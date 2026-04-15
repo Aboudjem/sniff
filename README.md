@@ -35,7 +35,7 @@ Source bugs, accessibility gaps, visual regressions, slow pages, and crash-on-in
 
 <br />
 
-[Get Started](#get-started) · [What It Catches](#what-it-catches) · [Under the Hood](#under-the-hood) · [Commands](#commands) · [CI Setup](#ci-integration) · [MCP Server](#mcp-server) · [Contributing](#contributing)
+[Quickstart](#quickstart) · [What It Catches](#what-it-catches) · [All Commands](#all-commands) · [Under the Hood](#under-the-hood) · [CI Setup](#ci-integration) · [MCP Server](#mcp-server) · [Contributing](#contributing)
 
 </div>
 
@@ -74,25 +74,45 @@ These aren't edge cases. They're the bugs that ship every single day because nob
 
 <br />
 
-## Get started
+## Quickstart
 
-### Try it now — nothing to install
+Run Sniff against any project in under a minute. Pick what fits your situation:
+
+### 1. Scan source code (fastest — no browser needed)
 
 ```bash
 npx sniff-qa scan
 ```
 
-That scans your source code right where you are. No signup, no API key, no config file. You'll see results in seconds.
+Checks for placeholder text, debug leftovers, broken imports, hardcoded URLs. Done in seconds.
 
-### Point it at a running app for the full suite
+### 2. Full quality sweep (browser-powered)
 
-Accessibility, visual regression, and performance checks need a browser. Start your dev server, then:
+Start your dev server, then point Sniff at it:
 
 ```bash
 npx sniff-qa run --base-url http://localhost:3000
 ```
 
-### Or add it to your project
+Runs accessibility, visual regression, performance, console error, and network failure checks — all in one pass.
+
+### 3. Let the AI explore your app
+
+The chaos monkey clicks everything, fills every form with nasty inputs, and reports what breaks:
+
+```bash
+npx sniff-qa explore --base-url http://localhost:3000
+```
+
+### 4. Set up CI in one step
+
+```bash
+npx sniff-qa ci
+```
+
+Generates a `.github/workflows/sniff.yml` with Playwright caching, JUnit output, and flakiness tracking.
+
+### 5. Add to your project permanently
 
 ```bash
 npm install -D sniff-qa
@@ -109,7 +129,7 @@ npm install -D sniff-qa
 ```
 
 > [!NOTE]
-> You'll need **Node.js 22 or newer**. Playwright browsers get installed automatically the first time you run a browser command — no extra step.
+> Requires **Node.js 22+**. Playwright browsers auto-install on first browser command.
 
 <br />
 
@@ -285,21 +305,32 @@ The scanner system is pluggable — each dimension implements a common interface
 
 <br />
 
-## Commands
+## All commands
 
-### `sniff scan`
+Everything Sniff can do, at a glance.
 
-Scans your source code. No browser, no server, just fast pattern matching.
+| Command | What it does | Needs browser? |
+|:---|:---|:---:|
+| `sniff scan` | Source code analysis (TODOs, debug, broken imports) | No |
+| `sniff run` | Full quality sweep (a11y, visual, perf, console, network) | Yes |
+| `sniff explore` | AI chaos monkey — clicks everything, fills forms with edge cases | Yes |
+| `sniff ci` | Generates a GitHub Actions workflow | No |
+| `sniff report` | Shows results from the last run | No |
+| `sniff init` | Scaffolds a config file | No |
+
+<details>
+<summary><strong>sniff scan</strong> — source code analysis</summary>
 
 ```bash
 sniff scan                    # Formatted terminal output
 sniff scan --json             # Machine-readable JSON
-sniff scan --fail-on critical # Only block on critical issues
+sniff scan --fail-on critical # Only block on critical severity
 ```
 
-### `sniff run`
+</details>
 
-The full browser-powered quality sweep — accessibility, visual regression, performance, console errors, network failures.
+<details>
+<summary><strong>sniff run</strong> — full browser-powered sweep</summary>
 
 ```bash
 sniff run --base-url http://localhost:3000
@@ -309,43 +340,42 @@ sniff run --ci                # CI mode: headless + JUnit + flakiness tracking
 sniff run --track-flakes      # Turn on flakiness detection
 ```
 
-### `sniff explore`
+</details>
 
-Let the AI loose on your app. It clicks everything, fills every form, and tells you what broke.
+<details>
+<summary><strong>sniff explore</strong> — AI chaos monkey</summary>
 
 ```bash
 sniff explore --base-url http://localhost:3000
 sniff explore --base-url http://localhost:3000 --max-steps 100
-sniff explore --no-headless   # Watch the chaos monkey work
+sniff explore --no-headless   # Watch the AI navigate your app
 sniff explore --json          # Structured output
 ```
 
-### `sniff ci`
+</details>
 
-Generates a ready-to-go GitHub Actions workflow.
+<details>
+<summary><strong>sniff ci</strong> — generate CI workflow</summary>
 
 ```bash
 sniff ci                      # Creates .github/workflows/sniff.yml
 sniff ci --force              # Overwrite an existing one
-sniff ci --package-name my-qa # Use a different package name
+sniff ci --package-name my-qa # Use a different package name in the workflow
 ```
 
-### `sniff report`
+</details>
 
-Pull up results from your last run without re-scanning.
+<details>
+<summary><strong>sniff report</strong> / <strong>sniff init</strong></summary>
 
 ```bash
-sniff report                  # Formatted terminal output
+sniff report                  # Formatted terminal output from last run
 sniff report --format json    # JSON output
+
+sniff init                    # Creates sniff.config.ts with defaults
 ```
 
-### `sniff init`
-
-Scaffold a config file with sensible defaults.
-
-```bash
-sniff init                    # Creates sniff.config.ts
-```
+</details>
 
 <br />
 
@@ -622,7 +652,7 @@ Check [CONTRIBUTING.md](CONTRIBUTING.md) for the full setup guide. Issues labele
 
 ## License
 
-[Apache License 2.0](LICENSE) — use it, fork it, build on it. Contributions are welcome and always appreciated. If you distribute a derivative, the [NOTICE](NOTICE) file asks for attribution.
+[Apache 2.0](LICENSE) — free to use, fork, and build on.
 
 <br />
 
@@ -634,7 +664,7 @@ Check [CONTRIBUTING.md](CONTRIBUTING.md) for the full setup guide. Issues labele
 
 Built by [**Adam Boudj**](https://github.com/Aboudjem)
 
-If Sniff caught something your tests didn't, consider [starring the repo](https://github.com/Aboudjem/sniff). It helps more people find it.
+Found a bug Sniff missed? [Open an issue.](https://github.com/Aboudjem/sniff/issues) Sniff found a bug your tests missed? [Drop a star.](https://github.com/Aboudjem/sniff)
 
 <br />
 
