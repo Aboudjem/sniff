@@ -67,9 +67,9 @@ export async function unifiedCommand(options: UnifiedOptions): Promise<void> {
     console.log(`${pc.blue('[source]')} ${sourceFindings.length} issues (${high} high, ${med} medium/low)`);
   }
 
-  // Generate AI tests from analysis
+  // Generate AI tests from analysis (only when running browser audit)
   const repoResult = sourceResults.find((r) => r.scanner === 'repo-analyzer');
-  if (repoResult?.metadata?.analysis) {
+  if (options.url && repoResult?.metadata?.analysis) {
     const { generateTests } = await import('../../ai/generator.js');
     const analysis = repoResult.metadata.analysis as import('../../analyzers/types.js').AnalysisResult;
     const aiConfig = (config as Record<string, unknown>).ai as Record<string, unknown> | undefined;
