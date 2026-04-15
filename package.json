@@ -33,13 +33,13 @@
   ],
   "author": "Adam Boudj <adam@integralayer.com>",
   "license": "Apache-2.0",
-  "homepage": "https://github.com/adamboudj/sniff#readme",
+  "homepage": "https://github.com/Aboudjem/sniff#readme",
   "repository": {
     "type": "git",
-    "url": "https://github.com/adamboudj/sniff.git"
+    "url": "https://github.com/Aboudjem/sniff.git"
   },
   "bugs": {
-    "url": "https://github.com/adamboudj/sniff/issues"
+    "url": "https://github.com/Aboudjem/sniff/issues"
   },
   "publishConfig": {
     "access": "public"

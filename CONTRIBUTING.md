@@ -1,113 +1,106 @@
 # Contributing to Sniff
 
-First off, thanks for considering contributing to Sniff! Every contribution helps
-make QA testing more accessible for developers everywhere.
+Glad you're here. Whether it's a typo fix, a new scanner rule, or a whole new scanning dimension — it all moves the project forward.
 
-## Quick Start
+## Getting set up
 
 ```bash
-# Fork and clone the repo
+# Fork and clone
 git clone https://github.com/YOUR_USERNAME/sniff.git
 cd sniff
 
-# Install dependencies
+# Install everything
 npm install
 
-# Build
+# Build once to make sure things work
 npm run build
 
-# Run tests
+# Run the test suite
 npm test
 
-# Run the CLI locally
+# Try the CLI locally
 node dist/cli/index.js scan
 ```
 
-## Development Setup
+You'll need **Node.js 22+** and optionally **Playwright browsers** (`npx playwright install chromium`) if you're working on anything browser-related.
 
-- **Node.js 22+** required
-- **Playwright** browsers installed: `npx playwright install chromium`
-- **TypeScript 6+** for type checking
-
-## Project Structure
+## Where things live
 
 ```
 src/
-  ai/              # AI providers (Claude Code, Anthropic API)
-  analyzers/       # Static analysis (routes, elements, frameworks)
-  browser/         # Playwright browser runner + page hooks
-  ci/              # CI workflow generation
-  cli/             # Commander CLI commands
-  config/          # Zod config schema + loader
-  core/            # Types, persistence, flakiness detection
-  exploration/     # Chaos monkey explorer
-  mcp/             # MCP server (Model Context Protocol)
+  ai/              # AI providers (Claude Code CLI, Anthropic API)
+  analyzers/       # Static analysis — route discovery, element extraction
+  browser/         # Playwright runner + page hooks (console, network, screenshots)
+  ci/              # GitHub Actions workflow generation
+  cli/             # Commander-based CLI — one file per command
+  config/          # Zod schemas + cosmiconfig loader
+  core/            # Shared types, persistence layer, flakiness detection
+  exploration/     # Chaos monkey — AI explorer + edge-case payloads
+  mcp/             # MCP server for AI editor integration
   report/          # HTML, JSON, JUnit report generators
-  scanners/        # All scanners (source, accessibility, visual, performance)
+  scanners/        # The actual scanners (source, accessibility, visual, performance)
 ```
 
-## How to Contribute
+## Ways to contribute
 
-### Reporting Bugs
+### Report a bug
 
-Use the [bug report template](https://github.com/adamboudj/sniff/issues/new?template=bug_report.yml).
-Include your Node.js version, OS, and the full error output.
+Use the [bug report form](https://github.com/Aboudjem/sniff/issues/new?template=bug_report.yml). Include your Node version, OS, and the full error output — it saves a lot of back-and-forth.
 
-### Suggesting Features
+### Suggest something
 
-Use the [feature request template](https://github.com/adamboudj/sniff/issues/new?template=feature_request.yml).
-Explain the problem you're solving, not just the solution.
+Got an idea? Use the [feature request form](https://github.com/Aboudjem/sniff/issues/new?template=feature_request.yml). Focus on the problem you're trying to solve — that context helps us figure out the best approach together.
 
-### Submitting Code
+### Submit a pull request
 
-1. **Fork** the repo and create a branch from `main`
-2. **Write tests** for any new functionality
-3. **Follow existing patterns** -- look at similar files for style guidance
-4. **Run the full check** before submitting:
+1. **Fork** the repo, branch off `main`
+2. **Write tests** for new behavior
+3. **Follow what's already there** — look at a similar file for patterns
+4. **Make sure it passes** before opening the PR:
    ```bash
    npm run build && npm test
    ```
-5. **Open a PR** with a clear description of what and why
+5. **Open the PR** with a short explanation of what changed and why
 
-### Adding a Scanner
+### Add a source rule (easiest first contribution)
 
-Sniff's scanner system is pluggable. To add a new scanner:
+Source rules are regex patterns with a severity level. Each one is a few lines of code:
+
+1. Create your rule in `src/scanners/source/rules/`
+2. Export it from `src/scanners/source/rules/index.ts`
+3. Done — the scanner picks it up automatically
+
+Look at the existing rules for the pattern. If you can write a regex, you can add a rule.
+
+### Add a scanner
+
+The scanner system is designed to be extended without touching core code:
 
 1. Create `src/scanners/your-scanner/index.ts`
 2. Implement the `Scanner` or `BrowserScanner` interface
-3. Register it in the appropriate command (`scan` or `run`)
-4. Add tests in `src/scanners/your-scanner/index.test.ts`
+3. Register it in the relevant command (`scan` or `run`)
+4. Add a test file alongside it
 
-### Adding Source Rules
+## Code conventions
 
-Source rules are the simplest contribution:
+- **ESM imports** with `.js` extensions — this is a TypeScript ESM project
+- **Lazy imports** in CLI commands (`await import(...)`) to keep startup fast
+- **Zod** for all config and schema validation
+- **Vitest** for tests
+- **picocolors** for terminal colors (not chalk)
+- Keep things straightforward — don't add abstractions until the third time you need one
 
-1. Add your rule to `src/scanners/source/rules/`
-2. Export it from `src/scanners/source/rules/index.ts`
-3. Each rule is a regex pattern with severity and description
+## Commit style
 
-## Code Style
-
-- **ESM imports** with `.js` extensions (TypeScript ESM)
-- **Lazy imports** in CLI commands (`await import(...)`)
-- **Zod schemas** for all config validation
-- **Vitest** for all tests
-- **picocolors** for CLI output (not chalk)
-- No unnecessary abstractions -- keep it simple
-
-## Commit Messages
-
-Use conventional-style messages:
+Conventional commits. Keep the subject line short, put detail in the body if needed.
 
 ```
 feat: add CSS specificity scanner
-fix: handle empty config file gracefully
-docs: update scanner architecture diagram
-test: add edge cases for flakiness detection
+fix: handle empty config file without crashing
+docs: clarify visual regression setup for CI
+test: cover flakiness detection edge cases
 ```
 
 ## License
 
-By contributing, you agree that your contributions will be licensed under the
-[Apache License 2.0](LICENSE). The NOTICE file requires attribution to the
-original author (Adam Boudj) in derivative works.
+Your contributions will be licensed under [Apache 2.0](LICENSE), same as the rest of the project. The [NOTICE](NOTICE) file carries attribution to the original author — that stays with any derivative work.
