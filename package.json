@@ -30,6 +30,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.89.0",
     "@babel/parser": "^7.29.2",
     "@babel/traverse": "^7.29.0",
     "@vue/compiler-sfc": "^3.5.32",
