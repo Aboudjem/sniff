@@ -69,13 +69,16 @@ Plans:
   6. Performance budgets (LCP, FCP, TTI) can be configured and violations appear as findings with severity
   7. An HTML report is generated with all findings, severity scores, screenshots, and fix suggestions in a brutally honest tone
   8. JUnit XML and JSON outputs are available for programmatic consumption
-**Plans**: TBD
+**Plans:** 6 plans
 **UI hint**: yes
 
 Plans:
-- [ ] 03-01: TBD
-- [ ] 03-02: TBD
-- [ ] 03-03: TBD
+- [ ] 03-01-PLAN.md — Browser types, config schema extensions, BrowserRunner, page hooks, and runtime discovery
+- [ ] 03-02-PLAN.md — Accessibility scanner (axe-core WCAG 2.1 AA) and visual regression scanner (pixelmatch)
+- [ ] 03-03-PLAN.md — Performance scanner (Lighthouse LCP/FCP/TTI) and report model with JSON/JUnit formatters
+- [ ] 03-04-PLAN.md — Self-contained HTML report generator with UI-SPEC compliance
+- [ ] 03-05-PLAN.md — CLI wiring: sniff run command, update-baselines command, formatter and report extensions
+- [ ] 03-06-PLAN.md — End-to-end verification and human checkpoint
 
 ### Phase 4: Exploration + CI + Distribution
 **Goal**: Users can run autonomous exploration, integrate sniff into CI pipelines, and install it via npm/MCP/Claude Code plugin
@@ -103,5 +106,5 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4
 |-------|----------------|--------|-----------|
 | 1. Foundation + Source Scanner | 4/4 | Complete | - |
 | 2. Repo Analyzer + AI Test Generation | 0/5 | Planning complete | - |
-| 3. Browser Runner + Quality Scanners + Reporting | 0/3 | Not started | - |
+| 3. Browser Runner + Quality Scanners + Reporting | 0/6 | Planning complete | - |
 | 4. Exploration + CI + Distribution | 0/3 | Not started | - |
