@@ -8,3 +8,4 @@ export type {
 
 export { detectFrameworks } from './framework-detector.js';
 export { discoverRoutes } from './route-discoverer.js';
+export { extractElements } from './element-extractor.js';
