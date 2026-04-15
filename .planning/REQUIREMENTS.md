@@ -13,7 +13,7 @@ Requirements for initial release (v0.1 through v0.3). Each maps to roadmap phase
 - [ ] **CLI-02**: User can run `sniff scan` to perform source-code-only scanning (no browser)
 - [ ] **CLI-03**: User can run `sniff run` to execute a full multi-dimensional test suite
 - [ ] **CLI-04**: User can run `sniff report` to view the last generated report
-- [ ] **CLI-05**: CLI provides colored, severity-based terminal output with progress indicators
+- [x] **CLI-05**: CLI provides colored, severity-based terminal output with progress indicators
 - [ ] **CLI-06**: CLI exits with code 0 on pass, non-zero on failure (CI-compatible)
 - [ ] **CLI-07**: User can configure severity threshold for failure via `--fail-on critical,high`
 
@@ -95,7 +95,7 @@ Requirements for initial release (v0.1 through v0.3). Each maps to roadmap phase
 - [ ] **DIST-01**: Published to npm (`npx sniff` works for zero-install usage)
 - [ ] **DIST-02**: MCP server exposes `sniff scan`, `sniff run`, `sniff report` as MCP tools
 - [ ] **DIST-03**: Claude Code plugin for one-line install (`claude plugin add sniff`)
-- [ ] **DIST-04**: Configurable via `sniff.config.ts`, `.sniffrc.json`, or `package.json#sniff`
+- [x] **DIST-04**: Configurable via `sniff.config.ts`, `.sniffrc.json`, or `package.json#sniff`
 
 ## v2 Requirements
 
@@ -148,7 +148,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | CLI-02 | Phase 1 | Pending |
 | CLI-03 | Phase 3 | Pending |
 | CLI-04 | Phase 1 | Pending |
-| CLI-05 | Phase 1 | Pending |
+| CLI-05 | Phase 1 | Complete |
 | CLI-06 | Phase 1 | Pending |
 | CLI-07 | Phase 1 | Pending |
 | REPO-01 | Phase 2 | Pending |
@@ -197,7 +197,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | DIST-01 | Phase 4 | Pending |
 | DIST-02 | Phase 4 | Pending |
 | DIST-03 | Phase 4 | Pending |
-| DIST-04 | Phase 1 | Pending |
+| DIST-04 | Phase 1 | Complete |
 
 **Coverage:**
 - v1 requirements: 54 total

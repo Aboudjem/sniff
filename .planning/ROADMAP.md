@@ -32,7 +32,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 **Plans:** 4 plans
 
 Plans:
-- [ ] 01-01-PLAN.md — Project setup, core types, and config system (cosmiconfig + Zod + defineConfig)
+- [x] 01-01-PLAN.md — Project setup, core types, and config system (cosmiconfig + Zod + defineConfig)
 - [ ] 01-02-PLAN.md — Scanner plugin interface, registry, and source scanner with all rule categories
 - [ ] 01-03-PLAN.md — CLI commands (init, scan, run stub, report), formatter, and persistence
 - [ ] 01-04-PLAN.md — End-to-end verification and human checkpoint
