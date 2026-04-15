@@ -70,12 +70,12 @@ Requirements for initial release (v0.1 through v0.3). Each maps to roadmap phase
 
 ### Reporting
 
-- [ ] **RPT-01**: HTML report generated with all findings, screenshots, and severity scores
+- [x] **RPT-01**: HTML report generated with all findings, screenshots, and severity scores
 - [x] **RPT-02**: Each finding has severity (critical, high, medium, low, info)
-- [ ] **RPT-03**: Findings include fix suggestions where possible
+- [x] **RPT-03**: Findings include fix suggestions where possible
 - [x] **RPT-04**: JUnit XML output for CI integration
 - [x] **RPT-05**: JSON output for programmatic consumption
-- [ ] **RPT-06**: Report uses "brutal honesty" tone — direct, opinionated, no sugar-coating
+- [x] **RPT-06**: Report uses "brutal honesty" tone — direct, opinionated, no sugar-coating
 
 ### Exploration
 
@@ -181,12 +181,12 @@ Which phases cover which requirements. Updated during roadmap creation.
 | PERF-01 | Phase 3 | Complete |
 | PERF-02 | Phase 3 | Complete |
 | PERF-03 | Phase 3 | Complete |
-| RPT-01 | Phase 3 | Pending |
+| RPT-01 | Phase 3 | Complete |
 | RPT-02 | Phase 3 | Complete |
-| RPT-03 | Phase 3 | Pending |
+| RPT-03 | Phase 3 | Complete |
 | RPT-04 | Phase 3 | Complete |
 | RPT-05 | Phase 3 | Complete |
-| RPT-06 | Phase 3 | Pending |
+| RPT-06 | Phase 3 | Complete |
 | EXPLR-01 | Phase 4 | Pending |
 | EXPLR-02 | Phase 4 | Pending |
 | EXPLR-03 | Phase 4 | Pending |
