@@ -9,3 +9,10 @@ export interface Finding {
   column: number;
   snippet: string;
 }
+
+export interface BrowserFinding extends Finding {
+  url: string;
+  viewport: string;
+  screenshotPath?: string;
+  fixSuggestion?: string;
+}
