@@ -40,9 +40,9 @@ describe('generateGitHubActionsWorkflow', () => {
     expect(yaml).toContain('~/.cache/ms-playwright');
   });
 
-  it('contains npx sniff-qa run --ci by default', () => {
+  it('contains npx sniff-qa --ci by default', () => {
     const yaml = generateGitHubActionsWorkflow(defaultOptions());
-    expect(yaml).toContain('npx sniff-qa run --ci');
+    expect(yaml).toContain('npx sniff-qa --ci');
   });
 
   it('contains if: always() on upload-artifact step', () => {
@@ -58,8 +58,8 @@ describe('generateGitHubActionsWorkflow', () => {
 
   it('uses custom package name in npx command', () => {
     const yaml = generateGitHubActionsWorkflow(defaultOptions({ packageName: 'custom-name' }));
-    expect(yaml).toContain('npx custom-name run --ci');
-    expect(yaml).not.toContain('npx sniff-qa run --ci');
+    expect(yaml).toContain('npx custom-name --ci');
+    expect(yaml).not.toContain('npx sniff-qa --ci');
   });
 
   it('uses custom branches', () => {

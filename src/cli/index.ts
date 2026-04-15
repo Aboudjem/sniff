@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-// Check for --mcp flag before Commander parses (MCP mode bypasses CLI)
+// MCP server mode bypasses CLI entirely
 if (process.argv.includes('--mcp')) {
   const { startMcpServer } = await import('../mcp/server.js');
   await startMcpServer();
@@ -33,6 +33,52 @@ if (process.argv.includes('--mcp')) {
     .description('AI-powered QA testing framework')
     .version('0.1.0');
 
+  // ── Default command: unified scan ──────────────────────────────
+  // `sniff`           → source scan
+  // `sniff --url ...` → source scan + browser tests
+  // `sniff --explore` → source scan + browser tests + chaos monkey
+  program
+    .argument('[target]', 'Project directory to scan (defaults to current directory)')
+    .option('--url <url>', 'Target URL for browser tests (enables accessibility, visual, performance)')
+    .option('--explore', 'Include AI chaos monkey exploration')
+    .option('--max-steps <n>', 'Max exploration steps (default: 50)')
+    .option('--source-only', 'Skip browser tests even if --url is set')
+    .option('--no-headless', 'Show the browser window')
+    .option('--format <formats>', 'Report formats: html, json, junit (comma-separated)')
+    .option('--fail-on <severities>', 'Exit non-zero on these severities (comma-separated)', 'critical,high')
+    .option('--json', 'Output results as JSON')
+    .option('--ci', 'CI mode: headless, JUnit output, flakiness tracking')
+    .option('--track-flakes', 'Track test flakiness across runs')
+    .action(async (target, options) => {
+      const { unifiedCommand } = await import('./commands/unified.js');
+
+      // Resolve URL from --url flag, config, or CI env
+      const { loadConfig } = await import('../config/loader.js');
+      const rootDir = target ? (await import('node:path')).resolve(target) : process.cwd();
+      const config = await loadConfig(rootDir);
+      const url = options.url ?? config.browser?.baseUrl;
+      const wantsBrowser = !!url && !options.sourceOnly;
+
+      if (wantsBrowser || options.explore) {
+        await ensurePlaywrightBrowsers();
+      }
+
+      await unifiedCommand({
+        rootDir,
+        url: wantsBrowser ? url : undefined,
+        explore: options.explore ?? false,
+        maxSteps: options.maxSteps,
+        headless: options.headless,
+        format: options.format,
+        failOn: options.failOn,
+        json: options.json,
+        ci: options.ci,
+        trackFlakes: options.trackFlakes,
+      });
+    });
+
+  // ── Utility commands ───────────────────────────────────────────
+
   program
     .command('init')
     .description('Generate a sniff config file')
@@ -43,33 +89,14 @@ if (process.argv.includes('--mcp')) {
     });
 
   program
-    .command('scan')
-    .description('Scan source code for problems')
-    .option('--json', 'Output results as JSON')
-    .option(
-      '--fail-on <severities>',
-      'Fail on these severities (comma-separated)',
-      'critical,high',
-    )
+    .command('ci')
+    .description('Generate a GitHub Actions workflow')
+    .option('--output <path>', 'Output path for workflow file', '.github/workflows/sniff.yml')
+    .option('--force', 'Overwrite existing workflow file')
+    .option('--package-name <name>', 'npm package name for npx command', 'sniff-qa')
     .action(async (options) => {
-      const { scanCommand } = await import('./commands/scan.js');
-      await scanCommand(options);
-    });
-
-  program
-    .command('run')
-    .description('Run full quality scan with browser tests')
-    .option('--no-headless', 'Run browser in headed mode')
-    .option('--base-url <url>', 'Base URL of the app to test')
-    .option('--format <formats>', 'Report formats (comma-separated: html,json,junit)')
-    .option('--fail-on <severities>', 'Fail on these severities (comma-separated)', 'critical,high')
-    .option('--json', 'Output results as JSON')
-    .option('--track-flakes', 'Track test flakiness across runs')
-    .option('--ci', 'CI mode: headless, JUnit XML, track flakes, non-zero exit on failure')
-    .action(async (options) => {
-      await ensurePlaywrightBrowsers();
-      const { runCommand } = await import('./commands/run.js');
-      await runCommand(options);
+      const { ciCommand } = await import('./commands/ci.js');
+      await ciCommand(options);
     });
 
   program
@@ -85,35 +112,11 @@ if (process.argv.includes('--mcp')) {
 
   program
     .command('update-baselines')
-    .description('Update visual regression baselines with current screenshots')
+    .description('Update visual regression baselines')
     .option('--yes', 'Skip confirmation prompt')
     .action(async (options) => {
       const { updateBaselinesCommand } = await import('./commands/update-baselines.js');
       await updateBaselinesCommand(options);
-    });
-
-  program
-    .command('ci')
-    .description('Generate a GitHub Actions workflow for running sniff in CI')
-    .option('--output <path>', 'Output path for workflow file', '.github/workflows/sniff.yml')
-    .option('--force', 'Overwrite existing workflow file')
-    .option('--package-name <name>', 'npm package name for npx command', 'sniff-qa')
-    .action(async (options) => {
-      const { ciCommand } = await import('./commands/ci.js');
-      await ciCommand(options);
-    });
-
-  program
-    .command('explore')
-    .description('Run AI-driven chaos monkey exploration')
-    .option('--base-url <url>', 'Base URL of the app to explore')
-    .option('--max-steps <n>', 'Maximum exploration steps', '50')
-    .option('--no-headless', 'Run browser in headed mode')
-    .option('--json', 'Output results as JSON')
-    .action(async (options) => {
-      await ensurePlaywrightBrowsers();
-      const { exploreCommand } = await import('./commands/explore.js');
-      await exploreCommand(options);
     });
 
   await program.parseAsync();

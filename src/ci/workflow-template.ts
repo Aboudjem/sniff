@@ -67,7 +67,7 @@ ${pnpmSetupStep}
         run: npx playwright install-deps chromium
 
       - name: Run Sniff QA
-        run: npx ${packageName} run --ci
+        run: npx ${packageName} --ci
         env:
           CI: true
 
