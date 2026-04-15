@@ -34,39 +34,44 @@ if (process.argv.includes('--mcp')) {
     .version('0.1.0');
 
   // ── Default command: unified scan ──────────────────────────────
-  // `sniff`           → source scan
-  // `sniff --url ...` → source scan + browser tests
-  // `sniff --explore` → source scan + browser tests + chaos monkey
+  // `sniff`               → source scan only
+  // `sniff --url <url>`   → everything (source + a11y + visual + perf + AI explore)
+  // `sniff --url X --ci`  → everything except exploration (deterministic for CI)
   program
-    .argument('[target]', 'Project directory to scan (defaults to current directory)')
-    .option('--url <url>', 'Target URL for browser tests (enables accessibility, visual, performance)')
-    .option('--explore', 'Include AI chaos monkey exploration')
-    .option('--max-steps <n>', 'Max exploration steps (default: 50)')
-    .option('--source-only', 'Skip browser tests even if --url is set')
+    .argument('[target]', 'Project directory to scan (default: current directory)')
+    .option('--url <url>', 'Target URL — enables full audit (a11y, visual, perf, AI explorer)')
+    .option('--ci', 'CI mode: headless, JUnit XML, flakiness tracking, no AI exploration')
+    .option('--no-browser', 'Force source-only scan even if URL is configured')
+    .option('--no-explore', 'Skip AI exploration (browser tests still run)')
+    .option('--max-steps <n>', 'Cap AI exploration steps (default: 50)')
     .option('--no-headless', 'Show the browser window')
     .option('--format <formats>', 'Report formats: html, json, junit (comma-separated)')
-    .option('--fail-on <severities>', 'Exit non-zero on these severities (comma-separated)', 'critical,high')
+    .option('--fail-on <severities>', 'Exit non-zero on these severities (default: critical,high)', 'critical,high')
     .option('--json', 'Output results as JSON')
-    .option('--ci', 'CI mode: headless, JUnit output, flakiness tracking')
     .option('--track-flakes', 'Track test flakiness across runs')
     .action(async (target, options) => {
       const { unifiedCommand } = await import('./commands/unified.js');
-
-      // Resolve URL from --url flag, config, or CI env
       const { loadConfig } = await import('../config/loader.js');
+
       const rootDir = target ? (await import('node:path')).resolve(target) : process.cwd();
       const config = await loadConfig(rootDir);
-      const url = options.url ?? config.browser?.baseUrl;
-      const wantsBrowser = !!url && !options.sourceOnly;
 
-      if (wantsBrowser || options.explore) {
+      // URL resolution: flag → config → none
+      const url = options.url ?? config.browser?.baseUrl;
+      const wantsBrowser = !!url && options.browser !== false;
+
+      // Exploration is default-ON when browser tests run, default-OFF in CI
+      const isCi = options.ci || !!process.env.CI;
+      const wantsExplore = wantsBrowser && options.explore !== false && !isCi;
+
+      if (wantsBrowser) {
         await ensurePlaywrightBrowsers();
       }
 
       await unifiedCommand({
         rootDir,
         url: wantsBrowser ? url : undefined,
-        explore: options.explore ?? false,
+        explore: wantsExplore,
         maxSteps: options.maxSteps,
         headless: options.headless,
         format: options.format,
