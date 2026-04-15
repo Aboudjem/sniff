@@ -52,15 +52,15 @@ Requirements for initial release (v0.1 through v0.3). Each maps to roadmap phase
 
 ### Accessibility
 
-- [ ] **A11Y-01**: axe-core integration scans every visited page for WCAG 2.1 AA violations
-- [ ] **A11Y-02**: Touch target size validation for mobile viewports
-- [ ] **A11Y-03**: Color contrast violations reported with specific elements and fix suggestions
+- [x] **A11Y-01**: axe-core integration scans every visited page for WCAG 2.1 AA violations
+- [x] **A11Y-02**: Touch target size validation for mobile viewports
+- [x] **A11Y-03**: Color contrast violations reported with specific elements and fix suggestions
 
 ### Visual Regression
 
-- [ ] **VIS-01**: Pixel-diff comparison against stored baselines (no paid vendor required)
-- [ ] **VIS-02**: User can update baselines via `sniff update-baselines`
-- [ ] **VIS-03**: Smart diff thresholds ignore sub-pixel/anti-aliasing noise
+- [x] **VIS-01**: Pixel-diff comparison against stored baselines (no paid vendor required)
+- [x] **VIS-02**: User can update baselines via `sniff update-baselines`
+- [x] **VIS-03**: Smart diff thresholds ignore sub-pixel/anti-aliasing noise
 
 ### Performance
 
@@ -172,12 +172,12 @@ Which phases cover which requirements. Updated during roadmap creation.
 | E2E-04 | Phase 3 | Complete |
 | E2E-05 | Phase 3 | Complete |
 | E2E-06 | Phase 3 | Complete |
-| A11Y-01 | Phase 3 | Pending |
-| A11Y-02 | Phase 3 | Pending |
-| A11Y-03 | Phase 3 | Pending |
-| VIS-01 | Phase 3 | Pending |
-| VIS-02 | Phase 3 | Pending |
-| VIS-03 | Phase 3 | Pending |
+| A11Y-01 | Phase 3 | Complete |
+| A11Y-02 | Phase 3 | Complete |
+| A11Y-03 | Phase 3 | Complete |
+| VIS-01 | Phase 3 | Complete |
+| VIS-02 | Phase 3 | Complete |
+| VIS-03 | Phase 3 | Complete |
 | PERF-01 | Phase 3 | Pending |
 | PERF-02 | Phase 3 | Pending |
 | PERF-03 | Phase 3 | Pending |

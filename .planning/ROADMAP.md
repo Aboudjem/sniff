@@ -74,7 +74,7 @@ Plans:
 
 Plans:
 - [x] 03-01-PLAN.md — Browser types, config schema extensions, BrowserRunner, page hooks, and runtime discovery
-- [ ] 03-02-PLAN.md — Accessibility scanner (axe-core WCAG 2.1 AA) and visual regression scanner (pixelmatch)
+- [x] 03-02-PLAN.md — Accessibility scanner (axe-core WCAG 2.1 AA) and visual regression scanner (pixelmatch)
 - [ ] 03-03-PLAN.md — Performance scanner (Lighthouse LCP/FCP/TTI) and report model with JSON/JUnit formatters
 - [ ] 03-04-PLAN.md — Self-contained HTML report generator with UI-SPEC compliance
 - [ ] 03-05-PLAN.md — CLI wiring: sniff run command, update-baselines command, formatter and report extensions
