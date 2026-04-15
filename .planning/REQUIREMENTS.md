@@ -36,10 +36,10 @@ Requirements for initial release (v0.1 through v0.3). Each maps to roadmap phase
 
 ### Source Scanning
 
-- [ ] **SRC-01**: Scanner detects placeholder text (lorem ipsum, "TODO", "FIXME", "TBD")
-- [ ] **SRC-02**: Scanner detects hardcoded strings that shouldn't ship (debug logs, test data)
-- [ ] **SRC-03**: Scanner detects broken internal links and unused imports
-- [ ] **SRC-04**: Source scanning runs without a browser (fast, lightweight)
+- [x] **SRC-01**: Scanner detects placeholder text (lorem ipsum, "TODO", "FIXME", "TBD")
+- [x] **SRC-02**: Scanner detects hardcoded strings that shouldn't ship (debug logs, test data)
+- [x] **SRC-03**: Scanner detects broken internal links and unused imports
+- [x] **SRC-04**: Source scanning runs without a browser (fast, lightweight)
 
 ### Browser Testing
 
@@ -162,10 +162,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 | AIGEN-04 | Phase 2 | Pending |
 | AIGEN-05 | Phase 2 | Pending |
 | AIGEN-06 | Phase 2 | Pending |
-| SRC-01 | Phase 1 | Pending |
-| SRC-02 | Phase 1 | Pending |
-| SRC-03 | Phase 1 | Pending |
-| SRC-04 | Phase 1 | Pending |
+| SRC-01 | Phase 1 | Complete |
+| SRC-02 | Phase 1 | Complete |
+| SRC-03 | Phase 1 | Complete |
+| SRC-04 | Phase 1 | Complete |
 | E2E-01 | Phase 3 | Pending |
 | E2E-02 | Phase 3 | Pending |
 | E2E-03 | Phase 3 | Pending |
