@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600" font-family="'Comic Sans MS', 'Caveat', system-ui, sans-serif">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600" font-family="-apple-system, system-ui, sans-serif">
   <defs>
     <filter id="rough" x="-20%" y="-20%" width="140%" height="140%">
       <feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="3" seed="5" result="noise"/>
@@ -28,90 +28,79 @@
       <stop offset="0%" stop-color="#1e293b"/>
       <stop offset="100%" stop-color="#0f172a"/>
     </linearGradient>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#475569"/>
+    </marker>
   </defs>
 
-  <style>
-    .label { font-size: 18px; font-weight: 700; fill: #fff; }
-    .sub { font-size: 13px; fill: #fff; opacity: 0.85; }
-    .arrow { stroke: #475569; stroke-width: 2.5; fill: none; stroke-linecap: round; }
-    .title { font-size: 22px; font-weight: 700; fill: #0f172a; }
-    .center-label { font-size: 24px; font-weight: 800; fill: #fff; }
-  </style>
-
-  <text x="600" y="40" text-anchor="middle" class="title">how sniff works</text>
+  <text x="600" y="40" text-anchor="middle" font-size="24" font-weight="800" fill="#0f172a">how sniff works</text>
 
   <!-- Input box -->
   <g filter="url(#rough)">
     <rect x="40" y="240" width="180" height="100" rx="14" fill="url(#g1)" stroke="#5b21b6" stroke-width="3"/>
   </g>
-  <text x="130" y="285" text-anchor="middle" class="label">$ npx sniff-qa</text>
-  <text x="130" y="310" text-anchor="middle" class="sub">your project</text>
+  <text x="130" y="285" text-anchor="middle" font-size="18" font-weight="700" fill="#ffffff">$ npx sniff-qa</text>
+  <text x="130" y="310" text-anchor="middle" font-size="13" fill="#ffffff" opacity="0.85">your project</text>
 
   <!-- Source scanner -->
   <g filter="url(#rough)">
     <rect x="380" y="80" width="200" height="80" rx="14" fill="url(#g2)" stroke="#92400e" stroke-width="3"/>
   </g>
-  <text x="480" y="115" text-anchor="middle" class="label">📄 source</text>
-  <text x="480" y="138" text-anchor="middle" class="sub">TODOs · debug · imports</text>
+  <text x="480" y="115" text-anchor="middle" font-size="18" font-weight="700" fill="#ffffff">📄 source</text>
+  <text x="480" y="138" text-anchor="middle" font-size="13" fill="#ffffff" opacity="0.9">TODOs · debug · imports</text>
 
   <!-- Accessibility -->
   <g filter="url(#rough)">
     <rect x="380" y="180" width="200" height="80" rx="14" fill="url(#g3)" stroke="#065f46" stroke-width="3"/>
   </g>
-  <text x="480" y="215" text-anchor="middle" class="label">♿ accessibility</text>
-  <text x="480" y="238" text-anchor="middle" class="sub">axe-core · WCAG 2.x</text>
+  <text x="480" y="215" text-anchor="middle" font-size="18" font-weight="700" fill="#ffffff">♿ accessibility</text>
+  <text x="480" y="238" text-anchor="middle" font-size="13" fill="#ffffff" opacity="0.9">axe-core · WCAG 2.x</text>
 
   <!-- Visual -->
   <g filter="url(#rough)">
     <rect x="380" y="280" width="200" height="80" rx="14" fill="url(#g4)" stroke="#1e40af" stroke-width="3"/>
   </g>
-  <text x="480" y="315" text-anchor="middle" class="label">🖼  visual</text>
-  <text x="480" y="338" text-anchor="middle" class="sub">pixelmatch diff</text>
+  <text x="480" y="315" text-anchor="middle" font-size="18" font-weight="700" fill="#ffffff">🖼  visual</text>
+  <text x="480" y="338" text-anchor="middle" font-size="13" fill="#ffffff" opacity="0.9">pixelmatch diff</text>
 
   <!-- Performance -->
   <g filter="url(#rough)">
     <rect x="380" y="380" width="200" height="80" rx="14" fill="url(#g5)" stroke="#9d174d" stroke-width="3"/>
   </g>
-  <text x="480" y="415" text-anchor="middle" class="label">⚡ performance</text>
-  <text x="480" y="438" text-anchor="middle" class="sub">Lighthouse · LCP/FCP/TTI</text>
+  <text x="480" y="415" text-anchor="middle" font-size="18" font-weight="700" fill="#ffffff">⚡ performance</text>
+  <text x="480" y="438" text-anchor="middle" font-size="13" fill="#ffffff" opacity="0.9">Lighthouse · LCP/FCP/TTI</text>
 
   <!-- AI explorer -->
   <g filter="url(#rough)">
     <rect x="380" y="480" width="200" height="80" rx="14" fill="url(#g1)" stroke="#5b21b6" stroke-width="3"/>
   </g>
-  <text x="480" y="515" text-anchor="middle" class="label">🤖 explorer</text>
-  <text x="480" y="538" text-anchor="middle" class="sub">AI chaos monkey</text>
+  <text x="480" y="515" text-anchor="middle" font-size="18" font-weight="700" fill="#ffffff">🤖 explorer</text>
+  <text x="480" y="538" text-anchor="middle" font-size="13" fill="#ffffff" opacity="0.9">AI chaos monkey</text>
 
   <!-- Arrows from input to scanners -->
-  <path class="arrow" d="M 220 290 Q 300 290 380 120" marker-end="url(#arrow)"/>
-  <path class="arrow" d="M 220 290 Q 300 280 380 220"/>
-  <path class="arrow" d="M 220 290 Q 300 290 380 320"/>
-  <path class="arrow" d="M 220 295 Q 300 360 380 420"/>
-  <path class="arrow" d="M 220 300 Q 300 440 380 520"/>
+  <path d="M 220 290 Q 300 290 380 120" stroke="#475569" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <path d="M 220 290 Q 300 280 380 220" stroke="#475569" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <path d="M 220 290 Q 300 290 380 320" stroke="#475569" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <path d="M 220 295 Q 300 360 380 420" stroke="#475569" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <path d="M 220 300 Q 300 440 380 520" stroke="#475569" stroke-width="2.5" fill="none" stroke-linecap="round"/>
 
   <!-- Arrows from scanners to report -->
-  <path class="arrow" d="M 580 120 Q 720 200 820 280"/>
-  <path class="arrow" d="M 580 220 Q 720 250 820 290"/>
-  <path class="arrow" d="M 580 320 Q 720 310 820 300"/>
-  <path class="arrow" d="M 580 420 Q 720 360 820 310"/>
-  <path class="arrow" d="M 580 520 Q 720 410 820 320"/>
+  <path d="M 580 120 Q 720 200 820 280" stroke="#475569" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <path d="M 580 220 Q 720 250 820 290" stroke="#475569" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <path d="M 580 320 Q 720 310 820 300" stroke="#475569" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <path d="M 580 420 Q 720 360 820 310" stroke="#475569" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <path d="M 580 520 Q 720 410 820 320" stroke="#475569" stroke-width="2.5" fill="none" stroke-linecap="round"/>
 
   <!-- Report -->
   <g filter="url(#rough)">
-    <rect x="820" y="240" width="200" height="120" rx="16" fill="url(#gReport)" stroke="#000" stroke-width="3"/>
+    <rect x="820" y="240" width="200" height="120" rx="16" fill="url(#gReport)" stroke="#000000" stroke-width="3"/>
   </g>
-  <text x="920" y="285" text-anchor="middle" class="center-label">report</text>
-  <text x="920" y="312" text-anchor="middle" class="sub">html · json · junit</text>
-  <text x="920" y="332" text-anchor="middle" class="sub">+ flakiness quarantine</text>
+  <text x="920" y="285" text-anchor="middle" font-size="24" font-weight="800" fill="#ffffff">report</text>
+  <text x="920" y="312" text-anchor="middle" font-size="13" fill="#ffffff" opacity="0.85">html · json · junit</text>
+  <text x="920" y="332" text-anchor="middle" font-size="13" fill="#ffffff" opacity="0.85">+ flakiness quarantine</text>
 
   <!-- Final arrow -->
-  <path class="arrow" d="M 1020 300 L 1100 300" marker-end="url(#arrow)"/>
+  <path d="M 1020 300 L 1100 300" stroke="#475569" stroke-width="2.5" fill="none" stroke-linecap="round" marker-end="url(#arrow)"/>
   <text x="1140" y="295" text-anchor="middle" font-size="32">🎯</text>
   <text x="1140" y="320" text-anchor="middle" font-size="11" fill="#475569">ship it</text>
-
-  <defs>
-    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
-      <path d="M 0 0 L 10 5 L 0 10 z" fill="#475569"/>
-    </marker>
-  </defs>
 </svg>

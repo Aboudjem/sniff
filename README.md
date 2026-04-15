@@ -13,22 +13,36 @@
 
 ### One command. Five checks. Zero config.
 
-Catches source bugs, accessibility violations, visual regressions, slow pages, and crash-on-input forms before your users do.
-
-<br />
+Source bugs · Accessibility · Visual regression · Performance · AI exploration
 
 [![npm](https://img.shields.io/npm/v/sniff-qa?color=cb3837&logo=npm&label=npm)](https://www.npmjs.com/package/sniff-qa)
 [![License](https://img.shields.io/badge/license-Apache_2.0-blue)](LICENSE)
 [![Node](https://img.shields.io/badge/node-≥22-339933?logo=node.js&logoColor=white)](https://nodejs.org)
-[![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-[![Playwright](https://img.shields.io/badge/Playwright-2EAD33?logo=playwright&logoColor=white)](https://playwright.dev)
 [![CI](https://github.com/Aboudjem/sniff/actions/workflows/ci.yml/badge.svg)](https://github.com/Aboudjem/sniff/actions/workflows/ci.yml)
 
 </div>
 
 <br />
 
-## Three modes. That's it.
+## Run it
+
+```bash
+npx sniff-qa
+```
+
+That's the whole tutorial. Source scan completes in seconds.
+
+For the full audit, point Sniff at your running app:
+
+```bash
+npx sniff-qa --url http://localhost:3000
+```
+
+This runs source scan + accessibility (axe-core) + visual regression (pixelmatch) + performance (Lighthouse) + AI chaos monkey exploration. Everything in one pass.
+
+<br />
+
+## The three commands
 
 <div align="center">
 
@@ -36,46 +50,26 @@ Catches source bugs, accessibility violations, visual regressions, slow pages, a
 
 </div>
 
-| | When to use it | Run |
-|:--|:--|:--|
-| **Quick** | Save the file. Want to check it. | `npx sniff-qa` |
-| **Full** | Pre-push. Pre-merge. Local audit. | `npx sniff-qa --url http://localhost:3000` |
-| **CI** | GitHub Actions, GitLab CI, anything pipeline. | `npx sniff-qa --url http://localhost:3000 --ci` |
-
-That's the whole CLI. No flags to memorize.
-
-> [!TIP]
-> The **full** mode runs everything Sniff knows how to do, including the AI explorer. **CI** mode skips exploration so your pipelines stay deterministic.
-
-<br />
-
-## Quickstart
-
 ```bash
-# Source scan (no browser needed)
-npx sniff-qa
-
-# Full audit against your running app
-npx sniff-qa --url http://localhost:3000
+npx sniff-qa                                   # quick scan (no browser)
+npx sniff-qa --url http://localhost:3000       # full audit (everything)
+npx sniff-qa --url http://localhost:3000 --ci  # ci mode (skips AI explorer)
 ```
 
-Requires **Node.js 22+**. Playwright browsers install automatically the first time you run a browser scan.
+That's the whole CLI. **CI mode** auto-skips the AI explorer because it's non-deterministic.
+
+> [!TIP]
+> Drop the URL in `sniff.config.ts` once and you can just run `sniff` for the full audit.
 
 <br />
 
-## What gets checked
-
-<div align="center">
-
-<img src="./.github/assets/architecture.svg" alt="Sniff architecture" width="100%">
-
-</div>
+## What it checks
 
 <table>
 <tr>
 <td width="50%" valign="top">
 
-### 📄 Source code
+**📄 Source code**
 
 ```
 ! HIGH (3)
@@ -84,12 +78,12 @@ Requires **Node.js 22+**. Playwright browsers install automatically the first ti
   src/utils/auth.ts:15     FIXME comment
 ```
 
-Catches what code review misses: leftover `debugger`, placeholder text, hardcoded URLs, broken imports, TODO/FIXME tags.
+Leftover `debugger`, placeholder text, hardcoded URLs, broken imports, TODO/FIXME tags.
 
 </td>
 <td width="50%" valign="top">
 
-### ♿ Accessibility
+**♿ Accessibility** ([axe-core](https://github.com/dequelabs/axe-core))
 
 ```
 ! CRITICAL
@@ -97,14 +91,14 @@ Catches what code review misses: leftover `debugger`, placeholder text, hardcode
   /login  Color contrast 2.1:1 (needs 4.5:1)
 ```
 
-Powered by [axe-core](https://github.com/dequelabs/axe-core). Same engine used at Microsoft, Google, and US government sites. Every finding includes the fix.
+WCAG 2.x violations with exact fix guidance.
 
 </td>
 </tr>
 <tr>
 <td valign="top">
 
-### 🖼 Visual regression
+**🖼 Visual regression** ([pixelmatch](https://github.com/mapbox/pixelmatch))
 
 ```
 ! HIGH
@@ -112,12 +106,12 @@ Powered by [axe-core](https://github.com/dequelabs/axe-core). Same engine used a
             (threshold: 0.1%)
 ```
 
-Local pixel diffing with [pixelmatch](https://github.com/mapbox/pixelmatch). No Percy subscription. Commit baselines to track changes across PRs.
+Local pixel diffing. Commit baselines to track UI changes across PRs.
 
 </td>
 <td valign="top">
 
-### ⚡ Performance
+**⚡ Performance** ([Lighthouse](https://developer.chrome.com/docs/lighthouse))
 
 ```
 ! HIGH
@@ -125,23 +119,22 @@ Local pixel diffing with [pixelmatch](https://github.com/mapbox/pixelmatch). No 
               budget 2500ms (68% over)
 ```
 
-[Lighthouse](https://developer.chrome.com/docs/lighthouse) audits with budget enforcement. Defaults: LCP 2500ms, FCP 1800ms, TTI 3800ms.
+Defaults: LCP 2500ms, FCP 1800ms, TTI 3800ms.
 
 </td>
 </tr>
 <tr>
 <td colspan="2" valign="top">
 
-### 🤖 AI explorer
+**🤖 AI explorer**
 
 ```
 ! HIGH
   /signup  Console error filling email with: <script>alert(1)</script>
            TypeError: Cannot read property 'trim' of undefined
-  /search  POST /api/search returned 500 — input: ' OR '1'='1
 ```
 
-Runs automatically in **full** mode. Roams your app, fills forms with adversarial inputs (XSS, SQL injection, Unicode), reports crashes. Every action traced in `.sniff/exploration-<timestamp>.json`.
+Roams your app, fills forms with adversarial inputs (XSS, SQL injection, Unicode), reports crashes. Action trace saved to `.sniff/exploration-<timestamp>.json`.
 
 </td>
 </tr>
@@ -149,50 +142,62 @@ Runs automatically in **full** mode. Roams your app, fills forms with adversaria
 
 <br />
 
-## Power-user flags
+## Install
 
-You don't need these. They're here when you do.
+```bash
+npm install -D sniff-qa
+```
 
-| Flag | Effect |
-|:--|:--|
-| `--no-explore` | Skip the AI explorer in full mode |
-| `--no-browser` | Force source-only even when URL is configured |
-| `--max-steps <n>` | Cap exploration steps (default: 50) |
-| `--no-headless` | Show the browser window |
-| `--format <list>` | Report formats: `html`, `json`, `junit` |
-| `--fail-on <list>` | Severities that exit non-zero (default: `critical,high`) |
-| `--track-flakes` | Enable flakiness detection across runs |
-| `--json` | Machine-readable JSON output |
+```json
+{
+  "scripts": {
+    "qa": "sniff --url http://localhost:3000"
+  }
+}
+```
+
+Then run `npm run qa`. Requires Node.js 22+. Playwright browsers install automatically the first time.
 
 <br />
 
-## Utility commands
+## All commands
 
-| Command | Purpose |
+```
+sniff                       quick scan (source only)
+sniff --url <url>           full audit (everything)
+sniff --url <url> --ci      ci mode (no AI explorer)
+
+sniff init                  scaffold sniff.config.ts
+sniff ci                    generate .github/workflows/sniff.yml
+sniff report                show last results
+sniff update-baselines      accept current screenshots as baselines
+```
+
+### Flags (all optional)
+
+| Flag | Effect |
 |:--|:--|
-| `sniff init` | Scaffold a `sniff.config.ts` file |
-| `sniff ci` | Generate `.github/workflows/sniff.yml` |
-| `sniff report` | Show results from the last run |
-| `sniff update-baselines` | Accept current screenshots as new baselines |
+| `--no-explore` | Skip AI explorer in full mode |
+| `--no-browser` | Force source-only even when URL is set |
+| `--max-steps <n>` | Cap exploration steps (default: 50) |
+| `--no-headless` | Show the browser window |
+| `--format html,json,junit` | Choose report formats |
+| `--fail-on critical,high` | Severities that exit non-zero |
+| `--track-flakes` | Enable flakiness detection |
+| `--json` | Machine-readable output |
 
 <br />
 
 ## Configuration
 
-Optional. Defaults are sensible. When you want control:
+Optional. Drop `sniff.config.ts` in your project root:
 
 ```typescript
-// sniff.config.ts
 import { defineConfig } from 'sniff-qa';
 
 export default defineConfig({
-  scanner: {
-    include: ['src/**/*.{ts,tsx,js,jsx,vue,svelte}'],
-    exclude: ['**/*.test.*'],
-  },
   browser: {
     baseUrl: 'http://localhost:3000',
-    timeout: 30000,
   },
   viewports: [
     { name: 'mobile', width: 375, height: 667 },
@@ -202,14 +207,10 @@ export default defineConfig({
     budgets: { lcp: 2500, fcp: 1800, tti: 3800 },
   },
   visual: { threshold: 0.1 },
-  flakiness: { windowSize: 5, threshold: 3 },
   exploration: { maxSteps: 50 },
-  report: { formats: ['html', 'json'] },
+  flakiness: { windowSize: 5, threshold: 3 },
 });
 ```
-
-> [!NOTE]
-> When `browser.baseUrl` is set, `sniff` runs the full audit by default. Drop the URL or pass `--no-browser` for a source-only scan.
 
 <br />
 
@@ -219,99 +220,39 @@ export default defineConfig({
 npx sniff-qa ci
 ```
 
-Generates a complete GitHub Actions workflow with Playwright caching, headless mode, JUnit output, flakiness quarantine, and report artifacts.
+Generates `.github/workflows/sniff.yml` with Playwright caching, JUnit output, flakiness quarantine, and report artifacts.
 
-<details>
-<summary><b>See the generated workflow</b></summary>
-
-```yaml
-name: Sniff QA
-on:
-  push:
-    branches: [main, master]
-  pull_request:
-    branches: [main, master]
-jobs:
-  sniff:
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-          cache: npm
-      - run: npm ci
-      - uses: actions/cache@v4
-        id: pw
-        with:
-          path: ~/.cache/ms-playwright
-          key: ${{ runner.os }}-pw-${{ hashFiles('package-lock.json') }}
-      - if: steps.pw.outputs.cache-hit != 'true'
-        run: npx playwright install --with-deps chromium
-      - if: steps.pw.outputs.cache-hit == 'true'
-        run: npx playwright install-deps chromium
-      - run: npx sniff-qa --ci
-        env:
-          CI: true
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: sniff-reports
-          path: sniff-reports/
-          retention-days: 30
-```
-
-</details>
-
-**Flakiness quarantine.** Tests that fail 3 of 5 recent runs get quarantined. They still run, still appear in reports, but won't block your pipeline. History lives in `.sniff/history.json`.
+**Flakiness quarantine.** Tests that fail 3 of 5 runs get quarantined. They still run, still appear in reports, but won't block your pipeline.
 
 <br />
 
-## Use it with your AI
+## Use with your AI editor
 
-Sniff ships an MCP server (`sniff --mcp`). Any AI tool that supports the [Model Context Protocol](https://modelcontextprotocol.io) can call Sniff directly. Pick your tool, copy the snippet, ask your AI to scan something.
-
-### Tools exposed
-
-| Tool | What it does |
-|:--|:--|
-| `sniff_scan` | Static source code analysis |
-| `sniff_run` | Browser-based quality scan |
-| `sniff_report` | Pull up the last scan results |
-
-### Setup
+Sniff ships an MCP server. Pick your tool and copy the snippet.
 
 <details>
-<summary><b>Claude Code</b> (recommended)</summary>
-
-One command:
+<summary><b>Claude Code</b></summary>
 
 ```bash
 claude mcp add sniff-qa npx sniff-qa --mcp
 ```
 
-Or drop a `.mcp.json` in your project root (commit it for team-wide setup):
+Or `.mcp.json`:
 
 ```json
 {
   "mcpServers": {
-    "sniff-qa": {
-      "command": "npx",
-      "args": ["sniff-qa", "--mcp"]
-    }
+    "sniff-qa": { "command": "npx", "args": ["sniff-qa", "--mcp"] }
   }
 }
 ```
-
-Verify with `claude mcp list`.
 
 </details>
 
 <details>
 <summary><b>Cursor</b></summary>
 
-Edit `~/.cursor/mcp.json` (global) or `.cursor/mcp.json` (project):
+`~/.cursor/mcp.json` or `.cursor/mcp.json`:
 
 ```json
 {
@@ -328,58 +269,38 @@ Edit `~/.cursor/mcp.json` (global) or `.cursor/mcp.json` (project):
 </details>
 
 <details>
-<summary><b>Windsurf</b> (Codeium)</summary>
+<summary><b>Windsurf</b></summary>
 
-Edit `~/.codeium/windsurf/mcp_config.json`:
+`~/.codeium/windsurf/mcp_config.json`:
 
 ```json
 {
   "mcpServers": {
-    "sniff-qa": {
-      "command": "npx",
-      "args": ["sniff-qa", "--mcp"]
-    }
+    "sniff-qa": { "command": "npx", "args": ["sniff-qa", "--mcp"] }
   }
 }
 ```
 
-Cascade has a 100-tool limit. Sniff exposes 3.
-
 </details>
 
 <details>
-<summary><b>Codex CLI</b> (OpenAI)</summary>
-
-Run:
+<summary><b>Codex CLI</b></summary>
 
 ```bash
 codex mcp add sniff-qa --command "npx sniff-qa --mcp"
 ```
 
-Or edit `~/.codex/config.toml`:
-
-```toml
-[[mcp.servers]]
-name = "sniff-qa"
-type = "stdio"
-command = "npx"
-args = ["sniff-qa", "--mcp"]
-```
-
 </details>
 
 <details>
-<summary><b>Gemini CLI</b> (Google)</summary>
+<summary><b>Gemini CLI</b></summary>
 
-Edit `~/.gemini/mcp_config.json`:
+`~/.gemini/mcp_config.json`:
 
 ```json
 {
   "mcpServers": {
-    "sniff-qa": {
-      "command": "npx",
-      "args": ["sniff-qa", "--mcp"]
-    }
+    "sniff-qa": { "command": "npx", "args": ["sniff-qa", "--mcp"] }
   }
 }
 ```
@@ -389,48 +310,27 @@ Edit `~/.gemini/mcp_config.json`:
 <details>
 <summary><b>Continue.dev</b></summary>
 
-Create `.continue/mcpServers/sniff-qa.yaml`:
+`.continue/mcpServers/sniff-qa.yaml`:
 
 ```yaml
 mcpServers:
   sniff-qa:
     command: npx
-    args:
-      - sniff-qa
-      - --mcp
+    args: [sniff-qa, --mcp]
     type: stdio
 ```
 
 </details>
 
-<details>
-<summary><b>Any other MCP-compatible tool</b></summary>
+Once configured, ask: *"Scan this project for issues"* or *"Check accessibility on localhost:3000"*.
 
-The MCP server is a stdio process. Configure your tool to launch:
-
-```
-command: npx
-args:    ["sniff-qa", "--mcp"]
-```
-
-That's it.
-
-</details>
-
-Once configured, just ask your AI: *"Scan this project for issues"* or *"Check accessibility on localhost:3000"*. The agent will pick the right tool automatically.
+**Tools exposed:** `sniff_scan` (source), `sniff_run` (browser), `sniff_report` (last results).
 
 <br />
 
 ## Built on
 
-| | Project | Role | License |
-|:--|:--|:--|:--|
-| 🎭 | [Playwright](https://playwright.dev) | Browser automation | Apache-2.0 |
-| ♿ | [axe-core](https://github.com/dequelabs/axe-core) | Accessibility engine | MPL-2.0 |
-| 🔦 | [Lighthouse](https://developer.chrome.com/docs/lighthouse) | Performance auditing | Apache-2.0 |
-| 🔲 | [pixelmatch](https://github.com/mapbox/pixelmatch) | Screenshot comparison | ISC |
-| 📐 | [Zod](https://zod.dev) | Schema validation | MIT |
-| 🔌 | [MCP SDK](https://github.com/modelcontextprotocol/typescript-sdk) | AI tool protocol | MIT |
+[Playwright](https://playwright.dev) · [axe-core](https://github.com/dequelabs/axe-core) · [Lighthouse](https://developer.chrome.com/docs/lighthouse) · [pixelmatch](https://github.com/mapbox/pixelmatch) · [Zod](https://zod.dev) · [MCP SDK](https://github.com/modelcontextprotocol/typescript-sdk)
 
 <br />
 
@@ -441,10 +341,9 @@ Once configured, just ask your AI: *"Scan this project for issues"* or *"Check a
 | Source scanning | ✅ | | | |
 | Accessibility | ✅ | partial | ✅ | |
 | Visual regression | ✅ | | | ✅ |
-| Performance budgets | ✅ | ✅ | | |
+| Performance | ✅ | ✅ | | |
 | AI exploration | ✅ | | | |
-| Flakiness detection | ✅ | | | |
-| Zero config | ✅ | | | |
+| Flakiness quarantine | ✅ | | | |
 | Single command | ✅ | | | |
 | MCP server | ✅ | | | |
 
@@ -452,9 +351,7 @@ Once configured, just ask your AI: *"Scan this project for issues"* or *"Check a
 
 ## Contributing
 
-Easiest way in: **add a source rule.** Each rule is a regex pattern with a severity level. See `src/scanners/source/rules/` for examples and read [CONTRIBUTING.md](CONTRIBUTING.md) for the full setup.
-
-Issues labeled [`good first issue`](https://github.com/Aboudjem/sniff/labels/good%20first%20issue) are scoped for newcomers.
+Easiest way in: **add a source rule.** Each rule is a regex pattern with a severity level in `src/scanners/source/rules/`. See [CONTRIBUTING.md](CONTRIBUTING.md).
 
 <br />
 
@@ -466,9 +363,6 @@ Issues labeled [`good first issue`](https://github.com/Aboudjem/sniff/labels/goo
 
 <div align="center">
 
-Built by [**Adam Boudj**](https://github.com/Aboudjem)
-
-Found a bug Sniff missed? [Open an issue.](https://github.com/Aboudjem/sniff/issues)
-Sniff found one your tests didn't? [Drop a star.](https://github.com/Aboudjem/sniff)
+Built by [**Adam Boudj**](https://github.com/Aboudjem) · [Open an issue](https://github.com/Aboudjem/sniff/issues) · [Star the repo](https://github.com/Aboudjem/sniff)
 
 </div>
