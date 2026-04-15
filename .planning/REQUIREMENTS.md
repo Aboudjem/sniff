@@ -9,13 +9,13 @@ Requirements for initial release (v0.1 through v0.3). Each maps to roadmap phase
 
 ### CLI
 
-- [ ] **CLI-01**: User can run `sniff init` to generate a config file for their project
-- [ ] **CLI-02**: User can run `sniff scan` to perform source-code-only scanning (no browser)
+- [x] **CLI-01**: User can run `sniff init` to generate a config file for their project
+- [x] **CLI-02**: User can run `sniff scan` to perform source-code-only scanning (no browser)
 - [ ] **CLI-03**: User can run `sniff run` to execute a full multi-dimensional test suite
-- [ ] **CLI-04**: User can run `sniff report` to view the last generated report
+- [x] **CLI-04**: User can run `sniff report` to view the last generated report
 - [x] **CLI-05**: CLI provides colored, severity-based terminal output with progress indicators
-- [ ] **CLI-06**: CLI exits with code 0 on pass, non-zero on failure (CI-compatible)
-- [ ] **CLI-07**: User can configure severity threshold for failure via `--fail-on critical,high`
+- [x] **CLI-06**: CLI exits with code 0 on pass, non-zero on failure (CI-compatible)
+- [x] **CLI-07**: User can configure severity threshold for failure via `--fail-on critical,high`
 
 ### Repo Analysis
 
@@ -144,13 +144,13 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| CLI-01 | Phase 1 | Pending |
-| CLI-02 | Phase 1 | Pending |
+| CLI-01 | Phase 1 | Complete |
+| CLI-02 | Phase 1 | Complete |
 | CLI-03 | Phase 3 | Pending |
-| CLI-04 | Phase 1 | Pending |
+| CLI-04 | Phase 1 | Complete |
 | CLI-05 | Phase 1 | Complete |
-| CLI-06 | Phase 1 | Pending |
-| CLI-07 | Phase 1 | Pending |
+| CLI-06 | Phase 1 | Complete |
+| CLI-07 | Phase 1 | Complete |
 | REPO-01 | Phase 2 | Pending |
 | REPO-02 | Phase 2 | Pending |
 | REPO-03 | Phase 2 | Pending |
