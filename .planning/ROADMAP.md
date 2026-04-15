@@ -90,12 +90,13 @@ Plans:
   3. Flaky tests are detected across runs and auto-quarantined so they don't block the CI pipeline
   4. User can install sniff globally via `npx sniff` (npm published)
   5. MCP server exposes sniff scan/run/report as tools for AI agent integration (Cursor, Windsurf, Claude Desktop)
-**Plans**: TBD
+**Plans**: 4 plans
 
 Plans:
-- [ ] 04-01: TBD
-- [ ] 04-02: TBD
-- [ ] 04-03: TBD
+- [ ] 04-01-PLAN.md — Flakiness detection + history persistence + quarantine-aware exit codes
+- [ ] 04-02-PLAN.md — Chaos monkey exploration mode (ExplorationRunner, edge-case data, sniff explore)
+- [ ] 04-03-PLAN.md — CI integration (sniff ci, GitHub Actions workflow generator)
+- [ ] 04-04-PLAN.md — Distribution (npm publish prep, MCP server, Claude Code plugin)
 
 ## Progress
 
