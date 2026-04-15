@@ -1,4 +1,5 @@
 import type { RouteInfo, ElementInfo, ComponentInfo, FrameworkInfo } from '../analyzers/types.js';
+import type { PageState, ExplorationActionLog, ExplorationDecision } from '../exploration/types.js';
 
 export interface AIProvider {
   name: string;
@@ -17,4 +18,11 @@ export interface GeneratedTest {
   specContent: string;
   reasoning: string;
   route: string;
+}
+
+export interface ExplorationProvider {
+  decideNextAction(
+    pageState: PageState,
+    history: ExplorationActionLog[],
+  ): Promise<ExplorationDecision>;
 }

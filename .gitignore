@@ -1,4 +1,26 @@
-node_modules
-dist
-.sniff
+node_modules/
+dist/
 *.tsbuildinfo
+
+# Sniff output
+.sniff/
+sniff-tests/
+sniff-baselines/
+sniff-reports/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment
+.env
+.env.*
+
+# Planning (internal)
+.planning/

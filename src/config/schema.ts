@@ -63,6 +63,20 @@ export const reportConfigSchema = z.object({
   openAfter: z.boolean().default(false),
 });
 
+export const explorationConfigSchema = z.object({
+  enabled: z.boolean().default(true),
+  maxSteps: z.number().default(50),
+  timeout: z.number().default(30000),
+  viewport: viewportConfigSchema.default({ name: 'desktop', width: 1280, height: 720 }),
+});
+
+export const flakinessConfigSchema = z.object({
+  enabled: z.boolean().default(false),
+  windowSize: z.number().default(5),
+  threshold: z.number().default(3),
+  historyPath: z.string().default('.sniff/history.json'),
+});
+
 export const sniffConfigSchema = z.object({
   failOn: z.array(severitySchema).default(['critical', 'high']),
   exclude: z.array(z.string()).default(DEFAULT_EXCLUDE),
@@ -81,6 +95,8 @@ export const sniffConfigSchema = z.object({
   visual: visualConfigSchema.optional(),
   performance: performanceConfigSchema.optional(),
   report: reportConfigSchema.optional(),
+  flakiness: flakinessConfigSchema.optional(),
+  exploration: explorationConfigSchema.optional(),
 });
 
 export type SniffConfig = z.output<typeof sniffConfigSchema>;
@@ -93,3 +109,5 @@ export type AccessibilityConfig = z.output<typeof accessibilityConfigSchema>;
 export type VisualConfig = z.output<typeof visualConfigSchema>;
 export type PerformanceConfig = z.output<typeof performanceConfigSchema>;
 export type ReportConfig = z.output<typeof reportConfigSchema>;
+export type FlakinessConfig = z.output<typeof flakinessConfigSchema>;
+export type ExplorationConfig = z.output<typeof explorationConfigSchema>;

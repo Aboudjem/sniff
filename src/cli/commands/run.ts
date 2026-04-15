@@ -16,6 +16,8 @@ export async function runCommand(options: {
   format?: string;
   failOn?: string;
   json?: boolean;
+  trackFlakes?: boolean;
+  ci?: boolean;
 }): Promise<void> {
   const pc = (await import('picocolors')).default;
   const { join } = await import('node:path');
@@ -29,6 +31,28 @@ export async function runCommand(options: {
   const { formatBrowserFindings } = await import('../formatter.js');
 
   const config = await loadConfig(process.cwd());
+
+  // CI mode (D-10): force headless and include JUnit XML format
+  const isCi = options.ci || !!process.env.CI;
+  if (isCi) {
+    options.headless = true;
+    // Ensure junit is in report formats
+    if (options.format) {
+      const fmts = options.format.split(',').map((f) => f.trim());
+      if (!fmts.includes('junit')) {
+        fmts.push('junit');
+        options.format = fmts.join(',');
+      }
+    } else if (config.report?.formats) {
+      const fmts = [...config.report.formats];
+      if (!fmts.includes('junit')) {
+        fmts.push('junit');
+      }
+      options.format = fmts.join(',');
+    } else {
+      options.format = 'html,json,junit';
+    }
+  }
 
   // Resolve baseUrl (T-03-13: validate URL is well-formed)
   const baseUrl = options.baseUrl ?? config.browser?.baseUrl;
@@ -201,6 +225,16 @@ export async function runCommand(options: {
     }
   }
 
+  // Post-run flakiness tracking (D-07: opt-in local, default-on in CI)
+  const trackFlakes = options.trackFlakes || isCi;
+  if (trackFlakes) {
+    const { buildTestRunRecords } = await import('../../core/flakiness.js');
+    const { appendRunHistory } = await import('../../core/persistence.js');
+    const runId = new Date().toISOString();
+    const records = buildTestRunRecords(allResults, runId);
+    await appendRunHistory(process.cwd(), records);
+  }
+
   // Exit code (same pattern as scanCommand)
   const failOnInput = options.failOn ?? 'critical,high';
   const failOnSeverities = failOnInput
@@ -216,9 +250,23 @@ export async function runCommand(options: {
       return true;
     });
 
-  const hasFailure = allFindings.some((f) =>
-    failOnSeverities.includes(f.severity),
-  );
+  // Load flakiness history and filter out quarantined tests (D-04/CI-04)
+  const { loadFlakinessHistory } = await import('../../core/persistence.js');
+  const history = await loadFlakinessHistory(process.cwd());
+  const flakyTestIds = new Set(history?.flaky ?? []);
+  const { buildTestId } = await import('../../core/flakiness.js');
+
+  const hasFailure = allFindings.some((f) => {
+    if (!failOnSeverities.includes(f.severity)) return false;
+    // Determine scanner name from the result that contains this finding
+    const parentResult = allResults.find((r) => r.findings.includes(f));
+    const scanner = parentResult?.scanner ?? 'unknown';
+    return !flakyTestIds.has(buildTestId(scanner, f));
+  });
+
+  if (flakyTestIds.size > 0 && !options.json) {
+    console.log(pc.yellow(`\n  ${flakyTestIds.size} flaky test(s) quarantined (run but not blocking exit code)`));
+  }
 
   process.exit(hasFailure ? 1 : 0);
 }

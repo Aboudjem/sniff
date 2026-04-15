@@ -1,0 +1,14 @@
+Sniff
+Copyright 2025 Adam Boudj <adam@integralayer.com>
+
+This product includes software developed by Adam Boudj.
+
+If you use Sniff in your project, a mention or attribution is appreciated:
+  - In your README, docs, or project credits
+  - "QA powered by Sniff (https://github.com/adamboudj/sniff)"
+
+Third-party licenses:
+  - Playwright (Apache-2.0) - https://playwright.dev
+  - axe-core (MPL-2.0) - https://www.deque.com/axe/
+  - Lighthouse (Apache-2.0) - https://developer.chrome.com/docs/lighthouse
+  - pixelmatch (ISC) - https://github.com/mapbox/pixelmatch

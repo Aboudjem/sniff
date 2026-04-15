@@ -1,0 +1,13 @@
+{
+  "name": "sniff",
+  "version": "0.1.0",
+  "description": "AI-powered QA testing -- scan, explore, and report bugs before users do",
+  "author": {
+    "name": "Adam Boudj",
+    "url": "https://github.com/adamboudj/sniff"
+  },
+  "homepage": "https://github.com/adamboudj/sniff",
+  "repository": "https://github.com/adamboudj/sniff",
+  "license": "Apache-2.0",
+  "keywords": ["testing", "qa", "playwright", "accessibility"]
+}

@@ -1,7 +1,7 @@
 {
-  "name": "sniff",
+  "name": "sniff-qa",
   "version": "0.1.0",
-  "description": "AI-powered QA testing framework",
+  "description": "AI-powered autonomous QA testing -- scan, explore, and report bugs before users do",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -26,14 +26,30 @@
   "files": [
     "dist"
   ],
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "keywords": [
+    "testing", "qa", "playwright", "accessibility", "e2e",
+    "ai", "claude", "visual-regression", "ci", "automation",
+    "a11y", "performance", "mcp"
+  ],
+  "author": "Adam Boudj <adam@integralayer.com>",
+  "license": "Apache-2.0",
+  "homepage": "https://github.com/adamboudj/sniff#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adamboudj/sniff.git"
+  },
+  "bugs": {
+    "url": "https://github.com/adamboudj/sniff/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.89.0",
     "@axe-core/playwright": "^4.11.1",
     "@babel/parser": "^7.29.2",
     "@babel/traverse": "^7.29.0",
+    "@modelcontextprotocol/sdk": "^1.29.0",
     "@vue/compiler-sfc": "^3.5.32",
     "chrome-launcher": "^1.2.1",
     "commander": "^14.0.3",

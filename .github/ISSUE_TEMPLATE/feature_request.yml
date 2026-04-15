@@ -1,0 +1,44 @@
+name: Feature Request
+description: Suggest a new feature or improvement
+title: "[Feature]: "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Have an idea for Sniff? We'd love to hear it!
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What problem does this solve? What's missing today?
+      placeholder: I often need to...
+    validations:
+      required: true
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed solution
+      description: How should this work? CLI flags, config options, output format?
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Any workarounds you've tried or other tools you've looked at?
+  - type: dropdown
+    id: scanner
+    attributes:
+      label: Related scanner
+      description: Which part of Sniff does this relate to?
+      options:
+        - Source scanner
+        - Accessibility scanner
+        - Visual regression scanner
+        - Performance scanner
+        - Chaos monkey explorer
+        - CI integration
+        - CLI / config
+        - MCP server
+        - Other
