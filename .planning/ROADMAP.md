@@ -29,12 +29,13 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. User can run `sniff report` to view the last scan results
   4. CLI exits with code 0 when no issues exceed the configured severity threshold, non-zero otherwise
   5. User can configure sniff via `sniff.config.ts`, `.sniffrc.json`, or `package.json#sniff`
-**Plans**: TBD
+**Plans:** 4 plans
 
 Plans:
-- [ ] 01-01: TBD
-- [ ] 01-02: TBD
-- [ ] 01-03: TBD
+- [ ] 01-01-PLAN.md — Project setup, core types, and config system (cosmiconfig + Zod + defineConfig)
+- [ ] 01-02-PLAN.md — Scanner plugin interface, registry, and source scanner with all rule categories
+- [ ] 01-03-PLAN.md — CLI commands (init, scan, run stub, report), formatter, and persistence
+- [ ] 01-04-PLAN.md — End-to-end verification and human checkpoint
 
 ### Phase 2: Repo Analyzer + AI Test Generation
 **Goal**: Users can point sniff at a codebase and get AI-generated Playwright test files without writing a single test manually
@@ -98,7 +99,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation + Source Scanner | 0/3 | Not started | - |
+| 1. Foundation + Source Scanner | 0/4 | Not started | - |
 | 2. Repo Analyzer + AI Test Generation | 0/3 | Not started | - |
 | 3. Browser Runner + Quality Scanners + Reporting | 0/3 | Not started | - |
 | 4. Exploration + CI + Distribution | 0/3 | Not started | - |
