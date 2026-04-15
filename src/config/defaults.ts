@@ -1,11 +1,15 @@
 export const DEFAULT_EXCLUDE = [
-  'node_modules/**',
-  'dist/**',
-  'build/**',
-  '.next/**',
-  '.sniff/**',
-  '*.min.js',
-  '*.map',
+  '**/node_modules/**',
+  '**/dist/**',
+  '**/build/**',
+  '**/.next/**',
+  '**/.nuxt/**',
+  '**/.svelte-kit/**',
+  '**/.sniff/**',
+  '**/.git/**',
+  '**/coverage/**',
+  '**/*.min.js',
+  '**/*.map',
 ];
 
 export const DEFAULT_FAIL_ON: string[] = ['critical', 'high'];
