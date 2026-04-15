@@ -268,14 +268,35 @@ jobs:
 
 <br />
 
-## Use it inside Claude Code, Cursor, or Windsurf
+## Use it with your AI
 
-Sniff ships an MCP server. Drop this in your project's `.mcp.json`:
+Sniff ships an MCP server (`sniff --mcp`). Any AI tool that supports the [Model Context Protocol](https://modelcontextprotocol.io) can call Sniff directly. Pick your tool, copy the snippet, ask your AI to scan something.
+
+### Tools exposed
+
+| Tool | What it does |
+|:--|:--|
+| `sniff_scan` | Static source code analysis |
+| `sniff_run` | Browser-based quality scan |
+| `sniff_report` | Pull up the last scan results |
+
+### Setup
+
+<details>
+<summary><b>Claude Code</b> (recommended)</summary>
+
+One command:
+
+```bash
+claude mcp add sniff-qa npx sniff-qa --mcp
+```
+
+Or drop a `.mcp.json` in your project root (commit it for team-wide setup):
 
 ```json
 {
   "mcpServers": {
-    "sniff": {
+    "sniff-qa": {
       "command": "npx",
       "args": ["sniff-qa", "--mcp"]
     }
@@ -283,13 +304,120 @@ Sniff ships an MCP server. Drop this in your project's `.mcp.json`:
 }
 ```
 
-Then ask your AI: *"Scan this project for issues"* or *"Check accessibility on localhost:3000"*.
+Verify with `claude mcp list`.
 
-| Tool | What it does |
-|:--|:--|
-| `sniff_scan` | Static source analysis |
-| `sniff_run` | Browser-based quality scan |
-| `sniff_report` | Last scan results |
+</details>
+
+<details>
+<summary><b>Cursor</b></summary>
+
+Edit `~/.cursor/mcp.json` (global) or `.cursor/mcp.json` (project):
+
+```json
+{
+  "mcpServers": {
+    "sniff-qa": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["sniff-qa", "--mcp"]
+    }
+  }
+}
+```
+
+</details>
+
+<details>
+<summary><b>Windsurf</b> (Codeium)</summary>
+
+Edit `~/.codeium/windsurf/mcp_config.json`:
+
+```json
+{
+  "mcpServers": {
+    "sniff-qa": {
+      "command": "npx",
+      "args": ["sniff-qa", "--mcp"]
+    }
+  }
+}
+```
+
+Cascade has a 100-tool limit. Sniff exposes 3.
+
+</details>
+
+<details>
+<summary><b>Codex CLI</b> (OpenAI)</summary>
+
+Run:
+
+```bash
+codex mcp add sniff-qa --command "npx sniff-qa --mcp"
+```
+
+Or edit `~/.codex/config.toml`:
+
+```toml
+[[mcp.servers]]
+name = "sniff-qa"
+type = "stdio"
+command = "npx"
+args = ["sniff-qa", "--mcp"]
+```
+
+</details>
+
+<details>
+<summary><b>Gemini CLI</b> (Google)</summary>
+
+Edit `~/.gemini/mcp_config.json`:
+
+```json
+{
+  "mcpServers": {
+    "sniff-qa": {
+      "command": "npx",
+      "args": ["sniff-qa", "--mcp"]
+    }
+  }
+}
+```
+
+</details>
+
+<details>
+<summary><b>Continue.dev</b></summary>
+
+Create `.continue/mcpServers/sniff-qa.yaml`:
+
+```yaml
+mcpServers:
+  sniff-qa:
+    command: npx
+    args:
+      - sniff-qa
+      - --mcp
+    type: stdio
+```
+
+</details>
+
+<details>
+<summary><b>Any other MCP-compatible tool</b></summary>
+
+The MCP server is a stdio process. Configure your tool to launch:
+
+```
+command: npx
+args:    ["sniff-qa", "--mcp"]
+```
+
+That's it.
+
+</details>
+
+Once configured, just ask your AI: *"Scan this project for issues"* or *"Check accessibility on localhost:3000"*. The agent will pick the right tool automatically.
 
 <br />
 
