@@ -1,4 +1,4 @@
-import type { Severity, Finding } from '../../core/types.js';
+import type { Severity } from '../../core/types.js';
 import type { BrowserRunContext, BrowserRunResult } from '../../browser/types.js';
 import type { Screenshot } from '../../report/types.js';
 
@@ -26,11 +26,7 @@ export async function runCommand(options: {
   const { VisualRegressionScanner } = await import('../../scanners/visual/index.js');
   const { PerformanceScanner } = await import('../../scanners/performance/index.js');
   const { buildReport, saveReport } = await import('../../report/model.js');
-  const formatter = await import('../formatter.js');
-  const formatBrowserFindings: (f: Finding[]) => string =
-    'formatBrowserFindings' in formatter
-      ? (formatter as unknown as { formatBrowserFindings: (f: Finding[]) => string }).formatBrowserFindings
-      : formatter.formatFindings;
+  const { formatBrowserFindings } = await import('../formatter.js');
 
   const config = await loadConfig(process.cwd());
 
