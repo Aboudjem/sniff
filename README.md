@@ -2,12 +2,6 @@
 
 <br />
 
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/Aboudjem/sniff/main/.github/assets/logo-dark.svg">
-  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/Aboudjem/sniff/main/.github/assets/logo-light.svg">
-  <img alt="sniff" src="https://raw.githubusercontent.com/Aboudjem/sniff/main/.github/assets/logo-light.svg" width="200">
-</picture>
-
 <pre>
         ╱|、
       (˚ˎ 。7
@@ -19,13 +13,13 @@
 
 ### One command. Five checks. Zero config.
 
-Source bugs · Accessibility · Visual regression · Performance · AI exploration
+Catch source bugs, accessibility violations, visual regressions, slow pages, and crash-on-input forms before your users do.
 
 <br />
 
-[![npm](https://img.shields.io/npm/v/sniff-qa?color=cb3837&logo=npm)](https://www.npmjs.com/package/sniff-qa)
-[![License](https://img.shields.io/badge/license-Apache--2.0-blue)](LICENSE)
-[![Node](https://img.shields.io/badge/node-%E2%89%A522-339933?logo=node.js&logoColor=white)](https://nodejs.org)
+[![npm](https://img.shields.io/npm/v/sniff-qa?color=cb3837&logo=npm&label=npm)](https://www.npmjs.com/package/sniff-qa)
+[![License](https://img.shields.io/badge/license-Apache_2.0-blue)](LICENSE)
+[![Node](https://img.shields.io/badge/node-≥22-339933?logo=node.js&logoColor=white)](https://nodejs.org)
 [![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![Playwright](https://img.shields.io/badge/Playwright-2EAD33?logo=playwright&logoColor=white)](https://playwright.dev)
 [![CI](https://github.com/Aboudjem/sniff/actions/workflows/ci.yml/badge.svg)](https://github.com/Aboudjem/sniff/actions/workflows/ci.yml)
@@ -36,69 +30,82 @@ Source bugs · Accessibility · Visual regression · Performance · AI explorati
 
 ## What is this
 
-Sniff scans your app across five dimensions in a single command. No test files to write, no config to set up.
+Sniff is a single-command QA tool. Point it at a project and it scans across five dimensions in parallel:
 
-```
-npx sniff-qa
-```
+<div align="center">
 
-It checks your **source code** for leftover debug statements and placeholder text, your **UI** for accessibility violations, your **screenshots** for visual regressions, your **page speed** against performance budgets, and optionally lets an **AI explorer** fill your forms with XSS payloads and Unicode edge cases to see what breaks.
+<img src="./.github/assets/architecture.svg" alt="Sniff architecture" width="100%">
 
-> [!TIP]
-> Works great as a pre-push check, a CI gate, or an MCP tool inside Claude Code / Cursor / Windsurf.
+</div>
+
+No test files. No config. No API keys. Works locally, works in CI, works as an MCP server inside Claude Code, Cursor, or Windsurf.
 
 <br />
 
 ## Quickstart
 
 ```bash
-# Source scan only (no browser needed)
 npx sniff-qa
-
-# Full quality sweep against a running app
-npx sniff-qa --url http://localhost:3000
-
-# Include AI chaos monkey exploration
-npx sniff-qa --url http://localhost:3000 --explore
-
-# CI mode (headless, JUnit XML, flakiness tracking)
-npx sniff-qa --url http://localhost:3000 --ci
-
-# Generate a GitHub Actions workflow
-npx sniff-qa ci
 ```
 
-> [!NOTE]
-> Requires **Node.js 22+**. Browser dependencies install automatically on first run.
+That's it. You'll see results in a few seconds. Want the full audit? Add a URL.
+
+```bash
+npx sniff-qa --url http://localhost:3000
+```
 
 <br />
 
-## What it finds
+## Pick your scan
 
-### Source code
+<div align="center">
 
-Runs without a browser. Catches things code review misses.
+<img src="./.github/assets/commands.svg" alt="Sniff command modes" width="100%">
+
+</div>
+
+| You want to... | Run |
+|:--|:--|
+| **Quick source scan** (no browser) | `npx sniff-qa` |
+| **Full quality audit** (browser) | `npx sniff-qa --url http://localhost:3000` |
+| **Everything + AI explorer** | `npx sniff-qa --url http://localhost:3000 --explore` |
+| **Run in CI** (headless, JUnit) | `npx sniff-qa --url http://localhost:3000 --ci` |
+| **Generate a CI workflow** | `npx sniff-qa ci` |
+
+> [!NOTE]
+> Requires Node.js 22+. Playwright browsers install automatically the first time you run a browser scan.
+
+<br />
+
+## What gets checked
+
+<table>
+<tr>
+<td width="50%" valign="top">
+
+### 📄 Source code
 
 ```
 ! HIGH (3)
-  src/api/handler.ts:42    Debugger statement detected
-  src/components/Hero.tsx:8 Lorem ipsum placeholder text
-  src/utils/auth.ts:15     FIXME comment found
+  src/api/handler.ts:42    Debugger statement
+  src/components/Hero.tsx:8 Lorem ipsum text
+  src/utils/auth.ts:15     FIXME comment
 
 ~ MEDIUM (12)
-  src/app.ts:3              Hardcoded localhost URL
-  src/lib/db.ts:7           TODO comment found
+  src/app.ts:3   Hardcoded localhost URL
+  src/lib/db.ts:7 TODO comment
 ```
 
-**Checks for:** placeholder text, `debugger` / `console.log`, hardcoded URLs, broken imports, TODO/FIXME/HACK comments.
+Catches the stuff code review misses: leftover `debugger`, placeholder text, hardcoded URLs, broken relative imports, TODO/FIXME tags.
 
-### Accessibility
+</td>
+<td width="50%" valign="top">
 
-Built on [axe-core](https://github.com/dequelabs/axe-core), the same engine used at Microsoft, Google, and across US government sites.
+### ♿ Accessibility
 
 ```
 ! CRITICAL
-  /login  Missing form label on <input type="email">
+  /login  Missing form label
   /login  Color contrast 2.1:1 (needs 4.5:1)
 
 ! HIGH
@@ -106,35 +113,47 @@ Built on [axe-core](https://github.com/dequelabs/axe-core), the same engine used
   /settings   Keyboard trap in modal
 ```
 
-Every finding comes with the exact fix: the ratio you need, the WCAG rule, the element selector.
+Powered by [axe-core](https://github.com/dequelabs/axe-core), the same engine used by Microsoft, Google, and US government sites. Every finding includes the fix.
 
-### Visual regression
+</td>
+</tr>
+<tr>
+<td width="50%" valign="top">
 
-```
-! HIGH
-  /pricing  2.3% pixels changed (threshold: 0.1%)
-            Diff: sniff-baselines/desktop/.diffs/_pricing.png
-```
-
-Local pixel diffing with [pixelmatch](https://github.com/mapbox/pixelmatch). No Percy subscription, no cloud dependency. Commit the baselines to track changes across PRs.
-
-### Performance
-
-[Lighthouse](https://developer.chrome.com/docs/lighthouse) audits with budget enforcement:
+### 🖼 Visual regression
 
 ```
 ! HIGH
-  /dashboard  LCP 4200ms (budget: 2500ms, 68% over)
+  /pricing  2.3% pixels changed
+            (threshold: 0.1%)
+  Diff saved: sniff-baselines/.../diff.png
+```
+
+Local pixel diffing with [pixelmatch](https://github.com/mapbox/pixelmatch). No Percy subscription, no cloud dependency. Commit baselines to track changes across PRs.
+
+</td>
+<td width="50%" valign="top">
+
+### ⚡ Performance
+
+```
+! HIGH
+  /dashboard  LCP 4200ms
+              budget 2500ms (68% over)
 
 ~ MEDIUM
-  /          FCP 2100ms (budget: 1800ms, 17% over)
+  /  FCP 2100ms
+     budget 1800ms (17% over)
 ```
 
-Defaults: LCP 2500ms, FCP 1800ms, TTI 3800ms. Override in config.
+[Lighthouse](https://developer.chrome.com/docs/lighthouse) audits with budget enforcement. Default budgets: LCP 2500ms, FCP 1800ms, TTI 3800ms.
 
-### AI exploration
+</td>
+</tr>
+<tr>
+<td colspan="2" valign="top">
 
-The chaos monkey navigates your app autonomously: clicking buttons, filling forms with adversarial inputs, reporting crashes.
+### 🤖 AI chaos monkey (`--explore`)
 
 ```
 ! HIGH
@@ -144,81 +163,49 @@ The chaos monkey navigates your app autonomously: clicking buttons, filling form
            Input: ' OR '1'='1
 ```
 
-Every action is traced with reasoning in `.sniff/exploration-<timestamp>.json`.
+Roams your app autonomously. Clicks buttons, fills forms with adversarial inputs (XSS, SQL injection, Unicode edge cases), reports crashes. Every action traced with reasoning in `.sniff/exploration-<timestamp>.json`.
+
+</td>
+</tr>
+</table>
 
 <br />
 
-## How it works
-
-```mermaid
-flowchart LR
-    A["sniff"] --> S["Source Scanner"]
-    A -->|"--url"| B["Browser Runner"]
-    A -->|"--explore"| E["AI Explorer"]
-
-    S --> R["Report"]
-    B --> R
-    E --> R
-
-    R --> O["HTML / JSON / JUnit"]
-
-    style A fill:#7c3aed,color:#fff,stroke:#6d28d9
-    style R fill:#059669,color:#fff,stroke:#047857
-    style O fill:#2563eb,color:#fff,stroke:#1d4ed8
-```
-
-```
-sniff
- ├─ Source Scanner ···· regex rules across your codebase
- ├─ Browser Runner ···· Playwright + axe-core + pixelmatch + Lighthouse
- ├─ AI Explorer ······· Claude-powered chaos monkey
- ├─ Flakiness Engine ·· run history + quarantine
- ├─ Report Generator ·· HTML / JSON / JUnit XML
- └─ MCP Server ········ tools for AI-powered editors
-```
-
-<br />
-
-## CLI reference
+## All commands
 
 ### Main command
 
-| Usage | What happens |
-|:--|:--|
-| `sniff` | Source scan only |
-| `sniff --url <url>` | Source + browser (a11y, visual, perf) |
-| `sniff --url <url> --explore` | Source + browser + AI chaos monkey |
-| `sniff --ci` | CI mode: headless, JUnit, flakiness tracking |
+```bash
+sniff [target] [options]
+```
 
-### Flags
-
-| Flag | What it does |
+| Flag | Effect |
 |:--|:--|
-| `--url <url>` | Target URL for browser testing |
-| `--explore` | Run AI chaos monkey exploration |
-| `--max-steps <n>` | Exploration step limit (default: 50) |
-| `--ci` | Headless + JUnit XML + flakiness tracking |
-| `--json` | Machine-readable JSON output |
-| `--format html,json,junit` | Choose report formats |
-| `--fail-on <severities>` | Exit non-zero on these levels (default: critical,high) |
-| `--track-flakes` | Enable flakiness detection |
+| `--url <url>` | Enable browser tests against this URL |
+| `--explore` | Add AI chaos monkey exploration (requires `--url`) |
+| `--max-steps <n>` | Cap exploration steps (default: 50) |
+| `--ci` | CI mode: headless, JUnit XML, flakiness tracking |
+| `--json` | JSON output for machine consumption |
+| `--format <list>` | Report formats: `html`, `json`, `junit` (comma-separated) |
+| `--fail-on <list>` | Severities that exit non-zero (default: `critical,high`) |
+| `--track-flakes` | Enable flakiness detection across runs |
 | `--no-headless` | Show the browser window |
 | `--source-only` | Skip browser even if URL is configured |
 
 ### Utility commands
 
-| Command | What it does |
+| Command | Purpose |
 |:--|:--|
-| `sniff ci` | Generate GitHub Actions workflow |
-| `sniff init` | Scaffold a config file |
-| `sniff report` | View last scan results |
-| `sniff update-baselines` | Accept current screenshots as baselines |
+| `sniff init` | Scaffold a `sniff.config.ts` file |
+| `sniff ci` | Generate `.github/workflows/sniff.yml` |
+| `sniff report` | View results from the last run |
+| `sniff update-baselines` | Accept current screenshots as new baselines |
 
 <br />
 
 ## Configuration
 
-Optional. Sniff picks smart defaults. Drop a `sniff.config.ts` when you want control:
+Optional. Sniff has sensible defaults. Drop `sniff.config.ts` in your project root when you want control:
 
 ```typescript
 import { defineConfig } from 'sniff-qa';
@@ -254,10 +241,10 @@ export default defineConfig({
 npx sniff-qa ci
 ```
 
-Generates `.github/workflows/sniff.yml` with Playwright caching, headless mode, JUnit output, flakiness quarantine, and report artifacts.
+Generates a complete GitHub Actions workflow with Playwright browser caching, headless mode, JUnit output, flakiness quarantine, and report artifacts that survive failed runs.
 
 <details>
-<summary>Generated workflow</summary>
+<summary><b>See the generated workflow</b></summary>
 
 ```yaml
 name: Sniff QA
@@ -299,13 +286,13 @@ jobs:
 
 </details>
 
-**Flakiness quarantine:** tests that fail 3/5 recent runs get quarantined. They still run, still show in reports, but won't block your pipeline. History lives in `.sniff/history.json`.
+**Flakiness quarantine.** Tests that fail 3 of 5 recent runs get quarantined. They still run, still appear in reports, but won't block your pipeline. History lives in `.sniff/history.json`.
 
 <br />
 
-## MCP server
+## Use it inside Claude Code, Cursor, or Windsurf
 
-For AI-powered editors (Claude Code, Cursor, Windsurf). Add to `.mcp.json`:
+Sniff ships with an MCP server. Add this to your project's `.mcp.json`:
 
 ```json
 {
@@ -318,9 +305,15 @@ For AI-powered editors (Claude Code, Cursor, Windsurf). Add to `.mcp.json`:
 }
 ```
 
-**Tools exposed:** `sniff_scan` (source analysis), `sniff_run` (browser scan), `sniff_report` (last results).
-
 Then ask your AI: *"Scan this project for issues"* or *"Check accessibility on localhost:3000"*.
+
+**Tools exposed:**
+
+| Tool | What it does |
+|:--|:--|
+| `sniff_scan` | Static source analysis |
+| `sniff_run` | Browser-based quality scan |
+| `sniff_report` | Last scan results |
 
 <br />
 
@@ -329,7 +322,7 @@ Then ask your AI: *"Scan this project for issues"* or *"Check accessibility on l
 | | Project | Role | License |
 |:--|:--|:--|:--|
 | 🎭 | [Playwright](https://playwright.dev) | Browser automation | Apache-2.0 |
-| ♿ | [axe-core](https://github.com/dequelabs/axe-core) | Accessibility engine (WCAG 2.x) | MPL-2.0 |
+| ♿ | [axe-core](https://github.com/dequelabs/axe-core) | Accessibility engine | MPL-2.0 |
 | 🔦 | [Lighthouse](https://developer.chrome.com/docs/lighthouse) | Performance auditing | Apache-2.0 |
 | 🔲 | [pixelmatch](https://github.com/mapbox/pixelmatch) | Screenshot comparison | ISC |
 | 📐 | [Zod](https://zod.dev) | Schema validation | MIT |
@@ -337,25 +330,25 @@ Then ask your AI: *"Scan this project for issues"* or *"Check accessibility on l
 
 <br />
 
-## Comparison
+## Compared to
 
-|  | Sniff | Lighthouse CI | Pa11y | BackstopJS |
+|  | **Sniff** | Lighthouse CI | Pa11y | BackstopJS |
 |:--|:--:|:--:|:--:|:--:|
-| Source scanning | **Yes** | | | |
-| Accessibility | **Yes** | Partial | **Yes** | |
-| Visual regression | **Yes** | | | **Yes** |
-| Performance | **Yes** | **Yes** | | |
-| AI exploration | **Yes** | | | |
-| Flakiness detection | **Yes** | | | |
-| Zero config | **Yes** | | | |
-| Single command | **Yes** | | | |
-| MCP server | **Yes** | | | |
+| Source scanning | ✅ | | | |
+| Accessibility | ✅ | partial | ✅ | |
+| Visual regression | ✅ | | | ✅ |
+| Performance budgets | ✅ | ✅ | | |
+| AI exploration | ✅ | | | |
+| Flakiness detection | ✅ | | | |
+| Zero config | ✅ | | | |
+| Single command | ✅ | | | |
+| MCP server | ✅ | | | |
 
 <br />
 
 ## Contributing
 
-Easiest way in: **add a source rule.** Each rule is a regex + severity level in `src/scanners/source/rules/`. See [CONTRIBUTING.md](CONTRIBUTING.md) for the full guide.
+Easiest way in: **add a source rule.** Each rule is a regex pattern with a severity level. See `src/scanners/source/rules/` for examples and read [CONTRIBUTING.md](CONTRIBUTING.md) for the full setup.
 
 Issues labeled [`good first issue`](https://github.com/Aboudjem/sniff/labels/good%20first%20issue) are scoped for newcomers.
 
