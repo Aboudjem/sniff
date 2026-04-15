@@ -11,7 +11,7 @@ Requirements for initial release (v0.1 through v0.3). Each maps to roadmap phase
 
 - [x] **CLI-01**: User can run `sniff init` to generate a config file for their project
 - [x] **CLI-02**: User can run `sniff scan` to perform source-code-only scanning (no browser)
-- [ ] **CLI-03**: User can run `sniff run` to execute a full multi-dimensional test suite
+- [x] **CLI-03**: User can run `sniff run` to execute a full multi-dimensional test suite
 - [x] **CLI-04**: User can run `sniff report` to view the last generated report
 - [x] **CLI-05**: CLI provides colored, severity-based terminal output with progress indicators
 - [x] **CLI-06**: CLI exits with code 0 on pass, non-zero on failure (CI-compatible)
@@ -43,12 +43,12 @@ Requirements for initial release (v0.1 through v0.3). Each maps to roadmap phase
 
 ### Browser Testing
 
-- [ ] **E2E-01**: Playwright runs generated tests in Chromium by default
-- [ ] **E2E-02**: Tests run across multiple viewports (desktop 1280x720, mobile 375x667, tablet 768x1024)
-- [ ] **E2E-03**: Screenshot captured automatically on test failure
-- [ ] **E2E-04**: Console errors (uncaught exceptions, console.error) monitored during runs
-- [ ] **E2E-05**: Network failures (4xx, 5xx, broken assets) detected during runs
-- [ ] **E2E-06**: Auto-discovery of clickable elements and form fields on each page
+- [x] **E2E-01**: Playwright runs generated tests in Chromium by default
+- [x] **E2E-02**: Tests run across multiple viewports (desktop 1280x720, mobile 375x667, tablet 768x1024)
+- [x] **E2E-03**: Screenshot captured automatically on test failure
+- [x] **E2E-04**: Console errors (uncaught exceptions, console.error) monitored during runs
+- [x] **E2E-05**: Network failures (4xx, 5xx, broken assets) detected during runs
+- [x] **E2E-06**: Auto-discovery of clickable elements and form fields on each page
 
 ### Accessibility
 
@@ -146,7 +146,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 |-------------|-------|--------|
 | CLI-01 | Phase 1 | Complete |
 | CLI-02 | Phase 1 | Complete |
-| CLI-03 | Phase 3 | Pending |
+| CLI-03 | Phase 3 | Complete |
 | CLI-04 | Phase 1 | Complete |
 | CLI-05 | Phase 1 | Complete |
 | CLI-06 | Phase 1 | Complete |
@@ -166,12 +166,12 @@ Which phases cover which requirements. Updated during roadmap creation.
 | SRC-02 | Phase 1 | Complete |
 | SRC-03 | Phase 1 | Complete |
 | SRC-04 | Phase 1 | Complete |
-| E2E-01 | Phase 3 | Pending |
-| E2E-02 | Phase 3 | Pending |
-| E2E-03 | Phase 3 | Pending |
-| E2E-04 | Phase 3 | Pending |
-| E2E-05 | Phase 3 | Pending |
-| E2E-06 | Phase 3 | Pending |
+| E2E-01 | Phase 3 | Complete |
+| E2E-02 | Phase 3 | Complete |
+| E2E-03 | Phase 3 | Complete |
+| E2E-04 | Phase 3 | Complete |
+| E2E-05 | Phase 3 | Complete |
+| E2E-06 | Phase 3 | Complete |
 | A11Y-01 | Phase 3 | Pending |
 | A11Y-02 | Phase 3 | Pending |
 | A11Y-03 | Phase 3 | Pending |
