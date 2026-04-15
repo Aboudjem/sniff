@@ -144,66 +144,66 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| CLI-01 | TBD | Pending |
-| CLI-02 | TBD | Pending |
-| CLI-03 | TBD | Pending |
-| CLI-04 | TBD | Pending |
-| CLI-05 | TBD | Pending |
-| CLI-06 | TBD | Pending |
-| CLI-07 | TBD | Pending |
-| REPO-01 | TBD | Pending |
-| REPO-02 | TBD | Pending |
-| REPO-03 | TBD | Pending |
-| REPO-04 | TBD | Pending |
-| REPO-05 | TBD | Pending |
-| AIGEN-01 | TBD | Pending |
-| AIGEN-02 | TBD | Pending |
-| AIGEN-03 | TBD | Pending |
-| AIGEN-04 | TBD | Pending |
-| AIGEN-05 | TBD | Pending |
-| AIGEN-06 | TBD | Pending |
-| SRC-01 | TBD | Pending |
-| SRC-02 | TBD | Pending |
-| SRC-03 | TBD | Pending |
-| SRC-04 | TBD | Pending |
-| E2E-01 | TBD | Pending |
-| E2E-02 | TBD | Pending |
-| E2E-03 | TBD | Pending |
-| E2E-04 | TBD | Pending |
-| E2E-05 | TBD | Pending |
-| E2E-06 | TBD | Pending |
-| A11Y-01 | TBD | Pending |
-| A11Y-02 | TBD | Pending |
-| A11Y-03 | TBD | Pending |
-| VIS-01 | TBD | Pending |
-| VIS-02 | TBD | Pending |
-| VIS-03 | TBD | Pending |
-| PERF-01 | TBD | Pending |
-| PERF-02 | TBD | Pending |
-| PERF-03 | TBD | Pending |
-| RPT-01 | TBD | Pending |
-| RPT-02 | TBD | Pending |
-| RPT-03 | TBD | Pending |
-| RPT-04 | TBD | Pending |
-| RPT-05 | TBD | Pending |
-| RPT-06 | TBD | Pending |
-| EXPLR-01 | TBD | Pending |
-| EXPLR-02 | TBD | Pending |
-| EXPLR-03 | TBD | Pending |
-| CI-01 | TBD | Pending |
-| CI-02 | TBD | Pending |
-| CI-03 | TBD | Pending |
-| CI-04 | TBD | Pending |
-| DIST-01 | TBD | Pending |
-| DIST-02 | TBD | Pending |
-| DIST-03 | TBD | Pending |
-| DIST-04 | TBD | Pending |
+| CLI-01 | Phase 1 | Pending |
+| CLI-02 | Phase 1 | Pending |
+| CLI-03 | Phase 3 | Pending |
+| CLI-04 | Phase 1 | Pending |
+| CLI-05 | Phase 1 | Pending |
+| CLI-06 | Phase 1 | Pending |
+| CLI-07 | Phase 1 | Pending |
+| REPO-01 | Phase 2 | Pending |
+| REPO-02 | Phase 2 | Pending |
+| REPO-03 | Phase 2 | Pending |
+| REPO-04 | Phase 2 | Pending |
+| REPO-05 | Phase 2 | Pending |
+| AIGEN-01 | Phase 2 | Pending |
+| AIGEN-02 | Phase 2 | Pending |
+| AIGEN-03 | Phase 2 | Pending |
+| AIGEN-04 | Phase 2 | Pending |
+| AIGEN-05 | Phase 2 | Pending |
+| AIGEN-06 | Phase 2 | Pending |
+| SRC-01 | Phase 1 | Pending |
+| SRC-02 | Phase 1 | Pending |
+| SRC-03 | Phase 1 | Pending |
+| SRC-04 | Phase 1 | Pending |
+| E2E-01 | Phase 3 | Pending |
+| E2E-02 | Phase 3 | Pending |
+| E2E-03 | Phase 3 | Pending |
+| E2E-04 | Phase 3 | Pending |
+| E2E-05 | Phase 3 | Pending |
+| E2E-06 | Phase 3 | Pending |
+| A11Y-01 | Phase 3 | Pending |
+| A11Y-02 | Phase 3 | Pending |
+| A11Y-03 | Phase 3 | Pending |
+| VIS-01 | Phase 3 | Pending |
+| VIS-02 | Phase 3 | Pending |
+| VIS-03 | Phase 3 | Pending |
+| PERF-01 | Phase 3 | Pending |
+| PERF-02 | Phase 3 | Pending |
+| PERF-03 | Phase 3 | Pending |
+| RPT-01 | Phase 3 | Pending |
+| RPT-02 | Phase 3 | Pending |
+| RPT-03 | Phase 3 | Pending |
+| RPT-04 | Phase 3 | Pending |
+| RPT-05 | Phase 3 | Pending |
+| RPT-06 | Phase 3 | Pending |
+| EXPLR-01 | Phase 4 | Pending |
+| EXPLR-02 | Phase 4 | Pending |
+| EXPLR-03 | Phase 4 | Pending |
+| CI-01 | Phase 4 | Pending |
+| CI-02 | Phase 4 | Pending |
+| CI-03 | Phase 4 | Pending |
+| CI-04 | Phase 4 | Pending |
+| DIST-01 | Phase 4 | Pending |
+| DIST-02 | Phase 4 | Pending |
+| DIST-03 | Phase 4 | Pending |
+| DIST-04 | Phase 1 | Pending |
 
 **Coverage:**
-- v1 requirements: 49 total
-- Mapped to phases: 0
-- Unmapped: 49
+- v1 requirements: 54 total
+- Mapped to phases: 54
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-04-15*
-*Last updated: 2026-04-15 after initial definition*
+*Last updated: 2026-04-15 after roadmap creation*
