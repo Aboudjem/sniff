@@ -77,7 +77,7 @@ Plans:
 - [x] 03-02-PLAN.md — Accessibility scanner (axe-core WCAG 2.1 AA) and visual regression scanner (pixelmatch)
 - [x] 03-03-PLAN.md — Performance scanner (Lighthouse LCP/FCP/TTI) and report model with JSON/JUnit formatters
 - [x] 03-04-PLAN.md — Self-contained HTML report generator with UI-SPEC compliance
-- [ ] 03-05-PLAN.md — CLI wiring: sniff run command, update-baselines command, formatter and report extensions
+- [x] 03-05-PLAN.md — CLI wiring: sniff run command, update-baselines command, formatter and report extensions
 - [ ] 03-06-PLAN.md — End-to-end verification and human checkpoint
 
 ### Phase 4: Exploration + CI + Distribution
