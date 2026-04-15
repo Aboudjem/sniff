@@ -47,12 +47,14 @@ Plans:
   3. User can switch to Anthropic API mode for CI/batch runs by setting an environment variable
   4. Each generated test scenario includes the AI's reasoning for why it was created
   5. Generated tests use real discovered elements (no hallucinated selectors)
-**Plans**: TBD
+**Plans:** 5 plans
 
 Plans:
-- [ ] 02-01: TBD
-- [ ] 02-02: TBD
-- [ ] 02-03: TBD
+- [ ] 02-01-PLAN.md — Analyzer types, framework detector, and route discoverer
+- [ ] 02-02-PLAN.md — AI provider types, prompt builder, response parser, and provider resolver
+- [ ] 02-03-PLAN.md — Element extractor (AST), RepoAnalyzer scanner plugin, and config schema extension
+- [ ] 02-04-PLAN.md — Claude Code and Anthropic API providers, test generator, and scan command wiring
+- [ ] 02-05-PLAN.md — Integration test and human verification of full pipeline
 
 ### Phase 3: Browser Runner + Quality Scanners + Reporting
 **Goal**: Users can run a single command that executes generated tests across viewports, scans for accessibility/visual/performance issues, and produces a comprehensive report
@@ -99,7 +101,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation + Source Scanner | 0/4 | Not started | - |
-| 2. Repo Analyzer + AI Test Generation | 0/3 | Not started | - |
+| 1. Foundation + Source Scanner | 4/4 | Complete | - |
+| 2. Repo Analyzer + AI Test Generation | 0/5 | Planning complete | - |
 | 3. Browser Runner + Quality Scanners + Reporting | 0/3 | Not started | - |
 | 4. Exploration + CI + Distribution | 0/3 | Not started | - |
