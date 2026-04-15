@@ -4,3 +4,5 @@ export { parseGeneratedTest } from './response-parser.js';
 export { resolveProvider } from './provider.js';
 export { ClaudeCodeProvider } from './claude-code.js';
 export { AnthropicAPIProvider } from './anthropic-api.js';
+export { generateTests } from './generator.js';
+export type { GenerateOptions } from './generator.js';

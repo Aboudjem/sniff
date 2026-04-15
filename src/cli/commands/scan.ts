@@ -21,8 +21,24 @@ export async function scanCommand(options: {
   const registry = new ScannerRegistry();
   registry.register(new SourceScanner());
 
+  const { RepoAnalyzer } = await import('../../scanners/repo-analyzer.js');
+  registry.register(new RepoAnalyzer());
+
   const ctx = { config, rootDir: process.cwd() };
   const results = await registry.runAll(ctx);
+
+  // Extract analysis from RepoAnalyzer result and generate tests
+  const repoResult = results.find((r) => r.scanner === 'repo-analyzer');
+  if (repoResult?.metadata?.analysis) {
+    const { generateTests } = await import('../../ai/generator.js');
+    const analysis = repoResult.metadata.analysis as import('../../analyzers/types.js').AnalysisResult;
+    const aiConfig = (config as Record<string, unknown>).ai as Record<string, unknown> | undefined;
+    await generateTests(analysis, {
+      outputDir: (aiConfig?.outputDir as string) ?? 'sniff-tests',
+      maxConcurrency: (aiConfig?.maxConcurrency as number) ?? 5,
+      rootDir: process.cwd(),
+    });
+  }
 
   // Flatten findings
   const findings = results.flatMap((r) => r.findings);
