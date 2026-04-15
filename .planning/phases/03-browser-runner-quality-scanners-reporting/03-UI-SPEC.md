@@ -72,7 +72,7 @@ Exceptions: none
 | Heading | 20px | 600 (semibold) | 1.2 | Section headings (severity groups, scanner sections) |
 | Display | 28px | 600 (semibold) | 1.2 | Report title, overall score |
 
-**Code snippets:** `'SF Mono', 'Fira Code', 'Cascadia Code', Consolas, monospace` at 13px, weight 400, line-height 1.6.
+**Code snippets:** `'SF Mono', 'Fira Code', 'Cascadia Code', Consolas, monospace` at 12px (reuses Label size), weight 400, line-height 1.6. Code blocks share the 12px size for dense, compact rendering consistent with the four-size scale above.
 
 ### Terminal Output
 
@@ -237,7 +237,7 @@ Each finding renders as a card with:
 - **Body:** Finding message at body size
 - **Fix row:** "Fix:" prefix in semibold + suggestion text
 - **Screenshot row** (if applicable): Thumbnail at 320px width, click/tap expands to full size via `<details>` element
-- **Code snippet** (if applicable): Monospace block with syntax highlighting via inline CSS classes
+- **Code snippet** (if applicable): Monospace block at 12px with syntax highlighting via inline CSS classes
 
 ### Visual Diff Card Anatomy
 
