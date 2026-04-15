@@ -35,7 +35,7 @@ Plans:
 - [x] 01-01-PLAN.md — Project setup, core types, and config system (cosmiconfig + Zod + defineConfig)
 - [x] 01-02-PLAN.md — Scanner plugin interface, registry, and source scanner with all rule categories
 - [x] 01-03-PLAN.md — CLI commands (init, scan, run stub, report), formatter, and persistence
-- [ ] 01-04-PLAN.md — End-to-end verification and human checkpoint
+- [x] 01-04-PLAN.md — End-to-end verification and human checkpoint
 
 ### Phase 2: Repo Analyzer + AI Test Generation
 **Goal**: Users can point sniff at a codebase and get AI-generated Playwright test files without writing a single test manually
