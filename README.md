@@ -12,217 +12,65 @@
   <a href="https://github.com/Aboudjem/sniff/stargazers"><img src="https://img.shields.io/github/stars/Aboudjem/sniff?style=flat-square&color=ef4444" alt="Stars"></a>
 </p>
 
-<p align="center">
-  <b>One command. Eight checks. Zero config.</b><br/>
-  <sub>Scan your source code, your live site, or both. Finds bugs before your users do.</sub>
-</p>
-
----
-
-## Table of contents
-
-- [Install](#install)
-- [Usage](#usage)
-- [Commands](#commands)
-- [What it checks](#what-it-checks)
-- [Example output](#example-output)
-- [Configuration](#configuration)
-- [MCP server (AI editors)](#mcp-server)
-- [CI integration](#ci-integration)
-- [How it works](#how-it-works)
-- [Compared to](#compared-to)
-- [Trust and privacy](#trust-and-privacy)
-- [Contributing](#contributing)
+<p align="center">Scan your source code, your live site, or both. Finds bugs before your users do.</p>
 
 ---
 
 ## Install
 
-**Run without installing** (recommended to try it out):
-
 ```bash
 npx sniff-qa
 ```
 
-**Add to your project** (for regular use):
+Or add to your project:
 
 ```bash
 npm install -D sniff-qa
 ```
 
-Then add to `package.json`:
-
-```json
-{
-  "scripts": {
-    "qa": "sniff",
-    "qa:full": "sniff --url http://localhost:3000"
-  }
-}
-```
-
-Requires **Node.js 22+**. Playwright browsers install automatically the first time you use `--url`.
+Requires Node.js 22+.
 
 ---
 
 ## Usage
 
-### 1. Scan source code only
-
-`cd` into your project and run sniff. It scans all files in the current directory for bugs.
+**Scan source code** (no browser, finishes in seconds):
 
 ```bash
 cd ~/projects/my-app
 npx sniff-qa
 ```
 
-**What it finds:** debug statements, placeholder text (lorem ipsum, TODO, FIXME), dead links, hardcoded localhost URLs, broken imports, API endpoint issues (missing validation, auth, error handling, hardcoded secrets).
-
-**No browser needed.** Works offline. Finishes in seconds.
-
-```
-sniff v0.2.0
-
-[source] Scanning source code...
-[source] 7 issues (2 high, 5 medium/low)
-
-  HIGH  src/api/handler.ts:42       debugger statement detected
-  HIGH  README.md:28                Broken internal link: ./missing-guide.md
-  MED   src/config.ts:8             Hardcoded localhost URL detected
-  MED   src/routes.ts:5             POST /users has no input validation
-  MED   src/routes.ts:18            GET /admin has no visible auth middleware
-  LOW   docs/api.md:15              HTTP 404: https://example.com/old-docs
-  INFO  Discovered 4 API endpoints (express: 3, nextjs-app: 1)
-```
-
-### 2. Scan source code + live site
-
-Start your dev server, then run sniff with `--url`. This scans your source code *and* opens a browser to test every route.
+**Scan source code + live site** (full audit):
 
 ```bash
-# Terminal 1: start your app
-npm run dev
-
-# Terminal 2: run sniff
 npx sniff-qa --url http://localhost:3000
 ```
 
-**What it adds on top of source scanning:** accessibility violations (WCAG via axe-core), visual regressions (pixel diffing), performance budget checks (LCP, FCP, TTI via Lighthouse), AI-driven exploration (fills forms with adversarial inputs), and cross-referencing between source and browser findings.
-
-Works with any URL: `localhost`, staging, or production.
-
-```
-sniff v0.2.0
-
-[source] Scanning source code...
-[source] 7 issues (2 high, 5 medium/low)
-
-[browser] Testing http://localhost:3000...
-  /            clean
-  /login       2 findings
-  /dashboard   4 findings
-
-[perf] 1 budget violation
-
-[xref] 2 finding(s) corroborated by source + browser evidence
-```
-
-### 3. Scan a specific directory
-
-Point sniff at any folder without `cd`-ing into it:
+**Scan any directory:**
 
 ```bash
-npx sniff-qa ~/projects/my-other-app
-npx sniff-qa ~/projects/my-other-app --url https://staging.myapp.com
+npx sniff-qa ./path/to/project
+npx sniff-qa ./path/to/project --url https://staging.myapp.com
 ```
 
-### 4. Scan in CI
+**CI mode** (deterministic, JUnit output):
 
 ```bash
 npx sniff-qa --url http://localhost:3000 --ci
 ```
 
-Same as full audit but skips the AI explorer (non-deterministic), outputs JUnit XML, and tracks flaky tests automatically.
-
 ---
 
-## Commands
+## What it finds
 
-```
-sniff                              Scan source code in current directory
-sniff --url <url>                  Scan source + test live site (full audit)
-sniff --url <url> --ci             Full audit for CI (deterministic, JUnit output)
-sniff <path>                       Scan a specific directory
-sniff <path> --url <url>           Scan specific directory + test live site
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset=".github/assets/features-dark.svg">
+  <source media="(prefers-color-scheme: light)" srcset=".github/assets/features-light.svg">
+  <img alt="Sniff checks: source bugs, dead links, API endpoints, broken imports, accessibility, visual regression, performance, AI explorer" src=".github/assets/features-light.svg" width="100%">
+</picture>
 
-sniff init                         Create a sniff.config.ts in your project
-sniff ci                           Generate .github/workflows/sniff.yml
-sniff report                       Show results from last scan
-sniff update-baselines             Accept current screenshots as visual baselines
-```
-
-### Flags
-
-All flags are optional. Sniff works with zero flags and zero config.
-
-| Flag | What it does |
-|:-----|:-------------|
-| `--url <url>` | Enable browser checks on this URL (accessibility, visual, performance, AI explorer) |
-| `--ci` | CI mode: skip AI explorer, add JUnit output, track flaky tests |
-| `--no-explore` | Run browser checks but skip the AI explorer |
-| `--no-browser` | Skip browser checks even if `--url` is set |
-| `--max-steps <n>` | Limit AI explorer to N steps (default: 50) |
-| `--no-headless` | Show the browser window while testing |
-| `--format html,json,junit` | Choose report formats (default: html,json) |
-| `--fail-on critical,high` | Which severities cause a non-zero exit code (default: critical,high) |
-| `--track-flakes` | Track test flakiness across runs |
-| `--json` | Output results as JSON (for scripts and integrations) |
-
----
-
-## What it checks
-
-| Check | When it runs | Example finding |
-|:------|:-------------|:----------------|
-| **Debug statements** | Always | `debugger` in `handler.ts:42` |
-| **Placeholder text** | Always | Lorem ipsum in `Page.tsx:15` |
-| **Hardcoded URLs** | Always | `http://localhost:3001` in `config.ts:8` |
-| **Broken imports** | Always | `./utils/helper` doesn't resolve in `index.ts:5` |
-| **Dead links** | Always | `./guide.md` doesn't exist, `https://old-url.com` returns 404 |
-| **API endpoints** | Always | `POST /users` has no validation, `GET /admin` has no auth |
-| **Accessibility** | With `--url` | Missing form label on `/login` (WCAG 2.x via axe-core) |
-| **Visual regression** | With `--url` | `/pricing` changed 2.3% of pixels since last run |
-| **Performance** | With `--url` | LCP 4200ms on `/dashboard` (budget: 2500ms, via Lighthouse) |
-| **AI explorer** | With `--url` | XSS payload in `/signup` email field crashes the app |
-| **Cross-reference** | With `--url` | `console.log` in source confirmed in browser console at `/dashboard` |
-
-> [!NOTE]
-> The first 6 checks run on source code only. No browser, no URL, no API keys needed. The last 5 require `--url` pointing to a running site.
-
-### Supported frameworks
-
-Sniff auto-detects your framework. No config needed.
-
-<table>
-<tr>
-<td align="center" width="16%"><b>React</b></td>
-<td align="center" width="16%"><b>Next.js</b></td>
-<td align="center" width="16%"><b>Vue</b></td>
-<td align="center" width="16%"><b>Svelte</b></td>
-<td align="center" width="16%"><b>Angular</b></td>
-<td align="center" width="16%"><b>Vanilla</b></td>
-</tr>
-<tr>
-<td align="center">JSX / TSX</td>
-<td align="center">App + Pages Router</td>
-<td align="center">SFC</td>
-<td align="center">Components</td>
-<td align="center">Templates</td>
-<td align="center">HTML / CSS</td>
-</tr>
-</table>
-
-API endpoint discovery also works with **Express**, **Fastify**, **Hono**, **tRPC**, and **GraphQL**.
+**Source checks** run on every scan. **Browser checks** activate when you pass `--url`.
 
 ---
 
@@ -231,188 +79,108 @@ API endpoint discovery also works with **Express**, **Fastify**, **Hono**, **tRP
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset=".github/assets/report-dark.svg">
   <source media="(prefers-color-scheme: light)" srcset=".github/assets/report-light.svg">
-  <img alt="Sniff terminal output showing source findings, browser results, and cross-referenced findings" src=".github/assets/report-light.svg" width="100%">
+  <img alt="Sniff terminal output" src=".github/assets/report-light.svg" width="100%">
 </picture>
 
 ---
 
-## Configuration
+## Commands
 
-**Sniff works with zero config.** You only need a config file if you want to customize behavior.
-
-Create one with:
-
-```bash
-npx sniff-qa init
 ```
-
-Or manually create `sniff.config.ts` in your project root:
-
-```typescript
-import { defineConfig } from 'sniff-qa';
-
-export default defineConfig({
-  // Save your URL so you can just run `sniff` without flags
-  browser: {
-    baseUrl: 'http://localhost:3000',
-  },
-
-  // Test these viewport sizes
-  viewports: [
-    { name: 'mobile', width: 375, height: 667 },
-    { name: 'desktop', width: 1280, height: 720 },
-  ],
-
-  // Performance budgets (ms)
-  performance: {
-    budgets: { lcp: 2500, fcp: 1800, tti: 3800 },
-  },
-
-  // Visual regression threshold (0-1, lower = stricter)
-  visual: { threshold: 0.1 },
-
-  // AI explorer settings
-  exploration: { maxSteps: 50 },
-
-  // Flakiness tracking
-  flakiness: { windowSize: 5, threshold: 3 },
-
-  // Dead link checker
-  deadLinks: {
-    checkExternal: true,      // validate external URLs via HTTP
-    timeout: 5000,            // ms per request
-    retries: 2,               // retry on failure
-    ignorePatterns: [],       // regex patterns to skip
-    maxConcurrent: 10,        // parallel HTTP requests
-  },
-
-  // API endpoint discovery
-  apiEndpoints: {
-    checkErrorHandling: true, // flag missing try/catch
-    checkValidation: true,    // flag missing input validation
-    checkAuth: true,          // flag missing auth middleware
-    checkSecrets: true,       // flag hardcoded secrets
-    frameworks: [],           // empty = auto-detect all
-  },
-
-  // Turn off specific rules
-  rules: {
-    'debug-console-log': 'off',  // allow console.log
-  },
-});
+sniff                              Scan source code
+sniff --url <url>                  Scan source + test live site
+sniff --url <url> --ci             Full audit for CI pipelines
+sniff <path>                       Scan a specific directory
+sniff init                         Create sniff.config.ts
+sniff ci                           Generate GitHub Actions workflow
+sniff report                       Show last scan results
+sniff update-baselines             Accept current visual baselines
 ```
 
 <details>
-<summary><b>All rule IDs you can toggle</b></summary>
-<br/>
+<summary><b>All flags</b></summary>
 
-| Rule ID | What it checks | Default severity |
-|:--------|:---------------|:-----------------|
-| `debug-console-log` | `console.log/debug/info` | medium |
-| `debug-debugger` | `debugger` statements | high |
-| `placeholder-lorem` | Lorem ipsum text | high |
-| `placeholder-todo` | TODO comments | medium |
-| `placeholder-fixme` | FIXME comments | high |
-| `placeholder-tbd` | TBD markers | medium |
-| `hardcoded-localhost` | `http://localhost:*` URLs | medium |
-| `hardcoded-127` | `http://127.0.0.1:*` URLs | medium |
-| `broken-import` | Unresolved relative imports | medium |
-| `dead-link-internal` | Broken internal file links | high |
-| `dead-link-external` | 404 external URLs | medium |
-| `dead-link-anchor` | Missing `#anchor` targets | medium |
-| `api-no-error-handling` | Routes without try/catch | medium |
-| `api-no-validation` | POST/PUT/PATCH without validation | medium |
-| `api-no-auth` | Non-public routes without auth | low |
-| `api-hardcoded-secret` | Hardcoded API keys/tokens | critical |
-| `api-endpoints-discovered` | Endpoint discovery summary | info |
-
-Set any rule to `'off'` to disable it:
-
-```typescript
-rules: {
-  'placeholder-todo': 'off',
-  'dead-link-external': 'off',
-}
-```
+| Flag | What it does |
+|:-----|:-------------|
+| `--url <url>` | Enable browser checks (accessibility, visual, performance, AI) |
+| `--ci` | CI mode: skip AI explorer, add JUnit output, track flaky tests |
+| `--no-explore` | Browser checks without AI explorer |
+| `--no-browser` | Source only even if `--url` is set |
+| `--max-steps <n>` | Limit AI explorer steps (default: 50) |
+| `--no-headless` | Show the browser window |
+| `--format html,json,junit` | Choose report formats |
+| `--fail-on critical,high` | Severities that cause non-zero exit |
+| `--track-flakes` | Track test flakiness across runs |
+| `--json` | JSON output for scripts |
 
 </details>
 
 ---
 
-<h2 id="mcp-server">MCP server</h2>
+## Works with any stack
 
-Sniff ships as an MCP server so your AI editor can scan, read results, and fix issues without you switching context.
+Sniff auto-detects your framework. No config needed.
+
+<table>
+<tr>
+<td align="center" width="14%"><b>React</b><br/><sub>JSX / TSX</sub></td>
+<td align="center" width="14%"><b>Next.js</b><br/><sub>App + Pages</sub></td>
+<td align="center" width="14%"><b>Vue</b><br/><sub>SFC</sub></td>
+<td align="center" width="14%"><b>Svelte</b><br/><sub>Components</sub></td>
+<td align="center" width="14%"><b>Angular</b><br/><sub>Templates</sub></td>
+<td align="center" width="14%"><b>Express</b><br/><sub>Routes</sub></td>
+<td align="center" width="14%"><b>Vanilla</b><br/><sub>HTML / CSS</sub></td>
+</tr>
+</table>
+
+API discovery also supports **Fastify**, **Hono**, **tRPC**, and **GraphQL**.
+
+---
+
+## MCP server
+
+Use sniff from your AI editor. It scans, reads results, and helps fix issues without switching context.
 
 ```bash
 npx sniff-qa --mcp
 ```
 
-**3 tools exposed:**
-
-| Tool | What it does |
-|:-----|:-------------|
-| `sniff_scan` | Run source code scan, returns findings |
-| `sniff_run` | Run full browser audit on a URL |
-| `sniff_report` | Get results from the last scan |
+Three tools: `sniff_scan` (source) · `sniff_run` (browser) · `sniff_report` (results)
 
 <details>
-<summary><b>Setup for your editor</b></summary>
-<br/>
+<summary><b>Editor setup</b></summary>
 
 **Claude Code**
-
 ```bash
 claude mcp add sniff-qa npx sniff-qa --mcp
 ```
 
 **Cursor** (`~/.cursor/mcp.json`)
-
 ```json
-{
-  "mcpServers": {
-    "sniff-qa": { "type": "stdio", "command": "npx", "args": ["sniff-qa", "--mcp"] }
-  }
-}
+{ "mcpServers": { "sniff-qa": { "type": "stdio", "command": "npx", "args": ["sniff-qa", "--mcp"] } } }
 ```
 
 **VS Code + Copilot** (`.vscode/mcp.json`)
-
 ```json
-{
-  "servers": {
-    "sniff-qa": { "type": "stdio", "command": "npx", "args": ["-y", "sniff-qa", "--mcp"] }
-  }
-}
+{ "servers": { "sniff-qa": { "type": "stdio", "command": "npx", "args": ["-y", "sniff-qa", "--mcp"] } } }
 ```
 
 **Windsurf** (`~/.codeium/windsurf/mcp_config.json`)
-
 ```json
-{
-  "mcpServers": {
-    "sniff-qa": { "command": "npx", "args": ["sniff-qa", "--mcp"] }
-  }
-}
+{ "mcpServers": { "sniff-qa": { "command": "npx", "args": ["sniff-qa", "--mcp"] } } }
 ```
 
 **Codex CLI**
-
 ```bash
 codex mcp add sniff-qa -- npx -y sniff-qa --mcp
 ```
 
 **Gemini CLI** (`~/.gemini/mcp_config.json`)
-
 ```json
-{
-  "mcpServers": {
-    "sniff-qa": { "command": "npx", "args": ["sniff-qa", "--mcp"] }
-  }
-}
+{ "mcpServers": { "sniff-qa": { "command": "npx", "args": ["sniff-qa", "--mcp"] } } }
 ```
 
 **Continue.dev** (`.continue/mcpServers/sniff-qa.yaml`)
-
 ```yaml
 mcpServers:
   sniff-qa:
@@ -422,28 +190,111 @@ mcpServers:
 ```
 
 **OpenClaw**
-
 ```bash
 clawhub install sniff-qa
 ```
 
 </details>
 
-Once configured, ask your AI: *"Scan this project for issues"* or *"Check accessibility on localhost:3000"*.
+---
+
+## Configuration
+
+Sniff works with zero config. Only create a config file if you want to customize.
+
+```bash
+npx sniff-qa init
+```
+
+<details>
+<summary><b>sniff.config.ts reference</b></summary>
+
+```typescript
+import { defineConfig } from 'sniff-qa';
+
+export default defineConfig({
+  // Save your URL so you can just run `sniff`
+  browser: { baseUrl: 'http://localhost:3000' },
+
+  // Viewports to test
+  viewports: [
+    { name: 'mobile', width: 375, height: 667 },
+    { name: 'desktop', width: 1280, height: 720 },
+  ],
+
+  // Performance budgets (ms)
+  performance: { budgets: { lcp: 2500, fcp: 1800, tti: 3800 } },
+
+  // Visual regression threshold (0-1)
+  visual: { threshold: 0.1 },
+
+  // AI explorer
+  exploration: { maxSteps: 50 },
+
+  // Dead link checker
+  deadLinks: {
+    checkExternal: true,
+    timeout: 5000,
+    retries: 2,
+    ignorePatterns: [],
+    maxConcurrent: 10,
+  },
+
+  // API endpoint discovery
+  apiEndpoints: {
+    checkErrorHandling: true,
+    checkValidation: true,
+    checkAuth: true,
+    checkSecrets: true,
+    frameworks: [],          // empty = auto-detect all
+  },
+
+  // Turn off specific rules
+  rules: {
+    'debug-console-log': 'off',
+  },
+});
+```
+
+</details>
+
+<details>
+<summary><b>All rule IDs</b></summary>
+
+| Rule | Severity | What it checks |
+|:-----|:---------|:---------------|
+| `debug-console-log` | medium | console.log/debug/info |
+| `debug-debugger` | high | debugger statements |
+| `placeholder-lorem` | high | Lorem ipsum text |
+| `placeholder-todo` | medium | TODO comments |
+| `placeholder-fixme` | high | FIXME comments |
+| `placeholder-tbd` | medium | TBD markers |
+| `hardcoded-localhost` | medium | localhost URLs |
+| `hardcoded-127` | medium | 127.0.0.1 URLs |
+| `broken-import` | medium | Unresolved imports |
+| `dead-link-internal` | high | Broken file links |
+| `dead-link-external` | medium | 404 external URLs |
+| `dead-link-anchor` | medium | Missing anchors |
+| `api-no-error-handling` | medium | Routes without try/catch |
+| `api-no-validation` | medium | POST/PUT without validation |
+| `api-no-auth` | low | Routes without auth |
+| `api-hardcoded-secret` | critical | Hardcoded API keys |
+
+Set any to `'off'` to disable.
+
+</details>
 
 ---
 
 ## CI integration
 
-Generate a GitHub Actions workflow:
-
 ```bash
 npx sniff-qa ci
 ```
 
-This creates `.github/workflows/sniff.yml` with Playwright caching, JUnit output, flakiness quarantine, and report artifacts.
+Generates `.github/workflows/sniff.yml` with Playwright caching, JUnit output, and report artifacts.
 
-**Flakiness quarantine:** Tests that fail 3 out of 5 runs get quarantined. They still run and appear in reports, but they won't block your pipeline.
+**Flakiness quarantine:** Tests that fail 3 of 5 runs get quarantined. They still run, still report, but won't block your pipeline.
 
 ---
 
@@ -455,14 +306,8 @@ This creates `.github/workflows/sniff.yml` with Playwright caching, JUnit output
   <img alt="Sniff pipeline" src=".github/assets/pipeline-light.svg" width="100%">
 </picture>
 
-1. **Source scanner** reads your files and runs regex + AST rules to find bugs
-2. **Browser runner** (when you pass `--url`) opens Playwright, visits every route, and runs accessibility/visual/performance checks
-3. **Cross-reference engine** compares what was found in source with what was seen in the browser. Findings confirmed in both get bumped severity and marked HIGH confidence
-4. **Report engine** outputs HTML, JSON, or JUnit XML
-
 <details>
-<summary><b>Architecture diagram</b></summary>
-<br/>
+<summary><b>Architecture</b></summary>
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset=".github/assets/architecture-dark.svg">
@@ -474,53 +319,26 @@ This creates `.github/workflows/sniff.yml` with Playwright caching, JUnit output
 
 ---
 
-## Compared to
+## Privacy
 
-| | **Sniff** | Lighthouse CI | Pa11y | BackstopJS |
-|:--|:--:|:--:|:--:|:--:|
-| Source scanning | yes | | | |
-| Dead link checking | yes | | | |
-| API endpoint discovery | yes | | | |
-| Accessibility | yes | partial | yes | |
-| Visual regression | yes | | | yes |
-| Performance | yes | yes | | |
-| AI exploration | yes | | | |
-| Cross-referencing | yes | | | |
-| Flakiness quarantine | yes | | | |
-| Single command | yes | | | |
-| MCP server | yes | | | |
-| Zero config | yes | | | |
-
----
-
-## Trust and privacy
-
-- **No telemetry.** Sniff does not phone home. Ever.
-- **No signup.** No accounts. No API keys for core functionality.
-- **No data collection.** Your code stays on your machine.
-- **Open source.** Read every line. [Apache 2.0](LICENSE).
+No telemetry. No signup. No data collection. Your code stays on your machine.
 
 > [!NOTE]
-> The AI explorer requires an Anthropic API key. The other 7 checks work completely offline. The dead link scanner makes HTTP requests to validate external URLs but never sends your code.
+> The AI explorer needs an Anthropic API key. Everything else works offline. Dead link checking validates external URLs but never sends your code.
 
 ---
 
 ## Contributing
 
-Easiest way in: **add a source rule.** Each rule is a regex pattern with a severity level in `src/scanners/source/rules/`. See [CONTRIBUTING.md](CONTRIBUTING.md).
-
-**Good first contributions:**
-- Add a new source scanning rule
-- Report a false positive
-- Improve documentation
+Add a source rule: each rule is a regex + severity in `src/scanners/source/rules/`. See [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ---
 
-## Built on
-
-[Playwright](https://playwright.dev) · [axe-core](https://github.com/dequelabs/axe-core) · [Lighthouse](https://developer.chrome.com/docs/lighthouse) · [pixelmatch](https://github.com/mapbox/pixelmatch) · [Zod](https://zod.dev) · [MCP SDK](https://github.com/modelcontextprotocol/typescript-sdk) · [Anthropic SDK](https://github.com/anthropics/anthropic-sdk-typescript)
-
----
+<p align="center">
+  <sub>
+    Built on <a href="https://playwright.dev">Playwright</a> · <a href="https://github.com/dequelabs/axe-core">axe-core</a> · <a href="https://developer.chrome.com/docs/lighthouse">Lighthouse</a> · <a href="https://github.com/mapbox/pixelmatch">pixelmatch</a> · <a href="https://zod.dev">Zod</a> · <a href="https://github.com/modelcontextprotocol/typescript-sdk">MCP SDK</a> · <a href="https://github.com/anthropics/anthropic-sdk-typescript">Anthropic SDK</a>
+  </sub>
+</p>
 
 <p align="center">
   <a href="https://www.linkedin.com/in/adam-boudjemaa/"><img src="https://img.shields.io/badge/LinkedIn-0A66C2?style=flat-square&logo=linkedin&logoColor=white" alt="LinkedIn"></a>
@@ -529,5 +347,5 @@ Easiest way in: **add a source rule.** Each rule is a regex pattern with a sever
 </p>
 
 <p align="center">
-  <sub>Built by <a href="https://github.com/Aboudjem">Adam Boudjemaa</a></sub>
+  <sub>Built by <a href="https://github.com/Aboudjem">Adam Boudjemaa</a> · <a href="LICENSE">Apache 2.0</a></sub>
 </p>

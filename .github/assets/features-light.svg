@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 320" font-family="system-ui, -apple-system, sans-serif">
+  <defs>
+    <filter id="s"><feDropShadow dx="0" dy="1" stdDeviation="2" flood-color="#00000008"/></filter>
+  </defs>
+  <rect width="840" height="320" rx="16" fill="#fafafa"/>
+
+  <!-- Row 1: Source checks (always run) -->
+  <text x="20" y="30" font-size="11" font-weight="600" fill="#94a3b8" letter-spacing="1">SOURCE CHECKS</text>
+  <text x="230" y="30" font-size="10" fill="#cbd5e1">always run, no browser needed</text>
+
+  <rect x="20" y="42" width="190" height="88" rx="12" fill="white" stroke="#fecaca" stroke-width="1" filter="url(#s)"/>
+  <text x="36" y="66" font-size="22">🐛</text>
+  <text x="64" y="68" font-size="13" font-weight="700" fill="#1f2937">Source Bugs</text>
+  <text x="36" y="88" font-size="10.5" fill="#64748b">debugger, console.log,</text>
+  <text x="36" y="102" font-size="10.5" fill="#64748b">TODO, FIXME, lorem ipsum</text>
+  <text x="36" y="120" font-size="9" fill="#f87171" font-weight="600">6 rules</text>
+
+  <rect x="224" y="42" width="190" height="88" rx="12" fill="white" stroke="#fecaca" stroke-width="1" filter="url(#s)"/>
+  <text x="240" y="66" font-size="22">🔗</text>
+  <text x="268" y="68" font-size="13" font-weight="700" fill="#1f2937">Dead Links</text>
+  <text x="240" y="88" font-size="10.5" fill="#64748b">Internal files, external URLs,</text>
+  <text x="240" y="102" font-size="10.5" fill="#64748b">anchor targets (#section)</text>
+  <text x="240" y="120" font-size="9" fill="#f87171" font-weight="600">HTTP HEAD + retry</text>
+
+  <rect x="428" y="42" width="190" height="88" rx="12" fill="white" stroke="#fecaca" stroke-width="1" filter="url(#s)"/>
+  <text x="444" y="66" font-size="22">🛣️</text>
+  <text x="474" y="68" font-size="13" font-weight="700" fill="#1f2937">API Endpoints</text>
+  <text x="444" y="88" font-size="10.5" fill="#64748b">Express, Next.js, Hono,</text>
+  <text x="444" y="102" font-size="10.5" fill="#64748b">SvelteKit, tRPC, GraphQL</text>
+  <text x="444" y="120" font-size="9" fill="#f87171" font-weight="600">8 frameworks</text>
+
+  <rect x="632" y="42" width="190" height="88" rx="12" fill="white" stroke="#fecaca" stroke-width="1" filter="url(#s)"/>
+  <text x="648" y="66" font-size="22">📦</text>
+  <text x="676" y="68" font-size="13" font-weight="700" fill="#1f2937">Broken Imports</text>
+  <text x="648" y="88" font-size="10.5" fill="#64748b">Unresolved relative imports</text>
+  <text x="648" y="102" font-size="10.5" fill="#64748b">with TS extension mapping</text>
+  <text x="648" y="120" font-size="9" fill="#f87171" font-weight="600">auto-resolve</text>
+
+  <!-- Row 2: Browser checks (need --url) -->
+  <text x="20" y="162" font-size="11" font-weight="600" fill="#94a3b8" letter-spacing="1">BROWSER CHECKS</text>
+  <text x="230" y="162" font-size="10" fill="#cbd5e1">add --url to enable</text>
+
+  <rect x="20" y="174" width="190" height="88" rx="12" fill="white" stroke="#c4b5fd" stroke-width="1" filter="url(#s)"/>
+  <text x="36" y="198" font-size="22">♿</text>
+  <text x="64" y="200" font-size="13" font-weight="700" fill="#1f2937">Accessibility</text>
+  <text x="36" y="220" font-size="10.5" fill="#64748b">WCAG 2.x via axe-core</text>
+  <text x="36" y="234" font-size="10.5" fill="#64748b">with fix guidance</text>
+  <text x="36" y="252" font-size="9" fill="#7c3aed" font-weight="600">every route + viewport</text>
+
+  <rect x="224" y="174" width="190" height="88" rx="12" fill="white" stroke="#fde68a" stroke-width="1" filter="url(#s)"/>
+  <text x="240" y="198" font-size="22">🖼</text>
+  <text x="268" y="200" font-size="13" font-weight="700" fill="#1f2937">Visual Regression</text>
+  <text x="240" y="220" font-size="10.5" fill="#64748b">Pixel diffing with pixelmatch</text>
+  <text x="240" y="234" font-size="10.5" fill="#64748b">Commit baselines to git</text>
+  <text x="240" y="252" font-size="9" fill="#d97706" font-weight="600">screenshot comparison</text>
+
+  <rect x="428" y="174" width="190" height="88" rx="12" fill="white" stroke="#86efac" stroke-width="1" filter="url(#s)"/>
+  <text x="444" y="198" font-size="22">⚡</text>
+  <text x="468" y="200" font-size="13" font-weight="700" fill="#1f2937">Performance</text>
+  <text x="444" y="220" font-size="10.5" fill="#64748b">LCP, FCP, TTI budgets</text>
+  <text x="444" y="234" font-size="10.5" fill="#64748b">via Lighthouse</text>
+  <text x="444" y="252" font-size="9" fill="#059669" font-weight="600">Core Web Vitals</text>
+
+  <rect x="632" y="174" width="190" height="88" rx="12" fill="white" stroke="#fda4af" stroke-width="1" filter="url(#s)"/>
+  <text x="648" y="198" font-size="22">🤖</text>
+  <text x="676" y="200" font-size="13" font-weight="700" fill="#1f2937">AI Explorer</text>
+  <text x="648" y="220" font-size="10.5" fill="#64748b">Roams your app, fills forms</text>
+  <text x="648" y="234" font-size="10.5" fill="#64748b">with adversarial inputs</text>
+  <text x="648" y="252" font-size="9" fill="#e11d48" font-weight="600">chaos monkey</text>
+
+  <!-- Cross-reference banner -->
+  <rect x="20" y="280" width="802" height="30" rx="8" fill="#f0fdf4" stroke="#86efac" stroke-width="1"/>
+  <text x="420" y="300" text-anchor="middle" font-size="11" fill="#166534" font-weight="600">🔀 Cross-Reference Engine: findings confirmed in both source and browser get bumped severity + HIGH confidence</text>
+</svg>
