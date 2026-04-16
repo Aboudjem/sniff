@@ -234,7 +234,15 @@ Or `.mcp.json`:
 <summary><b>Codex CLI</b></summary>
 
 ```bash
-codex mcp add sniff-qa --command "npx sniff-qa --mcp"
+codex mcp add sniff-qa -- npx -y sniff-qa --mcp
+```
+
+Or add to `~/.codex/config.toml`:
+
+```toml
+[mcp_servers.sniff-qa]
+command = "npx"
+args = ["-y", "sniff-qa", "--mcp"]
 ```
 
 </details>
@@ -265,6 +273,47 @@ mcpServers:
     command: npx
     args: [sniff-qa, --mcp]
     type: stdio
+```
+
+</details>
+
+<details>
+<summary><b>VS Code + Copilot</b></summary>
+
+Add to `.vscode/mcp.json`:
+
+```json
+{
+  "servers": {
+    "sniff-qa": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "sniff-qa", "--mcp"]
+    }
+  }
+}
+```
+
+</details>
+
+<details>
+<summary><b>OpenClaw</b></summary>
+
+```bash
+clawhub install sniff-qa
+```
+
+Or add to `~/.openclaw/openclaw.json`:
+
+```json
+{
+  "mcpServers": {
+    "sniff-qa": {
+      "command": "npx",
+      "args": ["-y", "sniff-qa", "--mcp"]
+    }
+  }
+}
 ```
 
 </details>
