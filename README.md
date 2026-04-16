@@ -363,6 +363,12 @@ Easiest way in: **add a source rule.** Each rule is a regex pattern with a sever
 
 <div align="center">
 
-Built by [**Adam Boudj**](https://github.com/Aboudjem) · [Open an issue](https://github.com/Aboudjem/sniff/issues) · [Star the repo](https://github.com/Aboudjem/sniff)
+<p>
+  <a href="https://www.linkedin.com/in/adam-boudjemaa/"><img src="https://img.shields.io/badge/LinkedIn-0A66C2?style=flat-square&logo=linkedin&logoColor=white" alt="LinkedIn"></a>
+  <a href="https://x.com/AdamBoudj"><img src="https://img.shields.io/badge/X-000000?style=flat-square&logo=x&logoColor=white" alt="X"></a>
+  <a href="https://adam-boudjemaa.com/"><img src="https://img.shields.io/badge/Website-cb3837?style=flat-square&logo=googlechrome&logoColor=white" alt="Website"></a>
+</p>
+
+Built by [**Adam Boudjemaa**](https://github.com/Aboudjem) · [Open an issue](https://github.com/Aboudjem/sniff/issues) · [Star the repo](https://github.com/Aboudjem/sniff)
 
 </div>
