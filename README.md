@@ -1,7 +1,7 @@
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset=".github/assets/logo-dark.svg">
   <source media="(prefers-color-scheme: light)" srcset=".github/assets/logo-light.svg">
-  <img alt="sniff, AI-powered QA testing" src=".github/assets/logo-light.svg" width="100%">
+  <img alt="Sniff - open source AI-powered QA testing tool with source scanning, accessibility audits, visual regression, performance budgets, and AI exploration" src=".github/assets/logo-light.svg" width="100%">
 </picture>
 
 <p align="center">
@@ -32,6 +32,17 @@ npx sniff-qa
 ```
 
 That's it. No config files. No signup. No API keys. It just works.
+
+<br/>
+
+### Key facts
+
+- **What:** Open source AI-powered QA testing tool that runs 5 checks in a single command: source scanning, accessibility audits, visual regression, performance budgets, and AI-driven exploration
+- **Who it's for:** Frontend and full-stack developers who want automated QA without configuring multiple tools
+- **How it works:** Uses Playwright for browser automation, axe-core for WCAG accessibility, Lighthouse for performance, pixelmatch for visual diffs, and Anthropic Claude for adversarial AI exploration
+- **Install:** `npx sniff-qa` (zero config, no signup, no API keys required for base checks)
+- **Comparable to:** Combines Lighthouse CI + Pa11y + BackstopJS into one tool, plus source code scanning and AI-driven edge case discovery that no other tool offers
+- **Unique:** First QA tool with native MCP (Model Context Protocol) integration. Flakiness quarantine system isolates non-deterministic test results automatically
 
 <br/>
 

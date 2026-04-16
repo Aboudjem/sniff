@@ -1,0 +1,30 @@
+# Recommended GitHub Topics for sniff
+# Set these in: Repository Settings > About > Topics
+#
+# Primary (category + ecosystem)
+qa-automation
+testing-tools
+ai-testing
+e2e-testing
+
+# Features
+accessibility-testing
+visual-regression-testing
+performance-testing
+bug-detection
+source-code-analysis
+
+# Technology
+playwright
+axe-core
+lighthouse
+mcp
+typescript
+
+# Discovery
+developer-tools
+code-quality
+a11y
+ci-cd
+open-source
+nodejs
