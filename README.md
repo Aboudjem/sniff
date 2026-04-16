@@ -123,11 +123,12 @@ npm install -D sniff-qa
 ```json
 {
   "scripts": {
-    "qa": "sniff",
-    "qa:full": "sniff --url http://localhost:3000"
+    "qa": "sniff"
   }
 }
 ```
+
+That's all you need. Sniff auto-detects your dev server when it's running.
 
 Requires Node.js 22+. Playwright installs automatically on first browser scan.
 
@@ -154,7 +155,7 @@ Sniff auto-detects your dev server by reading `package.json` scripts and probing
   <img alt="Sniff checks: source bugs, dead links, API endpoints, broken imports, accessibility, visual regression, performance, AI explorer" src=".github/assets/features-light.svg" width="100%">
 </picture>
 
-**Source checks** run on every scan. **Browser checks** activate when you pass `--url`.
+**Source checks** run on every scan. **Browser checks** run automatically when sniff detects a running dev server, or when you pass `--url`.
 
 ---
 
