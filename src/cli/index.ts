@@ -56,8 +56,21 @@ if (process.argv.includes('--mcp')) {
       const rootDir = target ? (await import('node:path')).resolve(target) : process.cwd();
       const config = await loadConfig(rootDir);
 
-      // URL resolution: flag → config → none
-      const url = options.url ?? config.browser?.baseUrl;
+      // URL resolution: flag → config → auto-detect
+      let url = options.url ?? config.browser?.baseUrl;
+
+      if (!url && options.browser !== false) {
+        const { detectDevServerUrl } = await import('../config/dev-server-detector.js');
+        const detection = await detectDevServerUrl(rootDir);
+        if (detection.url) {
+          url = detection.url;
+          if (!options.json) {
+            const pc = (await import('picocolors')).default;
+            console.log(`${pc.green('[auto]')} Found dev server at ${pc.bold(url)} (${detection.detail})\n`);
+          }
+        }
+      }
+
       const wantsBrowser = !!url && options.browser !== false;
 
       // Exploration is default-ON when browser tests run, default-OFF in CI
