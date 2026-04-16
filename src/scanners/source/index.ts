@@ -30,7 +30,15 @@ async function resolveImportExists(
   // Try exact path
   if (await fileExists(resolved)) return true;
 
-  // Try with extensions
+  // Handle TypeScript ESM convention: import './foo.js' resolves to './foo.ts'
+  if (resolved.endsWith('.js') || resolved.endsWith('.jsx')) {
+    const withoutExt = resolved.replace(/\.jsx?$/, '');
+    for (const ext of RESOLVE_EXTENSIONS) {
+      if (await fileExists(withoutExt + ext)) return true;
+    }
+  }
+
+  // Try with extensions (for extensionless imports)
   for (const ext of RESOLVE_EXTENSIONS) {
     if (await fileExists(resolved + ext)) return true;
   }
