@@ -1,4 +1,5 @@
 import type { AIProvider, RouteTestContext, GeneratedTest } from './types.js';
+import type { TextBlock } from '@anthropic-ai/sdk/resources/messages/messages.js';
 
 export class AnthropicAPIProvider implements AIProvider {
   name = 'anthropic-api';
@@ -26,7 +27,7 @@ export class AnthropicAPIProvider implements AIProvider {
       });
 
       const rawContent = message.content
-        .filter((block): block is { type: 'text'; text: string } => block.type === 'text')
+        .filter((block): block is TextBlock => block.type === 'text')
         .map((block) => block.text)
         .join('\n');
 

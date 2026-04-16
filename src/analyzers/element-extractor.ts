@@ -2,13 +2,15 @@ import { readFile } from 'node:fs/promises';
 import { relative } from 'node:path';
 import { parse as babelParse } from '@babel/parser';
 import _traverse from '@babel/traverse';
-import type { JSXAttribute, JSXOpeningElement, Node } from '@babel/types';
+import type { NodePath } from '@babel/traverse';
+import type { JSXAttribute, JSXOpeningElement, Node, ExportDefaultDeclaration, ExportNamedDeclaration } from '@babel/types';
 import type { ElementInfo, ComponentInfo } from './types.js';
 
 // Handle CJS/ESM interop for @babel/traverse
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const traverse = (
-  typeof _traverse === 'function' ? _traverse : (_traverse as { default: typeof _traverse }).default
-) as typeof _traverse;
+  typeof _traverse === 'function' ? _traverse : (_traverse as unknown as { default: typeof _traverse }).default
+) as unknown as (ast: unknown, opts: unknown) => void;
 
 const INTERACTIVE_TAGS = new Set([
   'form',
@@ -126,7 +128,7 @@ function processJSXFile(content: string, relPath: string): FileResult {
     let hasDefaultExport = false;
 
     traverse(ast, {
-      JSXOpeningElement(path) {
+      JSXOpeningElement(path: NodePath<JSXOpeningElement>) {
         const node = path.node as JSXOpeningElement;
         const tagName =
           node.name.type === 'JSXIdentifier' ? node.name.name : null;
@@ -150,7 +152,7 @@ function processJSXFile(content: string, relPath: string): FileResult {
           if (mappedKey) {
             const val = getJSXAttrValue(attr);
             if (val !== undefined) {
-              (info as Record<string, unknown>)[mappedKey] = val;
+              (info as unknown as Record<string, unknown>)[mappedKey] = val;
             }
           }
         }
@@ -166,7 +168,7 @@ function processJSXFile(content: string, relPath: string): FileResult {
           if (mappedKey) {
             const val = getJSXAttrValue(attr);
             if (val !== undefined) {
-              (info as Record<string, unknown>)[mappedKey] = val;
+              (info as unknown as Record<string, unknown>)[mappedKey] = val;
             }
           }
         }
@@ -178,7 +180,7 @@ function processJSXFile(content: string, relPath: string): FileResult {
         elements.push(info);
       },
 
-      ExportDefaultDeclaration(path) {
+      ExportDefaultDeclaration(path: NodePath<ExportDefaultDeclaration>) {
         hasDefaultExport = true;
         const decl = path.node.declaration;
         if (decl.type === 'FunctionDeclaration' && decl.id) {
@@ -188,7 +190,7 @@ function processJSXFile(content: string, relPath: string): FileResult {
         }
       },
 
-      ExportNamedDeclaration(path) {
+      ExportNamedDeclaration(path: NodePath<ExportNamedDeclaration>) {
         const decl = path.node.declaration;
         if (decl?.type === 'FunctionDeclaration' && decl.id) {
           namedExports.push(decl.id.name);
@@ -279,7 +281,7 @@ function walkVueAst(
             if (mappedKey) {
               const val = (prop.value as { content?: string })?.content;
               if (val !== undefined) {
-                (info as Record<string, unknown>)[mappedKey] = val;
+                (info as unknown as Record<string, unknown>)[mappedKey] = val;
               }
             }
           }
@@ -297,7 +299,7 @@ function walkVueAst(
                 const raw = exp.content;
                 const match = /^['"](.+)['"]$/.exec(raw);
                 if (match) {
-                  (info as Record<string, unknown>)[mappedKey] = match[1];
+                  (info as unknown as Record<string, unknown>)[mappedKey] = match[1];
                 }
               }
             }
