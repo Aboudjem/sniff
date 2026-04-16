@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>sniff report</title>
+<style>
+  :root {
+    --bg: #0c0a10;
+    --surface: #15121d;
+    --card: rgba(26, 23, 37, 0.7);
+    --card-border: rgba(255, 255, 255, 0.06);
+    --text: #e8e4f0;
+    --text-dim: #8b849e;
+    --text-muted: #5c5672;
+    --accent-1: #f97316;
+    --accent-2: #ec4899;
+    --gradient: linear-gradient(135deg, #f97316, #ec4899);
+    --gradient-subtle: linear-gradient(135deg, rgba(249,115,22,0.15), rgba(236,72,153,0.15));
+    --critical: #ef4444;
+    --high: #f97316;
+    --medium: #eab308;
+    --low: #22c55e;
+    --info: #3b82f6;
+    --radius: 16px;
+    --radius-sm: 8px;
+    --glass: blur(20px);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', -apple-system, system-ui, sans-serif;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* Ambient glow */
+  body::before {
+    content: '';
+    position: fixed;
+    top: -40%;
+    left: -20%;
+    width: 80%;
+    height: 80%;
+    background: radial-gradient(ellipse, rgba(249,115,22,0.06) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+  body::after {
+    content: '';
+    position: fixed;
+    bottom: -30%;
+    right: -20%;
+    width: 70%;
+    height: 70%;
+    background: radial-gradient(ellipse, rgba(236,72,153,0.04) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 32px 24px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Header */
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 32px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--card-border);
+  }
+  .header-left { display: flex; align-items: center; gap: 16px; }
+  .logo {
+    font-size: 28px;
+    font-weight: 800;
+    background: var(--gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: -1px;
+  }
+  .version {
+    font-size: 12px;
+    color: var(--text-muted);
+    background: var(--surface);
+    padding: 4px 10px;
+    border-radius: 20px;
+    border: 1px solid var(--card-border);
+  }
+  .header-right {
+    font-size: 13px;
+    color: var(--text-dim);
+    text-align: right;
+  }
+  .header-right span { display: block; }
+
+  /* KPI Cards */
+  .kpis {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+  .kpi {
+    background: var(--card);
+    backdrop-filter: var(--glass);
+    -webkit-backdrop-filter: var(--glass);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius);
+    padding: 20px;
+    text-align: center;
+    transition: border-color 0.2s;
+  }
+  .kpi:hover { border-color: rgba(255,255,255,0.12); }
+  .kpi-value {
+    font-size: 36px;
+    font-weight: 800;
+    letter-spacing: -2px;
+    line-height: 1.1;
+    margin-bottom: 4px;
+  }
+  .kpi-label {
+    font-size: 12px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .kpi-value.gradient {
+    background: var(--gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .kpi-value.critical { color: var(--critical); }
+  .kpi-value.high { color: var(--high); }
+  .kpi-value.medium { color: var(--medium); }
+  .kpi-value.low { color: var(--low); }
+
+  /* Section */
+  .section {
+    background: var(--card);
+    backdrop-filter: var(--glass);
+    -webkit-backdrop-filter: var(--glass);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius);
+    padding: 24px;
+    margin-bottom: 24px;
+  }
+  .section-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 20px;
+  }
+
+  /* Charts row */
+  .charts {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 24px;
+    margin-bottom: 24px;
+  }
+  @media (max-width: 768px) {
+    .charts { grid-template-columns: 1fr; }
+  }
+
+  /* Donut chart (CSS only) */
+  .donut-wrap { display: flex; flex-direction: column; align-items: center; gap: 20px; }
+  .donut {
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    position: relative;
+    /* Segments via conic-gradient - values injected by template */
+    background: conic-gradient(
+      var(--critical) 0% {{critical_pct}}%,
+      var(--high) {{critical_pct}}% {{high_pct}}%,
+      var(--medium) {{high_pct}}% {{medium_pct}}%,
+      var(--low) {{medium_pct}}% {{low_pct}}%,
+      var(--info) {{low_pct}}% 100%
+    );
+  }
+  .donut::after {
+    content: '';
+    position: absolute;
+    top: 40px; left: 40px;
+    width: 100px; height: 100px;
+    border-radius: 50%;
+    background: var(--surface);
+  }
+  .donut-center {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 2;
+    text-align: center;
+  }
+  .donut-center .num {
+    font-size: 32px;
+    font-weight: 800;
+    letter-spacing: -1px;
+    background: var(--gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .donut-center .label { font-size: 11px; color: var(--text-muted); }
+  .legend { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; }
+  .legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text-dim); }
+  .legend-dot { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; }
+
+  /* Bar chart (CSS only) */
+  .bars { display: flex; flex-direction: column; gap: 12px; }
+  .bar-row { display: flex; align-items: center; gap: 12px; }
+  .bar-label {
+    width: 130px;
+    font-size: 13px;
+    color: var(--text-dim);
+    text-align: right;
+    flex-shrink: 0;
+  }
+  .bar-track {
+    flex: 1;
+    height: 28px;
+    background: rgba(255,255,255,0.03);
+    border-radius: 6px;
+    overflow: hidden;
+    position: relative;
+  }
+  .bar-fill {
+    height: 100%;
+    border-radius: 6px;
+    background: var(--gradient);
+    transition: width 0.6s ease;
+    display: flex;
+    align-items: center;
+    padding-left: 10px;
+  }
+  .bar-fill span {
+    font-size: 12px;
+    font-weight: 600;
+    color: white;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+  }
+
+  /* Findings table */
+  .findings-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  .findings-table th {
+    text-align: left;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--card-border);
+  }
+  .findings-table td {
+    padding: 12px 16px;
+    font-size: 13px;
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+    vertical-align: top;
+  }
+  .findings-table tr:hover td { background: rgba(255,255,255,0.02); }
+  .findings-table .file {
+    color: var(--text-dim);
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    font-size: 12px;
+  }
+  .findings-table .line {
+    color: var(--text-muted);
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    font-size: 12px;
+  }
+  .findings-table .msg { color: var(--text); }
+
+  /* Severity badge */
+  .badge {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .badge-critical { background: rgba(239,68,68,0.15); color: var(--critical); }
+  .badge-high { background: rgba(249,115,22,0.15); color: var(--high); }
+  .badge-medium { background: rgba(234,179,8,0.15); color: var(--medium); }
+  .badge-low { background: rgba(34,197,94,0.15); color: var(--low); }
+  .badge-info { background: rgba(59,130,246,0.15); color: var(--info); }
+
+  /* Corroborated badge */
+  .badge-corr {
+    background: var(--gradient-subtle);
+    color: var(--accent-1);
+    border: 1px solid rgba(249,115,22,0.2);
+  }
+
+  /* Footer */
+  .footer {
+    text-align: center;
+    padding: 24px 0;
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+  .footer a {
+    color: var(--text-dim);
+    text-decoration: none;
+  }
+  .footer a:hover { color: var(--text); }
+
+  /* Status indicator */
+  .status {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 500;
+  }
+  .status-pass { background: rgba(34,197,94,0.1); color: var(--low); }
+  .status-fail { background: rgba(239,68,68,0.1); color: var(--critical); }
+  .status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: currentColor;
+  }
+
+  /* Responsive */
+  @media (max-width: 640px) {
+    .kpis { grid-template-columns: repeat(2, 1fr); }
+    .kpi-value { font-size: 28px; }
+    .header { flex-direction: column; gap: 12px; text-align: center; }
+    .header-right { text-align: center; }
+    .bar-label { width: 80px; font-size: 11px; }
+    .findings-table .file { max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  }
+
+  /* Print */
+  @media print {
+    body { background: white; color: #1a1a1a; }
+    body::before, body::after { display: none; }
+    .kpi, .section { background: #f5f5f5; border-color: #ddd; backdrop-filter: none; }
+    .kpi-value.gradient { color: #f97316; -webkit-text-fill-color: #f97316; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- Header -->
+  <header class="header">
+    <div class="header-left">
+      <span class="logo">sniff</span>
+      <span class="version">v{{version}}</span>
+      <span class="status {{status_class}}">
+        <span class="status-dot"></span>
+        {{status_text}}
+      </span>
+    </div>
+    <div class="header-right">
+      <span>{{timestamp}}</span>
+      <span>{{target_url}}</span>
+    </div>
+  </header>
+
+  <!-- KPI Cards -->
+  <div class="kpis">
+    <div class="kpi">
+      <div class="kpi-value gradient">{{total_findings}}</div>
+      <div class="kpi-label">Total Findings</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-value critical">{{critical_count}}</div>
+      <div class="kpi-label">Critical</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-value high">{{high_count}}</div>
+      <div class="kpi-label">High</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-value medium">{{medium_count}}</div>
+      <div class="kpi-label">Medium</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-value low">{{low_count}}</div>
+      <div class="kpi-label">Low</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-value" style="color: var(--text)">{{files_scanned}}</div>
+      <div class="kpi-label">Files Scanned</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-value" style="color: var(--text)">{{duration}}</div>
+      <div class="kpi-label">Duration</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-value" style="color: var(--info)">{{corroborated_count}}</div>
+      <div class="kpi-label">Corroborated</div>
+    </div>
+  </div>
+
+  <!-- Charts -->
+  <div class="charts">
+    <!-- Donut: severity breakdown -->
+    <div class="section">
+      <div class="section-title">Severity Breakdown</div>
+      <div class="donut-wrap">
+        <div class="donut" style="position: relative;">
+          <div class="donut-center">
+            <div class="num">{{total_findings}}</div>
+            <div class="label">findings</div>
+          </div>
+        </div>
+        <div class="legend">
+          <div class="legend-item"><span class="legend-dot" style="background:var(--critical)"></span> Critical</div>
+          <div class="legend-item"><span class="legend-dot" style="background:var(--high)"></span> High</div>
+          <div class="legend-item"><span class="legend-dot" style="background:var(--medium)"></span> Medium</div>
+          <div class="legend-item"><span class="legend-dot" style="background:var(--low)"></span> Low</div>
+          <div class="legend-item"><span class="legend-dot" style="background:var(--info)"></span> Info</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bar: findings by category -->
+    <div class="section">
+      <div class="section-title">Findings by Check</div>
+      <div class="bars">
+        {{#each categories}}
+        <div class="bar-row">
+          <div class="bar-label">{{name}}</div>
+          <div class="bar-track">
+            <div class="bar-fill" style="width: {{pct}}%"><span>{{count}}</span></div>
+          </div>
+        </div>
+        {{/each}}
+      </div>
+    </div>
+  </div>
+
+  <!-- Findings Table -->
+  <div class="section">
+    <div class="section-title">All Findings</div>
+    <div style="overflow-x: auto;">
+      <table class="findings-table">
+        <thead>
+          <tr>
+            <th>Severity</th>
+            <th>File</th>
+            <th>Line</th>
+            <th>Message</th>
+            <th>Rule</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#each findings}}
+          <tr>
+            <td><span class="badge badge-{{severity}}">{{severity}}</span></td>
+            <td class="file">{{filePath}}</td>
+            <td class="line">{{line}}</td>
+            <td class="msg">{{message}}</td>
+            <td class="file">{{ruleId}}</td>
+          </tr>
+          {{/each}}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    Generated by <a href="https://github.com/Aboudjem/sniff">sniff</a> v{{version}}
+  </footer>
+
+</div>
+
+</body>
+</html>
