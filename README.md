@@ -78,80 +78,13 @@ CI mode auto-skips the AI explorer because it is non-deterministic. Everything e
 
 ## What it checks
 
-<table>
-<tr>
-<td width="50%" valign="top">
-
-**📄 Source code**
-
-```
-! HIGH (3)
-  src/api/handler.ts:42    Debugger statement
-  src/components/Hero.tsx:8 Lorem ipsum text
-  src/utils/auth.ts:15     FIXME comment
-```
-
-Leftover `debugger`, placeholder text, hardcoded URLs, broken imports, TODO/FIXME tags.
-
-</td>
-<td width="50%" valign="top">
-
-**♿ Accessibility** ([axe-core](https://github.com/dequelabs/axe-core))
-
-```
-! CRITICAL
-  /login  Missing form label
-  /login  Color contrast 2.1:1 (needs 4.5:1)
-```
-
-WCAG 2.x violations with exact fix guidance.
-
-</td>
-</tr>
-<tr>
-<td valign="top">
-
-**🖼 Visual regression** ([pixelmatch](https://github.com/mapbox/pixelmatch))
-
-```
-! HIGH
-  /pricing  2.3% pixels changed
-            (threshold: 0.1%)
-```
-
-Local pixel diffing. Commit baselines to track UI changes across PRs.
-
-</td>
-<td valign="top">
-
-**⚡ Performance** ([Lighthouse](https://developer.chrome.com/docs/lighthouse))
-
-```
-! HIGH
-  /dashboard  LCP 4200ms
-              budget 2500ms (68% over)
-```
-
-Defaults: LCP 2500ms, FCP 1800ms, TTI 3800ms.
-
-</td>
-</tr>
-<tr>
-<td colspan="2" valign="top">
-
-**🤖 AI explorer**
-
-```
-! HIGH
-  /signup  Console error filling email with: <script>alert(1)</script>
-           TypeError: Cannot read property 'trim' of undefined
-```
-
-Roams your app, fills forms with adversarial inputs (XSS, SQL injection, Unicode), reports crashes. Action trace saved to `.sniff/exploration-<timestamp>.json`.
-
-</td>
-</tr>
-</table>
+| | Check | Example finding | Details |
+|:--|:------|:----------------|:--------|
+| 📄 | **Source code** | `debugger` statement in `handler.ts:42` | Leftover debugger, placeholder text, hardcoded URLs, broken imports, TODO/FIXME |
+| ♿ | **Accessibility** | Missing form label on `/login` | WCAG 2.x violations via [axe-core](https://github.com/dequelabs/axe-core) with exact fix guidance |
+| 🖼 | **Visual regression** | `/pricing` changed 2.3% of pixels | Local pixel diffing via [pixelmatch](https://github.com/mapbox/pixelmatch). Commit baselines to track changes |
+| ⚡ | **Performance** | LCP 4200ms on `/dashboard` (budget: 2500ms) | [Lighthouse](https://developer.chrome.com/docs/lighthouse) budgets for LCP, FCP, TTI |
+| 🤖 | **AI explorer** | XSS in `/signup` email field crashes app | Roams your app, fills forms with adversarial inputs, reports crashes and console errors |
 
 <br/>
 
