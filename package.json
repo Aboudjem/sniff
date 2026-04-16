@@ -1,7 +1,7 @@
 {
   "name": "sniff-qa",
   "version": "0.1.0",
-  "description": "AI-powered autonomous QA testing -- scan, explore, and report bugs before users do",
+  "description": "AI powered autonomous QA testing. Scan, explore, and report bugs before users do. One command. Five checks. Zero config.",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",

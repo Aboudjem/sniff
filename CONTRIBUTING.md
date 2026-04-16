@@ -1,6 +1,6 @@
 # Contributing to Sniff
 
-Glad you're here. Whether it's a typo fix, a new scanner rule, or a whole new scanning dimension — it all moves the project forward.
+Glad you're here. Whether it's a typo fix, a new scanner rule, or a whole new scanning dimension · it all moves the project forward.
 
 ## Getting set up
 
@@ -29,13 +29,13 @@ You'll need **Node.js 22+** and optionally **Playwright browsers** (`npx playwri
 ```
 src/
   ai/              # AI providers (Claude Code CLI, Anthropic API)
-  analyzers/       # Static analysis — route discovery, element extraction
+  analyzers/       # Static analysis · route discovery, element extraction
   browser/         # Playwright runner + page hooks (console, network, screenshots)
   ci/              # GitHub Actions workflow generation
-  cli/             # Commander-based CLI — one file per command
+  cli/             # Commander-based CLI · one file per command
   config/          # Zod schemas + cosmiconfig loader
   core/            # Shared types, persistence layer, flakiness detection
-  exploration/     # Chaos monkey — AI explorer + edge-case payloads
+  exploration/     # Chaos monkey · AI explorer + edge-case payloads
   mcp/             # MCP server for AI editor integration
   report/          # HTML, JSON, JUnit report generators
   scanners/        # The actual scanners (source, accessibility, visual, performance)
@@ -45,17 +45,17 @@ src/
 
 ### Report a bug
 
-Use the [bug report form](https://github.com/Aboudjem/sniff/issues/new?template=bug_report.yml). Include your Node version, OS, and the full error output — it saves a lot of back-and-forth.
+Use the [bug report form](https://github.com/Aboudjem/sniff/issues/new?template=bug_report.yml). Include your Node version, OS, and the full error output · it saves a lot of back-and-forth.
 
 ### Suggest something
 
-Got an idea? Use the [feature request form](https://github.com/Aboudjem/sniff/issues/new?template=feature_request.yml). Focus on the problem you're trying to solve — that context helps us figure out the best approach together.
+Got an idea? Use the [feature request form](https://github.com/Aboudjem/sniff/issues/new?template=feature_request.yml). Focus on the problem you're trying to solve · that context helps us figure out the best approach together.
 
 ### Submit a pull request
 
 1. **Fork** the repo, branch off `main`
 2. **Write tests** for new behavior
-3. **Follow what's already there** — look at a similar file for patterns
+3. **Follow what's already there** · look at a similar file for patterns
 4. **Make sure it passes** before opening the PR:
    ```bash
    npm run build && npm test
@@ -68,7 +68,7 @@ Source rules are regex patterns with a severity level. Each one is a few lines o
 
 1. Create your rule in `src/scanners/source/rules/`
 2. Export it from `src/scanners/source/rules/index.ts`
-3. Done — the scanner picks it up automatically
+3. Done · the scanner picks it up automatically
 
 Look at the existing rules for the pattern. If you can write a regex, you can add a rule.
 
@@ -83,12 +83,12 @@ The scanner system is designed to be extended without touching core code:
 
 ## Code conventions
 
-- **ESM imports** with `.js` extensions — this is a TypeScript ESM project
+- **ESM imports** with `.js` extensions · this is a TypeScript ESM project
 - **Lazy imports** in CLI commands (`await import(...)`) to keep startup fast
 - **Zod** for all config and schema validation
 - **Vitest** for tests
 - **picocolors** for terminal colors (not chalk)
-- Keep things straightforward — don't add abstractions until the third time you need one
+- Keep things straightforward · don't add abstractions until the third time you need one
 
 ## Commit style
 
@@ -103,4 +103,4 @@ test: cover flakiness detection edge cases
 
 ## License
 
-Your contributions will be licensed under [Apache 2.0](LICENSE), same as the rest of the project. The [NOTICE](NOTICE) file carries attribution to the original author — that stays with any derivative work.
+Your contributions will be licensed under [Apache 2.0](LICENSE), same as the rest of the project. The [NOTICE](NOTICE) file carries attribution to the original author · that stays with any derivative work.
