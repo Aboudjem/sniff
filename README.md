@@ -182,13 +182,18 @@ Sniff auto-detects your dev server by reading `package.json` scripts and probing
 
 ```
 sniff                              Scan source + auto-detect dev server
-sniff --url <url>                  Scan source + test live site
+sniff --url <url>                  Scan source + test specific URL
 sniff --url <url> --ci             Full audit for CI pipelines
 sniff <path>                       Scan a specific directory
+sniff fix                          Auto-fix safe issues (debugger, console.log)
+sniff fix --check                  Dry run: show what would be fixed
 sniff init                         Create sniff.config.ts
 sniff ci                           Generate GitHub Actions workflow
 sniff report                       Show last scan results
 sniff update-baselines             Accept current visual baselines
+sniff doctor                       Check your environment (Node, Playwright, config, dev server)
+sniff --help                       Show all commands and flags
+sniff --version                    Show version
 ```
 
 <details>

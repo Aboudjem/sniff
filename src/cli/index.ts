@@ -31,10 +31,10 @@ if (process.argv.includes('--mcp')) {
   program
     .name('sniff')
     .description('AI-powered QA testing framework')
-    .version('0.2.0');
+    .version('0.2.1');
 
   // ── Default command: unified scan ──────────────────────────────
-  // `sniff`               → source scan only
+  // `sniff`               → source scan + auto-detect dev server
   // `sniff --url <url>`   → everything (source + a11y + visual + perf + AI explore)
   // `sniff --url X --ci`  → everything except exploration (deterministic for CI)
   program
@@ -135,6 +135,76 @@ if (process.argv.includes('--mcp')) {
     .action(async (options) => {
       const { updateBaselinesCommand } = await import('./commands/update-baselines.js');
       await updateBaselinesCommand(options);
+    });
+
+  program
+    .command('fix')
+    .description('Auto-fix safe issues (removes debugger, console.log/debug/info)')
+    .argument('[target]', 'Project directory (default: current directory)')
+    .option('--check', 'Dry run: show what would be fixed without changing files')
+    .option('--json', 'Output results as JSON')
+    .action(async (target, options) => {
+      const { fixCommand } = await import('./commands/fix.js');
+      const rootDir = target ? (await import('node:path')).resolve(target) : process.cwd();
+      await fixCommand({ rootDir, dryRun: !!options.check, json: !!options.json });
+    });
+
+  program
+    .command('doctor')
+    .description('Check your environment: Node.js, Playwright, config, dev server')
+    .action(async () => {
+      const pc = (await import('picocolors')).default;
+      const rootDir = process.cwd();
+
+      console.log(`\n${pc.bold('sniff doctor')}\n`);
+
+      // Node.js
+      const nodeVersion = process.version;
+      const nodeMajor = parseInt(nodeVersion.slice(1), 10);
+      const nodeOk = nodeMajor >= 22;
+      console.log(`  ${nodeOk ? pc.green('OK') : pc.red('!!  ')} Node.js ${nodeVersion} ${nodeOk ? '' : '(need 22+)'}`);
+
+      // Playwright
+      let playwrightOk = false;
+      try {
+        const { chromium } = await import('playwright');
+        chromium.executablePath();
+        playwrightOk = true;
+      } catch { /* not installed */ }
+      console.log(`  ${playwrightOk ? pc.green('OK') : pc.yellow('--')} Playwright ${playwrightOk ? 'installed' : 'not installed (auto-installs on first browser scan)'}`);
+
+      // Config file
+      const { loadConfig } = await import('../config/loader.js');
+      let hasConfig = false;
+      try {
+        const config = await loadConfig(rootDir);
+        hasConfig = !!config.browser?.baseUrl;
+        console.log(`  ${pc.green('OK')} Config loaded${hasConfig ? ` (baseUrl: ${config.browser?.baseUrl})` : ' (defaults)'}`);
+      } catch {
+        console.log(`  ${pc.green('OK')} No config file (using defaults)`);
+      }
+
+      // Dev server detection
+      const { detectDevServerUrl, getDevCommand } = await import('../config/dev-server-detector.js');
+      const detection = await detectDevServerUrl(rootDir);
+      if (detection.url) {
+        console.log(`  ${pc.green('OK')} Dev server found at ${pc.bold(detection.url)} (${detection.detail})`);
+      } else {
+        const devCmd = await getDevCommand(rootDir);
+        console.log(`  ${pc.yellow('--')} No dev server running${devCmd ? ` (try: ${devCmd})` : ''}`);
+      }
+
+      // Package.json
+      try {
+        const { readFile } = await import('node:fs/promises');
+        const { join } = await import('node:path');
+        const pkg = JSON.parse(await readFile(join(rootDir, 'package.json'), 'utf-8'));
+        console.log(`  ${pc.green('OK')} package.json found (${pkg.name ?? 'unnamed'})`);
+      } catch {
+        console.log(`  ${pc.yellow('--')} No package.json in current directory`);
+      }
+
+      console.log('');
     });
 
   await program.parseAsync();
