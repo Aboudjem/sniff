@@ -1,66 +1,66 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 200" fill="none">
   <style>
-    @keyframes bob { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
-    @keyframes blink { 0%,38%,42%,100% { ry: 10; } 40% { ry: 1; } }
-    @keyframes sniff { 0%,100% { transform: scale(1); } 30% { transform: scale(1.12); } 60% { transform: scale(0.92); } }
-    .cat { animation: bob 2.8s ease-in-out infinite; }
-    .eye-l, .eye-r { animation: blink 4.5s ease-in-out infinite; }
-    .eye-r { animation-delay: 0.1s; }
-    .nose { animation: sniff 1.4s ease-in-out infinite; transform-origin: 50px 58px; }
+    @keyframes bob { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+    @keyframes blink { 0%,36%,40%,100% { transform: scaleY(1); } 38% { transform: scaleY(0.05); } }
+    @keyframes sniff { 0%,100% { transform: scale(1); } 40% { transform: scale(1.08); } }
+    .cat { animation: bob 2.5s ease-in-out infinite; }
+    .eyes { animation: blink 4s ease-in-out infinite; transform-origin: 50px 46px; }
+    .nose { animation: sniff 1.6s ease-in-out infinite; transform-origin: 50px 56px; }
   </style>
-  <rect x="10" y="20" width="700" height="160" rx="24" fill="#1a0f08" stroke="#fb923c" stroke-width="1" stroke-opacity="0.12"/>
+  <rect x="10" y="20" width="700" height="160" rx="24" fill="#1a120c" stroke="#f9a03f" stroke-width="1" stroke-opacity="0.1"/>
 
-  <g class="cat" transform="translate(46, 28)">
+  <g class="cat" transform="translate(48, 30)">
     <!-- Tail -->
-    <path d="M 70 90 Q 108 50 95 25" stroke="#fb923c" stroke-width="7" fill="none" stroke-linecap="round"/>
+    <path d="M 68 88 Q 100 58 94 32" stroke="#f9a03f" stroke-width="6" fill="none" stroke-linecap="round"/>
 
     <!-- Body -->
-    <ellipse cx="50" cy="98" rx="26" ry="20" fill="#fb923c"/>
-    <ellipse cx="50" cy="102" rx="15" ry="12" fill="#fde68a"/>
+    <ellipse cx="50" cy="94" rx="22" ry="16" fill="#f9a03f"/>
+    <ellipse cx="50" cy="97" rx="13" ry="10" fill="#ffecd2"/>
 
     <!-- Head -->
-    <circle cx="50" cy="50" r="38" fill="#fb923c"/>
-    <ellipse cx="50" cy="55" rx="26" ry="22" fill="#fde68a"/>
+    <circle cx="50" cy="48" r="34" fill="#f9a03f"/>
+    <circle cx="50" cy="52" r="23" fill="#ffecd2"/>
 
     <!-- Ears -->
-    <polygon points="18,32 26,2 40,26" fill="#fb923c"/>
-    <polygon points="60,26 74,2 82,32" fill="#fb923c"/>
-    <polygon points="22,29 28,8 36,26" fill="#fef3c7"/>
-    <polygon points="64,26 72,8 78,29" fill="#fef3c7"/>
+    <polygon points="20,30 28,4 40,26" fill="#f9a03f"/>
+    <polygon points="60,26 72,4 80,30" fill="#f9a03f"/>
+    <polygon points="24,27 30,10 36,26" fill="#ffd6b0"/>
+    <polygon points="64,26 70,10 76,27" fill="#ffd6b0"/>
 
     <!-- Eyes -->
-    <ellipse class="eye-l" cx="36" cy="48" rx="10" ry="10" fill="#1c1917"/>
-    <ellipse class="eye-r" cx="64" cy="48" rx="10" ry="10" fill="#1c1917"/>
-    <circle cx="40" cy="44" r="4" fill="white"/>
-    <circle cx="68" cy="44" r="4" fill="white"/>
-    <circle cx="34" cy="51" r="1.8" fill="white" opacity="0.5"/>
-    <circle cx="62" cy="51" r="1.8" fill="white" opacity="0.5"/>
+    <g class="eyes">
+      <circle cx="38" cy="46" r="8" fill="#2d2118"/>
+      <circle cx="62" cy="46" r="8" fill="#2d2118"/>
+      <circle cx="41" cy="43" r="3.2" fill="white"/>
+      <circle cx="65" cy="43" r="3.2" fill="white"/>
+      <circle cx="36" cy="48" r="1.5" fill="white" opacity="0.4"/>
+      <circle cx="60" cy="48" r="1.5" fill="white" opacity="0.4"/>
+    </g>
 
     <!-- Blush -->
-    <ellipse cx="22" cy="58" rx="7" ry="4" fill="#fdba74" opacity="0.45"/>
-    <ellipse cx="78" cy="58" rx="7" ry="4" fill="#fdba74" opacity="0.45"/>
+    <ellipse cx="24" cy="55" rx="6" ry="3.5" fill="#ffb88c" opacity="0.4"/>
+    <ellipse cx="76" cy="55" rx="6" ry="3.5" fill="#ffb88c" opacity="0.4"/>
 
     <!-- Nose -->
     <g class="nose">
-      <ellipse cx="50" cy="58" rx="4.5" ry="3.5" fill="#f43f5e"/>
+      <ellipse cx="50" cy="56" rx="3.5" ry="2.8" fill="#e8596e"/>
     </g>
 
     <!-- Mouth -->
-    <path d="M 45 62 Q 47.5 66 50 62" stroke="#c8956b" stroke-width="1.2" fill="none" stroke-linecap="round"/>
-    <path d="M 50 62 Q 52.5 66 55 62" stroke="#c8956b" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+    <path d="M 46 59 Q 48 62 50 59 Q 52 62 54 59" stroke="#c4956e" stroke-width="1" fill="none" stroke-linecap="round"/>
 
     <!-- Whiskers -->
-    <line x1="10" y1="55" x2="30" y2="57" stroke="#d4a373" stroke-width="0.8" opacity="0.4"/>
-    <line x1="12" y1="63" x2="30" y2="62" stroke="#d4a373" stroke-width="0.8" opacity="0.4"/>
-    <line x1="70" y1="57" x2="90" y2="55" stroke="#d4a373" stroke-width="0.8" opacity="0.4"/>
-    <line x1="70" y1="62" x2="88" y2="63" stroke="#d4a373" stroke-width="0.8" opacity="0.4"/>
+    <line x1="16" y1="52" x2="32" y2="54" stroke="#a08060" stroke-width="0.7"/>
+    <line x1="18" y1="59" x2="33" y2="58" stroke="#a08060" stroke-width="0.7"/>
+    <line x1="68" y1="54" x2="84" y2="52" stroke="#a08060" stroke-width="0.7"/>
+    <line x1="67" y1="58" x2="82" y2="59" stroke="#a08060" stroke-width="0.7"/>
 
     <!-- Paws -->
-    <ellipse cx="34" cy="116" rx="10" ry="6" fill="#fb923c"/>
-    <ellipse cx="66" cy="116" rx="10" ry="6" fill="#fb923c"/>
+    <ellipse cx="36" cy="108" rx="9" ry="5" fill="#f9a03f"/>
+    <ellipse cx="64" cy="108" rx="9" ry="5" fill="#f9a03f"/>
   </g>
 
-  <text x="180" y="78" font-family="system-ui, -apple-system, sans-serif" font-size="50" font-weight="800" fill="#fef3c7" letter-spacing="-2">sniff</text>
-  <text x="180" y="112" font-family="system-ui, -apple-system, sans-serif" font-size="17" fill="#fb923c" font-weight="600">AI-Powered QA Testing</text>
-  <text x="180" y="144" font-family="system-ui, -apple-system, sans-serif" font-size="13" fill="#78716c">One command · Eight checks · Zero config</text>
+  <text x="178" y="78" font-family="system-ui, -apple-system, sans-serif" font-size="50" font-weight="800" fill="#ffecd2" letter-spacing="-2">sniff</text>
+  <text x="178" y="112" font-family="system-ui, -apple-system, sans-serif" font-size="17" fill="#e8596e" font-weight="600">AI-Powered QA Testing</text>
+  <text x="178" y="142" font-family="system-ui, -apple-system, sans-serif" font-size="13" fill="#8a7560">One command · Eight checks · Zero config</text>
 </svg>
