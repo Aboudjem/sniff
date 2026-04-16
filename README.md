@@ -33,68 +33,81 @@ npx sniff-qa --url http://localhost:3000
 
 ### Use from your AI editor
 
-Sniff ships as an MCP server. One command to add it, then ask your AI to scan.
+Sniff ships as an MCP server. Add it to your editor, then ask your AI to scan.
 
-<table>
-<tr><td><b>Claude Code</b></td><td>
+<details>
+<summary><b>Claude Code</b></summary>
 
 ```bash
 claude mcp add sniff-qa npx sniff-qa --mcp
 ```
-</td></tr>
-<tr><td><b>Cursor</b></td><td>
+</details>
+
+<details>
+<summary><b>Cursor</b></summary>
 
 Add to `~/.cursor/mcp.json`:
 ```json
 { "mcpServers": { "sniff-qa": { "type": "stdio", "command": "npx", "args": ["sniff-qa", "--mcp"] } } }
 ```
-</td></tr>
-<tr><td><b>VS Code + Copilot</b></td><td>
+</details>
+
+<details>
+<summary><b>VS Code + Copilot</b></summary>
 
 Add to `.vscode/mcp.json`:
 ```json
 { "servers": { "sniff-qa": { "type": "stdio", "command": "npx", "args": ["-y", "sniff-qa", "--mcp"] } } }
 ```
-</td></tr>
-<tr><td><b>Codex CLI</b></td><td>
+</details>
+
+<details>
+<summary><b>Codex CLI</b></summary>
 
 ```bash
 codex mcp add sniff-qa -- npx -y sniff-qa --mcp
 ```
-</td></tr>
-<tr><td><b>Windsurf</b></td><td>
+</details>
+
+<details>
+<summary><b>Windsurf</b></summary>
 
 Add to `~/.codeium/windsurf/mcp_config.json`:
 ```json
 { "mcpServers": { "sniff-qa": { "command": "npx", "args": ["sniff-qa", "--mcp"] } } }
 ```
-</td></tr>
-<tr><td><b>Gemini CLI</b></td><td>
+</details>
+
+<details>
+<summary><b>Gemini CLI</b></summary>
 
 Add to `~/.gemini/mcp_config.json`:
 ```json
 { "mcpServers": { "sniff-qa": { "command": "npx", "args": ["sniff-qa", "--mcp"] } } }
 ```
-</td></tr>
-<tr><td><b>Continue.dev</b></td><td>
+</details>
+
+<details>
+<summary><b>Continue.dev</b></summary>
 
 Add to `.continue/mcpServers/sniff-qa.yaml`:
 ```yaml
 mcpServers:
   sniff-qa: { command: npx, args: [sniff-qa, --mcp], type: stdio }
 ```
-</td></tr>
-<tr><td><b>OpenClaw</b></td><td>
+</details>
+
+<details>
+<summary><b>OpenClaw</b></summary>
 
 ```bash
 clawhub install sniff-qa
 ```
-</td></tr>
-</table>
+</details>
 
-Then ask your AI: *"Scan this project for issues"* or *"Check accessibility on localhost:3000"*
+Then ask: *"Scan this project for issues"* or *"Check accessibility on localhost:3000"*
 
-**MCP tools:** `sniff_scan` (source scan) · `sniff_run` (browser audit) · `sniff_report` (last results)
+**MCP tools:** `sniff_scan` (source) · `sniff_run` (browser) · `sniff_report` (results)
 
 ### Install as a dev dependency
 
