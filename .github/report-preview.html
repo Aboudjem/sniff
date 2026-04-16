@@ -340,6 +340,49 @@
 <body>
 <div class="container">
 
+  <!-- Animated Cat -->
+  <div style="text-align:center;margin-bottom:8px;animation:fadeUp 0.4s ease both;">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 120" width="80" height="96" fill="none" style="filter:drop-shadow(0 0 12px rgba(249,115,22,0.2))">
+      <style>
+        @keyframes catBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+        @keyframes catBlink{0%,38%,42%,100%{transform:scaleY(1)}40%{transform:scaleY(0.05)}}
+        @keyframes catSniff{0%,100%{transform:scale(1)}40%{transform:scale(1.1)}}
+        .cb{animation:catBob 2.5s ease-in-out infinite}
+        .ce{animation:catBlink 4.5s ease-in-out infinite;transform-origin:50px 46px}
+        .cn{animation:catSniff 1.6s ease-in-out infinite;transform-origin:50px 56px}
+      </style>
+      <g class="cb" transform="translate(0,-2)">
+        <path d="M68 88Q100 58 94 32" stroke="#f9a03f" stroke-width="6" fill="none" stroke-linecap="round"/>
+        <ellipse cx="50" cy="94" rx="22" ry="16" fill="#f9a03f"/>
+        <ellipse cx="50" cy="97" rx="13" ry="10" fill="#ffecd2"/>
+        <circle cx="50" cy="48" r="34" fill="#f9a03f"/>
+        <circle cx="50" cy="52" r="23" fill="#ffecd2"/>
+        <polygon points="18,30 26,2 40,26" fill="#f9a03f"/>
+        <polygon points="60,26 72,2 80,30" fill="#f9a03f"/>
+        <polygon points="22,27 28,8 36,26" fill="#ffd6b0"/>
+        <polygon points="64,26 70,8 76,27" fill="#ffd6b0"/>
+        <g class="ce">
+          <circle cx="38" cy="46" r="8" fill="#2d2118"/>
+          <circle cx="62" cy="46" r="8" fill="#2d2118"/>
+          <circle cx="41" cy="43" r="3.2" fill="white"/>
+          <circle cx="65" cy="43" r="3.2" fill="white"/>
+          <circle cx="36" cy="48" r="1.5" fill="white" opacity="0.4"/>
+          <circle cx="60" cy="48" r="1.5" fill="white" opacity="0.4"/>
+        </g>
+        <ellipse cx="24" cy="55" rx="6" ry="3.5" fill="#ffb88c" opacity="0.45"/>
+        <ellipse cx="76" cy="55" rx="6" ry="3.5" fill="#ffb88c" opacity="0.45"/>
+        <g class="cn"><ellipse cx="50" cy="56" rx="3.5" ry="2.8" fill="#e8596e"/></g>
+        <path d="M46 59Q48 62 50 59Q52 62 54 59" stroke="#c4956e" stroke-width="1" fill="none" stroke-linecap="round"/>
+        <line x1="16" y1="52" x2="32" y2="54" stroke="#ddb896" stroke-width="0.7"/>
+        <line x1="18" y1="59" x2="33" y2="58" stroke="#ddb896" stroke-width="0.7"/>
+        <line x1="68" y1="54" x2="84" y2="52" stroke="#ddb896" stroke-width="0.7"/>
+        <line x1="67" y1="58" x2="82" y2="59" stroke="#ddb896" stroke-width="0.7"/>
+        <ellipse cx="36" cy="108" rx="9" ry="5" fill="#f9a03f"/>
+        <ellipse cx="64" cy="108" rx="9" ry="5" fill="#f9a03f"/>
+      </g>
+    </svg>
+  </div>
+
   <header class="header">
     <div class="header-left">
       <span class="logo">sniff</span>
