@@ -29,7 +29,8 @@ export async function exploreCommand(options: {
   const provider = new ClaudeExplorationProvider();
   const runner = new ExplorationRunner(config, provider);
 
-  console.log(`\nSniff v0.2.0 -- Chaos Monkey Exploration\n`);
+  const { getVersion } = await import('../../version.js');
+  console.log(`\nSniff v${getVersion()} - Chaos Monkey Exploration\n`);
   console.log(`  Target: ${baseUrl}`);
   console.log(`  Max steps: ${maxSteps}\n`);
 

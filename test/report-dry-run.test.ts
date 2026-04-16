@@ -124,7 +124,7 @@ describe('Report generators dry-run', () => {
     expect(report.summary.byScanner).toHaveProperty('accessibility');
     expect(report.summary.byScanner).toHaveProperty('performance');
     expect(report.findings).toHaveLength(5);
-    expect(report.metadata.version).toBe('0.1.0');
+    expect(report.metadata.version).toMatch(/^\d+\.\d+\.\d+$/);
   });
 
   it('generateJsonReport produces valid JSON', () => {

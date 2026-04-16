@@ -37,7 +37,8 @@ export async function fixCommand(options: FixOptions): Promise<void> {
   const pc = (await import('picocolors')).default;
 
   if (!options.json) {
-    console.log(`\n${pc.bold('sniff')} v0.2.1 --fix\n`);
+    const { getVersion } = await import('../../version.js');
+    console.log(`\n${pc.bold('sniff')} v${getVersion()} --fix\n`);
   }
 
   const files = await fg(['**/*.{ts,tsx,js,jsx}'], {

@@ -26,12 +26,14 @@ if (process.argv.includes('--mcp')) {
     }
   }
 
+  const { getVersion } = await import('../version.js');
+
   const program = new Command();
 
   program
     .name('sniff')
     .description('AI-powered QA testing framework')
-    .version('0.2.1');
+    .version(getVersion());
 
   // ── Default command: unified scan ──────────────────────────────
   // `sniff`               → source scan + auto-detect dev server

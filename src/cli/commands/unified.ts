@@ -36,7 +36,8 @@ export async function unifiedCommand(options: UnifiedOptions): Promise<void> {
   }
 
   if (!options.json) {
-    console.log(`\n${pc.bold('sniff')} v0.2.0\n`);
+    const { getVersion } = await import('../../version.js');
+    console.log(`\n${pc.bold('sniff')} v${getVersion()}\n`);
   }
 
   // ── Phase 1: Source scan (always runs) ─────────────────────────

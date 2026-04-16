@@ -2,11 +2,12 @@ import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { z } from 'zod';
 import { handleSniffScan, handleSniffRun, handleSniffReport } from './handlers.js';
+import { getVersion } from '../version.js';
 
 export async function startMcpServer(): Promise<void> {
   const server = new McpServer({
     name: 'sniff',
-    version: '0.2.0',
+    version: getVersion(),
   });
 
   // Tool: sniff_scan -- static source analysis (no browser needed)

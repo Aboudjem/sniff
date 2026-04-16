@@ -3,6 +3,7 @@ import { join } from 'node:path';
 import type { ScanResult } from '../scanners/types.js';
 import type { Severity, Finding } from '../core/types.js';
 import type { SniffReport, ReportMetadata, ReportSummary, Screenshot } from './types.js';
+import { getVersion } from '../version.js';
 
 const ALL_SEVERITIES: Severity[] = ['critical', 'high', 'medium', 'low', 'info'];
 
@@ -51,14 +52,7 @@ export function buildReport(
     performanceMetrics = perfResult.metadata.metrics as SniffReport['performanceMetrics'];
   }
 
-  // Read version
-  let version = '0.1.0';
-  try {
-    // This is a sync-safe fallback; actual version read happens at build time
-    version = '0.1.0';
-  } catch {
-    // Keep default
-  }
+  const version = getVersion();
 
   const summary: ReportSummary = {
     total: findings.length,

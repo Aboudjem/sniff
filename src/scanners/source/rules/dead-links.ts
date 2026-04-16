@@ -237,7 +237,7 @@ async function validateExternalLink(
         signal: controller.signal,
         redirect: config.followRedirects ? 'follow' : 'manual',
         headers: {
-          'User-Agent': 'sniff-qa/0.2.0 (link-checker)',
+          'User-Agent': 'sniff-qa (link-checker)',
         },
       });
 
@@ -257,7 +257,7 @@ async function validateExternalLink(
           signal: getController.signal,
           redirect: config.followRedirects ? 'follow' : 'manual',
           headers: {
-            'User-Agent': 'sniff-qa/0.2.0 (link-checker)',
+            'User-Agent': 'sniff-qa (link-checker)',
           },
         });
 
