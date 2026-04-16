@@ -25,10 +25,11 @@ cd ~/projects/my-app    # go to your project
 npx sniff-qa            # scan source code
 ```
 
-Add `--url` to also check your live site:
+Add `--url` to also check your running app (localhost, staging, or production):
 
 ```bash
-npx sniff-qa --url http://localhost:3000
+npx sniff-qa --url http://localhost:3000    # local dev server
+npx sniff-qa --url https://myapp.com        # or any live URL
 ```
 
 ### Use from your AI editor
