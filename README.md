@@ -22,15 +22,19 @@
 
 ```bash
 cd ~/projects/my-app    # go to your project
-npx sniff-qa            # scan source code
+npx sniff-qa            # that's it
 ```
 
-Add `--url` to also check your running app (localhost, staging, or production):
+Sniff auto-detects everything: your framework, your dev server port, and your running app. If `npm run dev` is running, sniff finds it and runs browser checks too. No flags needed.
+
+You can also be explicit:
 
 ```bash
-npx sniff-qa --url http://localhost:3000    # local dev server
-npx sniff-qa --url https://myapp.com        # or any live URL
+npx sniff-qa --url http://localhost:3000    # specific local URL
+npx sniff-qa --url https://myapp.com        # production URL
 ```
+
+> **No API keys. No Playwright install. No config files.** Everything works out of the box. Browser checks auto-install Chromium on first run.
 
 ### Use from your AI editor
 
@@ -132,12 +136,13 @@ Requires Node.js 22+. Playwright installs automatically on first browser scan.
 ## Usage
 
 ```bash
-npx sniff-qa                                        # scan source code
-npx sniff-qa --url http://localhost:3000             # scan source + live site
+npx sniff-qa                                        # scan source + auto-detect dev server
+npx sniff-qa --url https://myapp.com                # scan source + specific URL
 npx sniff-qa ./path/to/project                      # scan a specific directory
-npx sniff-qa ./path/to/project --url https://app.com # scan dir + live site
-npx sniff-qa --url http://localhost:3000 --ci        # CI mode (JUnit, no AI)
+npx sniff-qa --ci                                   # CI mode (JUnit output, no AI explorer)
 ```
+
+Sniff auto-detects your dev server by reading `package.json` scripts and probing common ports (3000, 5173, 8080, 4200). If it finds a running server, browser checks run automatically.
 
 ---
 
@@ -165,8 +170,18 @@ npx sniff-qa --url http://localhost:3000 --ci        # CI mode (JUnit, no AI)
 
 ## Commands
 
+### Slash commands (AI editors)
+
+| Command | What it does |
+|:--------|:-------------|
+| `/sniff` | Scan the project. Auto-detects dev server, runs source + browser checks |
+| `/sniff-fix` | Scan and auto-fix safe issues (debugger, console.log, etc.) |
+| `/sniff-report` | Show results from the last scan |
+
+### CLI
+
 ```
-sniff                              Scan source code
+sniff                              Scan source + auto-detect dev server
 sniff --url <url>                  Scan source + test live site
 sniff --url <url> --ci             Full audit for CI pipelines
 sniff <path>                       Scan a specific directory
@@ -339,10 +354,10 @@ Generates `.github/workflows/sniff.yml` with Playwright caching, JUnit output, a
 
 ## Privacy
 
-No telemetry. No signup. No data collection. Your code stays on your machine.
+No telemetry. No signup. No data collection. No API keys. Your code stays on your machine.
 
 > [!NOTE]
-> The AI explorer needs an Anthropic API key. Everything else works offline. Dead link checking validates external URLs but never sends your code.
+> All 8 checks work without any API key. The AI explorer uses Claude Code as the AI provider when run through MCP, so no separate Anthropic key is needed. Dead link checking validates external URLs but never sends your code.
 
 ---
 
