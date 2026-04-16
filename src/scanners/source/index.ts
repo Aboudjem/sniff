@@ -5,7 +5,9 @@ import { performance } from 'node:perf_hooks';
 
 import type { Scanner, ScanContext, ScanResult } from '../types.js';
 import type { Finding } from '../../core/types.js';
-import { allRules, type SourceRule } from './rules/index.js';
+import { allRules, type SourceRule, scanFileForDeadLinks, defaultDeadLinkConfig, scanForApiEndpoints, defaultApiEndpointsConfig } from './rules/index.js';
+import type { DeadLinkConfig } from './rules/index.js';
+import type { ApiEndpointsConfig } from './rules/index.js';
 
 const IMPORT_PATH_RE = /from\s+['"](\.\.?\/[^'"]+)['"]/;
 
@@ -90,6 +92,59 @@ export class SourceScanner implements Scanner {
       );
       for (const result of batchResults) {
         findings.push(...result);
+      }
+    }
+
+    // Dead link checking (runs separately from regex rules)
+    const deadLinksEnabled = ctx.config.rules['dead-link-internal'] !== 'off'
+      && ctx.config.rules['dead-link-internal'] !== false;
+
+    if (deadLinksEnabled) {
+      const dlConfig: DeadLinkConfig = {
+        ...defaultDeadLinkConfig,
+        ...ctx.config.deadLinks,
+      };
+
+      // Include link-containing file types
+      const linkGlobs = ['**/*.{md,mdx,html,htm,jsx,tsx,js,ts,vue,svelte,astro}'];
+      const linkFiles = await fg(linkGlobs, {
+        cwd: ctx.rootDir,
+        ignore: ctx.config.exclude,
+        absolute: true,
+      });
+
+      for (let i = 0; i < linkFiles.length; i += 50) {
+        const batch = linkFiles.slice(i, i + 50);
+        const batchResults = await Promise.all(
+          batch.map(async (filePath) => {
+            const content = await readFile(filePath, 'utf-8');
+            const relPath = relative(ctx.rootDir, filePath);
+            return scanFileForDeadLinks(filePath, relPath, content, ctx.rootDir, dlConfig);
+          }),
+        );
+        for (const result of batchResults) {
+          findings.push(...result);
+        }
+      }
+    }
+
+    // API endpoint discovery
+    const apiEnabled = ctx.config.rules['api-endpoints-discovered'] !== 'off'
+      && ctx.config.rules['api-endpoints-discovered'] !== false;
+
+    if (apiEnabled) {
+      const apiConfig: ApiEndpointsConfig = {
+        ...defaultApiEndpointsConfig,
+        ...ctx.config.apiEndpoints,
+      };
+
+      if (apiConfig.enabled) {
+        const { findings: apiFindings } = await scanForApiEndpoints(
+          ctx.rootDir,
+          apiConfig,
+          ctx.config.exclude,
+        );
+        findings.push(...apiFindings);
       }
     }
 

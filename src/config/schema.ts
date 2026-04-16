@@ -70,6 +70,25 @@ export const explorationConfigSchema = z.object({
   viewport: viewportConfigSchema.default({ name: 'desktop', width: 1280, height: 720 }),
 });
 
+export const apiEndpointsConfigSchema = z.object({
+  enabled: z.boolean().default(true),
+  checkErrorHandling: z.boolean().default(true),
+  checkValidation: z.boolean().default(true),
+  checkAuth: z.boolean().default(true),
+  checkSecrets: z.boolean().default(true),
+  frameworks: z.array(z.string()).default([]),
+});
+
+export const deadLinksConfigSchema = z.object({
+  enabled: z.boolean().default(true),
+  checkExternal: z.boolean().default(true),
+  timeout: z.number().default(5000),
+  retries: z.number().default(2),
+  ignorePatterns: z.array(z.string()).default([]),
+  followRedirects: z.boolean().default(true),
+  maxConcurrent: z.number().default(10),
+});
+
 export const flakinessConfigSchema = z.object({
   enabled: z.boolean().default(false),
   windowSize: z.number().default(5),
@@ -95,6 +114,8 @@ export const sniffConfigSchema = z.object({
   visual: visualConfigSchema.optional(),
   performance: performanceConfigSchema.optional(),
   report: reportConfigSchema.optional(),
+  apiEndpoints: apiEndpointsConfigSchema.optional(),
+  deadLinks: deadLinksConfigSchema.optional(),
   flakiness: flakinessConfigSchema.optional(),
   exploration: explorationConfigSchema.optional(),
 });
@@ -109,5 +130,7 @@ export type AccessibilityConfig = z.output<typeof accessibilityConfigSchema>;
 export type VisualConfig = z.output<typeof visualConfigSchema>;
 export type PerformanceConfig = z.output<typeof performanceConfigSchema>;
 export type ReportConfig = z.output<typeof reportConfigSchema>;
+export type ApiEndpointsConfig = z.output<typeof apiEndpointsConfigSchema>;
+export type DeadLinksConfig = z.output<typeof deadLinksConfigSchema>;
 export type FlakinessConfig = z.output<typeof flakinessConfigSchema>;
 export type ExplorationConfig = z.output<typeof explorationConfigSchema>;

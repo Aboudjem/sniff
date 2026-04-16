@@ -1,0 +1,94 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 480" font-family="-apple-system, system-ui, sans-serif">
+  <defs>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#00000040"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="480" rx="16" fill="#0f172a"/>
+
+  <!-- Title -->
+  <text x="600" y="40" text-anchor="middle" font-size="18" font-weight="700" fill="#f1f5f9">Sniff Pipeline: 8 Checks in One Command</text>
+
+  <!-- Input -->
+  <rect x="30" y="70" width="160" height="70" rx="12" fill="#451a03" stroke="#ef4444" stroke-width="1.5" filter="url(#shadow)"/>
+  <text x="110" y="100" text-anchor="middle" font-size="13" font-weight="600" fill="#fca5a5">Your Project</text>
+  <text x="110" y="118" text-anchor="middle" font-size="10" fill="#fecaca">Source + Browser</text>
+
+  <!-- Arrow from input -->
+  <line x1="190" y1="105" x2="230" y2="105" stroke="#ef4444" stroke-width="2" marker-end="url(#arrowRed)"/>
+  <defs><marker id="arrowRed" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" fill="#ef4444"/></marker></defs>
+
+  <!-- Source Scanner Block -->
+  <rect x="230" y="60" width="320" height="200" rx="12" fill="#1e293b" stroke="#334155" stroke-width="1" filter="url(#shadow)"/>
+  <text x="390" y="85" text-anchor="middle" font-size="14" font-weight="700" fill="#f1f5f9">Source Scanner</text>
+
+  <rect x="250" y="96" width="130" height="32" rx="6" fill="#2d1519" stroke="#7f1d1d" stroke-width="1"/>
+  <text x="315" y="116" text-anchor="middle" font-size="10" font-weight="500" fill="#fca5a5">Debug Statements</text>
+
+  <rect x="400" y="96" width="130" height="32" rx="6" fill="#2d1519" stroke="#7f1d1d" stroke-width="1"/>
+  <text x="465" y="116" text-anchor="middle" font-size="10" font-weight="500" fill="#fca5a5">Placeholder Text</text>
+
+  <rect x="250" y="136" width="130" height="32" rx="6" fill="#2d1519" stroke="#7f1d1d" stroke-width="1"/>
+  <text x="315" y="156" text-anchor="middle" font-size="10" font-weight="500" fill="#fca5a5">Hardcoded URLs</text>
+
+  <rect x="400" y="136" width="130" height="32" rx="6" fill="#2d1519" stroke="#7f1d1d" stroke-width="1"/>
+  <text x="465" y="156" text-anchor="middle" font-size="10" font-weight="500" fill="#fca5a5">Broken Imports</text>
+
+  <rect x="250" y="176" width="130" height="32" rx="6" fill="#052e16" stroke="#22c55e" stroke-width="1"/>
+  <text x="315" y="196" text-anchor="middle" font-size="10" font-weight="600" fill="#86efac">Dead Links</text>
+  <text x="315" y="203" text-anchor="middle" font-size="7" fill="#86efac">NEW</text>
+
+  <rect x="400" y="176" width="130" height="32" rx="6" fill="#052e16" stroke="#22c55e" stroke-width="1"/>
+  <text x="465" y="196" text-anchor="middle" font-size="10" font-weight="600" fill="#86efac">API Endpoints</text>
+  <text x="465" y="203" text-anchor="middle" font-size="7" fill="#86efac">NEW</text>
+
+  <rect x="250" y="220" width="280" height="28" rx="6" fill="#172554" stroke="#3b82f6" stroke-width="1"/>
+  <text x="390" y="239" text-anchor="middle" font-size="10" font-weight="500" fill="#93c5fd">Repo Analyzer (framework detection, route discovery)</text>
+
+  <!-- Browser Scanner Block -->
+  <rect x="230" y="280" width="320" height="170" rx="12" fill="#1e293b" stroke="#334155" stroke-width="1" filter="url(#shadow)"/>
+  <text x="390" y="305" text-anchor="middle" font-size="14" font-weight="700" fill="#f1f5f9">Browser Runner</text>
+  <text x="390" y="320" text-anchor="middle" font-size="9" fill="#94a3b8">Playwright + URL required</text>
+
+  <rect x="250" y="332" width="130" height="32" rx="6" fill="#2e1065" stroke="#7c3aed" stroke-width="1"/>
+  <text x="315" y="352" text-anchor="middle" font-size="10" font-weight="500" fill="#c4b5fd">Accessibility</text>
+
+  <rect x="400" y="332" width="130" height="32" rx="6" fill="#451a03" stroke="#f59e0b" stroke-width="1"/>
+  <text x="465" y="352" text-anchor="middle" font-size="10" font-weight="500" fill="#fcd34d">Visual Regression</text>
+
+  <rect x="250" y="372" width="130" height="32" rx="6" fill="#022c22" stroke="#059669" stroke-width="1"/>
+  <text x="315" y="392" text-anchor="middle" font-size="10" font-weight="500" fill="#6ee7b7">Performance</text>
+
+  <rect x="400" y="372" width="130" height="32" rx="6" fill="#4c0519" stroke="#f43f5e" stroke-width="1"/>
+  <text x="465" y="392" text-anchor="middle" font-size="10" font-weight="500" fill="#fda4af">AI Explorer</text>
+
+  <line x1="110" y1="140" x2="110" y2="360" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="4"/>
+  <line x1="110" y1="360" x2="230" y2="360" stroke="#ef4444" stroke-width="2" marker-end="url(#arrowRed)"/>
+
+  <!-- Cross-Reference Engine -->
+  <rect x="610" y="180" width="200" height="100" rx="12" fill="#052e16" stroke="#22c55e" stroke-width="2" filter="url(#shadow)"/>
+  <text x="710" y="210" text-anchor="middle" font-size="13" font-weight="700" fill="#86efac">Cross-Reference</text>
+  <text x="710" y="228" text-anchor="middle" font-size="10" fill="#86efac">Source + Browser</text>
+  <text x="710" y="244" text-anchor="middle" font-size="10" fill="#86efac">Correlation Engine</text>
+  <text x="710" y="270" text-anchor="middle" font-size="8" font-weight="600" fill="#4ade80">NEW</text>
+
+  <line x1="550" y1="160" x2="610" y2="210" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrowGray)"/>
+  <line x1="550" y1="365" x2="610" y2="260" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrowGray)"/>
+  <defs><marker id="arrowGray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" fill="#64748b"/></marker></defs>
+
+  <!-- Report Output -->
+  <rect x="880" y="170" width="280" height="120" rx="12" fill="#0c0a09" stroke="#ef4444" stroke-width="1.5" filter="url(#shadow)"/>
+  <text x="1020" y="200" text-anchor="middle" font-size="14" font-weight="700" fill="#f8fafc">Report</text>
+  <text x="1020" y="222" text-anchor="middle" font-size="10" fill="#94a3b8">HTML + JSON + JUnit</text>
+  <text x="1020" y="242" text-anchor="middle" font-size="10" fill="#94a3b8">Actionable findings with fixes</text>
+  <text x="1020" y="262" text-anchor="middle" font-size="10" fill="#94a3b8">Severity scores + corroboration</text>
+  <text x="1020" y="278" text-anchor="middle" font-size="10" fill="#fbbf24">Flakiness quarantine built in</text>
+
+  <line x1="810" y1="230" x2="880" y2="230" stroke="#22c55e" stroke-width="2" marker-end="url(#arrowGreen)"/>
+  <defs><marker id="arrowGreen" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" fill="#22c55e"/></marker></defs>
+
+  <line x1="550" y1="130" x2="880" y2="195" stroke="#475569" stroke-width="1" stroke-dasharray="4"/>
+  <line x1="550" y1="400" x2="880" y2="265" stroke="#475569" stroke-width="1" stroke-dasharray="4"/>
+</svg>

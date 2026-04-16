@@ -36,7 +36,7 @@ export async function unifiedCommand(options: UnifiedOptions): Promise<void> {
   }
 
   if (!options.json) {
-    console.log(`\n${pc.bold('sniff')} v0.1.0\n`);
+    console.log(`\n${pc.bold('sniff')} v0.2.0\n`);
   }
 
   // ── Phase 1: Source scan (always runs) ─────────────────────────
@@ -198,6 +198,31 @@ export async function unifiedCommand(options: UnifiedOptions): Promise<void> {
     if (!options.json) {
       for (const p of savedPaths) {
         console.log(pc.dim(`  Report: ${p}`));
+      }
+    }
+  }
+
+  // ── Cross-reference: correlate source + browser findings ───────
+  if (options.url) {
+    const { crossReference, crossReferenceSummary } = await import('../../analyzers/cross-reference.js');
+    const allFindingsSoFar = allResults.flatMap((r) => r.findings);
+    const sourceFindingsForXref = allFindingsSoFar.filter((f) => !('url' in f));
+    const browserFindingsForXref = allFindingsSoFar.filter((f) => 'url' in f);
+
+    const corroborated = crossReference(sourceFindingsForXref, browserFindingsForXref);
+
+    if (corroborated.length > 0) {
+      const summary = crossReferenceSummary(corroborated);
+      const xrefFindings = [...corroborated, ...(summary ? [summary] : [])];
+
+      allResults.push({
+        scanner: 'cross-reference',
+        findings: xrefFindings,
+        duration: 0,
+      });
+
+      if (!options.json) {
+        console.log(`\n${pc.cyan('[xref]')} ${corroborated.length} finding(s) corroborated by source + browser evidence`);
       }
     }
   }

@@ -4,6 +4,12 @@ import { debugRules } from './debug.js';
 import { hardcodedRules } from './hardcoded.js';
 import { importRules } from './imports.js';
 
+export { scanFileForDeadLinks, defaultDeadLinkConfig } from './dead-links.js';
+export type { DeadLinkConfig } from './dead-links.js';
+
+export { scanForApiEndpoints, defaultApiEndpointsConfig } from './api-endpoints.js';
+export type { ApiEndpointsConfig, DiscoveredEndpoint } from './api-endpoints.js';
+
 export interface SourceRule {
   id: string;
   severity: Severity;

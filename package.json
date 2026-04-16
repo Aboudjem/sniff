@@ -1,6 +1,6 @@
 {
   "name": "sniff-qa",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "AI-powered QA testing tool. Source scanning, accessibility audits, visual regression, performance budgets, and AI exploration in one command. Uses Playwright, axe-core, and Lighthouse. Zero config.",
   "type": "module",
   "main": "./dist/index.js",

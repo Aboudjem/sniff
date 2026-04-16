@@ -31,7 +31,7 @@ if (process.argv.includes('--mcp')) {
   program
     .name('sniff')
     .description('AI-powered QA testing framework')
-    .version('0.1.0');
+    .version('0.2.0');
 
   // ── Default command: unified scan ──────────────────────────────
   // `sniff`               → source scan only

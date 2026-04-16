@@ -81,7 +81,7 @@ export async function runCommand(options: {
     { name: 'tablet', width: 768, height: 1024 },
   ];
 
-  console.log(`\nSniff v0.1.0 — Running quality scan\n`);
+  console.log(`\nSniff v0.2.0 — Running quality scan\n`);
 
   // Discover test files
   const testDir = join(process.cwd(), config.ai?.outputDir ?? 'sniff-tests');

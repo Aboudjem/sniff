@@ -1,0 +1,105 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 580" font-family="-apple-system, system-ui, sans-serif">
+  <defs>
+    <filter id="s" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#00000040"/>
+    </filter>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10z" fill="#64748b"/></marker>
+    <marker id="ag" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10z" fill="#22c55e"/></marker>
+  </defs>
+
+  <rect width="1100" height="580" rx="16" fill="#0f172a"/>
+  <text x="550" y="36" text-anchor="middle" font-size="18" font-weight="700" fill="#f1f5f9">Sniff Architecture</text>
+
+  <!-- CLI -->
+  <rect x="30" y="56" width="200" height="80" rx="10" fill="#451a03" stroke="#ef4444" stroke-width="1.5" filter="url(#s)"/>
+  <text x="130" y="82" text-anchor="middle" font-size="13" font-weight="700" fill="#fca5a5">CLI</text>
+  <text x="130" y="100" text-anchor="middle" font-size="10" fill="#fecaca">sniff / npx sniff-qa</text>
+  <text x="130" y="116" text-anchor="middle" font-size="9" fill="#94a3b8">commander.js</text>
+
+  <!-- MCP -->
+  <rect x="30" y="150" width="200" height="60" rx="10" fill="#172554" stroke="#3b82f6" stroke-width="1.5" filter="url(#s)"/>
+  <text x="130" y="176" text-anchor="middle" font-size="13" font-weight="700" fill="#93c5fd">MCP Server</text>
+  <text x="130" y="194" text-anchor="middle" font-size="9" fill="#94a3b8">sniff_scan / sniff_run / sniff_report</text>
+
+  <!-- Config -->
+  <rect x="30" y="228" width="200" height="50" rx="10" fill="#1e293b" stroke="#334155" stroke-width="1" filter="url(#s)"/>
+  <text x="130" y="250" text-anchor="middle" font-size="12" font-weight="600" fill="#e2e8f0">Config Loader</text>
+  <text x="130" y="266" text-anchor="middle" font-size="9" fill="#94a3b8">cosmiconfig + zod</text>
+
+  <!-- Source Scanner -->
+  <rect x="300" y="56" width="340" height="230" rx="12" fill="#1e293b" stroke="#334155" stroke-width="1" filter="url(#s)"/>
+  <text x="470" y="82" text-anchor="middle" font-size="14" font-weight="700" fill="#f1f5f9">Source Scanner</text>
+
+  <rect x="320" y="96" width="140" height="28" rx="5" fill="#2d1519" stroke="#7f1d1d"/>
+  <text x="390" y="114" text-anchor="middle" font-size="10" fill="#fca5a5">Debug Rules</text>
+  <rect x="480" y="96" width="140" height="28" rx="5" fill="#2d1519" stroke="#7f1d1d"/>
+  <text x="550" y="114" text-anchor="middle" font-size="10" fill="#fca5a5">Placeholder Rules</text>
+  <rect x="320" y="132" width="140" height="28" rx="5" fill="#2d1519" stroke="#7f1d1d"/>
+  <text x="390" y="150" text-anchor="middle" font-size="10" fill="#fca5a5">Hardcoded Rules</text>
+  <rect x="480" y="132" width="140" height="28" rx="5" fill="#2d1519" stroke="#7f1d1d"/>
+  <text x="550" y="150" text-anchor="middle" font-size="10" fill="#fca5a5">Import Rules</text>
+
+  <rect x="320" y="170" width="140" height="28" rx="5" fill="#052e16" stroke="#22c55e"/>
+  <text x="390" y="188" text-anchor="middle" font-size="10" font-weight="600" fill="#86efac">Dead Link Checker</text>
+  <rect x="480" y="170" width="140" height="28" rx="5" fill="#052e16" stroke="#22c55e"/>
+  <text x="550" y="188" text-anchor="middle" font-size="10" font-weight="600" fill="#86efac">API Discovery</text>
+
+  <rect x="320" y="210" width="300" height="28" rx="5" fill="#172554" stroke="#3b82f6"/>
+  <text x="470" y="228" text-anchor="middle" font-size="10" fill="#93c5fd">Repo Analyzer (framework + routes + elements)</text>
+
+  <rect x="320" y="248" width="300" height="28" rx="5" fill="#2e1065" stroke="#7c3aed"/>
+  <text x="470" y="266" text-anchor="middle" font-size="10" fill="#c4b5fd">AST Parsing (babel + vue-compiler-sfc)</text>
+
+  <!-- Browser Runner -->
+  <rect x="300" y="310" width="340" height="220" rx="12" fill="#1e293b" stroke="#334155" stroke-width="1" filter="url(#s)"/>
+  <text x="470" y="336" text-anchor="middle" font-size="14" font-weight="700" fill="#f1f5f9">Browser Runner</text>
+  <text x="470" y="352" text-anchor="middle" font-size="9" fill="#94a3b8">Playwright (Chromium)</text>
+
+  <rect x="320" y="364" width="140" height="28" rx="5" fill="#2e1065" stroke="#7c3aed"/>
+  <text x="390" y="382" text-anchor="middle" font-size="10" fill="#c4b5fd">Accessibility (axe)</text>
+  <rect x="480" y="364" width="140" height="28" rx="5" fill="#451a03" stroke="#f59e0b"/>
+  <text x="550" y="382" text-anchor="middle" font-size="10" fill="#fcd34d">Visual (pixelmatch)</text>
+
+  <rect x="320" y="400" width="140" height="28" rx="5" fill="#022c22" stroke="#059669"/>
+  <text x="390" y="418" text-anchor="middle" font-size="10" fill="#6ee7b7">Perf (Lighthouse)</text>
+  <rect x="480" y="400" width="140" height="28" rx="5" fill="#4c0519" stroke="#f43f5e"/>
+  <text x="550" y="418" text-anchor="middle" font-size="10" fill="#fda4af">AI Explorer (Claude)</text>
+
+  <rect x="320" y="442" width="300" height="28" rx="5" fill="#1e293b" stroke="#475569"/>
+  <text x="470" y="460" text-anchor="middle" font-size="10" fill="#94a3b8">Network + Console + Screenshot capture</text>
+
+  <rect x="320" y="480" width="300" height="28" rx="5" fill="#422006" stroke="#fde68a"/>
+  <text x="470" y="498" text-anchor="middle" font-size="10" fill="#fde68a">Flakiness Tracker (quarantine system)</text>
+
+  <!-- Cross-Reference -->
+  <rect x="710" y="200" width="180" height="100" rx="12" fill="#052e16" stroke="#22c55e" stroke-width="2" filter="url(#s)"/>
+  <text x="800" y="232" text-anchor="middle" font-size="13" font-weight="700" fill="#86efac">Cross-Reference</text>
+  <text x="800" y="250" text-anchor="middle" font-size="10" fill="#86efac">Correlation Engine</text>
+  <text x="800" y="268" text-anchor="middle" font-size="10" fill="#4ade80">5 strategies</text>
+  <text x="800" y="292" text-anchor="middle" font-size="8" font-weight="600" fill="#4ade80">NEW in v0.2</text>
+
+  <!-- Report -->
+  <rect x="920" y="120" width="150" height="170" rx="12" fill="#0c0a09" stroke="#ef4444" stroke-width="1.5" filter="url(#s)"/>
+  <text x="995" y="150" text-anchor="middle" font-size="13" font-weight="700" fill="#f8fafc">Report Engine</text>
+  <rect x="935" y="164" width="120" height="22" rx="4" fill="#1c1917"/>
+  <text x="995" y="179" text-anchor="middle" font-size="9" fill="#a8a29e">HTML Report</text>
+  <rect x="935" y="192" width="120" height="22" rx="4" fill="#1c1917"/>
+  <text x="995" y="207" text-anchor="middle" font-size="9" fill="#a8a29e">JSON Export</text>
+  <rect x="935" y="220" width="120" height="22" rx="4" fill="#1c1917"/>
+  <text x="995" y="235" text-anchor="middle" font-size="9" fill="#a8a29e">JUnit XML (CI)</text>
+  <rect x="935" y="248" width="120" height="22" rx="4" fill="#1c1917"/>
+  <text x="995" y="263" text-anchor="middle" font-size="9" fill="#fbbf24">CLI Formatter</text>
+
+  <!-- Arrows -->
+  <line x1="230" y1="96" x2="300" y2="160" stroke="#64748b" stroke-width="1.5" marker-end="url(#a)"/>
+  <line x1="230" y1="170" x2="300" y2="400" stroke="#64748b" stroke-width="1.5" marker-end="url(#a)"/>
+  <line x1="640" y1="170" x2="710" y2="230" stroke="#64748b" stroke-width="1.5" marker-end="url(#a)"/>
+  <line x1="640" y1="420" x2="710" y2="270" stroke="#64748b" stroke-width="1.5" marker-end="url(#a)"/>
+  <line x1="890" y1="250" x2="920" y2="220" stroke="#22c55e" stroke-width="2" marker-end="url(#ag)"/>
+  <line x1="640" y1="130" x2="920" y2="160" stroke="#475569" stroke-width="1" stroke-dasharray="4"/>
+  <line x1="640" y1="450" x2="920" y2="260" stroke="#475569" stroke-width="1" stroke-dasharray="4"/>
+
+  <text x="660" y="160" font-size="8" fill="#64748b">source findings</text>
+  <text x="660" y="310" font-size="8" fill="#64748b">browser findings</text>
+  <text x="860" y="210" font-size="8" fill="#4ade80">corroborated</text>
+</svg>
