@@ -23,67 +23,99 @@
 
 ## What is this?
 
-You ship features. But did you actually *test* them?
-
-**sniff** is an AI-powered QA tool that scans your project for real problems: leftover debugger statements, dead links, API endpoint issues, accessibility violations, visual regressions, performance budget breaches, and adversarial edge cases. It runs eight checks in a single command and cross-references source code with browser behavior for high-confidence findings.
-
-```bash
-npx sniff-qa
-```
-
-That's it. No config files. No signup. No API keys. It just works.
-
-<br/>
-
-### Key facts
-
-- **What:** Open source AI-powered QA testing tool that runs 8 checks in a single command: source scanning (6 rule categories + dead links + API endpoint discovery), accessibility audits, visual regression, performance budgets, AI-driven exploration, and source/browser cross-referencing
-- **Who it's for:** Frontend and full-stack developers who want automated QA without configuring multiple tools
-- **How it works:** Uses Playwright for browser automation, axe-core for WCAG accessibility, Lighthouse for performance, pixelmatch for visual diffs, and Anthropic Claude for adversarial AI exploration
-- **Install:** `npx sniff-qa` (zero config, no signup, no API keys required for base checks)
-- **Comparable to:** Combines Lighthouse CI + Pa11y + BackstopJS into one tool, plus source code scanning and AI-driven edge case discovery that no other tool offers
-- **Unique:** First QA tool with native MCP (Model Context Protocol) integration. Flakiness quarantine system isolates non-deterministic test results automatically
+**sniff** scans your project for real bugs: leftover debugger statements, dead links, broken API endpoints, accessibility violations, visual regressions, and performance problems. Point it at your code, your live site, or both.
 
 <br/>
 
 ## Quick start
 
-| Step | Action |
-|:----:|:-------|
-| **1** | Run a source scan: `npx sniff-qa` |
-| **2** | Run the full audit: `npx sniff-qa --url http://localhost:3000` |
-| **3** | Read the report and fix what matters |
+### Scan your source code
 
-The source scan finishes in seconds. The full audit adds accessibility, visual regression, performance, and AI exploration on top of it.
+`cd` into any project and run:
+
+```bash
+cd ~/projects/my-app
+npx sniff-qa
+```
+
+This scans all source files in the current directory. It finds debug statements, placeholder text, dead links, hardcoded URLs, broken imports, and API endpoint issues. No browser needed, finishes in seconds.
+
+```
+sniff v0.2.0
+
+[source] Scanning source code...
+[source] 7 issues (2 high, 5 medium/low)
+
+  HIGH  src/api/handler.ts:42       debugger statement detected
+  HIGH  README.md:28                Broken internal link: ./missing-guide.md
+  MED   src/config.ts:8             Hardcoded localhost URL detected
+  MED   src/routes.ts:5             POST /users has no input validation
+  MED   src/routes.ts:18            GET /admin has no visible auth middleware
+  LOW   docs/api.md:15              HTTP 404: https://example.com/old-docs
+  INFO  Discovered 4 API endpoints (express: 3, nextjs-app: 1)
+```
+
+### Scan your source code + live site
+
+If your app is running locally (or deployed anywhere), add `--url` to also check accessibility, visual regression, performance, and more:
+
+```bash
+# Start your dev server first
+npm run dev
+
+# In another terminal, run sniff with the URL
+npx sniff-qa --url http://localhost:3000
+```
+
+This does everything the source scan does, *plus* it opens a browser and checks every route for accessibility violations (WCAG), visual regressions, performance budget breaches (LCP, FCP, TTI), and then cross-references what it found in your code with what it saw in the browser.
+
+```
+sniff v0.2.0
+
+[source] Scanning source code...
+[source] 7 issues (2 high, 5 medium/low)
+
+[browser] Testing http://localhost:3000...
+  /            clean
+  /login       2 findings
+  /dashboard   4 findings
+
+[perf] 1 budget violation
+
+[xref] 2 finding(s) corroborated by source + browser evidence
+```
+
+### Scan a specific directory
+
+You can point sniff at any directory without `cd`-ing into it:
+
+```bash
+npx sniff-qa ~/projects/my-other-app
+npx sniff-qa ~/projects/my-other-app --url https://staging.myapp.com
+```
+
+### Use in CI
+
+```bash
+npx sniff-qa --url http://localhost:3000 --ci
+```
+
+CI mode skips the AI explorer (it's non-deterministic), outputs JUnit XML for your CI pipeline, and tracks flaky tests automatically.
 
 > [!TIP]
-> Drop your URL in `sniff.config.ts` once and you can just run `sniff` for the full audit every time.
+> You don't need to remember flags. Drop a `sniff.config.ts` in your project root once and just run `sniff` from then on. See the [Configuration](#configuration) section below.
 
 <br/>
 
 ## The three modes
 
-```mermaid
-graph LR
-    A["🔍 Quick Scan<br/><sub>npx sniff-qa</sub>"] --> B["Source bugs only<br/><sub>No browser needed</sub>"]
-    C["🛡️ Full Audit<br/><sub>npx sniff-qa --url URL</sub>"] --> D["All 8 checks<br/><sub>Source + Browser + Xref</sub>"]
-    E["🏗️ CI Mode<br/><sub>npx sniff-qa --url URL --ci</sub>"] --> F["Deterministic<br/><sub>Skips AI explorer</sub>"]
+| Mode | Command | What runs | Browser needed? |
+|:-----|:--------|:----------|:----------------|
+| **Quick scan** | `npx sniff-qa` | Source code only (debug, placeholders, dead links, API endpoints, imports, hardcoded URLs) | No |
+| **Full audit** | `npx sniff-qa --url http://localhost:3000` | Everything: source scan + accessibility + visual regression + performance + AI explorer + cross-referencing | Yes (Playwright auto-installs Chromium) |
+| **CI mode** | `npx sniff-qa --url http://localhost:3000 --ci` | Same as full audit but skips AI explorer (non-deterministic), adds JUnit XML output, tracks flaky tests | Yes |
 
-    style A fill:#fef2f2,stroke:#ef4444,color:#7f1d1d
-    style B fill:#fee2e2,stroke:#ef4444,color:#7f1d1d
-    style C fill:#fef2f2,stroke:#ef4444,color:#7f1d1d
-    style D fill:#fee2e2,stroke:#ef4444,color:#7f1d1d
-    style E fill:#fef2f2,stroke:#ef4444,color:#7f1d1d
-    style F fill:#fee2e2,stroke:#ef4444,color:#7f1d1d
-```
-
-```bash
-npx sniff-qa                                   # quick scan (no browser)
-npx sniff-qa --url http://localhost:3000       # full audit (everything)
-npx sniff-qa --url http://localhost:3000 --ci  # ci mode (skips AI explorer)
-```
-
-CI mode auto-skips the AI explorer because it is non-deterministic. Everything else runs exactly the same.
+The quick scan works on any machine with Node.js. The full audit and CI mode need a running URL (local dev server, staging, or production).
 
 <br/>
 
