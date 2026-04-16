@@ -16,48 +16,113 @@
 
 ---
 
-## Install
+## Get started
+
+### Use from the terminal
 
 ```bash
-npx sniff-qa
+cd ~/projects/my-app    # go to your project
+npx sniff-qa            # scan source code
 ```
 
-Or add to your project:
-
-```bash
-npm install -D sniff-qa
-```
-
-Requires Node.js 22+.
-
----
-
-## Usage
-
-**Scan source code** (no browser, finishes in seconds):
-
-```bash
-cd ~/projects/my-app
-npx sniff-qa
-```
-
-**Scan source code + live site** (full audit):
+Add `--url` to also check your live site:
 
 ```bash
 npx sniff-qa --url http://localhost:3000
 ```
 
-**Scan any directory:**
+### Use from your AI editor
+
+Sniff ships as an MCP server. One command to add it, then ask your AI to scan.
+
+<table>
+<tr><td><b>Claude Code</b></td><td>
 
 ```bash
-npx sniff-qa ./path/to/project
-npx sniff-qa ./path/to/project --url https://staging.myapp.com
+claude mcp add sniff-qa npx sniff-qa --mcp
+```
+</td></tr>
+<tr><td><b>Cursor</b></td><td>
+
+Add to `~/.cursor/mcp.json`:
+```json
+{ "mcpServers": { "sniff-qa": { "type": "stdio", "command": "npx", "args": ["sniff-qa", "--mcp"] } } }
+```
+</td></tr>
+<tr><td><b>VS Code + Copilot</b></td><td>
+
+Add to `.vscode/mcp.json`:
+```json
+{ "servers": { "sniff-qa": { "type": "stdio", "command": "npx", "args": ["-y", "sniff-qa", "--mcp"] } } }
+```
+</td></tr>
+<tr><td><b>Codex CLI</b></td><td>
+
+```bash
+codex mcp add sniff-qa -- npx -y sniff-qa --mcp
+```
+</td></tr>
+<tr><td><b>Windsurf</b></td><td>
+
+Add to `~/.codeium/windsurf/mcp_config.json`:
+```json
+{ "mcpServers": { "sniff-qa": { "command": "npx", "args": ["sniff-qa", "--mcp"] } } }
+```
+</td></tr>
+<tr><td><b>Gemini CLI</b></td><td>
+
+Add to `~/.gemini/mcp_config.json`:
+```json
+{ "mcpServers": { "sniff-qa": { "command": "npx", "args": ["sniff-qa", "--mcp"] } } }
+```
+</td></tr>
+<tr><td><b>Continue.dev</b></td><td>
+
+Add to `.continue/mcpServers/sniff-qa.yaml`:
+```yaml
+mcpServers:
+  sniff-qa: { command: npx, args: [sniff-qa, --mcp], type: stdio }
+```
+</td></tr>
+<tr><td><b>OpenClaw</b></td><td>
+
+```bash
+clawhub install sniff-qa
+```
+</td></tr>
+</table>
+
+Then ask your AI: *"Scan this project for issues"* or *"Check accessibility on localhost:3000"*
+
+**MCP tools:** `sniff_scan` (source scan) · `sniff_run` (browser audit) · `sniff_report` (last results)
+
+### Install as a dev dependency
+
+```bash
+npm install -D sniff-qa
 ```
 
-**CI mode** (deterministic, JUnit output):
+```json
+{
+  "scripts": {
+    "qa": "sniff",
+    "qa:full": "sniff --url http://localhost:3000"
+  }
+}
+```
+
+Requires Node.js 22+. Playwright installs automatically on first browser scan.
+
+---
+
+## Usage
 
 ```bash
-npx sniff-qa --url http://localhost:3000 --ci
+npx sniff-qa                                        # scan source code
+npx sniff-qa --url http://localhost:3000             # scan source + live site
+npx sniff-qa ./path/to/project                      # scan a specific directory
+npx sniff-qa ./path/to/project --url https://app.com # scan dir + live site
+npx sniff-qa --url http://localhost:3000 --ci        # CI mode (JUnit, no AI)
 ```
 
 ---
@@ -134,67 +199,6 @@ Sniff auto-detects your framework. No config needed.
 </table>
 
 API discovery also supports **Fastify**, **Hono**, **tRPC**, and **GraphQL**.
-
----
-
-## MCP server
-
-Use sniff from your AI editor. It scans, reads results, and helps fix issues without switching context.
-
-```bash
-npx sniff-qa --mcp
-```
-
-Three tools: `sniff_scan` (source) · `sniff_run` (browser) · `sniff_report` (results)
-
-<details>
-<summary><b>Editor setup</b></summary>
-
-**Claude Code**
-```bash
-claude mcp add sniff-qa npx sniff-qa --mcp
-```
-
-**Cursor** (`~/.cursor/mcp.json`)
-```json
-{ "mcpServers": { "sniff-qa": { "type": "stdio", "command": "npx", "args": ["sniff-qa", "--mcp"] } } }
-```
-
-**VS Code + Copilot** (`.vscode/mcp.json`)
-```json
-{ "servers": { "sniff-qa": { "type": "stdio", "command": "npx", "args": ["-y", "sniff-qa", "--mcp"] } } }
-```
-
-**Windsurf** (`~/.codeium/windsurf/mcp_config.json`)
-```json
-{ "mcpServers": { "sniff-qa": { "command": "npx", "args": ["sniff-qa", "--mcp"] } } }
-```
-
-**Codex CLI**
-```bash
-codex mcp add sniff-qa -- npx -y sniff-qa --mcp
-```
-
-**Gemini CLI** (`~/.gemini/mcp_config.json`)
-```json
-{ "mcpServers": { "sniff-qa": { "command": "npx", "args": ["sniff-qa", "--mcp"] } } }
-```
-
-**Continue.dev** (`.continue/mcpServers/sniff-qa.yaml`)
-```yaml
-mcpServers:
-  sniff-qa:
-    command: npx
-    args: [sniff-qa, --mcp]
-    type: stdio
-```
-
-**OpenClaw**
-```bash
-clawhub install sniff-qa
-```
-
-</details>
 
 ---
 
