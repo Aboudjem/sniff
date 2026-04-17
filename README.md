@@ -43,15 +43,6 @@ Sniff ships as an MCP server. Add it to your editor, then ask your AI to scan.
 <details>
 <summary><b>Claude Code</b></summary>
 
-**Option A: Plugin install** (gives you `/sniff`, `/sniff-fix`, `/sniff-report` slash commands + MCP tools)
-
-```bash
-claude plugin marketplace add Aboudjem/sniff
-claude plugin install sniff@sniff
-```
-
-**Option B: MCP only** (gives you MCP tools, no slash commands)
-
 ```bash
 claude mcp add sniff-qa npx sniff-qa --mcp
 ```
