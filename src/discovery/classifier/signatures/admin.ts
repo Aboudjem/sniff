@@ -1,0 +1,47 @@
+import type { Signature } from '../types.js';
+
+export const admin: Signature = {
+  type: 'admin',
+  routes: {
+    admin: 6,
+    dashboard: 3,
+    users: 4,
+    roles: 4,
+    permissions: 5,
+    audit: 4,
+    logs: 4,
+    reports: 3,
+    exports: 3,
+    moderation: 5,
+    settings: 2,
+  },
+  elements: {
+    'edit row': 4,
+    'delete row': 4,
+    'export csv': 5,
+    'bulk actions': 5,
+    'assign role': 4,
+    'revoke access': 4,
+    'view logs': 3,
+  },
+  deps: {
+    'react-admin': 7,
+    refine: 6,
+    '@refinedev/core': 6,
+    'ant-design/pro-components': 5,
+    'mui-datatables': 5,
+    '@tanstack/react-table': 4,
+    agGrid: 4,
+    'ag-grid-react': 5,
+    keystonejs: 5,
+    '@keystone-6/core': 5,
+  },
+  schema: {
+    user: 2,
+    role: 4,
+    permission: 5,
+    audit: 4,
+    log: 3,
+    auditlog: 5,
+  },
+};

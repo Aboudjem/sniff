@@ -67,6 +67,43 @@ describe('MCP Server', () => {
       });
     });
 
+    describe('handleSniffDiscover', () => {
+      it('returns error for non-absolute rootDir', async () => {
+        const { handleSniffDiscover } = await import('./handlers.js');
+        const result = await handleSniffDiscover({
+          rootDir: 'relative',
+          baseUrl: 'http://localhost:3000',
+          headless: true,
+        });
+        const text = result.content[0].text;
+        expect(text).toContain('error');
+        expect(text).toContain('absolute path');
+      });
+
+      it('returns error when no baseUrl can be resolved', async () => {
+        const { handleSniffDiscover } = await import('./handlers.js');
+        const result = await handleSniffDiscover({
+          rootDir: '/tmp',
+          headless: true,
+        });
+        const text = result.content[0].text;
+        expect(text).toContain('error');
+        expect(text).toContain('baseUrl');
+      });
+
+      it('returns error for invalid baseUrl scheme', async () => {
+        const { handleSniffDiscover } = await import('./handlers.js');
+        const result = await handleSniffDiscover({
+          rootDir: '/tmp',
+          baseUrl: 'ftp://example.com',
+          headless: true,
+        });
+        const text = result.content[0].text;
+        expect(text).toContain('error');
+        expect(text).toContain('http or https');
+      });
+    });
+
     describe('handleSniffReport', () => {
       it('returns "no results" message when no prior results exist', async () => {
         const { handleSniffReport } = await import('./handlers.js');

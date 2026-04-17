@@ -186,6 +186,8 @@ sniff                              Scan source + auto-detect dev server
 sniff --url <url>                  Scan source + test specific URL
 sniff --url <url> --ci             Full audit for CI pipelines
 sniff <path>                       Scan a specific directory
+sniff discover                     Autonomous E2E discovery (scenarios + edge cases)
+sniff discover --regenerate-only   Write sniff-scenarios/ tree without running
 sniff fix                          Auto-fix safe issues (debugger, console.log)
 sniff fix --check                  Dry run: show what would be fixed
 sniff init                         Create sniff.config.ts
@@ -334,6 +336,45 @@ npx sniff-qa ci
 Generates `.github/workflows/sniff.yml` with Playwright caching, JUnit output, and report artifacts.
 
 **Flakiness quarantine:** Tests that fail 3 of 5 runs get quarantined. They still run, still report, but won't block your pipeline.
+
+---
+
+## Autonomous discovery
+
+```bash
+sniff discover                     # run against the detected dev server
+sniff discover --regenerate-only   # write sniff-scenarios/ and exit (no run)
+```
+
+`sniff discover` reads your source (Prisma, Drizzle, TypeORM, Zod, GraphQL, OpenAPI, TS types), classifies what the app is (ecommerce, booking, saas, social, content, crm, auth-only, marketing, admin), generates happy-path journeys with real personas, enumerates edge variants (invalid email, XSS, payment declined, empty cart, offline, and more), and drives everything through Playwright.
+
+**What you get:**
+
+- `sniff-scenarios/_generated/<app-type>/<journey>.<variant>.scenario.md` — reviewable scenarios with JSON frontmatter. Track them in git. Hand-edit them — sniff detects the change and asks before regenerating.
+- `sniff-reports/discovery/` — HTML, JSON, and JUnit reports per run.
+- Flakiness quarantine for scenarios that fail 3 of the last 5 runs.
+
+**Flags:**
+
+| Flag | What it does |
+|:-----|:-------------|
+| `--url <url>` | Target URL (default: auto-detect dev server) |
+| `--max-scenarios <n>` | Cap total scenarios (default: 50) |
+| `--max-variants-per-scenario <n>` | Cap edge variants per scenario (default: 3) |
+| `--max-variants-per-run <n>` | Cap edge variants per run (default: 40) |
+| `--realism <profile>` | `robot`, `careful-user`, `casual-user` (default), `frustrated-user`, `power-user` |
+| `--seed <n>` | Replay a specific random seed |
+| `--only <filter>` | Filter scenarios by id substring or app type |
+| `--app-type <types>` | Force app types (comma-separated) |
+| `--regenerate` | Regenerate `sniff-scenarios/` before running |
+| `--regenerate-only` | Regenerate and exit (no browser) |
+| `--force-regenerate` | Overwrite hand-edits without prompting |
+| `--non-interactive` | Skip prompts and the production-URL countdown |
+| `--no-llm` | Skip Claude Code CLI polish (deterministic only) |
+
+**Production-URL safety:** when the target is not a local address, sniff prints a 5-second countdown banner before running. Hit Ctrl+C to cancel. No `--allow-destructive` flag.
+
+**LLM polish (optional):** if the `claude` CLI is available, sniff uses it to break close-call app-type classifications. Responses are cached under `.sniff/discover/cache/`. Pass `--no-llm` to skip.
 
 ---
 

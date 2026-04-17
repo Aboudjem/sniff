@@ -1,4 +1,5 @@
 import type { Finding, Severity } from '../core/types.js';
+import type { DiscoveryReport } from '../discovery/run-types.js';
 
 export interface Screenshot {
   path: string;
@@ -36,4 +37,5 @@ export interface SniffReport {
     tti: number | null;
     score: number | null;
   }>;
+  discovery?: DiscoveryReport;
 }

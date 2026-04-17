@@ -5,6 +5,25 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.0] - 2026-04-17
+
+### Added
+
+- **Autonomous E2E discovery** (`sniff discover`): scans source (Prisma, Drizzle, TypeORM, Zod, GraphQL, OpenAPI, TS types), classifies the app into one of 10 types, generates happy-path journeys with personas, enumerates edge variants (invalid email, XSS, payment declined, empty cart, offline, slow network, and more), drives them through Playwright, and writes HTML/JSON/JUnit reports
+- **Scenario persistence** at `sniff-scenarios/_generated/<app-type>/<journey>.<variant>.scenario.md` with JSON frontmatter, hash-tracked to protect hand-edits; `custom/` directory for user-authored scenarios
+- **Regenerate semantics**: `--regenerate`, `--regenerate-only`, `--force-regenerate` flags; non-interactive runs default to keeping hand-edits
+- **Realism profiles** (`robot`, `careful-user`, `casual-user`, `frustrated-user`, `power-user`) with seeded RNG and `--seed <n>` for replay
+- **Real-world variant caps** (3 per scenario, 40 per run, both configurable) surface the most informative edge variants first
+- **Production-URL safety banner**: 5-second non-blocking countdown before running against a non-localhost URL
+- **Flakiness quarantine** for discovery scenarios using the existing quarantine engine
+- **LLM polish via Claude Code CLI**: optional tie-break for close-call app-type classifications, cached under `.sniff/discover/cache/`; falls back to deterministic classification if the CLI is unavailable or `--no-llm` is set
+- **`sniff_discover` MCP tool**: returns compact summary (top app type, stats, failures) so AI editors can drive discovery
+- **Doctor awareness** of `sniff-scenarios/` baselines
+
+### Changed
+
+- `sniff doctor` now also reports on discovery baselines
+
 ## [0.2.0] - 2026-04-16
 
 ### Added

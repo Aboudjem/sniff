@@ -1,0 +1,47 @@
+import type { Signature } from '../types.js';
+
+export const marketing: Signature = {
+  type: 'marketing',
+  routes: {
+    pricing: 6,
+    features: 5,
+    about: 4,
+    contact: 4,
+    home: 2,
+    faq: 4,
+    testimonials: 4,
+    customers: 3,
+    partners: 3,
+    careers: 3,
+    'case-studies': 4,
+    demo: 4,
+    'get-started': 3,
+  },
+  elements: {
+    'get started': 4,
+    'request demo': 5,
+    'book a demo': 5,
+    'contact sales': 5,
+    'start free trial': 5,
+    'learn more': 2,
+    'see pricing': 4,
+    testimonial: 3,
+    'our customers': 3,
+  },
+  deps: {
+    '@vercel/analytics': 2,
+    'react-hubspot-form': 4,
+    hubspot: 3,
+    mailchimp: 3,
+    intercom: 4,
+    '@intercom/messenger-js-sdk': 4,
+    calendly: 3,
+    typeform: 3,
+    'react-typeform-embed': 4,
+  },
+  schema: {
+    lead: 3,
+    subscriber: 4,
+    feedback: 2,
+  },
+};

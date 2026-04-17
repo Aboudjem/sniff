@@ -1,7 +1,7 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { z } from 'zod';
-import { handleSniffScan, handleSniffRun, handleSniffReport } from './handlers.js';
+import { handleSniffScan, handleSniffRun, handleSniffReport, handleSniffDiscover } from './handlers.js';
 import { getVersion } from '../version.js';
 
 export async function startMcpServer(): Promise<void> {
@@ -44,6 +44,44 @@ export async function startMcpServer(): Promise<void> {
 
       // No server found -- fall back to source scan only
       return handleSniffScan(rootDir);
+    },
+  );
+
+  // Tool: sniff_discover -- autonomous E2E discovery (scenarios + edge cases)
+  server.tool(
+    'sniff_discover',
+    'Run autonomous end-to-end discovery: extract the app domain from source, classify the app type, generate scenarios with edge-case variants, drive them through Playwright, and return a compact summary. Requires a running dev server (baseUrl optional, auto-detected if omitted). Writes HTML/JSON reports to sniff-reports/discovery/.',
+    {
+      rootDir: z.string().describe('Absolute path to the project root directory'),
+      baseUrl: z.string().optional().describe('URL of the running app. Optional -- sniff auto-detects localhost servers if omitted.'),
+      headless: z.boolean().default(true).describe('Run browser in headless mode'),
+      maxScenarios: z.number().int().min(1).max(200).optional().describe('Cap total scenarios (default: 50)'),
+      maxVariantsPerScenario: z.number().int().min(0).max(20).optional().describe('Cap edge variants per scenario (default: 3)'),
+      maxVariantsPerRun: z.number().int().min(0).max(200).optional().describe('Cap edge variants per run (default: 40)'),
+      realism: z.enum(['robot', 'careful-user', 'casual-user', 'frustrated-user', 'power-user']).optional().describe('Realism profile (default: robot in CI, casual-user otherwise)'),
+      seed: z.number().int().optional().describe('Replay a specific random seed'),
+      only: z.string().optional().describe('Filter scenarios by id substring or app type'),
+      appType: z.array(z.string()).optional().describe('Force app types'),
+    },
+    async (args) => {
+      let url = args.baseUrl;
+      if (!url) {
+        const { detectDevServerUrl } = await import('../config/dev-server-detector.js');
+        const detection = await detectDevServerUrl(args.rootDir);
+        url = detection.url;
+      }
+      return handleSniffDiscover({
+        rootDir: args.rootDir,
+        baseUrl: url,
+        headless: args.headless,
+        ...(args.maxScenarios !== undefined ? { maxScenarios: args.maxScenarios } : {}),
+        ...(args.maxVariantsPerScenario !== undefined ? { maxVariantsPerScenario: args.maxVariantsPerScenario } : {}),
+        ...(args.maxVariantsPerRun !== undefined ? { maxVariantsPerRun: args.maxVariantsPerRun } : {}),
+        ...(args.realism !== undefined ? { realism: args.realism } : {}),
+        ...(args.seed !== undefined ? { seed: args.seed } : {}),
+        ...(args.only !== undefined ? { only: args.only } : {}),
+        ...(args.appType !== undefined ? { appType: args.appType } : {}),
+      });
     },
   );
 

@@ -51,11 +51,56 @@ if (process.argv.includes('--mcp')) {
     .option('--fail-on <severities>', 'Exit non-zero on these severities (default: critical,high)', 'critical,high')
     .option('--json', 'Output results as JSON')
     .option('--track-flakes', 'Track test flakiness across runs')
+    .option('--discover', 'Run autonomous E2E discovery (scenarios + edge cases)')
+    .option('--max-scenarios <n>', 'Cap total scenarios for discovery (default: 50)')
+    .option('--max-variants-per-scenario <n>', 'Cap edge variants per scenario (default: 3)')
+    .option('--max-variants-per-run <n>', 'Cap edge variants per run (default: 40)')
+    .option('--realism <profile>', 'Discovery realism: robot, careful-user, casual-user, frustrated-user, power-user')
+    .option('--seed <n>', 'Replay a specific random seed')
+    .option('--only <filter>', 'Filter discovery scenarios by id substring or app type')
+    .option('--app-type <types>', 'Force discovery app types (comma-separated)')
+    .option('--no-llm', 'Disable LLM-backed discovery polish')
+    .option('--non-interactive', 'Non-interactive mode for discovery (skips prompts and countdown)')
+    .option('--regenerate', 'Regenerate sniff-scenarios/ before running (prompts on hand-edits)')
+    .option('--regenerate-only', 'Regenerate sniff-scenarios/ and exit without running')
+    .option('--force-regenerate', 'Regenerate sniff-scenarios/ and overwrite hand-edits')
     .action(async (target, options) => {
+      const rootDir = target ? (await import('node:path')).resolve(target) : process.cwd();
+
+      if (options.discover || options.regenerate || options.regenerateOnly || options.forceRegenerate) {
+        if (!options.regenerateOnly) {
+          await ensurePlaywrightBrowsers();
+        }
+        const { discoverCommand } = await import('./commands/discover.js');
+        const appTypes = typeof options.appType === 'string'
+          ? options.appType.split(',').map((s: string) => s.trim()).filter(Boolean)
+          : undefined;
+        const result = await discoverCommand({
+          rootDir,
+          url: options.url,
+          headless: options.headless,
+          ci: options.ci,
+          json: options.json,
+          ...(options.maxScenarios ? { maxScenarios: parseInt(options.maxScenarios, 10) } : {}),
+          ...(options.maxVariantsPerScenario ? { maxVariantsPerScenario: parseInt(options.maxVariantsPerScenario, 10) } : {}),
+          ...(options.maxVariantsPerRun ? { maxVariantsPerRun: parseInt(options.maxVariantsPerRun, 10) } : {}),
+          ...(options.realism ? { realism: options.realism } : {}),
+          ...(options.seed ? { seed: parseInt(options.seed, 10) } : {}),
+          ...(options.only ? { only: options.only } : {}),
+          ...(appTypes ? { appType: appTypes } : {}),
+          ...(options.llm === false ? { noLlm: true } : {}),
+          ...(options.nonInteractive ? { nonInteractive: true } : {}),
+          ...(options.format ? { format: options.format } : {}),
+          ...(options.regenerate ? { regenerate: true } : {}),
+          ...(options.regenerateOnly ? { regenerateOnly: true } : {}),
+          ...(options.forceRegenerate ? { regenerate: true, forceRegenerate: true } : {}),
+        });
+        process.exit(result.exitCode);
+      }
+
       const { unifiedCommand } = await import('./commands/unified.js');
       const { loadConfig } = await import('../config/loader.js');
 
-      const rootDir = target ? (await import('node:path')).resolve(target) : process.cwd();
       const config = await loadConfig(rootDir);
 
       // URL resolution: flag → config → auto-detect
@@ -140,6 +185,59 @@ if (process.argv.includes('--mcp')) {
     });
 
   program
+    .command('discover')
+    .description('Run autonomous E2E discovery (scenarios + edge cases)')
+    .argument('[target]', 'Project directory (default: current directory)')
+    .option('--url <url>', 'Target URL (default: auto-detect dev server)')
+    .option('--ci', 'CI mode: headless, robot realism, no countdown, JUnit output')
+    .option('--no-headless', 'Show the browser window')
+    .option('--format <formats>', 'Report formats: html, json, junit (comma-separated)')
+    .option('--json', 'Output results as JSON')
+    .option('--max-scenarios <n>', 'Cap total scenarios (default: 50)')
+    .option('--max-variants-per-scenario <n>', 'Cap edge variants per scenario (default: 3)')
+    .option('--max-variants-per-run <n>', 'Cap edge variants per run (default: 40)')
+    .option('--realism <profile>', 'Realism: robot, careful-user, casual-user, frustrated-user, power-user')
+    .option('--seed <n>', 'Replay a specific random seed')
+    .option('--only <filter>', 'Filter scenarios by id substring or app type')
+    .option('--app-type <types>', 'Force app types (comma-separated)')
+    .option('--no-llm', 'Disable LLM-backed polish')
+    .option('--non-interactive', 'Skip prompts and the production-URL countdown')
+    .option('--regenerate', 'Regenerate sniff-scenarios/ before running (prompts on hand-edits)')
+    .option('--regenerate-only', 'Regenerate sniff-scenarios/ and exit without running')
+    .option('--force-regenerate', 'Regenerate sniff-scenarios/ and overwrite hand-edits')
+    .action(async (target, options) => {
+      if (!options.regenerateOnly) {
+        await ensurePlaywrightBrowsers();
+      }
+      const rootDir = target ? (await import('node:path')).resolve(target) : process.cwd();
+      const { discoverCommand } = await import('./commands/discover.js');
+      const appTypes = typeof options.appType === 'string'
+        ? options.appType.split(',').map((s: string) => s.trim()).filter(Boolean)
+        : undefined;
+      const result = await discoverCommand({
+        rootDir,
+        url: options.url,
+        headless: options.headless,
+        ci: options.ci,
+        json: options.json,
+        ...(options.maxScenarios ? { maxScenarios: parseInt(options.maxScenarios, 10) } : {}),
+        ...(options.maxVariantsPerScenario ? { maxVariantsPerScenario: parseInt(options.maxVariantsPerScenario, 10) } : {}),
+        ...(options.maxVariantsPerRun ? { maxVariantsPerRun: parseInt(options.maxVariantsPerRun, 10) } : {}),
+        ...(options.realism ? { realism: options.realism } : {}),
+        ...(options.seed ? { seed: parseInt(options.seed, 10) } : {}),
+        ...(options.only ? { only: options.only } : {}),
+        ...(appTypes ? { appType: appTypes } : {}),
+        ...(options.llm === false ? { noLlm: true } : {}),
+        ...(options.nonInteractive ? { nonInteractive: true } : {}),
+        ...(options.format ? { format: options.format } : {}),
+        ...(options.regenerate ? { regenerate: true } : {}),
+        ...(options.regenerateOnly ? { regenerateOnly: true } : {}),
+        ...(options.forceRegenerate ? { regenerate: true, forceRegenerate: true } : {}),
+      });
+      process.exit(result.exitCode);
+    });
+
+  program
     .command('fix')
     .description('Auto-fix safe issues (removes debugger, console.log/debug/info)')
     .argument('[target]', 'Project directory (default: current directory)')
@@ -204,6 +302,27 @@ if (process.argv.includes('--mcp')) {
         console.log(`  ${pc.green('OK')} package.json found (${pkg.name ?? 'unnamed'})`);
       } catch {
         console.log(`  ${pc.yellow('--')} No package.json in current directory`);
+      }
+
+      // sniff-scenarios/ (discovery baselines)
+      try {
+        const { readdir, stat } = await import('node:fs/promises');
+        const { join } = await import('node:path');
+        const scenariosDir = join(rootDir, 'sniff-scenarios');
+        const st = await stat(scenariosDir);
+        if (st.isDirectory()) {
+          const entries = await readdir(scenariosDir, { recursive: true });
+          const count = entries.filter(
+            (e) => typeof e === 'string' && e.endsWith('.scenario.md'),
+          ).length;
+          if (count > 0) {
+            console.log(`  ${pc.green('OK')} sniff-scenarios/ found (${count} scenario${count === 1 ? '' : 's'})`);
+          } else {
+            console.log(`  ${pc.yellow('--')} sniff-scenarios/ exists but has no .scenario.md files`);
+          }
+        }
+      } catch {
+        console.log(`  ${pc.yellow('--')} No sniff-scenarios/ (run 'sniff discover' to generate)`);
       }
 
       console.log('');

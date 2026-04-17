@@ -118,6 +118,82 @@ export async function handleSniffRun(
   };
 }
 
+export interface SniffDiscoverOptions {
+  rootDir: string;
+  baseUrl?: string;
+  headless?: boolean;
+  maxScenarios?: number;
+  maxVariantsPerScenario?: number;
+  maxVariantsPerRun?: number;
+  realism?: 'robot' | 'careful-user' | 'casual-user' | 'frustrated-user' | 'power-user';
+  seed?: number;
+  only?: string;
+  appType?: string[];
+}
+
+export async function handleSniffDiscover(options: SniffDiscoverOptions): Promise<McpToolResult> {
+  const rootErr = validateRootDir(options.rootDir);
+  if (rootErr) {
+    return { content: [{ type: 'text', text: JSON.stringify({ error: rootErr }) }] };
+  }
+
+  if (!options.baseUrl) {
+    return {
+      content: [
+        {
+          type: 'text',
+          text: JSON.stringify({
+            error: 'No baseUrl provided and no local dev server detected. Start your dev server or pass baseUrl.',
+          }),
+        },
+      ],
+    };
+  }
+
+  const urlErr = validateBaseUrl(options.baseUrl);
+  if (urlErr) {
+    return { content: [{ type: 'text', text: JSON.stringify({ error: urlErr }) }] };
+  }
+
+  const { discoverCommand } = await import('../cli/commands/discover.js');
+  const result = await discoverCommand({
+    rootDir: options.rootDir,
+    url: options.baseUrl,
+    headless: options.headless ?? true,
+    nonInteractive: true,
+    json: true,
+    ...(options.maxScenarios !== undefined ? { maxScenarios: options.maxScenarios } : {}),
+    ...(options.maxVariantsPerScenario !== undefined
+      ? { maxVariantsPerScenario: options.maxVariantsPerScenario }
+      : {}),
+    ...(options.maxVariantsPerRun !== undefined ? { maxVariantsPerRun: options.maxVariantsPerRun } : {}),
+    ...(options.realism !== undefined ? { realism: options.realism } : {}),
+    ...(options.seed !== undefined ? { seed: options.seed } : {}),
+    ...(options.only !== undefined ? { only: options.only } : {}),
+    ...(options.appType !== undefined ? { appType: options.appType } : {}),
+  });
+
+  const summary = {
+    baseUrl: result.baseUrl,
+    stats: result.report.stats,
+    topAppType: result.report.appTypeGuesses[0]?.type,
+    topAppConfidence: result.report.appTypeGuesses[0]?.confidence,
+    savedPaths: result.savedPaths,
+    failedScenarios: result.report.scenarios
+      .filter((s) => s.status === 'fail' && s.quarantined !== true)
+      .map((s) => ({
+        id: s.scenario.id,
+        name: s.scenario.name,
+        failureReason: s.steps.find((step) => step.status === 'fail')?.failureReason,
+      })),
+    exitCode: result.exitCode,
+  };
+
+  return {
+    content: [{ type: 'text', text: JSON.stringify(summary, null, 2) }],
+  };
+}
+
 export async function handleSniffReport(
   rootDir: string,
   format: 'json' | 'summary',
