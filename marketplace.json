@@ -1,0 +1,15 @@
+{
+  "name": "sniff",
+  "description": "AI-powered QA testing for any frontend project",
+  "plugins": [
+    {
+      "name": "sniff",
+      "description": "Scan, explore, and report bugs before your users do. Source analysis + browser checks with auto-detection.",
+      "source": {
+        "type": "git-subdir",
+        "url": "https://github.com/Aboudjem/sniff.git",
+        "subdir": "plugin"
+      }
+    }
+  ]
+}
