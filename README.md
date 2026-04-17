@@ -41,7 +41,18 @@ npx sniff-qa --url https://myapp.com        # production URL
 Sniff ships as an MCP server. Add it to your editor, then ask your AI to scan.
 
 <details>
-<summary><b>Claude Code</b></summary>
+<summary><b>Claude Code plugin marketplace</b> (one-command install)</summary>
+
+```bash
+claude plugin marketplace add Aboudjem/10x
+claude plugin install sniff@10x
+```
+
+This installs sniff as a Claude Code plugin from the [10x marketplace](https://github.com/Aboudjem/10x). Skills, commands, and the MCP server are wired up automatically.
+</details>
+
+<details>
+<summary><b>Claude Code (MCP server only)</b></summary>
 
 ```bash
 claude mcp add sniff-qa npx sniff-qa --mcp
