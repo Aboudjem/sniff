@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 640" width="1280" height="640">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0a0a0a"/>
+      <stop offset="100%" stop-color="#1a0a0a"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#ef4444"/>
+      <stop offset="100%" stop-color="#f97316"/>
+    </linearGradient>
+  </defs>
+  <rect width="1280" height="640" fill="url(#bg)"/>
+  <rect x="0" y="0" width="8" height="640" fill="url(#accent)"/>
+  <circle cx="1100" cy="160" r="220" fill="#ef4444" opacity="0.08"/>
+  <text x="96" y="240" font-family="Inter, system-ui, -apple-system, sans-serif" font-size="148" font-weight="900" fill="#ffffff" letter-spacing="-4">sniff</text>
+  <text x="96" y="320" font-family="Inter, system-ui, -apple-system, sans-serif" font-size="40" font-weight="600" fill="#ef4444">QA for your codebase. Zero config.</text>
+  <text x="96" y="390" font-family="Inter, system-ui, -apple-system, sans-serif" font-size="28" fill="#cbd5e1">Source scan + accessibility + visual regression + performance</text>
+  <text x="96" y="430" font-family="Inter, system-ui, -apple-system, sans-serif" font-size="28" fill="#cbd5e1">+ autonomous E2E discovery. Drops into any project.</text>
+  <g transform="translate(96, 510)">
+    <rect x="0" y="0" width="130" height="40" rx="20" fill="#ef4444" opacity="0.15"/>
+    <text x="65" y="27" font-family="Inter, monospace" font-size="18" font-weight="700" fill="#ef4444" text-anchor="middle">v0.4.0</text>
+    <rect x="145" y="0" width="190" height="40" rx="20" fill="#22c55e" opacity="0.12"/>
+    <text x="240" y="27" font-family="Inter, monospace" font-size="18" font-weight="700" fill="#22c55e" text-anchor="middle">374 tests pass</text>
+    <rect x="355" y="0" width="155" height="40" rx="20" fill="#ffffff" opacity="0.08"/>
+    <text x="432" y="27" font-family="Inter, monospace" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">npx sniff-qa</text>
+  </g>
+  <text x="1184" y="592" font-family="Inter, monospace" font-size="20" fill="#64748b" text-anchor="end">github.com/Aboudjem/sniff</text>
+</svg>
