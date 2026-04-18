@@ -32,6 +32,7 @@ If you were relying on sniff probing `:5000` / `:8000` / `:8080`, set `SNIFF_URL
 ### Changed
 
 - **Playwright pinned** to `~1.59.1` (patch-only updates). Prevents drifting into 1.57+ memory regression reports without explicit review. Reference: [DEEP-DIVE §Playwright memory](`.planning/VERIFICATION-AUDIT-2026-04-18.md`).
+- **`--headed` CLI flag** as an alias for `--no-headless`. Matches Playwright's own convention (`playwright test --headed`) so muscle memory works. `--no-headless` remains supported for back-compat.
 
 ## [0.4.0] - 2026-04-17
 
