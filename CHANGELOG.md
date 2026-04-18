@@ -18,6 +18,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - **`--app-type` is now a filter, not a force.** The existing CLI flag and MCP `appType` param filter classifier guesses down to the listed types — they do NOT bypass classification. The internal option is renamed from `forceAppTypes` → `filterAppTypes` on `generateScenarios`; old name kept as a deprecated alias for one release.
+### Changed
+
+- **Dev-server detection hardened.** Removed ports `5000`, `8000`, and `8080` from the conservative probe fallback — these collide with macOS AirPlay Receiver, `python -m http.server`, and every Java/Tomcat/Jenkins default, and previously caused sniff to false-positive on unrelated services. Probe fallback now requires a framework marker (Next.js `__NEXT_DATA__`, Vite `/@vite/client`, Nuxt `__NUXT__`, Astro islands, SvelteKit, Angular, Remix) to accept a port as a dev server. Added parsing of `vite.config.{ts,js,mjs,cjs}`, `nuxt.config.{ts,js,mjs}`, `astro.config.{mjs,ts,js}`, and `angular.json` for explicit port overrides. Added auto-increment probe (defaultPort+1..+20) so sniff finds Next.js / Vite dev servers that rolled forward after a port-busy collision. `DetectionResult` now includes a `candidates` array for callers (CLI, MCP) to show or pick from.
+
+### Migration note
+
+If you were relying on sniff probing `:5000` / `:8000` / `:8080`, set `SNIFF_URL=http://localhost:<port>` or add the port to your dev script (`"dev": "vite --port 8080"`) and sniff will pick it up via `package.json`.
 
 ## [0.4.0] - 2026-04-17
 
