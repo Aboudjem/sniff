@@ -1,7 +1,7 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { z } from 'zod';
-import { handleSniffScan, handleSniffRun, handleSniffReport, handleSniffDiscover } from './handlers.js';
+import { handleSniffScan, handleSniffRun, handleSniffReport, handleSniffDiscover, handleSniffUnified } from './handlers.js';
 import { getVersion } from '../version.js';
 
 export async function startMcpServer(): Promise<void> {
@@ -10,10 +10,38 @@ export async function startMcpServer(): Promise<void> {
     version: getVersion(),
   });
 
+  // Tool: sniff -- unified entry point (mode dispatches to the narrow tools below).
+  // The narrow tools (sniff_scan, sniff_run, sniff_discover, sniff_report) remain
+  // registered for back-compat and security (scoped capabilities per
+  // sniff-qa/DEEP-DIVE.md:1108) — but `sniff({ mode })` is the preferred
+  // surface for new integrations. Will be marked deprecated on narrow tools
+  // in v0.6 and removed in v0.7.
+  server.tool(
+    'sniff',
+    'Unified entry point. Pass { mode: "scan" | "run" | "discover" | "report", rootDir, ...} to dispatch. Prefer this over the narrow tools (sniff_scan / sniff_run / sniff_discover / sniff_report) which are kept only for back-compat.',
+    {
+      mode: z.enum(['scan', 'run', 'discover', 'report']).describe('What to run: scan = source only, run = source + browser audit, discover = autonomous E2E, report = load last results.'),
+      rootDir: z.string().describe('Absolute path to the project root directory'),
+      baseUrl: z.string().optional().describe('URL of the running app (modes: run, discover). Auto-detected if omitted.'),
+      headless: z.boolean().optional().describe('Run browser in headless mode (modes: run, discover). Default: true.'),
+      format: z.enum(['json', 'summary']).optional().describe('Report format (mode: report). Default: summary.'),
+      maxScenarios: z.number().int().min(1).max(200).optional().describe('Cap total scenarios (mode: discover). Default: 50.'),
+      maxVariantsPerScenario: z.number().int().min(0).max(20).optional().describe('Cap edge variants per scenario (mode: discover). Default: 3.'),
+      maxVariantsPerRun: z.number().int().min(0).max(200).optional().describe('Cap edge variants per run (mode: discover). Default: 40.'),
+      realism: z.enum(['robot', 'careful-user', 'casual-user', 'frustrated-user', 'power-user']).optional().describe('Realism profile (mode: discover).'),
+      seed: z.number().int().optional().describe('Replay a specific random seed (mode: discover).'),
+      only: z.string().optional().describe('Filter scenarios by id substring or app type (mode: discover).'),
+      appType: z.array(z.string()).optional().describe('Filter app types (mode: discover). Does NOT bypass classification — use forceAppType.'),
+      forceAppType: z.string().optional().describe('Force a single app type, bypassing the classifier (mode: discover).'),
+      dryRun: z.boolean().optional().describe('Generate scenarios without browser or reports (mode: discover).'),
+    },
+    async (args) => handleSniffUnified(args),
+  );
+
   // Tool: sniff_scan -- static source analysis (no browser needed)
   server.tool(
     'sniff_scan',
-    'Scan project source code for bugs. Finds debug statements, placeholder text, dead links, broken imports, hardcoded URLs, and API endpoint issues (missing validation, auth, error handling, secrets). Works offline, no browser or API key needed. Just pass the project path.',
+    '[DEPRECATED in v0.5, will be removed in v0.7 — use `sniff({ mode: "scan" })` instead.] Scan project source code for bugs. Finds debug statements, placeholder text, dead links, broken imports, hardcoded URLs, and API endpoint issues.',
     {
       rootDir: z.string().describe('Absolute path to the project root directory'),
     },
@@ -23,7 +51,7 @@ export async function startMcpServer(): Promise<void> {
   // Tool: sniff_run -- full audit (source + browser, auto-detects URL)
   server.tool(
     'sniff_run',
-    'Run a full quality audit: source scan + browser checks (accessibility, visual regression, performance). The URL is optional -- sniff auto-detects running dev servers. If no server is found, runs source scan only. No API key needed.',
+    '[DEPRECATED in v0.5, will be removed in v0.7 — use `sniff({ mode: "run" })` instead.] Run a full quality audit: source scan + browser checks (accessibility, visual regression, performance).',
     {
       rootDir: z.string().describe('Absolute path to the project root directory'),
       baseUrl: z.string().optional().describe('URL of the running app. Optional -- sniff auto-detects localhost servers if omitted.'),
@@ -50,7 +78,7 @@ export async function startMcpServer(): Promise<void> {
   // Tool: sniff_discover -- autonomous E2E discovery (scenarios + edge cases)
   server.tool(
     'sniff_discover',
-    'Run autonomous end-to-end discovery: extract the app domain from source, classify the app type, generate scenarios with edge-case variants, drive them through Playwright, and return a compact summary. Requires a running dev server (baseUrl optional, auto-detected if omitted). Writes HTML/JSON reports to sniff-reports/discovery/.',
+    '[DEPRECATED in v0.5, will be removed in v0.7 — use `sniff({ mode: "discover" })` instead.] Run autonomous end-to-end discovery: classify the app, generate scenarios, drive them through Playwright.',
     {
       rootDir: z.string().describe('Absolute path to the project root directory'),
       baseUrl: z.string().optional().describe('URL of the running app. Optional -- sniff auto-detects localhost servers if omitted.'),
@@ -88,7 +116,7 @@ export async function startMcpServer(): Promise<void> {
   // Tool: sniff_report -- load last results
   server.tool(
     'sniff_report',
-    'Get the results from the most recent sniff scan. Returns findings, severities, and fix suggestions.',
+    '[DEPRECATED in v0.5, will be removed in v0.7 — use `sniff({ mode: "report" })` instead.] Get the results from the most recent sniff scan.',
     {
       rootDir: z.string().describe('Absolute path to the project root directory'),
       format: z.enum(['json', 'summary']).default('summary').describe('Output format: full JSON or text summary'),

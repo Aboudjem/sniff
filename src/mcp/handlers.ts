@@ -194,6 +194,69 @@ export async function handleSniffDiscover(options: SniffDiscoverOptions): Promis
   };
 }
 
+export interface SniffUnifiedOptions {
+  mode: 'scan' | 'run' | 'discover' | 'report';
+  rootDir: string;
+  baseUrl?: string;
+  headless?: boolean;
+  format?: 'json' | 'summary';
+  maxScenarios?: number;
+  maxVariantsPerScenario?: number;
+  maxVariantsPerRun?: number;
+  realism?: 'robot' | 'careful-user' | 'casual-user' | 'frustrated-user' | 'power-user';
+  seed?: number;
+  only?: string;
+  appType?: string[];
+  forceAppType?: string;
+  dryRun?: boolean;
+}
+
+/**
+ * Dispatch for the unified `sniff` MCP tool. Normalizes the discriminated
+ * union input and calls through to the narrow handlers. No new capabilities —
+ * this is a UX wrapper only, preserving the security pattern of scoped tools.
+ */
+export async function handleSniffUnified(options: SniffUnifiedOptions): Promise<McpToolResult> {
+  switch (options.mode) {
+    case 'scan':
+      return handleSniffScan(options.rootDir);
+    case 'run': {
+      let url = options.baseUrl;
+      if (!url) {
+        const { detectDevServerUrl } = await import('../config/dev-server-detector.js');
+        const detection = await detectDevServerUrl(options.rootDir);
+        url = detection.url;
+      }
+      if (!url) {
+        return handleSniffScan(options.rootDir); // fallback, matches sniff_run behavior
+      }
+      return handleSniffRun(options.rootDir, url, options.headless ?? true);
+    }
+    case 'discover': {
+      let url = options.baseUrl;
+      if (!url) {
+        const { detectDevServerUrl } = await import('../config/dev-server-detector.js');
+        const detection = await detectDevServerUrl(options.rootDir);
+        url = detection.url;
+      }
+      return handleSniffDiscover({
+        rootDir: options.rootDir,
+        ...(url ? { baseUrl: url } : {}),
+        headless: options.headless ?? true,
+        ...(options.maxScenarios !== undefined ? { maxScenarios: options.maxScenarios } : {}),
+        ...(options.maxVariantsPerScenario !== undefined ? { maxVariantsPerScenario: options.maxVariantsPerScenario } : {}),
+        ...(options.maxVariantsPerRun !== undefined ? { maxVariantsPerRun: options.maxVariantsPerRun } : {}),
+        ...(options.realism !== undefined ? { realism: options.realism } : {}),
+        ...(options.seed !== undefined ? { seed: options.seed } : {}),
+        ...(options.only !== undefined ? { only: options.only } : {}),
+        ...(options.appType !== undefined ? { appType: options.appType } : {}),
+      });
+    }
+    case 'report':
+      return handleSniffReport(options.rootDir, options.format ?? 'summary');
+  }
+}
+
 export async function handleSniffReport(
   rootDir: string,
   format: 'json' | 'summary',

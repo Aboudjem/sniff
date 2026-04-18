@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- **Unified `sniff` MCP tool** — `sniff({ mode: 'scan' | 'run' | 'discover' | 'report', rootDir, ... })` dispatches to the narrow handlers. One tool to teach your agent instead of four. Preferred surface for new integrations.
+
+### Deprecated
+
+- `sniff_scan`, `sniff_run`, `sniff_discover`, `sniff_report` — kept for back-compat with existing agent integrations. Tool descriptions now carry `[DEPRECATED in v0.5, removed in v0.7]`. Plan your migration.
+
 ## [0.4.0] - 2026-04-17
 
 ### Added
