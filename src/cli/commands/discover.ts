@@ -22,11 +22,22 @@ export interface DiscoverOptions {
   forceRegenerate?: boolean;
 }
 
+export interface DetectedFrom {
+  method: 'flag' | 'config' | 'env' | 'script' | 'framework' | 'probe' | 'none';
+  detail?: string;
+}
+
 export interface DiscoverResult {
   report: DiscoveryReport;
   savedPaths: string[];
   baseUrl: string;
   exitCode: number;
+  /**
+   * How the baseUrl was resolved. "flag" means the user passed --url, "config"
+   * means it came from sniff.config.ts, otherwise bubbles up from the
+   * dev-server detector. Useful for the MCP client to render.
+   */
+  detectedFrom?: DetectedFrom;
 }
 
 const DEFAULT_STEP_TIMEOUT_MS = 10_000;
@@ -93,12 +104,19 @@ export async function discoverCommand(options: DiscoverOptions): Promise<Discove
   });
 
   let url: string | undefined;
+  let detectedFrom: DetectedFrom | undefined;
   if (!options.regenerateOnly) {
-    url = options.url ?? config.browser?.baseUrl;
-    if (!url) {
+    if (options.url) {
+      url = options.url;
+      detectedFrom = { method: 'flag', detail: '--url' };
+    } else if (config.browser?.baseUrl) {
+      url = config.browser.baseUrl;
+      detectedFrom = { method: 'config', detail: 'sniff.config.ts' };
+    } else {
       const { detectDevServerUrl } = await import('../../config/dev-server-detector.js');
       const detection = await detectDevServerUrl(options.rootDir);
       url = detection.url;
+      detectedFrom = { method: detection.method, ...(detection.detail ? { detail: detection.detail } : {}) };
       if (url && !options.json) {
         console.log(`${pc.green('[auto]')} Found dev server at ${pc.bold(url)} (${detection.detail})\n`);
       }
@@ -192,7 +210,13 @@ export async function discoverCommand(options: DiscoverOptions): Promise<Discove
       console.log(pc.yellow('  no scenarios generated for this project'));
     }
     const report: DiscoveryReport = { ...emptyReport(), appTypeGuesses: guesses };
-    return { report, savedPaths: [], baseUrl: url ?? '', exitCode: 0 };
+    return {
+      report,
+      savedPaths: [],
+      baseUrl: url ?? '',
+      exitCode: 0,
+      ...(detectedFrom ? { detectedFrom } : {}),
+    };
   }
 
   if (!options.json) {
@@ -226,7 +250,13 @@ export async function discoverCommand(options: DiscoverOptions): Promise<Discove
     }
     if (options.regenerateOnly) {
       const report: DiscoveryReport = { ...emptyReport(), appTypeGuesses: guesses };
-      return { report, savedPaths: [], baseUrl: url ?? '', exitCode: 0 };
+      return {
+        report,
+        savedPaths: [],
+        baseUrl: url ?? '',
+        exitCode: 0,
+        ...(detectedFrom ? { detectedFrom } : {}),
+      };
     }
   }
 
@@ -294,5 +324,11 @@ export async function discoverCommand(options: DiscoverOptions): Promise<Discove
 
   const { shouldFailCi } = await import('../../discovery/report/flakiness.js');
   const exitCode = shouldFailCi(report) ? 1 : 0;
-  return { report, savedPaths, baseUrl: resolvedUrl, exitCode };
+  return {
+    report,
+    savedPaths,
+    baseUrl: resolvedUrl,
+    exitCode,
+    ...(detectedFrom ? { detectedFrom } : {}),
+  };
 }

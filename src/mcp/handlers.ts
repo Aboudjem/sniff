@@ -173,12 +173,20 @@ export async function handleSniffDiscover(options: SniffDiscoverOptions): Promis
     ...(options.appType !== undefined ? { appType: options.appType } : {}),
   });
 
+  const reports: { html?: string; json?: string; junit?: string } = {};
+  for (const p of result.savedPaths) {
+    if (p.endsWith('.html')) reports.html = p;
+    else if (p.endsWith('.xml')) reports.junit = p;
+    else if (p.endsWith('.json')) reports.json = p;
+  }
   const summary = {
     baseUrl: result.baseUrl,
+    detectedFrom: result.detectedFrom,
     stats: result.report.stats,
     topAppType: result.report.appTypeGuesses[0]?.type,
     topAppConfidence: result.report.appTypeGuesses[0]?.confidence,
-    savedPaths: result.savedPaths,
+    reports,
+    savedPaths: result.savedPaths, // kept for back-compat
     failedScenarios: result.report.scenarios
       .filter((s) => s.status === 'fail' && s.quarantined !== true)
       .map((s) => ({
