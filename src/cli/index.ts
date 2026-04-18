@@ -29,6 +29,7 @@ if (process.argv.includes('--mcp')) {
     .option('--no-browser', 'Force source-only scan even if URL is configured')
     .option('--no-explore', 'Skip AI exploration (browser tests still run)')
     .option('--max-steps <n>', 'Cap AI exploration steps (default: 50)')
+    .option('--headed', 'Show the browser window (alias for --no-headless)')
     .option('--no-headless', 'Show the browser window')
     .option('--format <formats>', 'Report formats: html, json, junit (comma-separated)')
     .option('--fail-on <severities>', 'Exit non-zero on these severities (default: critical,high)', 'critical,high')
@@ -63,7 +64,7 @@ if (process.argv.includes('--mcp')) {
         const result = await discoverCommand({
           rootDir,
           url: options.url,
-          headless: options.headless,
+          headless: options.headed ? false : options.headless,
           ci: options.ci,
           json: options.json,
           ...(options.maxScenarios ? { maxScenarios: parseInt(options.maxScenarios, 10) } : {}),
@@ -120,7 +121,7 @@ if (process.argv.includes('--mcp')) {
         url: wantsBrowser ? url : undefined,
         explore: wantsExplore,
         maxSteps: options.maxSteps,
-        headless: options.headless,
+        headless: options.headed ? false : options.headless,
         format: options.format,
         failOn: options.failOn,
         json: options.json,
@@ -177,6 +178,7 @@ if (process.argv.includes('--mcp')) {
     .argument('[target]', 'Project directory (default: current directory)')
     .option('--url <url>', 'Target URL (default: auto-detect dev server)')
     .option('--ci', 'CI mode: headless, robot realism, no countdown, JUnit output')
+    .option('--headed', 'Show the browser window (alias for --no-headless)')
     .option('--no-headless', 'Show the browser window')
     .option('--format <formats>', 'Report formats: html, json, junit (comma-separated)')
     .option('--json', 'Output results as JSON')
@@ -206,7 +208,7 @@ if (process.argv.includes('--mcp')) {
       const result = await discoverCommand({
         rootDir,
         url: options.url,
-        headless: options.headless,
+        headless: options.headed ? false : options.headless,
         ci: options.ci,
         json: options.json,
         ...(options.maxScenarios ? { maxScenarios: parseInt(options.maxScenarios, 10) } : {}),
