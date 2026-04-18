@@ -121,9 +121,9 @@ clawhub install sniff-qa
 ```
 </details>
 
-Then ask: *"Scan this project for issues"* or *"Check accessibility on localhost:3000"*
+Then ask: *"Scan this project for issues"* or *"Check accessibility on localhost:3000"* or *"Discover and run E2E tests"*
 
-**MCP tools:** `sniff_scan` (source) · `sniff_run` (browser) · `sniff_report` (results)
+**MCP tools:** `sniff({ mode: "scan" | "run" | "discover" | "report" })` — unified entry point. Plus `sniff_install` when Playwright's Chromium is missing. The legacy per-mode tools (`sniff_scan`, `sniff_run`, `sniff_discover`, `sniff_report`) remain available but are deprecated in v0.5 and will be removed in v0.7.
 
 ### Install as a dev dependency
 
@@ -152,9 +152,12 @@ npx sniff-qa                                        # scan source + auto-detect 
 npx sniff-qa --url https://myapp.com                # scan source + specific URL
 npx sniff-qa ./path/to/project                      # scan a specific directory
 npx sniff-qa --ci                                   # CI mode (JUnit output, no AI explorer)
+npx sniff-qa --verbose                              # show classifier top 3 + matched signals
+npx sniff-qa discover --dry-run                     # preview generated scenarios, no browser
+npx sniff-qa discover --force-app-type saas         # skip classification, treat as SaaS
 ```
 
-Sniff auto-detects your dev server by reading `package.json` scripts and probing common ports (3000, 5173, 8080, 4200). If it finds a running server, browser checks run automatically.
+Sniff auto-detects your dev server by reading `package.json` scripts plus `vite.config`, `nuxt.config`, `astro.config`, and `angular.json`, then probing the framework's default port *and* the next 20 after it (to catch auto-increment when the default is taken). If a port responds with framework markers (Next.js, Vite, Nuxt, Astro, Remix, SvelteKit, Angular), browser checks run automatically. Ghost-process ports like macOS AirPlay on `:5000` no longer collide.
 
 ---
 
@@ -221,10 +224,15 @@ sniff --version                    Show version
 | `--no-browser` | Source only even if `--url` is set |
 | `--max-steps <n>` | Limit AI explorer steps (default: 50) |
 | `--no-headless` | Show the browser window |
+| `--headed` | Alias for `--no-headless` |
 | `--format html,json,junit` | Choose report formats |
 | `--fail-on critical,high` | Severities that cause non-zero exit |
 | `--track-flakes` | Track test flakiness across runs |
 | `--json` | JSON output for scripts |
+| `--verbose` | Print classifier top-3 guesses and matched signals per dimension |
+| `--dry-run` | Discover: generate scenarios without launching browser or writing reports |
+| `--force-app-type <type>` | Discover: bypass the classifier (e.g. `saas`, `ecommerce`, `booking`) |
+| `--app-type <types>` | Discover: filter classifier guesses to these app types (comma-separated) |
 
 </details>
 
@@ -255,7 +263,9 @@ API discovery also supports **Fastify**, **Hono**, **tRPC**, and **GraphQL**.
 Sniff works with zero config. Only create a config file if you want to customize.
 
 ```bash
-npx sniff-qa init
+npx sniff-qa init           # auto-detects: .ts if TypeScript, .mjs if ESM, .js otherwise
+npx sniff-qa init --ts      # force TypeScript config
+npx sniff-qa init --js      # force JavaScript config (respects package.json "type")
 ```
 
 <details>
@@ -357,7 +367,9 @@ sniff discover                     # run against the detected dev server
 sniff discover --regenerate-only   # write sniff-scenarios/ and exit (no run)
 ```
 
-`sniff discover` reads your source (Prisma, Drizzle, TypeORM, Zod, GraphQL, OpenAPI, TS types), classifies what the app is (ecommerce, booking, saas, social, content, crm, auth-only, marketing, admin), generates happy-path journeys with real personas, enumerates edge variants (invalid email, XSS, payment declined, empty cart, offline, and more), and drives everything through Playwright.
+`sniff discover` reads your source (Prisma, Drizzle, TypeORM, Zod, GraphQL, OpenAPI, TS types), classifies what the app is (ecommerce, booking, saas, social, content, crm, auth-only, marketing, admin) with route tokens in **English, French, Spanish, German, Portuguese, and Italian** (a French SaaS on `/fr/tableau-de-bord` classifies correctly), generates happy-path journeys with real personas, enumerates edge variants (invalid email, XSS, payment declined, empty cart, offline, and more), and drives everything through Playwright.
+
+Pass `--verbose` to see the top-3 candidates and every matched signal — useful for understanding *why* a classification happened. Pass `--force-app-type <type>` to skip classification entirely. Pass `--dry-run` to preview scenarios without launching a browser or writing reports.
 
 **Multilingual projects supported.** The classifier matches French, Spanish, German, Portuguese (BR/PT), and Italian equivalents for every signature token, so a French SaaS on `/fr/tableau-de-bord` classifies the same as an English one on `/dashboard`.
 
@@ -378,7 +390,10 @@ sniff discover --regenerate-only   # write sniff-scenarios/ and exit (no run)
 | `--realism <profile>` | `robot`, `careful-user`, `casual-user` (default), `frustrated-user`, `power-user` |
 | `--seed <n>` | Replay a specific random seed |
 | `--only <filter>` | Filter scenarios by id substring or app type |
-| `--app-type <types>` | Force app types (comma-separated) |
+| `--app-type <types>` | Filter classifier guesses to these app types (comma-separated, kept for back-compat) |
+| `--force-app-type <type>` | Bypass the classifier entirely — treat the app as this type |
+| `--verbose` | Print classifier breakdown (top 3 guesses + matched signals per dimension) |
+| `--dry-run` | Generate scenarios without launching the browser or writing reports |
 | `--regenerate` | Regenerate `sniff-scenarios/` before running |
 | `--regenerate-only` | Regenerate and exit (no browser) |
 | `--force-regenerate` | Overwrite hand-edits without prompting |
