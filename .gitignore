@@ -2,6 +2,13 @@ node_modules/
 dist/
 *.tsbuildinfo
 
+# Alternate package managers — this repo uses npm. Prevent accidental
+# pnpm/yarn lockfile commits if a contributor uses a different client.
+pnpm-lock.yaml
+yarn.lock
+bun.lockb
+bun.lock
+
 # Sniff output (NOT sniff-tests/ — that holds fixtures tests depend on)
 .sniff/
 sniff-baselines/
