@@ -1,7 +1,7 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { z } from 'zod';
-import { handleSniffScan, handleSniffRun, handleSniffReport, handleSniffDiscover } from './handlers.js';
+import { handleSniffScan, handleSniffRun, handleSniffReport, handleSniffDiscover, handleSniffInstall } from './handlers.js';
 import { getVersion } from '../version.js';
 
 export async function startMcpServer(): Promise<void> {
@@ -39,6 +39,24 @@ export async function startMcpServer(): Promise<void> {
       }
 
       if (url) {
+        // Gate on Playwright — return structured setup hint instead of
+        // silently running `npx playwright install` (MCP stdio transports
+        // commonly time out on the ~45s install).
+        const { checkPlaywrightBrowsers } = await import('../core/ensure-browsers.js');
+        const check = await checkPlaywrightBrowsers();
+        if (check.status !== 'installed') {
+          return {
+            content: [{
+              type: 'text',
+              text: JSON.stringify({
+                needsSetup: 'playwright-chromium',
+                installCommand: check.status === 'missing' ? check.installCommand : 'npx playwright install chromium',
+                installSizeMb: check.status === 'missing' ? check.installSizeMb : 165,
+                hint: 'Run the sniff_install MCP tool, or run the install command manually, then retry.',
+              }),
+            }],
+          };
+        }
         return handleSniffRun(rootDir, url, headless);
       }
 
@@ -85,6 +103,17 @@ export async function startMcpServer(): Promise<void> {
         ...(args.forceAppType !== undefined ? { forceAppType: args.forceAppType } : {}),
       });
     },
+  );
+
+  // Tool: sniff_install -- explicitly install Playwright's Chromium binary.
+  // MCP browser tools return `needsSetup: playwright-chromium` instead of
+  // silently shelling out (install takes ~45s, transports time out). Call
+  // this tool when that happens, then retry the browser tool.
+  server.tool(
+    'sniff_install',
+    'Install the Playwright Chromium binary (~165MB, one-time). Run this when sniff_run or sniff_discover returns `needsSetup: playwright-chromium`.',
+    {},
+    async () => handleSniffInstall(),
   );
 
   // Tool: sniff_report -- load last results

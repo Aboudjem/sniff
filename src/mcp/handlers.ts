@@ -156,6 +156,24 @@ export async function handleSniffDiscover(options: SniffDiscoverOptions): Promis
     return { content: [{ type: 'text', text: JSON.stringify({ error: urlErr }) }] };
   }
 
+  // Gate on Playwright install — return setup hint instead of hanging
+  // the MCP transport while `npx playwright install` runs for 30-60s.
+  const { checkPlaywrightBrowsers } = await import('../core/ensure-browsers.js');
+  const check = await checkPlaywrightBrowsers();
+  if (check.status !== 'installed') {
+    return {
+      content: [{
+        type: 'text',
+        text: JSON.stringify({
+          needsSetup: 'playwright-chromium',
+          installCommand: check.status === 'missing' ? check.installCommand : 'npx playwright install chromium',
+          installSizeMb: check.status === 'missing' ? check.installSizeMb : 165,
+          hint: 'Run the sniff_install MCP tool, or run the install command manually, then retry.',
+        }),
+      }],
+    };
+  }
+
   const { discoverCommand } = await import('../cli/commands/discover.js');
   const result = await discoverCommand({
     rootDir: options.rootDir,
@@ -194,6 +212,21 @@ export async function handleSniffDiscover(options: SniffDiscoverOptions): Promis
 
   return {
     content: [{ type: 'text', text: JSON.stringify(summary, null, 2) }],
+  };
+}
+
+export async function handleSniffInstall(): Promise<McpToolResult> {
+  const { installPlaywrightBrowsers } = await import('../core/ensure-browsers.js');
+  const result = await installPlaywrightBrowsers();
+  return {
+    content: [{
+      type: 'text',
+      text: JSON.stringify(
+        result.status === 'ok'
+          ? { status: 'installed', browser: 'chromium' }
+          : { status: 'failed', error: result.error, hint: 'Run `npx playwright install chromium` manually for full error output.' },
+      ),
+    }],
   };
 }
 

@@ -7,24 +7,7 @@ if (process.argv.includes('--mcp')) {
 } else {
   const { Command } = await import('commander');
 
-  async function ensurePlaywrightBrowsers(): Promise<void> {
-    try {
-      const { chromium } = await import('playwright');
-      chromium.executablePath();
-    } catch {
-      const pc = (await import('picocolors')).default;
-      console.log(pc.yellow('\nPlaywright browsers not installed.'));
-      console.log(pc.dim('Installing Chromium (required for browser testing)...\n'));
-      const { execSync } = await import('node:child_process');
-      try {
-        execSync('npx playwright install chromium', { stdio: 'inherit' });
-        console.log('');
-      } catch {
-        console.error(pc.red('Failed to install Playwright browsers. Run manually: npx playwright install chromium'));
-        process.exit(1);
-      }
-    }
-  }
+  const { ensurePlaywrightBrowsers } = await import('../core/ensure-browsers.js');
 
   const { getVersion } = await import('../version.js');
 

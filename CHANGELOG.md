@@ -25,6 +25,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Migration note
 
 If you were relying on sniff probing `:5000` / `:8000` / `:8080`, set `SNIFF_URL=http://localhost:<port>` or add the port to your dev script (`"dev": "vite --port 8080"`) and sniff will pick it up via `package.json`.
+- **`sniff_install` MCP tool** — explicitly installs Playwright's Chromium binary. Use this instead of hoping MCP tools trigger an install inline.
+- **`needsSetup` structured response** — `sniff_run` and `sniff_discover` now return `{ needsSetup: 'playwright-chromium', installCommand, installSizeMb, hint }` when the browser binary is missing instead of silently shelling out to `npx playwright install` (which can take 30-60s and time out MCP stdio transports).
+- **Shared `src/core/ensure-browsers.ts`** — `checkPlaywrightBrowsers` (non-invasive), `ensurePlaywrightBrowsers` (CLI install-inline), `installPlaywrightBrowsers` (programmatic install with structured result). CLI path unchanged in behavior.
+
+### Changed
+
+- **Playwright pinned** to `~1.59.1` (patch-only updates). Prevents drifting into 1.57+ memory regression reports without explicit review. Reference: [DEEP-DIVE §Playwright memory](`.planning/VERIFICATION-AUDIT-2026-04-18.md`).
 
 ## [0.4.0] - 2026-04-17
 
