@@ -2,9 +2,8 @@ node_modules/
 dist/
 *.tsbuildinfo
 
-# Sniff output
+# Sniff output (NOT sniff-tests/ — that holds fixtures tests depend on)
 .sniff/
-sniff-tests/
 sniff-baselines/
 sniff-reports/
 
