@@ -50,11 +50,12 @@ if (process.argv.includes('--mcp')) {
     .option('--regenerate-only', 'Regenerate sniff-scenarios/ and exit without running')
     .option('--force-regenerate', 'Regenerate sniff-scenarios/ and overwrite hand-edits')
     .option('--verbose', 'Print classification breakdown (top 3 guesses + matched signals per dimension)')
+    .option('--dry-run', 'Discover: generate scenarios + classify without running browser or writing reports')
     .action(async (target, options) => {
       const rootDir = target ? (await import('node:path')).resolve(target) : process.cwd();
 
-      if (options.discover || options.regenerate || options.regenerateOnly || options.forceRegenerate) {
-        if (!options.regenerateOnly) {
+      if (options.discover || options.regenerate || options.regenerateOnly || options.forceRegenerate || options.dryRun) {
+        if (!options.regenerateOnly && !options.dryRun) {
           await ensurePlaywrightBrowsers();
         }
         const { discoverCommand } = await import('./commands/discover.js');
@@ -82,6 +83,7 @@ if (process.argv.includes('--mcp')) {
           ...(options.regenerateOnly ? { regenerateOnly: true } : {}),
           ...(options.forceRegenerate ? { regenerate: true, forceRegenerate: true } : {}),
           ...(options.verbose ? { verbose: true } : {}),
+          ...(options.dryRun ? { dryRun: true } : {}),
         });
         process.exit(result.exitCode);
       }
@@ -196,8 +198,9 @@ if (process.argv.includes('--mcp')) {
     .option('--regenerate-only', 'Regenerate sniff-scenarios/ and exit without running')
     .option('--force-regenerate', 'Regenerate sniff-scenarios/ and overwrite hand-edits')
     .option('--verbose', 'Print classification breakdown (top 3 guesses + matched signals per dimension)')
+    .option('--dry-run', 'Generate scenarios + classify without running browser or writing reports')
     .action(async (target, options) => {
-      if (!options.regenerateOnly) {
+      if (!options.regenerateOnly && !options.dryRun) {
         await ensurePlaywrightBrowsers();
       }
       const rootDir = target ? (await import('node:path')).resolve(target) : process.cwd();
@@ -226,6 +229,7 @@ if (process.argv.includes('--mcp')) {
         ...(options.regenerateOnly ? { regenerateOnly: true } : {}),
         ...(options.forceRegenerate ? { regenerate: true, forceRegenerate: true } : {}),
         ...(options.verbose ? { verbose: true } : {}),
+        ...(options.dryRun ? { dryRun: true } : {}),
       });
       process.exit(result.exitCode);
     });

@@ -130,6 +130,7 @@ export interface SniffDiscoverOptions {
   only?: string;
   appType?: string[];
   forceAppType?: string;
+  dryRun?: boolean;
 }
 
 export async function handleSniffDiscover(options: SniffDiscoverOptions): Promise<McpToolResult> {
@@ -138,7 +139,7 @@ export async function handleSniffDiscover(options: SniffDiscoverOptions): Promis
     return { content: [{ type: 'text', text: JSON.stringify({ error: rootErr }) }] };
   }
 
-  if (!options.baseUrl) {
+  if (!options.baseUrl && !options.dryRun) {
     return {
       content: [
         {
@@ -151,33 +152,36 @@ export async function handleSniffDiscover(options: SniffDiscoverOptions): Promis
     };
   }
 
-  const urlErr = validateBaseUrl(options.baseUrl);
-  if (urlErr) {
-    return { content: [{ type: 'text', text: JSON.stringify({ error: urlErr }) }] };
+  if (options.baseUrl) {
+    const urlErr = validateBaseUrl(options.baseUrl);
+    if (urlErr) {
+      return { content: [{ type: 'text', text: JSON.stringify({ error: urlErr }) }] };
+    }
   }
 
-  // Gate on Playwright install — return setup hint instead of hanging
-  // the MCP transport while `npx playwright install` runs for 30-60s.
-  const { checkPlaywrightBrowsers } = await import('../core/ensure-browsers.js');
-  const check = await checkPlaywrightBrowsers();
-  if (check.status !== 'installed') {
-    return {
-      content: [{
-        type: 'text',
-        text: JSON.stringify({
-          needsSetup: 'playwright-chromium',
-          installCommand: check.status === 'missing' ? check.installCommand : 'npx playwright install chromium',
-          installSizeMb: check.status === 'missing' ? check.installSizeMb : 165,
-          hint: 'Run the sniff_install MCP tool, or run the install command manually, then retry.',
-        }),
-      }],
-    };
+  // Gate on Playwright install — skip when dryRun since no browser runs.
+  if (!options.dryRun) {
+    const { checkPlaywrightBrowsers } = await import('../core/ensure-browsers.js');
+    const check = await checkPlaywrightBrowsers();
+    if (check.status !== 'installed') {
+      return {
+        content: [{
+          type: 'text',
+          text: JSON.stringify({
+            needsSetup: 'playwright-chromium',
+            installCommand: check.status === 'missing' ? check.installCommand : 'npx playwright install chromium',
+            installSizeMb: check.status === 'missing' ? check.installSizeMb : 165,
+            hint: 'Run the sniff_install MCP tool, or run the install command manually, then retry.',
+          }),
+        }],
+      };
+    }
   }
 
   const { discoverCommand } = await import('../cli/commands/discover.js');
   const result = await discoverCommand({
     rootDir: options.rootDir,
-    url: options.baseUrl,
+    ...(options.baseUrl ? { url: options.baseUrl } : {}),
     headless: options.headless ?? true,
     nonInteractive: true,
     json: true,
@@ -191,14 +195,24 @@ export async function handleSniffDiscover(options: SniffDiscoverOptions): Promis
     ...(options.only !== undefined ? { only: options.only } : {}),
     ...(options.appType !== undefined ? { appType: options.appType } : {}),
     ...(options.forceAppType !== undefined ? { forceAppType: options.forceAppType } : {}),
+    ...(options.dryRun ? { dryRun: true } : {}),
   });
 
+  const reports: { html?: string; json?: string; junit?: string } = {};
+  for (const p of result.savedPaths) {
+    if (p.endsWith('.html')) reports.html = p;
+    else if (p.endsWith('.xml')) reports.junit = p;
+    else if (p.endsWith('.json')) reports.json = p;
+  }
   const summary = {
     baseUrl: result.baseUrl,
+    detectedFrom: result.detectedFrom,
     stats: result.report.stats,
     topAppType: result.report.appTypeGuesses[0]?.type,
     topAppConfidence: result.report.appTypeGuesses[0]?.confidence,
     classificationBreakdown: result.report.classificationBreakdown,
+    ...(result.dryRun ? { dryRun: result.dryRun } : {}),
+    reports,
     savedPaths: result.savedPaths,
     failedScenarios: result.report.scenarios
       .filter((s) => s.status === 'fail' && s.quarantined !== true)
@@ -213,6 +227,69 @@ export async function handleSniffDiscover(options: SniffDiscoverOptions): Promis
   return {
     content: [{ type: 'text', text: JSON.stringify(summary, null, 2) }],
   };
+}
+
+export interface SniffUnifiedOptions {
+  mode: 'scan' | 'run' | 'discover' | 'report';
+  rootDir: string;
+  baseUrl?: string;
+  headless?: boolean;
+  format?: 'json' | 'summary';
+  maxScenarios?: number;
+  maxVariantsPerScenario?: number;
+  maxVariantsPerRun?: number;
+  realism?: 'robot' | 'careful-user' | 'casual-user' | 'frustrated-user' | 'power-user';
+  seed?: number;
+  only?: string;
+  appType?: string[];
+  forceAppType?: string;
+  dryRun?: boolean;
+}
+
+/**
+ * Dispatch for the unified `sniff` MCP tool. Normalizes the discriminated
+ * union input and calls through to the narrow handlers. No new capabilities —
+ * this is a UX wrapper only, preserving the security pattern of scoped tools.
+ */
+export async function handleSniffUnified(options: SniffUnifiedOptions): Promise<McpToolResult> {
+  switch (options.mode) {
+    case 'scan':
+      return handleSniffScan(options.rootDir);
+    case 'run': {
+      let url = options.baseUrl;
+      if (!url) {
+        const { detectDevServerUrl } = await import('../config/dev-server-detector.js');
+        const detection = await detectDevServerUrl(options.rootDir);
+        url = detection.url;
+      }
+      if (!url) return handleSniffScan(options.rootDir);
+      return handleSniffRun(options.rootDir, url, options.headless ?? true);
+    }
+    case 'discover': {
+      let url = options.baseUrl;
+      if (!url && !options.dryRun) {
+        const { detectDevServerUrl } = await import('../config/dev-server-detector.js');
+        const detection = await detectDevServerUrl(options.rootDir);
+        url = detection.url;
+      }
+      return handleSniffDiscover({
+        rootDir: options.rootDir,
+        ...(url ? { baseUrl: url } : {}),
+        headless: options.headless ?? true,
+        ...(options.maxScenarios !== undefined ? { maxScenarios: options.maxScenarios } : {}),
+        ...(options.maxVariantsPerScenario !== undefined ? { maxVariantsPerScenario: options.maxVariantsPerScenario } : {}),
+        ...(options.maxVariantsPerRun !== undefined ? { maxVariantsPerRun: options.maxVariantsPerRun } : {}),
+        ...(options.realism !== undefined ? { realism: options.realism } : {}),
+        ...(options.seed !== undefined ? { seed: options.seed } : {}),
+        ...(options.only !== undefined ? { only: options.only } : {}),
+        ...(options.appType !== undefined ? { appType: options.appType } : {}),
+        ...(options.forceAppType !== undefined ? { forceAppType: options.forceAppType } : {}),
+        ...(options.dryRun ? { dryRun: true } : {}),
+      });
+    }
+    case 'report':
+      return handleSniffReport(options.rootDir, options.format ?? 'summary');
+  }
 }
 
 export async function handleSniffInstall(): Promise<McpToolResult> {
