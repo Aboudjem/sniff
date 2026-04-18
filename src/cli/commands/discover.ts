@@ -20,6 +20,7 @@ export interface DiscoverOptions {
   regenerate?: boolean;
   regenerateOnly?: boolean;
   forceRegenerate?: boolean;
+  verbose?: boolean;
 }
 
 export interface DiscoverResult {
@@ -92,6 +93,36 @@ export async function discoverCommand(options: DiscoverOptions): Promise<Discove
     runAt: new Date().toISOString(),
   });
 
+  function printVerboseBreakdown(breakdown: import('../../discovery/classifier/index.js').ClassificationBreakdown): void {
+    if (options.json) return;
+    console.log('');
+    console.log(pc.bold('  classification breakdown:'));
+    console.log(pc.dim('    top 3:'));
+    for (const t of breakdown.top3) {
+      const pct = Math.round(t.confidence * 100);
+      console.log(`      ${pc.bold(t.type.padEnd(12))} ${String(pct).padStart(3)}%   (raw score: ${t.rawScore})`);
+    }
+    const describeBucket = (label: string, entries: Array<{ value: string; weight: number; appType: string }>): void => {
+      if (entries.length === 0) {
+        console.log(pc.dim(`    ${label}: —`));
+        return;
+      }
+      const top = [...entries].sort((a, b) => b.weight - a.weight).slice(0, 8);
+      console.log(pc.dim(`    ${label}:`));
+      for (const e of top) {
+        console.log(`      ${pc.dim(e.appType.padEnd(12))} ${e.value}  ${pc.dim(`(+${e.weight})`)}`);
+      }
+      if (entries.length > top.length) {
+        console.log(pc.dim(`      ... ${entries.length - top.length} more`));
+      }
+    };
+    describeBucket('routes  ', breakdown.matchedSignals.routes);
+    describeBucket('elements', breakdown.matchedSignals.elements);
+    describeBucket('deps    ', breakdown.matchedSignals.deps);
+    describeBucket('schema  ', breakdown.matchedSignals.schema);
+    console.log('');
+  }
+
   let url: string | undefined;
   if (!options.regenerateOnly) {
     url = options.url ?? config.browser?.baseUrl;
@@ -132,8 +163,12 @@ export async function discoverCommand(options: DiscoverOptions): Promise<Discove
   if (!options.json) {
     console.log(`${pc.blue('[discover]')} Classifying app type...`);
   }
-  const { classifyApp } = await import('../../discovery/classifier/index.js');
+  const { classifyApp, scoreAllSignatures, buildClassificationBreakdown } = await import(
+    '../../discovery/classifier/index.js'
+  );
   let guesses = classifyApp(snapshot);
+  const allScored = scoreAllSignatures(snapshot);
+  const breakdown = buildClassificationBreakdown(allScored);
 
   if (!options.noLlm) {
     const { needsTieBreak, tieBreakClassification } = await import('../../discovery/classifier/tiebreak.js');
@@ -159,6 +194,10 @@ export async function discoverCommand(options: DiscoverOptions): Promise<Discove
     } else {
       console.log(pc.yellow('  no app type matched any signature'));
     }
+  }
+
+  if (options.verbose) {
+    printVerboseBreakdown(breakdown);
   }
 
   if (!options.json) {
@@ -225,7 +264,7 @@ export async function discoverCommand(options: DiscoverOptions): Promise<Discove
       }
     }
     if (options.regenerateOnly) {
-      const report: DiscoveryReport = { ...emptyReport(), appTypeGuesses: guesses };
+      const report: DiscoveryReport = { ...emptyReport(), appTypeGuesses: guesses, classificationBreakdown: breakdown };
       return { report, savedPaths: [], baseUrl: url ?? '', exitCode: 0 };
     }
   }
@@ -257,12 +296,14 @@ export async function discoverCommand(options: DiscoverOptions): Promise<Discove
 
   const { runScenarios } = await import('../../discovery/runner.js');
   let report = await runScenarios(allScenarios, guesses, runContext, config);
+  report.classificationBreakdown = breakdown;
 
   const { markQuarantinedScenarios } = await import('../../discovery/report/flakiness.js');
   const { loadFlakinessHistory } = await import('../../core/persistence.js');
   const history = await loadFlakinessHistory(options.rootDir);
   if (history) {
     report = markQuarantinedScenarios(report, history, resolvedUrl);
+    report.classificationBreakdown = breakdown;
   }
 
   const { saveDiscoveryReport } = await import('../../discovery/report/index.js');

@@ -168,6 +168,72 @@ export function classifyApp(snapshot: DomainSnapshot): AppTypeGuess[] {
     .sort((a, b) => b.confidence - a.confidence);
 }
 
+/**
+ * Returns every signature's guess with full evidence, BEFORE the blank fallback
+ * and BEFORE the min-confidence filter. Useful for --verbose output and for the
+ * `classificationBreakdown` field in DiscoveryReport so callers can see which
+ * signatures almost matched and on which tokens.
+ */
+export function scoreAllSignatures(snapshot: DomainSnapshot): AppTypeGuess[] {
+  return SIGNATURES.map((signature) => scoreSignature(signature, snapshot))
+    .sort((a, b) => b.rawScore - a.rawScore);
+}
+
+export interface SignalEvidenceEntry {
+  value: string;
+  weight: number;
+  appType: AppType;
+}
+
+export interface ClassificationBreakdown {
+  top3: Array<{ type: AppType; confidence: number; rawScore: number }>;
+  matchedSignals: {
+    routes: SignalEvidenceEntry[];
+    elements: SignalEvidenceEntry[];
+    deps: SignalEvidenceEntry[];
+    schema: SignalEvidenceEntry[];
+  };
+}
+
+/**
+ * Build a consolidated breakdown for surfacing *why* the classifier chose
+ * what it did (and why near-misses lost). Pass the full raw guess list from
+ * `scoreAllSignatures` — includes every signature, not just ones that cleared
+ * the confidence floor.
+ */
+export function buildClassificationBreakdown(
+  allGuesses: AppTypeGuess[],
+): ClassificationBreakdown {
+  const sorted = [...allGuesses].sort((a, b) => b.rawScore - a.rawScore);
+  const top3 = sorted.slice(0, 3).map((g) => ({
+    type: g.type,
+    confidence: g.confidence,
+    rawScore: g.rawScore,
+  }));
+
+  const matchedSignals: ClassificationBreakdown['matchedSignals'] = {
+    routes: [],
+    elements: [],
+    deps: [],
+    schema: [],
+  };
+  for (const guess of allGuesses) {
+    if (guess.type === 'blank') continue;
+    for (const ev of guess.evidence) {
+      const entry: SignalEvidenceEntry = {
+        value: ev.value,
+        weight: ev.weight,
+        appType: guess.type,
+      };
+      if (ev.signal === 'route') matchedSignals.routes.push(entry);
+      else if (ev.signal === 'element') matchedSignals.elements.push(entry);
+      else if (ev.signal === 'dep') matchedSignals.deps.push(entry);
+      else if (ev.signal === 'schema') matchedSignals.schema.push(entry);
+    }
+  }
+  return { top3, matchedSignals };
+}
+
 export function topAppType(snapshot: DomainSnapshot): AppType {
   const ranked = classifyApp(snapshot);
   return ranked[0]?.type ?? 'blank';

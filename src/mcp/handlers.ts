@@ -178,6 +178,7 @@ export async function handleSniffDiscover(options: SniffDiscoverOptions): Promis
     stats: result.report.stats,
     topAppType: result.report.appTypeGuesses[0]?.type,
     topAppConfidence: result.report.appTypeGuesses[0]?.confidence,
+    classificationBreakdown: result.report.classificationBreakdown,
     savedPaths: result.savedPaths,
     failedScenarios: result.report.scenarios
       .filter((s) => s.status === 'fail' && s.quarantined !== true)

@@ -64,6 +64,7 @@ if (process.argv.includes('--mcp')) {
     .option('--regenerate', 'Regenerate sniff-scenarios/ before running (prompts on hand-edits)')
     .option('--regenerate-only', 'Regenerate sniff-scenarios/ and exit without running')
     .option('--force-regenerate', 'Regenerate sniff-scenarios/ and overwrite hand-edits')
+    .option('--verbose', 'Print classification breakdown (top 3 guesses + matched signals per dimension)')
     .action(async (target, options) => {
       const rootDir = target ? (await import('node:path')).resolve(target) : process.cwd();
 
@@ -94,6 +95,7 @@ if (process.argv.includes('--mcp')) {
           ...(options.regenerate ? { regenerate: true } : {}),
           ...(options.regenerateOnly ? { regenerateOnly: true } : {}),
           ...(options.forceRegenerate ? { regenerate: true, forceRegenerate: true } : {}),
+          ...(options.verbose ? { verbose: true } : {}),
         });
         process.exit(result.exitCode);
       }
@@ -205,6 +207,7 @@ if (process.argv.includes('--mcp')) {
     .option('--regenerate', 'Regenerate sniff-scenarios/ before running (prompts on hand-edits)')
     .option('--regenerate-only', 'Regenerate sniff-scenarios/ and exit without running')
     .option('--force-regenerate', 'Regenerate sniff-scenarios/ and overwrite hand-edits')
+    .option('--verbose', 'Print classification breakdown (top 3 guesses + matched signals per dimension)')
     .action(async (target, options) => {
       if (!options.regenerateOnly) {
         await ensurePlaywrightBrowsers();
@@ -233,6 +236,7 @@ if (process.argv.includes('--mcp')) {
         ...(options.regenerate ? { regenerate: true } : {}),
         ...(options.regenerateOnly ? { regenerateOnly: true } : {}),
         ...(options.forceRegenerate ? { regenerate: true, forceRegenerate: true } : {}),
+        ...(options.verbose ? { verbose: true } : {}),
       });
       process.exit(result.exitCode);
     });

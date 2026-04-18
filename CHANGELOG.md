@@ -9,7 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+<<<<<<< HEAD
 - **i18n classifier aliases** — the app-type classifier now matches French, Spanish, German, Portuguese (BR/PT), and Italian equivalents for every English signature token. Non-English apps (e.g. a French SaaS on `/fr/tableau-de-bord`, `/fr/parametres`, `/fr/facturation`) classify correctly instead of returning `blank`. Alias map in `src/discovery/classifier/signatures/i18n.ts`; matched aliases surface in evidence with an `(i18n: <alias>)` suffix. Covers route tokens (single-word) and element phrases (multi-word).
+=======
+- **Classification breakdown** — `sniff discover` (and the `sniff_discover` MCP tool) now returns a `classificationBreakdown` with the top-3 app-type candidates (type, confidence, raw score) and every matched signal grouped by dimension (routes, elements, deps, schema) with the app type that scored it. Useful for debugging why an app classified the way it did, especially the "100% blank with no context" case.
+- **`--verbose` flag** on `sniff` and `sniff discover` — pretty-prints the classification breakdown to the terminal (top 3 guesses + first 8 matched signals per dimension).
+- **`scoreAllSignatures` / `buildClassificationBreakdown` exports** from `src/discovery/classifier/index.ts` for downstream tooling.
+>>>>>>> 782eda8 (feat(classifier): classification breakdown + --verbose flag)
 
 ## [0.4.0] - 2026-04-17
 

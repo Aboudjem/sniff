@@ -1,5 +1,6 @@
 import type { BrowserFinding } from '../core/types.js';
 import type { AppTypeGuess } from './classifier/types.js';
+import type { ClassificationBreakdown } from './classifier/index.js';
 import type { Scenario, StepValidationKind } from './scenarios/types.js';
 
 export type ScenarioStatus = 'pass' | 'fail' | 'skip';
@@ -54,6 +55,7 @@ export interface DiscoveryReportStats {
 
 export interface DiscoveryReport {
   appTypeGuesses: AppTypeGuess[];
+  classificationBreakdown?: ClassificationBreakdown;
   scenarios: ScenarioResult[];
   stats: DiscoveryReportStats;
   runAt: string;
