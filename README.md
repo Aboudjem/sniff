@@ -398,6 +398,7 @@ Pass `--verbose` to see the top-3 candidates and every matched signal — useful
 | `--regenerate-only` | Regenerate and exit (no browser) |
 | `--force-regenerate` | Overwrite hand-edits without prompting |
 | `--non-interactive` | Skip prompts and the production-URL countdown |
+| `--verbose` | Print classification breakdown (top 3 guesses + matched signals per dimension) |
 | `--no-llm` | Skip Claude Code CLI polish (deterministic only) |
 
 **Production-URL safety:** when the target is not a local address, sniff prints a 5-second countdown banner before running. Hit Ctrl+C to cancel. No `--allow-destructive` flag.

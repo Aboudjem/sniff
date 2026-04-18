@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { fileURLToPath } from 'node:url';
 import { dirname, resolve } from 'node:path';
-import { classifyApp, topAppType } from './index.js';
+import { classifyApp, topAppType, scoreAllSignatures, buildClassificationBreakdown } from './index.js';
 import { extractDomainSnapshot } from '../domain/index.js';
 import type { DomainSnapshot } from '../types.js';
 import type { AppType } from './types.js';
@@ -264,6 +264,71 @@ describe('classifyApp (synthetic snapshots)', () => {
     expect(top.evidence.some((e) => e.signal === 'route' && e.value === 'checkout')).toBe(true);
     expect(top.evidence.some((e) => e.signal === 'dep' && e.value === 'stripe')).toBe(true);
     expect(top.evidence.some((e) => e.signal === 'schema' && e.value === 'product')).toBe(true);
+  });
+});
+
+describe('scoreAllSignatures + buildClassificationBreakdown', () => {
+  it('returns every signature regardless of confidence', () => {
+    const empty = makeSnapshot({ routes: [], elements: [], deps: [], entities: [] });
+    const all = scoreAllSignatures(empty);
+    // 10 signatures shipped today (ecommerce, booking, social, saas, content,
+    // crm, auth-only, marketing, admin, blank). Don't assert exact count so
+    // adding new signatures doesn't churn this test.
+    expect(all.length).toBeGreaterThanOrEqual(9);
+    expect(all.every((g) => typeof g.rawScore === 'number')).toBe(true);
+  });
+
+  it('preserves near-miss evidence even when everything falls under threshold', () => {
+    // Only 1 dep + 1 schema — below 0.1 confidence, so classifyApp collapses
+    // to blank. scoreAllSignatures must still surface the matched signals.
+    const snapshot = makeSnapshot({
+      routes: [],
+      elements: [],
+      deps: ['stripe'],
+      entities: ['Order'],
+    });
+    const all = scoreAllSignatures(snapshot);
+    const ecommerce = all.find((g) => g.type === 'ecommerce');
+    expect(ecommerce?.evidence.some((e) => e.signal === 'dep' && e.value === 'stripe')).toBe(true);
+    expect(ecommerce?.evidence.some((e) => e.signal === 'schema' && e.value === 'order')).toBe(true);
+  });
+
+  it('buildClassificationBreakdown groups signals by dimension', () => {
+    const snapshot = makeSnapshot({
+      routes: ['cart', 'checkout', 'products'],
+      elements: ['add', 'cart'],
+      deps: ['stripe'],
+      entities: ['Product', 'Order'],
+    });
+    const breakdown = buildClassificationBreakdown(scoreAllSignatures(snapshot));
+    expect(breakdown.top3).toHaveLength(3);
+    expect(breakdown.top3[0].type).toBe('ecommerce');
+    expect(breakdown.matchedSignals.routes.some((r) => r.value === 'checkout')).toBe(true);
+    expect(breakdown.matchedSignals.deps.some((d) => d.value === 'stripe')).toBe(true);
+    expect(breakdown.matchedSignals.schema.some((s) => s.value === 'product')).toBe(true);
+  });
+
+  it('buildClassificationBreakdown excludes blank from matchedSignals', () => {
+    const empty = makeSnapshot({ routes: [], elements: [], deps: [], entities: [] });
+    const breakdown = buildClassificationBreakdown(scoreAllSignatures(empty));
+    for (const bucket of Object.values(breakdown.matchedSignals)) {
+      for (const entry of bucket) {
+        expect(entry.appType).not.toBe('blank');
+      }
+    }
+  });
+
+  it('buildClassificationBreakdown top3 is sorted by rawScore desc', () => {
+    const snapshot = makeSnapshot({
+      routes: ['cart', 'checkout', 'products', 'dashboard', 'settings', 'billing'],
+      elements: ['add', 'cart', 'workspace'],
+      deps: ['stripe', 'next-auth'],
+      entities: ['Workspace', 'Subscription', 'Product', 'Order'],
+    });
+    const breakdown = buildClassificationBreakdown(scoreAllSignatures(snapshot));
+    for (let i = 1; i < breakdown.top3.length; i++) {
+      expect(breakdown.top3[i - 1].rawScore).toBeGreaterThanOrEqual(breakdown.top3[i].rawScore);
+    }
   });
 });
 
