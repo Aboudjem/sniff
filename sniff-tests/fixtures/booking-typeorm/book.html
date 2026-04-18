@@ -1,0 +1,13 @@
+<!doctype html>
+<html>
+  <head><title>Book</title></head>
+  <body>
+    <h1>Confirm your booking</h1>
+    <form action="/api/reservations" method="post">
+      <input name="email" type="email" required aria-label="Email" />
+      <input name="fullName" type="text" required aria-label="Full name" />
+      <input name="phone" type="tel" aria-label="Phone" />
+      <button type="submit" data-testid="confirm-booking">Confirm and pay</button>
+    </form>
+  </body>
+</html>
