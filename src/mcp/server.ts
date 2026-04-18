@@ -1,7 +1,7 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { z } from 'zod';
-import { handleSniffScan, handleSniffRun, handleSniffReport, handleSniffDiscover, handleSniffInstall } from './handlers.js';
+import { handleSniffScan, handleSniffRun, handleSniffReport, handleSniffDiscover, handleSniffInstall, handleSniffUnified } from './handlers.js';
 import { getVersion } from '../version.js';
 
 export async function startMcpServer(): Promise<void> {
@@ -9,6 +9,32 @@ export async function startMcpServer(): Promise<void> {
     name: 'sniff',
     version: getVersion(),
   });
+
+  // Tool: sniff -- unified entry point (preferred). Dispatches to the narrow
+  // tools below. The narrow tools remain registered for back-compat and to
+  // preserve the documented security pattern of scoped capabilities
+  // (sniff-qa/DEEP-DIVE.md:1108). Marked deprecated in v0.5, removal planned v0.7.
+  server.tool(
+    'sniff',
+    'Unified entry point. Pass { mode: "scan" | "run" | "discover" | "report", rootDir, ...} to dispatch. Prefer this over the narrow tools (sniff_scan / sniff_run / sniff_discover / sniff_report) which are kept only for back-compat.',
+    {
+      mode: z.enum(['scan', 'run', 'discover', 'report']).describe('scan = source only, run = source + browser audit, discover = autonomous E2E, report = load last results'),
+      rootDir: z.string().describe('Absolute path to the project root directory'),
+      baseUrl: z.string().optional(),
+      headless: z.boolean().optional(),
+      format: z.enum(['json', 'summary']).optional(),
+      maxScenarios: z.number().int().min(1).max(200).optional(),
+      maxVariantsPerScenario: z.number().int().min(0).max(20).optional(),
+      maxVariantsPerRun: z.number().int().min(0).max(200).optional(),
+      realism: z.enum(['robot', 'careful-user', 'casual-user', 'frustrated-user', 'power-user']).optional(),
+      seed: z.number().int().optional(),
+      only: z.string().optional(),
+      appType: z.array(z.string()).optional(),
+      forceAppType: z.string().optional(),
+      dryRun: z.boolean().optional(),
+    },
+    async (args) => handleSniffUnified(args),
+  );
 
   // Tool: sniff_scan -- static source analysis (no browser needed)
   server.tool(
@@ -81,6 +107,7 @@ export async function startMcpServer(): Promise<void> {
       only: z.string().optional().describe('Filter scenarios by id substring or app type'),
       appType: z.array(z.string()).optional().describe('Filter classifier guesses to these app types (does NOT bypass classification — use forceAppType for that)'),
       forceAppType: z.string().optional().describe('Force a single app type, bypassing the classifier entirely. Use when classification returns blank.'),
+      dryRun: z.boolean().optional().describe('Generate scenarios + classify without launching a browser or writing reports. Useful for preview.'),
     },
     async (args) => {
       let url = args.baseUrl;
@@ -101,6 +128,7 @@ export async function startMcpServer(): Promise<void> {
         ...(args.only !== undefined ? { only: args.only } : {}),
         ...(args.appType !== undefined ? { appType: args.appType } : {}),
         ...(args.forceAppType !== undefined ? { forceAppType: args.forceAppType } : {}),
+        ...(args.dryRun !== undefined ? { dryRun: args.dryRun } : {}),
       });
     },
   );
