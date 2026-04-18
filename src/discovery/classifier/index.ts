@@ -1,5 +1,9 @@
 import type { DomainSnapshot } from '../types.js';
 import { SIGNATURES } from './signatures/index.js';
+import {
+  getRouteMatchTokens,
+  getElementMatchPhrases,
+} from './signatures/i18n.js';
 import type { AppType, AppTypeGuess, Evidence, Signature } from './types.js';
 
 const MIN_CONFIDENCE_TO_KEEP = 0.1;
@@ -31,9 +35,24 @@ function scoreRoutes(
   let score = 0;
   const evidence: Evidence[] = [];
   for (const [token, weight] of Object.entries(signature.routes)) {
-    if (routeTokens.has(token)) {
+    // Each signature entry scores at most once, regardless of how many
+    // aliases match. We pick the English key if present, else the first
+    // matching alias for evidence display.
+    const candidates = getRouteMatchTokens(token);
+    let matched: string | undefined;
+    for (const c of candidates) {
+      if (routeTokens.has(c)) {
+        matched = c;
+        break;
+      }
+    }
+    if (matched) {
       score += weight;
-      evidence.push({ signal: 'route', value: token, weight });
+      evidence.push({
+        signal: 'route',
+        value: matched === token ? token : `${token} (i18n: ${matched})`,
+        weight,
+      });
     }
   }
   return { score, evidence };
@@ -46,12 +65,23 @@ function scoreElements(
   let score = 0;
   const evidence: Evidence[] = [];
   for (const [phrase, weight] of Object.entries(signature.elements)) {
-    const phraseTokens = tokenize(phrase);
-    if (phraseTokens.length === 0) continue;
-    const allPresent = phraseTokens.every((t) => elementTokens.has(t));
-    if (allPresent) {
+    const candidates = getElementMatchPhrases(phrase);
+    let matchedPhrase: string | undefined;
+    for (const c of candidates) {
+      const phraseTokens = tokenize(c);
+      if (phraseTokens.length === 0) continue;
+      if (phraseTokens.every((t) => elementTokens.has(t))) {
+        matchedPhrase = c;
+        break;
+      }
+    }
+    if (matchedPhrase) {
       score += weight;
-      evidence.push({ signal: 'element', value: phrase, weight });
+      evidence.push({
+        signal: 'element',
+        value: matchedPhrase === phrase ? phrase : `${phrase} (i18n: ${matchedPhrase})`,
+        weight,
+      });
     }
   }
   return { score, evidence };

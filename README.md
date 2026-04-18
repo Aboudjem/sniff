@@ -359,6 +359,8 @@ sniff discover --regenerate-only   # write sniff-scenarios/ and exit (no run)
 
 `sniff discover` reads your source (Prisma, Drizzle, TypeORM, Zod, GraphQL, OpenAPI, TS types), classifies what the app is (ecommerce, booking, saas, social, content, crm, auth-only, marketing, admin), generates happy-path journeys with real personas, enumerates edge variants (invalid email, XSS, payment declined, empty cart, offline, and more), and drives everything through Playwright.
 
+**Multilingual projects supported.** The classifier matches French, Spanish, German, Portuguese (BR/PT), and Italian equivalents for every signature token, so a French SaaS on `/fr/tableau-de-bord` classifies the same as an English one on `/dashboard`.
+
 **What you get:**
 
 - `sniff-scenarios/_generated/<app-type>/<journey>.<variant>.scenario.md` — reviewable scenarios with JSON frontmatter. Track them in git. Hand-edit them — sniff detects the change and asks before regenerating.
