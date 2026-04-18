@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Changed
+
+- **`sniff init` auto-detects the config flavor.** TypeScript projects (detected via `tsconfig.json` or `typescript` in deps) get `sniff.config.ts`. ESM projects (`"type": "module"`) get `sniff.config.mjs`. Plain JS projects get `sniff.config.js` (CJS). Previously it always wrote `.ts`, which required users to install TypeScript.
+
+### Added
+
+- **`sniff init --ts`** forces TypeScript flavor.
+- **`sniff init --js`** forces JS (ESM or CJS depending on `package.json`).
+
 ## [0.4.0] - 2026-04-17
 
 ### Added
