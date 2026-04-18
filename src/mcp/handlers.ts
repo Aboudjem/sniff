@@ -129,6 +129,7 @@ export interface SniffDiscoverOptions {
   seed?: number;
   only?: string;
   appType?: string[];
+  dryRun?: boolean;
 }
 
 export async function handleSniffDiscover(options: SniffDiscoverOptions): Promise<McpToolResult> {
@@ -137,7 +138,7 @@ export async function handleSniffDiscover(options: SniffDiscoverOptions): Promis
     return { content: [{ type: 'text', text: JSON.stringify({ error: rootErr }) }] };
   }
 
-  if (!options.baseUrl) {
+  if (!options.baseUrl && !options.dryRun) {
     return {
       content: [
         {
@@ -150,15 +151,17 @@ export async function handleSniffDiscover(options: SniffDiscoverOptions): Promis
     };
   }
 
-  const urlErr = validateBaseUrl(options.baseUrl);
-  if (urlErr) {
-    return { content: [{ type: 'text', text: JSON.stringify({ error: urlErr }) }] };
+  if (options.baseUrl) {
+    const urlErr = validateBaseUrl(options.baseUrl);
+    if (urlErr) {
+      return { content: [{ type: 'text', text: JSON.stringify({ error: urlErr }) }] };
+    }
   }
 
   const { discoverCommand } = await import('../cli/commands/discover.js');
   const result = await discoverCommand({
     rootDir: options.rootDir,
-    url: options.baseUrl,
+    ...(options.baseUrl ? { url: options.baseUrl } : {}),
     headless: options.headless ?? true,
     nonInteractive: true,
     json: true,
@@ -171,6 +174,7 @@ export async function handleSniffDiscover(options: SniffDiscoverOptions): Promis
     ...(options.seed !== undefined ? { seed: options.seed } : {}),
     ...(options.only !== undefined ? { only: options.only } : {}),
     ...(options.appType !== undefined ? { appType: options.appType } : {}),
+    ...(options.dryRun ? { dryRun: true } : {}),
   });
 
   const summary = {
@@ -178,6 +182,7 @@ export async function handleSniffDiscover(options: SniffDiscoverOptions): Promis
     stats: result.report.stats,
     topAppType: result.report.appTypeGuesses[0]?.type,
     topAppConfidence: result.report.appTypeGuesses[0]?.confidence,
+    ...(result.dryRun ? { dryRun: result.dryRun } : {}),
     savedPaths: result.savedPaths,
     failedScenarios: result.report.scenarios
       .filter((s) => s.status === 'fail' && s.quarantined !== true)

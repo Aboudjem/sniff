@@ -20,6 +20,23 @@ export interface DiscoverOptions {
   regenerate?: boolean;
   regenerateOnly?: boolean;
   forceRegenerate?: boolean;
+  /**
+   * Generate scenarios + classification and return them without opening a
+   * browser, running tests, or writing reports. Useful for CI preview
+   * ("what would sniff do?") and for iterating on force-app-type decisions.
+   */
+  dryRun?: boolean;
+}
+
+export interface DryRunScenarioSummary {
+  id: string;
+  name: string;
+  appType: string;
+  journey: string;
+  variant: string;
+  persona?: string;
+  stepCount: number;
+  steps: string[];
 }
 
 export interface DiscoverResult {
@@ -27,6 +44,12 @@ export interface DiscoverResult {
   savedPaths: string[];
   baseUrl: string;
   exitCode: number;
+  /** Populated only when `options.dryRun === true`. Capped at 50 entries. */
+  dryRun?: {
+    scenarios: DryRunScenarioSummary[];
+    totalGenerated: number;
+    estimatedDurationMs: number;
+  };
 }
 
 const DEFAULT_STEP_TIMEOUT_MS = 10_000;
@@ -93,7 +116,7 @@ export async function discoverCommand(options: DiscoverOptions): Promise<Discove
   });
 
   let url: string | undefined;
-  if (!options.regenerateOnly) {
+  if (!options.regenerateOnly && !options.dryRun) {
     url = options.url ?? config.browser?.baseUrl;
     if (!url) {
       const { detectDevServerUrl } = await import('../../config/dev-server-detector.js');
@@ -192,11 +215,57 @@ export async function discoverCommand(options: DiscoverOptions): Promise<Discove
       console.log(pc.yellow('  no scenarios generated for this project'));
     }
     const report: DiscoveryReport = { ...emptyReport(), appTypeGuesses: guesses };
-    return { report, savedPaths: [], baseUrl: url ?? '', exitCode: 0 };
+    const base: DiscoverResult = { report, savedPaths: [], baseUrl: url ?? '', exitCode: 0 };
+    if (options.dryRun) {
+      base.dryRun = { scenarios: [], totalGenerated: 0, estimatedDurationMs: 0 };
+    }
+    return base;
   }
 
   if (!options.json) {
     console.log(`  ${happyScenarios.length} happy + ${edgeScenarios.length} edge = ${allScenarios.length} total`);
+  }
+
+  if (options.dryRun) {
+    // Short-circuit before runScenarios. No browser, no disk writes, no
+    // network. Return a compact summary the caller can render or feed back
+    // to an agent for review before committing to a real run.
+    const DRY_RUN_CAP = 50;
+    const scenarios: DryRunScenarioSummary[] = allScenarios.slice(0, DRY_RUN_CAP).map((s) => ({
+      id: s.id,
+      name: s.name,
+      appType: s.appType,
+      journey: s.journey,
+      variant: s.variant,
+      persona: s.persona,
+      stepCount: s.steps.length,
+      steps: s.steps.map((step) => `${step.n}. ${step.intent}`),
+    }));
+    // Rough estimate: per-step timeout * avg steps. Caps at scenario
+    // timeout regardless so we don't wildly over-estimate.
+    const avgSteps = allScenarios.reduce((sum, s) => sum + s.steps.length, 0) / allScenarios.length;
+    const perScenarioMs = Math.min(avgSteps * DEFAULT_STEP_TIMEOUT_MS, DEFAULT_SCENARIO_TIMEOUT_MS);
+    const estimatedDurationMs = Math.round(perScenarioMs * allScenarios.length);
+    if (!options.json) {
+      console.log('');
+      console.log(pc.bold('  dry run — no browser launched, no reports written'));
+      for (const s of scenarios) {
+        console.log(`  ${pc.green(s.appType)}  ${s.id}  ${pc.dim(`(${s.stepCount} steps)`)}`);
+      }
+      if (allScenarios.length > DRY_RUN_CAP) {
+        console.log(pc.dim(`  ... ${allScenarios.length - DRY_RUN_CAP} more`));
+      }
+      console.log('');
+      console.log(pc.dim(`  estimated run duration: ~${Math.round(estimatedDurationMs / 1000)}s`));
+    }
+    const report: DiscoveryReport = { ...emptyReport(), appTypeGuesses: guesses };
+    return {
+      report,
+      savedPaths: [],
+      baseUrl: url ?? '',
+      exitCode: 0,
+      dryRun: { scenarios, totalGenerated: allScenarios.length, estimatedDurationMs },
+    };
   }
 
   if (options.regenerate || options.regenerateOnly) {

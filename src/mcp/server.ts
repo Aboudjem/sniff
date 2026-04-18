@@ -62,6 +62,7 @@ export async function startMcpServer(): Promise<void> {
       seed: z.number().int().optional().describe('Replay a specific random seed'),
       only: z.string().optional().describe('Filter scenarios by id substring or app type'),
       appType: z.array(z.string()).optional().describe('Force app types'),
+      dryRun: z.boolean().optional().describe('Generate scenarios + classify without launching a browser or writing reports. Useful for previewing what sniff would do.'),
     },
     async (args) => {
       let url = args.baseUrl;
@@ -81,6 +82,7 @@ export async function startMcpServer(): Promise<void> {
         ...(args.seed !== undefined ? { seed: args.seed } : {}),
         ...(args.only !== undefined ? { only: args.only } : {}),
         ...(args.appType !== undefined ? { appType: args.appType } : {}),
+        ...(args.dryRun !== undefined ? { dryRun: args.dryRun } : {}),
       });
     },
   );

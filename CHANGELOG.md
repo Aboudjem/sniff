@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- **`dryRun` on `sniff discover`** — generates scenarios and classification but does NOT launch a browser, does NOT write reports, and does NOT need a dev-server URL. Returns `{ dryRun: { scenarios: [{id, name, appType, journey, stepCount, steps}], totalGenerated, estimatedDurationMs } }` so agents / CI previews can inspect what sniff would do before committing to a real run. CLI: `--dry-run`. MCP: `dryRun: boolean` on `sniff_discover`. Scenario list capped at 50; `totalGenerated` always reports the true count.
+
 ## [0.4.0] - 2026-04-17
 
 ### Added
