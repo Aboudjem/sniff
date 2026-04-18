@@ -20,8 +20,20 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: '22.14'
           registry-url: 'https://registry.npmjs.org'
+
+      - name: Ensure npm supports trusted publishing (>=11.5.1)
+        run: |
+          CURRENT=$(npm --version)
+          echo "Node $(node --version), npm $CURRENT"
+          node -e "
+          const [a,b,c] = process.argv[1].split('.').map(n => parseInt(n,10));
+          const ok = a > 11 || (a === 11 && (b > 5 || (b === 5 && c >= 1)));
+          if (!ok) { console.log('Upgrading npm from', process.argv[1], 'to >=11.5.1'); }
+          process.exit(ok ? 0 : 42);
+          " "$CURRENT" || npm install -g npm@latest
+          echo "Using npm $(npm --version)"
 
       - name: Verify tag matches package.json version
         run: |
@@ -44,10 +56,8 @@ jobs:
       - name: Build
         run: npm run build
 
-      - name: Publish to npm with provenance
+      - name: Publish to npm with provenance (OIDC)
         run: npm publish --provenance --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
@@ -68,13 +78,21 @@ jobs:
       - name: Dispatch plugin-released to 10x
         env:
           DISPATCH_TOKEN: ${{ secrets.TEN_X_DISPATCH_TOKEN }}
+          VERSION: ${{ steps.version.outputs.value }}
         run: |
           if [ -z "$DISPATCH_TOKEN" ]; then
             echo "TEN_X_DISPATCH_TOKEN secret not set; skipping 10x sync."
             exit 0
           fi
-          curl -sS -X POST \
+          HTTP_CODE=$(curl -sS -o /tmp/dispatch.json -w "%{http_code}" -X POST \
             -H "Authorization: token $DISPATCH_TOKEN" \
             -H "Accept: application/vnd.github+json" \
             https://api.github.com/repos/Aboudjem/10x/dispatches \
-            -d '{"event_type":"plugin-released","client_payload":{"plugin":"sniff","version":"${{ steps.version.outputs.value }}"}}'
+            -d "{\"event_type\":\"plugin-released\",\"client_payload\":{\"plugin\":\"sniff\",\"version\":\"$VERSION\"}}")
+          if [ "$HTTP_CODE" != "204" ]; then
+            echo "10x dispatch failed with HTTP $HTTP_CODE:"
+            cat /tmp/dispatch.json
+            echo "Rotate TEN_X_DISPATCH_TOKEN at https://github.com/Aboudjem/sniff/settings/secrets/actions"
+            exit 1
+          fi
+          echo "10x dispatch succeeded (HTTP 204)."
