@@ -58,7 +58,8 @@ if (process.argv.includes('--mcp')) {
     .option('--realism <profile>', 'Discovery realism: robot, careful-user, casual-user, frustrated-user, power-user')
     .option('--seed <n>', 'Replay a specific random seed')
     .option('--only <filter>', 'Filter discovery scenarios by id substring or app type')
-    .option('--app-type <types>', 'Force discovery app types (comma-separated)')
+    .option('--app-type <types>', 'Filter discovery app types (comma-separated) — only generates scenarios for these types if the classifier matches them')
+    .option('--force-app-type <type>', 'Force a single app type, bypassing the classifier entirely (use when classification returns blank)')
     .option('--no-llm', 'Disable LLM-backed discovery polish')
     .option('--non-interactive', 'Non-interactive mode for discovery (skips prompts and countdown)')
     .option('--regenerate', 'Regenerate sniff-scenarios/ before running (prompts on hand-edits)')
@@ -89,6 +90,7 @@ if (process.argv.includes('--mcp')) {
           ...(options.seed ? { seed: parseInt(options.seed, 10) } : {}),
           ...(options.only ? { only: options.only } : {}),
           ...(appTypes ? { appType: appTypes } : {}),
+          ...(options.forceAppType ? { forceAppType: options.forceAppType } : {}),
           ...(options.llm === false ? { noLlm: true } : {}),
           ...(options.nonInteractive ? { nonInteractive: true } : {}),
           ...(options.format ? { format: options.format } : {}),
@@ -201,7 +203,8 @@ if (process.argv.includes('--mcp')) {
     .option('--realism <profile>', 'Realism: robot, careful-user, casual-user, frustrated-user, power-user')
     .option('--seed <n>', 'Replay a specific random seed')
     .option('--only <filter>', 'Filter scenarios by id substring or app type')
-    .option('--app-type <types>', 'Force app types (comma-separated)')
+    .option('--app-type <types>', 'Filter discovery app types (comma-separated) — only generates scenarios for these types if the classifier matches them')
+    .option('--force-app-type <type>', 'Force a single app type, bypassing the classifier entirely (use when classification returns blank)')
     .option('--no-llm', 'Disable LLM-backed polish')
     .option('--non-interactive', 'Skip prompts and the production-URL countdown')
     .option('--regenerate', 'Regenerate sniff-scenarios/ before running (prompts on hand-edits)')
@@ -230,6 +233,7 @@ if (process.argv.includes('--mcp')) {
         ...(options.seed ? { seed: parseInt(options.seed, 10) } : {}),
         ...(options.only ? { only: options.only } : {}),
         ...(appTypes ? { appType: appTypes } : {}),
+        ...(options.forceAppType ? { forceAppType: options.forceAppType } : {}),
         ...(options.llm === false ? { noLlm: true } : {}),
         ...(options.nonInteractive ? { nonInteractive: true } : {}),
         ...(options.format ? { format: options.format } : {}),

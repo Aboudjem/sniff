@@ -108,6 +108,81 @@ describe('generateScenarios (synthetic)', () => {
   });
 });
 
+describe('filterAppTypes + forceAppType (issue #2)', () => {
+  // saas settings-update template requires routeTokens: ['settings'] + forms: ['sign-in'].
+  const saasForms = [
+    { route: '/login', filePath: 'x', intent: 'sign-in' as const, intentConfidence: 1, fields: [] },
+  ];
+  const saasVocab = { routes: ['settings', 'login'], elements: [], deps: [] };
+
+  it('filterAppTypes drops guesses not in the list (previous forceAppTypes behavior)', () => {
+    const snapshot = mkSnapshot({
+      forms: [
+        { route: '/checkout', filePath: 'x', intent: 'checkout', intentConfidence: 1, fields: [] },
+      ],
+      vocabulary: { routes: ['cart', 'checkout'], elements: [], deps: [] },
+    });
+    const scenarios = generateScenarios(
+      snapshot,
+      [guess('ecommerce'), guess('saas', 0.6)],
+      { filterAppTypes: ['saas'] },
+    );
+    expect(scenarios.every((s) => s.appType !== 'ecommerce')).toBe(true);
+  });
+
+  it('filterAppTypes generates nothing when no guess matches (classifier returned blank)', () => {
+    // Reproduction of the Prevue case: classifier says "blank 100%",
+    // user passes filterAppTypes=["saas"], and no scenarios come out.
+    // This is intentional for filterAppTypes — use forceAppType to bypass.
+    const snapshot = mkSnapshot({ forms: saasForms, vocabulary: saasVocab });
+    const scenarios = generateScenarios(
+      snapshot,
+      [guess('blank', 1)],
+      { filterAppTypes: ['saas'] },
+    );
+    expect(scenarios).toHaveLength(0);
+  });
+
+  it('forceAppType bypasses classifier and emits templates for the forced type', () => {
+    // Same Prevue case — but forceAppType: 'saas' should short-circuit
+    // the classifier and generate SaaS templates regardless.
+    const snapshot = mkSnapshot({ forms: saasForms, vocabulary: saasVocab });
+    const scenarios = generateScenarios(
+      snapshot,
+      [guess('blank', 1)],
+      { forceAppType: 'saas' },
+    );
+    expect(scenarios.length).toBeGreaterThan(0);
+    expect(scenarios.every((s) => s.appType === 'saas')).toBe(true);
+    expect(scenarios.every((s) => s.generatedFrom.confidence === 1)).toBe(true);
+  });
+
+  it('forceAppType wins over filterAppTypes when both are set', () => {
+    const snapshot = mkSnapshot({ forms: saasForms, vocabulary: saasVocab });
+    const scenarios = generateScenarios(
+      snapshot,
+      [guess('ecommerce', 0.9)],
+      { forceAppType: 'saas', filterAppTypes: ['ecommerce'] },
+    );
+    expect(scenarios.every((s) => s.appType === 'saas')).toBe(true);
+  });
+
+  it('deprecated forceAppTypes alias still works as filterAppTypes', () => {
+    const snapshot = mkSnapshot({
+      forms: [
+        { route: '/checkout', filePath: 'x', intent: 'checkout', intentConfidence: 1, fields: [] },
+      ],
+      vocabulary: { routes: ['cart', 'checkout'], elements: [], deps: [] },
+    });
+    const scenarios = generateScenarios(
+      snapshot,
+      [guess('ecommerce'), guess('saas', 0.6)],
+      { forceAppTypes: ['saas'] },
+    );
+    expect(scenarios.every((s) => s.appType !== 'ecommerce')).toBe(true);
+  });
+});
+
 describe('serializeScenarios', () => {
   it('returns valid JSON', () => {
     const snapshot = mkSnapshot({
