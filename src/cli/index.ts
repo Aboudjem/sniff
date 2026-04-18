@@ -136,8 +136,10 @@ if (process.argv.includes('--mcp')) {
 
   program
     .command('init')
-    .description('Generate a sniff config file')
+    .description('Generate a sniff config file (auto-detects .ts vs .js based on project)')
     .option('--force', 'Overwrite existing config')
+    .option('--ts', 'Force TypeScript config (sniff.config.ts)')
+    .option('--js', 'Force JavaScript config (sniff.config.mjs if ESM, sniff.config.js if CJS)')
     .action(async (options) => {
       const { initCommand } = await import('./commands/init.js');
       await initCommand(options);
