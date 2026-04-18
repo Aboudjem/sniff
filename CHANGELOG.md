@@ -33,6 +33,14 @@ If you were relying on sniff probing `:5000` / `:8000` / `:8080`, set `SNIFF_URL
 
 - **Playwright pinned** to `~1.59.1` (patch-only updates). Prevents drifting into 1.57+ memory regression reports without explicit review. Reference: [DEEP-DIVE §Playwright memory](`.planning/VERIFICATION-AUDIT-2026-04-18.md`).
 - **`--headed` CLI flag** as an alias for `--no-headless`. Matches Playwright's own convention (`playwright test --headed`) so muscle memory works. `--no-headless` remains supported for back-compat.
+### Changed
+
+- **`sniff init` auto-detects the config flavor.** TypeScript projects (detected via `tsconfig.json` or `typescript` in deps) get `sniff.config.ts`. ESM projects (`"type": "module"`) get `sniff.config.mjs`. Plain JS projects get `sniff.config.js` (CJS). Previously it always wrote `.ts`, which required users to install TypeScript.
+
+### Added
+
+- **`sniff init --ts`** forces TypeScript flavor.
+- **`sniff init --js`** forces JS (ESM or CJS depending on `package.json`).
 
 ## [0.4.0] - 2026-04-17
 
