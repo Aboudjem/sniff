@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- **i18n classifier aliases** — the app-type classifier now matches French, Spanish, German, Portuguese (BR/PT), and Italian equivalents for every English signature token. Non-English apps (e.g. a French SaaS on `/fr/tableau-de-bord`, `/fr/parametres`, `/fr/facturation`) classify correctly instead of returning `blank`. Alias map in `src/discovery/classifier/signatures/i18n.ts`; matched aliases surface in evidence with an `(i18n: <alias>)` suffix. Covers route tokens (single-word) and element phrases (multi-word).
+
 ## [0.4.0] - 2026-04-17
 
 ### Added

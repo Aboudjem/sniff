@@ -138,6 +138,71 @@ describe('classifyApp (synthetic snapshots)', () => {
         entities: [],
       }),
     },
+    // i18n cases — same semantics as English counterparts above,
+    // but with French / Spanish / German / Portuguese / Italian tokens.
+    {
+      label: 'saas (French)',
+      expected: 'saas',
+      snapshot: makeSnapshot({
+        // Prevue-class: /fr/tableau-de-bord, /fr/parametres, /fr/facturation,
+        // /fr/abonnement, /fr/equipe, /fr/integrations
+        routes: ['fr', 'tableau', 'parametres', 'facturation', 'abonnement', 'equipe', 'integrations'],
+        elements: ['inviter', 'equipe', 'creer', 'espace', 'cle', 'api', 'connexion'],
+        deps: ['next-auth', '@clerk/nextjs', 'stripe'],
+        entities: ['Workspace', 'Subscription', 'Plan', 'Membership', 'ApiKey'],
+      }),
+    },
+    {
+      label: 'saas (Spanish)',
+      expected: 'saas',
+      snapshot: makeSnapshot({
+        routes: ['es', 'panel', 'ajustes', 'facturacion', 'suscripcion', 'equipo', 'integraciones'],
+        elements: ['invitar', 'equipo', 'mejorar', 'plan', 'empezar', 'prueba'],
+        deps: ['@clerk/nextjs', 'stripe', 'posthog-js'],
+        entities: ['Workspace', 'Subscription', 'Plan', 'Membership'],
+      }),
+    },
+    {
+      label: 'saas (German)',
+      expected: 'saas',
+      snapshot: makeSnapshot({
+        routes: ['de', 'dashboard', 'einstellungen', 'abrechnung', 'abonnement', 'team', 'integrationen'],
+        elements: ['team', 'einladen', 'jetzt', 'kaufen', 'kostenlos', 'testen', 'anmelden'],
+        deps: ['next-auth', 'stripe'],
+        entities: ['Workspace', 'Subscription', 'Plan'],
+      }),
+    },
+    {
+      label: 'ecommerce (French)',
+      expected: 'ecommerce',
+      snapshot: makeSnapshot({
+        routes: ['fr', 'panier', 'commander', 'produits', 'produit', 'commandes'],
+        elements: ['ajouter', 'au', 'panier', 'acheter', 'maintenant', 'commander'],
+        deps: ['stripe', '@stripe/stripe-js'],
+        entities: ['Product', 'Order', 'OrderItem', 'Customer'],
+      }),
+    },
+    {
+      label: 'ecommerce (Spanish)',
+      expected: 'ecommerce',
+      snapshot: makeSnapshot({
+        // ZARA-style checkout: /es/cesta, /es/finalizar-compra, /es/productos
+        routes: ['es', 'cesta', 'finalizar', 'productos', 'pedidos'],
+        elements: ['anadir', 'la', 'cesta', 'comprar', 'ahora'],
+        deps: ['stripe', '@stripe/stripe-js'],
+        entities: ['Product', 'Order', 'Customer'],
+      }),
+    },
+    {
+      label: 'booking (French)',
+      expected: 'booking',
+      snapshot: makeSnapshot({
+        routes: ['fr', 'reservation', 'reserver', 'disponibilites', 'rendez', 'vous'],
+        elements: ['reserver', 'maintenant', 'selectionner', 'les', 'dates', 'confirmer', 'reservation'],
+        deps: ['@fullcalendar/react', 'date-fns'],
+        entities: ['Reservation', 'Availability'],
+      }),
+    },
   ];
 
   for (const { label, expected, snapshot } of cases) {
@@ -146,6 +211,20 @@ describe('classifyApp (synthetic snapshots)', () => {
       expect(top).toBe(expected);
     });
   }
+
+  it('attaches i18n evidence tag when matched via alias', () => {
+    const snapshot = makeSnapshot({
+      routes: ['fr', 'tableau', 'parametres', 'facturation', 'abonnement', 'equipe', 'integrations'],
+      elements: [],
+      deps: ['stripe'],
+      entities: ['Workspace', 'Subscription'],
+    });
+    const guesses = classifyApp(snapshot);
+    const saas = guesses.find((g) => g.type === 'saas');
+    expect(saas).toBeDefined();
+    // At least one route evidence entry should indicate an i18n alias match.
+    expect(saas?.evidence.some((e) => e.signal === 'route' && e.value.includes('i18n:'))).toBe(true);
+  });
 
   it('returns guesses sorted by confidence desc', () => {
     const snapshot = makeSnapshot({
