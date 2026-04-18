@@ -28,6 +28,23 @@ const DEFAULT_REALISM: RealismProfile = 'casual-user';
 export interface GenerateScenariosOptions {
   realism?: RealismProfile;
   minConfidence?: number;
+  /**
+   * Filter classifier-provided guesses down to these app types. If the
+   * classifier returns nothing matching (e.g. it picked `blank`), NO
+   * scenarios are generated. This is the behavior previously called
+   * `forceAppTypes` — it only filters, it does not force.
+   */
+  filterAppTypes?: string[];
+  /**
+   * Force a specific app type, bypassing the classifier entirely. Unlike
+   * `filterAppTypes`, this works even when the classifier returned `blank`
+   * — the signature's templates are instantiated at confidence 1.0.
+   */
+  forceAppType?: string;
+  /**
+   * @deprecated Renamed to `filterAppTypes`. Kept for one release so existing
+   * callers don't break. Will be removed in v0.6.
+   */
   forceAppTypes?: string[];
 }
 
@@ -127,12 +144,20 @@ export function generateScenarios(
   const minConfidence = options.minConfidence ?? 0.1;
   const realism = options.realism ?? DEFAULT_REALISM;
 
-  const forcedTypes = options.forceAppTypes ? new Set(options.forceAppTypes) : null;
   const byType = new Map<string, number>();
-  for (const guess of guesses) {
-    if (guess.confidence < minConfidence) continue;
-    if (forcedTypes && !forcedTypes.has(guess.type)) continue;
-    byType.set(guess.type, guess.confidence);
+
+  if (options.forceAppType) {
+    // Bypass classifier entirely — pin the requested type at confidence 1.
+    byType.set(options.forceAppType, 1);
+  } else {
+    // Back-compat: accept old `forceAppTypes` name as equivalent to `filterAppTypes`.
+    const filterList = options.filterAppTypes ?? options.forceAppTypes;
+    const filterSet = filterList && filterList.length > 0 ? new Set(filterList) : null;
+    for (const guess of guesses) {
+      if (guess.confidence < minConfidence) continue;
+      if (filterSet && !filterSet.has(guess.type)) continue;
+      byType.set(guess.type, guess.confidence);
+    }
   }
 
   const scenarios: Scenario[] = [];

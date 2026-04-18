@@ -13,7 +13,18 @@ export interface DiscoverOptions {
   realism?: RealismProfile;
   seed?: number;
   only?: string;
+  /**
+   * Filter classifier-provided guesses to these app types. Does NOT bypass
+   * classification — if none of these types scored above threshold, no
+   * scenarios are generated. Old `--app-type` CLI flag maps here.
+   */
   appType?: string[];
+  /**
+   * Force a specific app type, bypassing the classifier entirely. New in
+   * v0.5, wired to `--force-app-type <type>` on the CLI and `forceAppType`
+   * on MCP.
+   */
+  forceAppType?: string;
   noLlm?: boolean;
   nonInteractive?: boolean;
   format?: string;
@@ -206,7 +217,8 @@ export async function discoverCommand(options: DiscoverOptions): Promise<Discove
   const { generateScenarios } = await import('../../discovery/scenarios/index.js');
   const happyScenarios = generateScenarios(snapshot, guesses, {
     realism,
-    ...(options.appType && options.appType.length > 0 ? { forceAppTypes: options.appType } : {}),
+    ...(options.appType && options.appType.length > 0 ? { filterAppTypes: options.appType } : {}),
+    ...(options.forceAppType ? { forceAppType: options.forceAppType } : {}),
   });
 
   const { enumerateAllEdgeVariants } = await import('../../discovery/edge-cases/index.js');

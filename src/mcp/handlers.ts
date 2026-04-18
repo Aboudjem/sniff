@@ -129,6 +129,7 @@ export interface SniffDiscoverOptions {
   seed?: number;
   only?: string;
   appType?: string[];
+  forceAppType?: string;
 }
 
 export async function handleSniffDiscover(options: SniffDiscoverOptions): Promise<McpToolResult> {
@@ -171,6 +172,7 @@ export async function handleSniffDiscover(options: SniffDiscoverOptions): Promis
     ...(options.seed !== undefined ? { seed: options.seed } : {}),
     ...(options.only !== undefined ? { only: options.only } : {}),
     ...(options.appType !== undefined ? { appType: options.appType } : {}),
+    ...(options.forceAppType !== undefined ? { forceAppType: options.forceAppType } : {}),
   });
 
   const summary = {

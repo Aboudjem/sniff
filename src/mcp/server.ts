@@ -61,7 +61,8 @@ export async function startMcpServer(): Promise<void> {
       realism: z.enum(['robot', 'careful-user', 'casual-user', 'frustrated-user', 'power-user']).optional().describe('Realism profile (default: robot in CI, casual-user otherwise)'),
       seed: z.number().int().optional().describe('Replay a specific random seed'),
       only: z.string().optional().describe('Filter scenarios by id substring or app type'),
-      appType: z.array(z.string()).optional().describe('Force app types'),
+      appType: z.array(z.string()).optional().describe('Filter classifier guesses to these app types (does NOT bypass classification — use forceAppType for that)'),
+      forceAppType: z.string().optional().describe('Force a single app type, bypassing the classifier entirely. Use when classification returns blank.'),
     },
     async (args) => {
       let url = args.baseUrl;
@@ -81,6 +82,7 @@ export async function startMcpServer(): Promise<void> {
         ...(args.seed !== undefined ? { seed: args.seed } : {}),
         ...(args.only !== undefined ? { only: args.only } : {}),
         ...(args.appType !== undefined ? { appType: args.appType } : {}),
+        ...(args.forceAppType !== undefined ? { forceAppType: args.forceAppType } : {}),
       });
     },
   );
