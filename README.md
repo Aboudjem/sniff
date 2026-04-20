@@ -12,7 +12,43 @@
   <a href="https://github.com/Aboudjem/sniff/stargazers"><img src="https://img.shields.io/github/stars/Aboudjem/sniff?style=flat-square&color=ef4444" alt="Stars"></a>
 </p>
 
-<p align="center">Scan your source code, your live site, or both. Finds bugs before your users do.</p>
+<p align="center"><b>Scan your source code, your live site, or both. Finds bugs before your users do.</b></p>
+
+<p align="center">
+  <a href="#get-started">Get started</a> ·
+  <a href="#what-it-finds">What it finds</a> ·
+  <a href="#commands">Commands</a> ·
+  <a href="#works-with-any-stack">Stacks</a> ·
+  <a href="docs/VIDEO-PLAN.md">Demo videos</a>
+</p>
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset=".github/assets/sniff-diagram.svg">
+  <img alt="Sniff flow: source → radar scanner → findings" src=".github/assets/sniff-diagram.svg" width="100%">
+</picture>
+
+---
+
+## The 30-second pitch
+
+> You ship a feature. A user finds the bug before you do. Sniff is the opposite of that.
+
+Sniff is a tiny CLI that reads your source, opens your app in a headless browser, and hunts down bugs across **eight dimensions** — functional, visual, accessibility, performance, dead links, API endpoints, broken imports, and AI-driven exploration. No API key. No Playwright install. No config.
+
+```bash
+npx sniff-qa
+```
+
+That's the whole setup. The rest of this README is detail.
+
+### Why developers love it
+
+- **One command.** `npx sniff-qa` auto-detects your framework, your dev server, your test scenarios. If `npm run dev` is running, sniff finds it.
+- **Zero API keys by default.** Uses your local Claude Code if you have it. Works completely offline otherwise.
+- **Eight checks, every time.** Accessibility + visual regression + performance + dead links + API contracts + source scanning + broken imports + AI exploration — out of the box.
+- **Talks to your editor.** Ships as an MCP server. Just say *"scan this project"* in Claude / Cursor / Copilot / Continue / Windsurf / Codex / Gemini.
+- **CI-ready.** `sniff ci` emits JUnit, tracks flakes, and fails on severity thresholds you set.
+- **Actually explains the fix.** Every finding cites the rule, the file, the line — and `/sniff-fix` generates the patch.
 
 ---
 
