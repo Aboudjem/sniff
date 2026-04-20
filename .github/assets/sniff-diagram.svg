@@ -1,0 +1,279 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 360" fill="none" role="img" aria-label="Sniff flow: source files are scanned, bugs are found, fixes are suggested">
+  <style>
+    .bg-grid { stroke: #ef4444; stroke-width: 1; opacity: 0.05; }
+    .frame { fill: #0b0b0f; stroke: #ef4444; stroke-width: 1.5; }
+    .frame-inset { fill: #11131a; stroke: #ef4444; stroke-opacity: 0.2; stroke-width: 1; }
+    .mono { font-family: ui-monospace, Menlo, monospace; font-size: 11px; fill: #e5e7eb; }
+    .mono-dim { font-family: ui-monospace, Menlo, monospace; font-size: 10px; fill: #6b7280; }
+    .mono-tab { font-family: ui-monospace, Menlo, monospace; font-size: 10px; fill: #9ca3af; }
+    .mono-tab-active { font-family: ui-monospace, Menlo, monospace; font-size: 10px; fill: #f3f4f6; font-weight: 600; }
+    .line-no { font-family: ui-monospace, Menlo, monospace; font-size: 9px; fill: #4b5563; }
+    .title { font-family: 'SF Pro Display', system-ui, sans-serif; font-size: 15px; font-weight: 700; fill: #f3f4f6; }
+    .label { font-family: ui-monospace, Menlo, monospace; font-size: 10px; font-weight: 600; fill: #ef4444; letter-spacing: 0.5px; }
+    .flow-path { stroke: #ef4444; stroke-width: 1.5; opacity: 0.35; fill: none; stroke-dasharray: 3 4; }
+
+    /* radar blip pop — scales a circle only */
+    @keyframes blip-pop {
+      0%, 100% { opacity: 0; transform: scale(0.8); }
+      10% { opacity: 1; transform: scale(1.15); }
+      20%, 80% { opacity: 1; transform: scale(1); }
+    }
+    .radar-blip-1 { animation: blip-pop 4s ease-in-out infinite 0.6s; transform-origin: center; transform-box: fill-box; }
+    .radar-blip-2 { animation: blip-pop 4s ease-in-out infinite 1.4s; transform-origin: center; transform-box: fill-box; }
+    .radar-blip-3 { animation: blip-pop 4s ease-in-out infinite 2.2s; transform-origin: center; transform-box: fill-box; }
+
+    /* finding row — staggered slide-in, stays visible */
+    @keyframes finding-slide {
+      0% { opacity: 0; transform: translateX(14px); }
+      100% { opacity: 1; transform: translateX(0); }
+    }
+    .finding-row-1 { animation: finding-slide 0.6s ease-out 0.4s both; }
+    .finding-row-2 { animation: finding-slide 0.6s ease-out 0.9s both; }
+    .finding-row-3 { animation: finding-slide 0.6s ease-out 1.4s both; }
+
+    /* severity dot pulse */
+    @keyframes dot-pulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.35); opacity: 0.75; }
+    }
+    .sev-dot-1 { animation: dot-pulse 2.2s ease-in-out infinite 1.2s; transform-origin: center; transform-box: fill-box; }
+    .sev-dot-2 { animation: dot-pulse 2.2s ease-in-out infinite 1.7s; transform-origin: center; transform-box: fill-box; }
+    .sev-dot-3 { animation: dot-pulse 2.2s ease-in-out infinite 2.2s; transform-origin: center; transform-box: fill-box; }
+
+    @keyframes radar-ring {
+      0% { r: 10; opacity: 0.9; }
+      100% { r: 90; opacity: 0; }
+    }
+    .radar-1 { animation: radar-ring 2.4s ease-out infinite; }
+    .radar-2 { animation: radar-ring 2.4s ease-out infinite 0.8s; }
+    .radar-3 { animation: radar-ring 2.4s ease-out infinite 1.6s; }
+
+    /* code line shimmer */
+    @keyframes code-flicker {
+      0%, 100% { opacity: 0.85; }
+      50% { opacity: 0.45; }
+    }
+    .code-line { animation: code-flicker 3s ease-in-out infinite; }
+    .code-line-2 { animation: code-flicker 3s ease-in-out infinite 0.5s; }
+    .code-line-3 { animation: code-flicker 3s ease-in-out infinite 1s; }
+
+    /* scan highlight sweeping over code */
+    @keyframes scan-sweep {
+      0% { transform: translateY(0); opacity: 0; }
+      10% { opacity: 1; }
+      90% { opacity: 1; }
+      100% { transform: translateY(126px); opacity: 0; }
+    }
+    .scan-highlight { animation: scan-sweep 2.8s ease-in-out infinite; }
+
+    /* caret blink */
+    @keyframes caret-blink {
+      0%, 49% { opacity: 1; }
+      50%, 100% { opacity: 0; }
+    }
+    .caret { animation: caret-blink 1s step-end infinite; }
+
+    /* command prompt glow */
+    @keyframes cmd-glow {
+      0%, 100% { stroke-opacity: 0.6; }
+      50% { stroke-opacity: 1; }
+    }
+    .cmd-frame { animation: cmd-glow 2.4s ease-in-out infinite; }
+  </style>
+
+  <defs>
+    <pattern id="grid-sniff" width="30" height="30" patternUnits="userSpaceOnUse">
+      <path d="M 30 0 L 0 0 0 30" class="bg-grid"/>
+    </pattern>
+    <linearGradient id="beam-grad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ef4444" stop-opacity="0"/>
+      <stop offset="50%" stop-color="#ef4444" stop-opacity="0.55"/>
+      <stop offset="100%" stop-color="#ef4444" stop-opacity="0"/>
+    </linearGradient>
+    <radialGradient id="radar-grad">
+      <stop offset="0%" stop-color="#ef4444" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="#ef4444" stop-opacity="0"/>
+    </radialGradient>
+    <clipPath id="code-clip">
+      <rect x="0" y="0" width="220" height="126" rx="6"/>
+    </clipPath>
+  </defs>
+
+  <rect width="1200" height="360" fill="url(#grid-sniff)"/>
+
+  <!-- STAGE 1: source files -->
+  <g transform="translate(40,80)">
+    <text x="0" y="-10" class="label">01 · INPUT</text>
+    <rect x="0" y="0" width="260" height="200" rx="12" class="frame"/>
+    <text x="20" y="28" class="title">Your source</text>
+
+    <!-- traffic lights -->
+    <g transform="translate(20,42)">
+      <circle cx="0" cy="0" r="3.5" fill="#ef4444" opacity="0.9"/>
+      <circle cx="11" cy="0" r="3.5" fill="#f59e0b" opacity="0.9"/>
+      <circle cx="22" cy="0" r="3.5" fill="#10b981" opacity="0.9"/>
+    </g>
+
+    <!-- tab bar -->
+    <g transform="translate(56,34)">
+      <rect x="0" y="0" width="78" height="18" rx="4" fill="#1f2937"/>
+      <rect x="0" y="15" width="78" height="3" fill="#ef4444"/>
+      <text x="10" y="12" class="mono-tab-active">app.tsx</text>
+      <text x="88" y="12" class="mono-tab">Button.tsx</text>
+      <text x="152" y="12" class="mono-tab">theme.css</text>
+    </g>
+
+    <!-- code panel -->
+    <g transform="translate(20,62)">
+      <rect x="0" y="0" width="220" height="126" rx="6" fill="#11131a" stroke="#ef4444" stroke-opacity="0.18"/>
+
+      <!-- gutter -->
+      <rect x="0" y="0" width="22" height="126" rx="6" fill="#0b0b0f"/>
+      <text x="11" y="16" text-anchor="middle" class="line-no">1</text>
+      <text x="11" y="30" text-anchor="middle" class="line-no">2</text>
+      <text x="11" y="44" text-anchor="middle" class="line-no">3</text>
+      <text x="11" y="58" text-anchor="middle" class="line-no">4</text>
+      <text x="11" y="72" text-anchor="middle" class="line-no">5</text>
+      <text x="11" y="86" text-anchor="middle" class="line-no">6</text>
+      <text x="11" y="100" text-anchor="middle" class="line-no">7</text>
+      <text x="11" y="114" text-anchor="middle" class="line-no">8</text>
+
+      <!-- scan highlight line -->
+      <g clip-path="url(#code-clip)">
+        <rect class="scan-highlight" x="22" y="-4" width="198" height="14" fill="url(#beam-grad)" opacity="0.55"/>
+      </g>
+
+      <!-- code lines (syntax-ish colors) -->
+      <g transform="translate(32,10)">
+        <!-- line 1: import -->
+        <rect class="code-line" x="0" y="0" width="26" height="6" rx="2" fill="#a78bfa" fill-opacity="0.75"/>
+        <rect x="30" y="0" width="42" height="6" rx="2" fill="#e5e7eb" fill-opacity="0.5"/>
+        <rect x="76" y="0" width="18" height="6" rx="2" fill="#a78bfa" fill-opacity="0.75"/>
+        <rect x="98" y="0" width="68" height="6" rx="2" fill="#10b981" fill-opacity="0.55"/>
+
+        <!-- line 2 -->
+        <rect class="code-line-2" x="0" y="14" width="36" height="6" rx="2" fill="#60a5fa" fill-opacity="0.7"/>
+        <rect x="40" y="14" width="58" height="6" rx="2" fill="#f3f4f6" fill-opacity="0.55"/>
+        <rect x="102" y="14" width="20" height="6" rx="2" fill="#a78bfa" fill-opacity="0.7"/>
+        <rect x="126" y="14" width="48" height="6" rx="2" fill="#10b981" fill-opacity="0.55"/>
+
+        <!-- line 3 (indent) -->
+        <rect class="code-line-3" x="12" y="28" width="44" height="6" rx="2" fill="#60a5fa" fill-opacity="0.7"/>
+        <rect x="60" y="28" width="70" height="6" rx="2" fill="#f3f4f6" fill-opacity="0.5"/>
+        <rect x="134" y="28" width="36" height="6" rx="2" fill="#f59e0b" fill-opacity="0.7"/>
+
+        <!-- line 4 (indent, this is the one with the bug) -->
+        <rect class="code-line" x="12" y="42" width="20" height="6" rx="2" fill="#60a5fa" fill-opacity="0.7"/>
+        <rect x="36" y="42" width="56" height="6" rx="2" fill="#ef4444" fill-opacity="0.55"/>
+        <rect x="96" y="42" width="40" height="6" rx="2" fill="#f3f4f6" fill-opacity="0.5"/>
+        <rect x="140" y="42" width="28" height="6" rx="2" fill="#10b981" fill-opacity="0.55"/>
+
+        <!-- line 5 (indent deeper) -->
+        <rect class="code-line-2" x="24" y="56" width="34" height="6" rx="2" fill="#60a5fa" fill-opacity="0.7"/>
+        <rect x="62" y="56" width="46" height="6" rx="2" fill="#f3f4f6" fill-opacity="0.5"/>
+        <rect x="112" y="56" width="18" height="6" rx="2" fill="#a78bfa" fill-opacity="0.7"/>
+
+        <!-- line 6 -->
+        <rect class="code-line-3" x="12" y="70" width="14" height="6" rx="2" fill="#f3f4f6" fill-opacity="0.55"/>
+        <!-- caret -->
+        <rect class="caret" x="30" y="69" width="1.5" height="8" fill="#ef4444"/>
+
+        <!-- line 7 -->
+        <rect class="code-line" x="0" y="84" width="22" height="6" rx="2" fill="#f3f4f6" fill-opacity="0.5"/>
+
+        <!-- line 8 -->
+        <rect class="code-line-2" x="0" y="98" width="40" height="6" rx="2" fill="#a78bfa" fill-opacity="0.7"/>
+        <rect x="44" y="98" width="76" height="6" rx="2" fill="#f3f4f6" fill-opacity="0.45"/>
+      </g>
+    </g>
+  </g>
+
+  <!-- flow arrow -->
+  <path d="M 310 180 L 450 180" class="flow-path"/>
+  <circle r="4" fill="#ef4444"><animateMotion dur="2s" repeatCount="indefinite" path="M 310 180 L 450 180"/></circle>
+  <circle r="3" fill="#ef4444" opacity="0.5"><animateMotion dur="2s" begin="0.6s" repeatCount="indefinite" path="M 310 180 L 450 180"/></circle>
+
+  <!-- STAGE 2: scanner -->
+  <g transform="translate(460,80)">
+    <text x="0" y="-10" class="label">02 · SNIFF SCANNER</text>
+    <rect x="0" y="0" width="240" height="200" rx="12" class="frame"/>
+    <text x="20" y="28" class="title">Radar sweep</text>
+    <!-- radar -->
+    <g transform="translate(120,125)">
+      <circle cx="0" cy="0" r="70" fill="#1f2937" opacity="0.6"/>
+      <circle cx="0" cy="0" r="70" fill="none" stroke="#ef4444" stroke-opacity="0.25"/>
+      <circle cx="0" cy="0" r="50" fill="none" stroke="#ef4444" stroke-opacity="0.2"/>
+      <circle cx="0" cy="0" r="30" fill="none" stroke="#ef4444" stroke-opacity="0.15"/>
+      <line x1="-70" y1="0" x2="70" y2="0" stroke="#ef4444" stroke-opacity="0.1"/>
+      <line x1="0" y1="-70" x2="0" y2="70" stroke="#ef4444" stroke-opacity="0.1"/>
+
+      <!-- ripples -->
+      <circle cx="0" cy="0" r="10" fill="none" stroke="#ef4444" stroke-width="1.5" class="radar-1"/>
+      <circle cx="0" cy="0" r="10" fill="none" stroke="#ef4444" stroke-width="1.5" class="radar-2"/>
+      <circle cx="0" cy="0" r="10" fill="none" stroke="#ef4444" stroke-width="1.5" class="radar-3"/>
+
+      <!-- sweep wedge -->
+      <path d="M 0 0 L 70 0 A 70 70 0 0 1 49.5 49.5 Z" fill="#ef4444" fill-opacity="0.18">
+        <animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="3s" repeatCount="indefinite"/>
+      </path>
+
+      <!-- bug blips -->
+      <circle cx="38" cy="-22" r="4" fill="#ef4444" class="radar-blip-1"/>
+      <circle cx="-28" cy="30" r="4" fill="#f59e0b" class="radar-blip-2"/>
+      <circle cx="20" cy="45" r="4" fill="#10b981" class="radar-blip-3"/>
+
+      <!-- center dot -->
+      <circle cx="0" cy="0" r="4" fill="#ef4444"/>
+    </g>
+  </g>
+
+  <!-- flow arrow -->
+  <path d="M 710 180 L 850 180" class="flow-path"/>
+  <circle r="4" fill="#ef4444"><animateMotion dur="2s" repeatCount="indefinite" path="M 710 180 L 850 180"/></circle>
+  <circle r="3" fill="#ef4444" opacity="0.5"><animateMotion dur="2s" begin="0.6s" repeatCount="indefinite" path="M 710 180 L 850 180"/></circle>
+
+  <!-- STAGE 3: findings -->
+  <g transform="translate(860,80)">
+    <text x="0" y="-10" class="label">03 · FINDINGS</text>
+    <rect x="0" y="0" width="300" height="200" rx="12" class="frame"/>
+    <text x="20" y="28" class="title">Bugs · a11y · perf</text>
+
+    <g transform="translate(20,48)">
+      <!-- finding row 1 -->
+      <g transform="translate(0,0)">
+        <g class="finding-row-1">
+          <rect x="0" y="0" width="260" height="30" rx="6" fill="#ef4444" fill-opacity="0.1" stroke="#ef4444" stroke-opacity="0.4"/>
+          <circle cx="14" cy="15" r="4" fill="#ef4444" class="sev-dot-1"/>
+          <text x="28" y="19" class="mono">missing alt text · img.tsx:42</text>
+        </g>
+      </g>
+
+      <!-- finding row 2 -->
+      <g transform="translate(0,38)">
+        <g class="finding-row-2">
+          <rect x="0" y="0" width="260" height="30" rx="6" fill="#f59e0b" fill-opacity="0.1" stroke="#f59e0b" stroke-opacity="0.4"/>
+          <circle cx="14" cy="15" r="4" fill="#f59e0b" class="sev-dot-2"/>
+          <text x="28" y="19" class="mono">contrast 2.8:1 · button.css</text>
+        </g>
+      </g>
+
+      <!-- finding row 3 -->
+      <g transform="translate(0,76)">
+        <g class="finding-row-3">
+          <rect x="0" y="0" width="260" height="30" rx="6" fill="#10b981" fill-opacity="0.1" stroke="#10b981" stroke-opacity="0.4"/>
+          <circle cx="14" cy="15" r="4" fill="#10b981" class="sev-dot-3"/>
+          <text x="28" y="19" class="mono">LCP 3.2s · home route</text>
+        </g>
+      </g>
+
+      <!-- fix suggestion -->
+      <g transform="translate(0,120)">
+        <rect x="0" y="0" width="260" height="24" rx="6" fill="#0b0b0f" stroke="#ef4444" stroke-opacity="0.6" class="cmd-frame"/>
+        <text x="12" y="16" font-family="Menlo,monospace" font-size="10" fill="#ef4444" font-weight="600">›  /sniff-fix  · apply safe fixes</text>
+      </g>
+    </g>
+  </g>
+
+  <!-- bottom caption -->
+  <text x="600" y="335" text-anchor="middle" font-family="Menlo,monospace" font-size="10" fill="#6b7280" letter-spacing="0.5">npx sniff-qa  ·  auto-detects your dev server  ·  no config, no api keys</text>
+</svg>
