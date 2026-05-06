@@ -3,6 +3,7 @@ import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js'
 import { z } from 'zod';
 import { handleSniffScan, handleSniffRun, handleSniffReport, handleSniffDiscover, handleSniffInstall, handleSniffUnified } from './handlers.js';
 import { getVersion } from '../version.js';
+import type { BrowserProject } from '../config/schema.js';
 
 export async function startMcpServer(): Promise<void> {
   const server = new McpServer({
@@ -68,17 +69,20 @@ export async function startMcpServer(): Promise<void> {
         // Gate on Playwright — return structured setup hint instead of
         // silently running `npx playwright install` (MCP stdio transports
         // commonly time out on the ~45s install).
+        const { loadConfig } = await import('../config/loader.js');
+        const config = await loadConfig(rootDir);
         const { checkPlaywrightBrowsers } = await import('../core/ensure-browsers.js');
-        const check = await checkPlaywrightBrowsers();
+        const check = await checkPlaywrightBrowsers(config.browser?.projects);
         if (check.status !== 'installed') {
           return {
             content: [{
               type: 'text',
               text: JSON.stringify({
-                needsSetup: 'playwright-chromium',
-                installCommand: check.status === 'missing' ? check.installCommand : 'npx playwright install chromium',
+                needsSetup: 'playwright-browsers',
+                projects: check.status === 'missing' ? check.missingProjects : config.browser?.projects ?? ['chromium'],
+                installCommand: check.status === 'missing' ? check.installCommand : `npx playwright install ${(config.browser?.projects ?? ['chromium']).join(' ')}`,
                 installSizeMb: check.status === 'missing' ? check.installSizeMb : 165,
-                hint: 'Run the sniff_install MCP tool, or run the install command manually, then retry.',
+                hint: 'Run the sniff_install MCP tool with the same projects, or run the install command manually, then retry.',
               }),
             }],
           };
@@ -133,15 +137,17 @@ export async function startMcpServer(): Promise<void> {
     },
   );
 
-  // Tool: sniff_install -- explicitly install Playwright's Chromium binary.
-  // MCP browser tools return `needsSetup: playwright-chromium` instead of
+  // Tool: sniff_install -- explicitly install requested Playwright browsers.
+  // MCP browser tools return `needsSetup: playwright-browsers` instead of
   // silently shelling out (install takes ~45s, transports time out). Call
   // this tool when that happens, then retry the browser tool.
   server.tool(
     'sniff_install',
-    'Install the Playwright Chromium binary (~165MB, one-time). Run this when sniff_run or sniff_discover returns `needsSetup: playwright-chromium`.',
-    {},
-    async () => handleSniffInstall(),
+    'Install requested Playwright browser binaries (default: chromium). Run this when sniff_run or sniff_discover returns `needsSetup: playwright-browsers`.',
+    {
+      projects: z.array(z.enum(['chromium', 'firefox', 'webkit'])).optional().describe('Browser projects to install. Defaults to ["chromium"].'),
+    },
+    async ({ projects }) => handleSniffInstall(projects as BrowserProject[] | undefined),
   );
 
   // Tool: sniff_report -- load last results

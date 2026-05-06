@@ -2,4 +2,4 @@
 # Set this in: Repository Settings > About > Description
 #
 # Current recommendation:
-AI-powered QA testing tool. 5 checks in one command: source scanning, accessibility (axe-core), visual regression (pixelmatch), performance (Lighthouse), and AI exploration. Works with React, Next.js, Vue, Svelte, Angular. Zero config. Native MCP integration.
+Local QA testing CLI. Source scans, browser runtime hooks, accessibility, visual regression, performance, dead links, API checks, discovery, and optional AI exploration. Works with React, Next.js, Vue, Svelte, Angular. Zero config. Native MCP integration.

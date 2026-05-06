@@ -1,12 +1,12 @@
 {
   "name": "sniff-qa",
-  "version": "0.5.0",
-  "description": "AI-powered QA testing tool. Source scanning, accessibility audits, visual regression, performance budgets, and AI exploration in one command. Uses Playwright, axe-core, and Lighthouse. Zero config.",
+  "version": "0.5.1",
+  "description": "Local QA testing CLI. Source scanning, browser hooks, accessibility audits, visual regression, performance budgets, and optional AI exploration. Uses Playwright, axe-core, and Lighthouse. Zero config.",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "bin": {
-    "sniff": "./dist/cli/index.js"
+    "sniff": "dist/cli/index.js"
   },
   "exports": {
     ".": {
@@ -18,13 +18,21 @@
     "build": "tsup",
     "dev": "tsup --watch",
     "test": "vitest",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit && tsc -p tsconfig.test.json --noEmit"
   },
   "engines": {
     "node": ">=22.0.0"
   },
   "files": [
-    "dist"
+    "dist",
+    "skills",
+    ".claude-plugin",
+    "smithery.yaml",
+    "README.md",
+    "LICENSE",
+    "NOTICE",
+    "CHANGELOG.md",
+    "SECURITY.md"
   ],
   "keywords": [
     "testing",
@@ -58,7 +66,7 @@
   "homepage": "https://github.com/Aboudjem/sniff#readme",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Aboudjem/sniff.git"
+    "url": "git+https://github.com/Aboudjem/sniff.git"
   },
   "bugs": {
     "url": "https://github.com/Aboudjem/sniff/issues"
@@ -67,7 +75,7 @@
     "access": "public"
   },
   "dependencies": {
-    "@anthropic-ai/sdk": "^0.89.0",
+    "@anthropic-ai/sdk": "^0.94.0",
     "@axe-core/playwright": "^4.11.1",
     "@babel/parser": "^7.29.2",
     "@babel/traverse": "^7.29.0",
@@ -91,5 +99,10 @@
     "tsup": "^8.5.1",
     "typescript": "^6.0.2",
     "vitest": "^4.1.4"
+  },
+  "overrides": {
+    "basic-ftp": "^6.0.1",
+    "ip-address": "^10.2.0",
+    "postcss": "^8.5.14"
   }
 }

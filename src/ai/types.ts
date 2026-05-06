@@ -1,9 +1,16 @@
 import type { RouteInfo, ElementInfo, ComponentInfo, FrameworkInfo } from '../analyzers/types.js';
 import type { PageState, ExplorationActionLog, ExplorationDecision } from '../exploration/types.js';
+import type { AIProviderName } from '../config/schema.js';
 
 export interface AIProvider {
-  name: string;
+  name: AIProviderName;
   generateTests(context: RouteTestContext): Promise<GeneratedTest>;
+}
+
+export interface AIProviderResolution {
+  provider: AIProvider | null;
+  name: AIProviderName;
+  reason?: string;
 }
 
 export interface RouteTestContext {

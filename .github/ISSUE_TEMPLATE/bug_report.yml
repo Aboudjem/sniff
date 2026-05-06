@@ -12,7 +12,7 @@ body:
     attributes:
       label: What happened?
       description: A clear description of the bug.
-      placeholder: When I run `npx sniff-qa scan`, I get...
+      placeholder: When I run `npx sniff-qa`, I get...
     validations:
       required: true
   - type: textarea
@@ -29,7 +29,7 @@ body:
       description: Minimal steps to reproduce the issue.
       placeholder: |
         1. Create a new project with `npm init -y`
-        2. Run `npx sniff-qa scan`
+        2. Run `npx sniff-qa`
         3. See error...
     validations:
       required: true
@@ -38,7 +38,7 @@ body:
     attributes:
       label: Sniff version
       description: Run `npx sniff-qa --version`
-      placeholder: "0.1.0"
+      placeholder: "0.5.1"
     validations:
       required: true
   - type: dropdown

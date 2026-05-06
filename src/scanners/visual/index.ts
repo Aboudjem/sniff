@@ -21,7 +21,7 @@ export class VisualRegressionScanner implements BrowserScanner {
     const { mkdir, writeFile, readFile, copyFile } = await import('node:fs/promises');
     const { join, dirname } = await import('node:path');
 
-    const baselineDir = join(ctx.rootDir, visualConfig?.baselineDir ?? 'sniff-baselines', ctx.viewport.name);
+    const baselineDir = join(ctx.rootDir, visualConfig?.baselineDir ?? 'sniff-baselines', ctx.browser, ctx.viewport.name);
     const slug = ctx.page.url().replace(ctx.baseUrl, '').replace(/\//g, '_') || '_root';
     const baselinePath = join(baselineDir, slug + '.png');
     const currentPath = join(baselineDir, '.current', slug + '.png');
@@ -55,6 +55,7 @@ export class VisualRegressionScanner implements BrowserScanner {
         snippet: '',
         url: ctx.page.url(),
         viewport: ctx.viewport.name,
+        browser: ctx.browser,
       });
       return { scanner: this.name, findings, duration: performance.now() - start };
     }
@@ -75,6 +76,7 @@ export class VisualRegressionScanner implements BrowserScanner {
         snippet: '',
         url: ctx.page.url(),
         viewport: ctx.viewport.name,
+        browser: ctx.browser,
       });
       return { scanner: this.name, findings, duration: performance.now() - start };
     }
@@ -94,6 +96,7 @@ export class VisualRegressionScanner implements BrowserScanner {
         snippet: `Baseline: ${baselinePath}\nCurrent: ${currentPath}`,
         url: ctx.page.url(),
         viewport: ctx.viewport.name,
+        browser: ctx.browser,
         screenshotPath: currentPath,
         fixSuggestion: `Viewport dimensions changed. Review the current screenshot at ${currentPath} and run 'sniff update-baselines' if the change is intentional.`,
       });
@@ -140,6 +143,7 @@ export class VisualRegressionScanner implements BrowserScanner {
         snippet: `Baseline: ${baselinePath}\nCurrent: ${currentPath}\nDiff: ${diffPath}`,
         url: ctx.page.url(),
         viewport: ctx.viewport.name,
+        browser: ctx.browser,
         screenshotPath: diffPath,
         fixSuggestion: `Review the diff image at ${diffPath}. If the change is intentional, run 'sniff update-baselines' to accept it.`,
       });

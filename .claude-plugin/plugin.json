@@ -1,7 +1,7 @@
 {
   "name": "sniff",
-  "version": "0.1.0",
-  "description": "AI-powered QA testing -- scan, explore, and report bugs before users do",
+  "version": "0.5.1",
+  "description": "Local QA automation via sniff-qa: source scans, browser audits, discovery, and reports with no API key required by default",
   "author": {
     "name": "Adam Boudj",
     "url": "https://github.com/Aboudjem/sniff"
@@ -9,5 +9,5 @@
   "homepage": "https://github.com/Aboudjem/sniff",
   "repository": "https://github.com/Aboudjem/sniff",
   "license": "Apache-2.0",
-  "keywords": ["testing", "qa", "playwright", "accessibility"]
+  "keywords": ["testing", "qa", "playwright", "accessibility", "mcp", "sniff-qa"]
 }

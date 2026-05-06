@@ -1,5 +1,6 @@
 import type { BrowserFinding } from '../core/types.js';
 import type { ScanResult } from '../scanners/types.js';
+import type { BrowserProject } from '../config/schema.js';
 
 export interface ViewportConfig {
   name: string;
@@ -14,11 +15,14 @@ export interface BrowserRunContext {
   headless: boolean;
   slowMo: number;
   timeout: number;
+  rootDir: string;
+  projects: BrowserProject[];
 }
 
 export interface PageVisitResult {
   url: string;
   viewport: string;
+  browser: BrowserProject;
   findings: BrowserFinding[];
   screenshotPath?: string;
   duration: number;

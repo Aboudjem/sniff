@@ -5,7 +5,12 @@ import type { AIProvider, RouteTestContext, GeneratedTest } from './types.js';
 const execFile = promisify(execFileCb);
 
 export class ClaudeCodeProvider implements AIProvider {
-  name = 'claude-code';
+  name = 'claude-code' as const;
+  private command: string;
+
+  constructor(command = 'claude') {
+    this.command = command;
+  }
 
   async generateTests(context: RouteTestContext): Promise<GeneratedTest> {
     const { buildSystemPrompt, buildUserPrompt } = await import('./prompt-builder.js');
@@ -15,7 +20,7 @@ export class ClaudeCodeProvider implements AIProvider {
     const userPrompt = buildUserPrompt(context);
 
     try {
-      const { stdout } = await execFile('claude', [
+      const { stdout } = await execFile(this.command, [
         '--print',
         '--output-format', 'json',
         '--system-prompt', systemPrompt,
@@ -33,7 +38,7 @@ export class ClaudeCodeProvider implements AIProvider {
     } catch (err) {
       if (err instanceof Error && 'code' in err && (err as NodeJS.ErrnoException).code === 'ENOENT') {
         const { SniffError } = await import('../core/errors.js');
-        throw new SniffError('CLAUDE_CLI_NOT_FOUND', 'Claude Code CLI not found. Install it from https://claude.ai/download or set ANTHROPIC_API_KEY for API mode.');
+        throw new SniffError('CLAUDE_CLI_NOT_FOUND', 'Claude Code CLI not found. Install it from https://claude.ai/download, choose another ai.provider, or set ai.provider to "none".');
       }
       const { SniffError } = await import('../core/errors.js');
       throw new SniffError('CLAUDE_CLI_ERROR', `Claude Code CLI failed: ${err instanceof Error ? err.message : String(err)}`);

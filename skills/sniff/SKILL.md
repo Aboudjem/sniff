@@ -9,12 +9,13 @@ Run a full quality scan on the current project.
 
 ## What to do
 
-1. Use the `sniff_run` MCP tool with:
+1. Use the unified `sniff` MCP tool with:
+   - `mode`: `"run"`
    - `rootDir`: the current project's absolute path
    - Do NOT pass `baseUrl` -- sniff auto-detects running dev servers
    - `headless`: true
 
-2. If `sniff_run` is not available, use `sniff_scan` with just `rootDir`
+2. If the unified `sniff` tool is not available, use legacy `sniff_run`; if that is not available, use `sniff_scan` with just `rootDir`
 
 3. Present the findings to the user grouped by severity:
    - CRITICAL and HIGH first
@@ -27,7 +28,7 @@ Run a full quality scan on the current project.
 User: /sniff
 You: I'll scan your project for issues.
 
-[calls sniff_run with rootDir=/Users/user/projects/my-app]
+[calls sniff with mode=run rootDir=/Users/user/projects/my-app]
 
 Found 12 issues:
 

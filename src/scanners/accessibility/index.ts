@@ -42,6 +42,15 @@ export class AccessibilityScanner implements BrowserScanner {
   async scan(ctx: BrowserScanContext): Promise<ScanResult> {
     const start = performance.now();
 
+    if (ctx.config.accessibility?.enabled === false) {
+      return {
+        scanner: this.name,
+        findings: [],
+        duration: performance.now() - start,
+        metadata: { skipped: true },
+      };
+    }
+
     const { AxeBuilder } = await import('@axe-core/playwright');
 
     const a11yConfig = ctx.config.accessibility;
@@ -93,6 +102,7 @@ export class AccessibilityScanner implements BrowserScanner {
           snippet: node.html,
           url: ctx.page.url(),
           viewport: ctx.viewport.name,
+          browser: ctx.browser,
           fixSuggestion: buildFixSuggestion(violation, node),
         });
       }

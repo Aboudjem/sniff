@@ -2,11 +2,13 @@ import type { AIProvider, RouteTestContext, GeneratedTest } from './types.js';
 import type { TextBlock } from '@anthropic-ai/sdk/resources/messages/messages.js';
 
 export class AnthropicAPIProvider implements AIProvider {
-  name = 'anthropic-api';
+  name = 'anthropic-api' as const;
   private apiKey: string;
+  private model: string;
 
-  constructor(apiKey: string) {
+  constructor(apiKey: string, model = 'claude-sonnet-4-5-20250514') {
     this.apiKey = apiKey;
+    this.model = model;
   }
 
   async generateTests(context: RouteTestContext): Promise<GeneratedTest> {
@@ -20,7 +22,7 @@ export class AnthropicAPIProvider implements AIProvider {
 
     try {
       const message = await client.messages.create({
-        model: 'claude-sonnet-4-5-20250514',
+        model: this.model,
         max_tokens: 4096,
         system: systemPrompt,
         messages: [{ role: 'user', content: userPrompt }],

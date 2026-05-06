@@ -1,10 +1,11 @@
 import type { Page, ConsoleMessage, Response, Request } from 'playwright';
 import type { BrowserFinding } from '../core/types.js';
+import type { BrowserProject } from '../config/schema.js';
 import { join } from 'node:path';
 
 export interface PageHook {
   name: string;
-  setup(page: Page, viewport: string): void;
+  setup(page: Page, viewport: string, browser: BrowserProject): void;
   collect(): BrowserFinding[];
   reset(): void;
 }
@@ -13,9 +14,11 @@ export class ConsoleErrorHook implements PageHook {
   readonly name = 'console-error';
   private findings: BrowserFinding[] = [];
   private currentViewport = '';
+  private currentBrowser: BrowserProject = 'chromium';
 
-  setup(page: Page, viewport: string): void {
+  setup(page: Page, viewport: string, browser: BrowserProject): void {
     this.currentViewport = viewport;
+    this.currentBrowser = browser;
 
     page.on('console', (msg: ConsoleMessage) => {
       if (msg.type() === 'error') {
@@ -29,6 +32,7 @@ export class ConsoleErrorHook implements PageHook {
           snippet: msg.text(),
           url: msg.location().url || page.url(),
           viewport: this.currentViewport,
+          browser: this.currentBrowser,
           fixSuggestion: 'Check browser console for stack trace details.',
         });
       }
@@ -45,6 +49,7 @@ export class ConsoleErrorHook implements PageHook {
         snippet: err.stack ?? err.message,
         url: page.url(),
         viewport: this.currentViewport,
+        browser: this.currentBrowser,
         fixSuggestion: 'Check browser console for stack trace details.',
       });
     });
@@ -63,9 +68,11 @@ export class NetworkFailureHook implements PageHook {
   readonly name = 'network-failure';
   private findings: BrowserFinding[] = [];
   private currentViewport = '';
+  private currentBrowser: BrowserProject = 'chromium';
 
-  setup(page: Page, viewport: string): void {
+  setup(page: Page, viewport: string, browser: BrowserProject): void {
     this.currentViewport = viewport;
+    this.currentBrowser = browser;
 
     page.on('response', (res: Response) => {
       const status = res.status();
@@ -81,6 +88,7 @@ export class NetworkFailureHook implements PageHook {
           snippet: `${res.request().method()} ${res.url()} -> ${status}`,
           url: res.url(),
           viewport: this.currentViewport,
+          browser: this.currentBrowser,
           fixSuggestion: 'Verify the resource URL is correct and the server is responding.',
         });
       }
@@ -97,6 +105,7 @@ export class NetworkFailureHook implements PageHook {
         snippet: `${req.method()} ${req.url()} -> FAILED: ${req.failure()?.errorText ?? 'unknown'}`,
         url: req.url(),
         viewport: this.currentViewport,
+        browser: this.currentBrowser,
         fixSuggestion: 'Verify the resource URL is correct and the server is responding.',
       });
     });
@@ -114,7 +123,7 @@ export class NetworkFailureHook implements PageHook {
 export class ScreenshotHook implements PageHook {
   readonly name = 'screenshot';
 
-  setup(_page: Page, _viewport: string): void {
+  setup(_page: Page, _viewport: string, _browser: BrowserProject): void {
     // ScreenshotHook does not listen to events; it is called on demand.
   }
 
@@ -144,10 +153,10 @@ export class PageHookPipeline {
     }
   }
 
-  setupAll(page: Page, viewport: string): void {
+  setupAll(page: Page, viewport: string, browser: BrowserProject): void {
     for (const hook of this.hooks) {
       try {
-        hook.setup(page, viewport);
+        hook.setup(page, viewport, browser);
       } catch {
         // Error isolation: if one hook fails setup, others still run.
       }

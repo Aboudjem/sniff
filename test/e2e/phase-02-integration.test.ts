@@ -89,21 +89,24 @@ describe('Phase 2 Integration: Repo Analyzer + AI Test Generation', () => {
       vi.doMock('../../src/ai/provider.js', () => ({
         resolveProvider: async () => ({
           name: 'mock-provider',
-          generateTests: async (ctx: { route: { path: string }; elements: Array<{ testId?: string }> }) => ({
-            specContent: [
-              "import { test, expect } from '@playwright/test';",
-              '',
-              `/** Tests for ${ctx.route.path} -- verifies interactive elements are functional */`,
-              `test('${ctx.route.path} loads correctly', async ({ page }) => {`,
-              `  await page.goto('${ctx.route.path}');`,
-              ctx.elements[0]?.testId
-                ? `  await expect(page.getByTestId('${ctx.elements[0].testId}')).toBeVisible();`
-                : `  await expect(page).toHaveURL('${ctx.route.path}');`,
-              '});',
-            ].join('\n'),
-            reasoning: `Generated navigation and element visibility test for ${ctx.route.path}`,
-            route: ctx.route.path,
-          }),
+          provider: {
+            name: 'claude-code',
+            generateTests: async (ctx: { route: { path: string }; elements: Array<{ testId?: string }> }) => ({
+              specContent: [
+                "import { test, expect } from '@playwright/test';",
+                '',
+                `/** Tests for ${ctx.route.path} -- verifies interactive elements are functional */`,
+                `test('${ctx.route.path} loads correctly', async ({ page }) => {`,
+                `  await page.goto('${ctx.route.path}');`,
+                ctx.elements[0]?.testId
+                  ? `  await expect(page.getByTestId('${ctx.elements[0].testId}')).toBeVisible();`
+                  : `  await expect(page).toHaveURL('${ctx.route.path}');`,
+                '});',
+              ].join('\n'),
+              reasoning: `Generated navigation and element visibility test for ${ctx.route.path}`,
+              route: ctx.route.path,
+            }),
+          },
         }),
       }));
 

@@ -37,7 +37,7 @@ body:
         - Accessibility scanner
         - Visual regression scanner
         - Performance scanner
-        - Chaos monkey explorer
+        - Optional AI exploration
         - CI integration
         - CLI / config
         - MCP server

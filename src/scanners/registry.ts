@@ -1,4 +1,18 @@
 import type { Scanner, ScanContext, ScanResult } from './types.js';
+import type { Finding } from '../core/types.js';
+
+function scannerErrorFinding(scannerName: string, rootDir: string, err: unknown): Finding {
+  const message = err instanceof Error ? err.message : String(err);
+  return {
+    ruleId: `scanner-error/${scannerName}`,
+    severity: 'high',
+    message: `Scanner "${scannerName}" failed: ${message}`,
+    filePath: rootDir,
+    line: 0,
+    column: 0,
+    snippet: message,
+  };
+}
 
 export class ScannerRegistry {
   private scanners: Scanner[] = [];
@@ -24,7 +38,7 @@ export class ScannerRegistry {
       } catch (err) {
         results.push({
           scanner: scanner.name,
-          findings: [],
+          findings: [scannerErrorFinding(scanner.name, ctx.rootDir, err)],
           duration: 0,
           metadata: {
             error: err instanceof Error ? err.message : String(err),

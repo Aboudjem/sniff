@@ -1,12 +1,14 @@
 import { mkdir, writeFile, readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import type { AnalysisResult } from '../analyzers/types.js';
+import type { AIConfig } from '../config/schema.js';
 import type { GeneratedTest, RouteTestContext } from './types.js';
 
 export interface GenerateOptions {
   outputDir: string;       // default 'sniff-tests'
   maxConcurrency: number;  // default 5
   rootDir: string;
+  ai?: AIConfig;
 }
 
 export async function generateTests(
@@ -14,7 +16,15 @@ export async function generateTests(
   options: GenerateOptions,
 ): Promise<GeneratedTest[]> {
   const { resolveProvider } = await import('./provider.js');
-  const provider = await resolveProvider();
+  const resolution = await resolveProvider(options.ai);
+  const provider = resolution.provider;
+
+  if (!provider) {
+    if (resolution.name !== 'none') {
+      console.warn(`Skipping AI test generation (${resolution.name}): ${resolution.reason ?? 'provider unavailable'}`);
+    }
+    return [];
+  }
 
   const outputDir = join(options.rootDir, options.outputDir);
   await mkdir(outputDir, { recursive: true });

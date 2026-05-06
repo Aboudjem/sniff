@@ -1,5 +1,4 @@
 import type { Severity } from '../../core/types.js';
-import type { BrowserRunContext, BrowserRunResult } from '../../browser/types.js';
 import type { Screenshot } from '../../report/types.js';
 
 const VALID_SEVERITIES: ReadonlySet<string> = new Set([
@@ -20,17 +19,13 @@ export async function runCommand(options: {
   ci?: boolean;
 }): Promise<void> {
   const pc = (await import('picocolors')).default;
-  const { join } = await import('node:path');
-  const { readdir } = await import('node:fs/promises');
   const { loadConfig } = await import('../../config/loader.js');
-  const { BrowserRunner } = await import('../../browser/runner.js');
-  const { AccessibilityScanner } = await import('../../scanners/accessibility/index.js');
-  const { VisualRegressionScanner } = await import('../../scanners/visual/index.js');
-  const { PerformanceScanner } = await import('../../scanners/performance/index.js');
   const { buildReport, saveReport } = await import('../../report/model.js');
   const { formatBrowserFindings } = await import('../formatter.js');
+  const { runSourceScan, routesFromAnalysis, runBrowserAudit } = await import('../../core/quality-run.js');
 
-  const config = await loadConfig(process.cwd());
+  const rootDir = process.cwd();
+  const config = await loadConfig(rootDir);
 
   // CI mode (D-10): force headless and include JUnit XML format
   const isCi = options.ci || !!process.env.CI;
@@ -84,74 +79,24 @@ export async function runCommand(options: {
   const { getVersion } = await import('../../version.js');
   console.log(`\nSniff v${getVersion()} - Running quality scan\n`);
 
-  // Discover test files
-  const testDir = join(process.cwd(), config.ai?.outputDir ?? 'sniff-tests');
-  let testFiles: string[] = [];
-  try {
-    const allFiles = await readdir(testDir, { recursive: true }) as string[];
-    testFiles = allFiles.filter((f) => f.endsWith('.spec.ts'));
-  } catch {
-    // Test directory doesn't exist yet
-  }
-
-  if (testFiles.length === 0 && !options.json) {
-    console.log(
-      pc.yellow(
-        "No generated tests found. Run 'sniff scan' first to analyze your codebase and generate tests.",
-      ),
-    );
-    console.log('');
-  }
-
-  // Discover routes from last analysis, fallback to baseUrl root
-  let routes: string[] = ['/'];
-  try {
-    const { readFile } = await import('node:fs/promises');
-    const lastResults = JSON.parse(
-      await readFile(join(process.cwd(), '.sniff', 'last-results.json'), 'utf-8'),
-    );
-    if (lastResults?.results) {
-      const repoResult = lastResults.results.find(
-        (r: { scanner: string }) => r.scanner === 'repo-analyzer',
-      );
-      if (repoResult?.metadata?.analysis?.routes?.length > 0) {
-        routes = repoResult.metadata.analysis.routes.map(
-          (r: { path: string }) => r.path,
-        );
-      }
-    }
-  } catch {
-    // No previous analysis; use root route
-  }
-
-  // Create BrowserRunner and register scanners
-  const runner = new BrowserRunner(config);
-  const a11yScanner = new AccessibilityScanner();
-  const visualScanner = new VisualRegressionScanner();
-  const perfScanner = new PerformanceScanner();
-
-  runner.registerScanner(a11yScanner);
-  runner.registerScanner(visualScanner);
-  runner.registerScanner(perfScanner);
-
-  // Build run context
-  const runCtx: BrowserRunContext = {
-    baseUrl,
-    testFiles: routes,
-    viewports,
-    headless: options.headless ?? config.browser?.headless ?? true,
-    slowMo: config.browser?.slowMo ?? 0,
-    timeout: config.browser?.timeout ?? 30000,
-  };
+  const sourceRun = await runSourceScan(rootDir);
+  const routes = routesFromAnalysis(sourceRun.analysis);
 
   // Run browser tests (T-03-14: timeout enforced via context, browser closed in finally)
-  let result: BrowserRunResult;
+  let result;
   try {
-    result = await runner.run(runCtx);
+    result = await runBrowserAudit({
+      rootDir,
+      config,
+      baseUrl,
+      routes,
+      headless: options.headless ?? config.browser?.headless ?? true,
+    });
   } catch (err) {
+    const projects = config.browser?.projects?.join(' ') ?? 'chromium';
     console.error(
       pc.red(
-        'Failed to launch browser. Ensure Playwright browsers are installed: npx playwright install chromium',
+        `Failed to launch browser. Ensure Playwright browsers are installed: npx playwright install ${projects}`,
       ),
     );
     process.exit(1);
@@ -159,42 +104,29 @@ export async function runCommand(options: {
 
   // Print progress per page visit
   if (!options.json) {
-    for (const visit of result.pageVisits) {
+    for (const visit of result.browserRun.pageVisits) {
       const count = visit.findings.length;
       const suffix =
         count === 0
           ? pc.green('0 findings')
           : pc.yellow(`${count} finding${count !== 1 ? 's' : ''}`);
-      console.log(`  ${pc.dim(visit.url)}... done (${suffix})`);
+      console.log(`  ${pc.dim(`${visit.browser}/${visit.viewport}`)} ${pc.dim(visit.url)}... done (${suffix})`);
     }
   }
 
-  // Run Lighthouse performance measurement AFTER browser closes
+  const perfResult = result.results.find((r) => r.scanner === 'performance' && !r.metadata?.urlsCollected);
   if (!options.json) {
     console.log(
-      `\n${pc.blue(pc.bold('[perf]'))} Measuring ${result.urls.length} unique URLs...`,
-    );
-  }
-  const perfResult = await perfScanner.measureAll();
-  if (!options.json) {
-    console.log(
-      `${pc.blue(pc.bold('[perf]'))} done (${perfResult.findings.length} budget violation${perfResult.findings.length !== 1 ? 's' : ''})`,
+      `${pc.blue(pc.bold('[perf]'))} done (${perfResult?.findings.length ?? 0} budget violation${perfResult?.findings.length !== 1 ? 's' : ''})`,
     );
   }
 
   // Combine all results
-  const allResults = [...result.scanResults, perfResult];
+  const allResults = [...sourceRun.results, ...result.results];
   const allFindings = allResults.flatMap((r) => r.findings);
 
   // Collect screenshots from page visits
-  const screenshots: Screenshot[] = result.pageVisits
-    .filter((v) => v.screenshotPath)
-    .map((v) => ({
-      path: v.screenshotPath!,
-      url: v.url,
-      viewport: v.viewport,
-      caption: `${v.viewport} - ${v.url}`,
-    }));
+  const screenshots: Screenshot[] = result.screenshots;
 
   // Build report
   const report = buildReport(

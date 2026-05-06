@@ -1,7 +1,7 @@
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset=".github/assets/logo-dark.svg">
-  <source media="(prefers-color-scheme: light)" srcset=".github/assets/logo-light.svg">
-  <img alt="Sniff" src=".github/assets/logo-light.svg" width="100%">
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/Aboudjem/sniff/main/.github/assets/logo-dark.svg">
+  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/Aboudjem/sniff/main/.github/assets/logo-light.svg">
+  <img alt="Sniff" src="https://raw.githubusercontent.com/Aboudjem/sniff/main/.github/assets/logo-light.svg" width="100%">
 </picture>
 
 <p align="center">
@@ -23,8 +23,8 @@
 </p>
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset=".github/assets/sniff-diagram.svg">
-  <img alt="Sniff flow: source → radar scanner → findings" src=".github/assets/sniff-diagram.svg" width="100%">
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/Aboudjem/sniff/main/.github/assets/sniff-diagram.svg">
+  <img alt="Sniff flow: source -> radar scanner -> findings" src="https://raw.githubusercontent.com/Aboudjem/sniff/main/.github/assets/sniff-diagram.svg" width="100%">
 </picture>
 
 ---
@@ -33,7 +33,7 @@
 
 > You ship a feature. A user finds the bug before you do. Sniff is the opposite of that.
 
-Sniff is a tiny CLI that reads your source, opens your app in a headless browser, and hunts down bugs across **eight dimensions** — functional, visual, accessibility, performance, dead links, API endpoints, broken imports, and AI-driven exploration. No API key. No Playwright install. No config.
+Sniff is a tiny CLI that reads your source, opens your app in a headless browser, and hunts down bugs across **eight dimensions** — functional, visual, accessibility, performance, dead links, API endpoints, broken imports, and optional AI-assisted exploration. No API key required. No manual Playwright setup. No config.
 
 ```bash
 npx sniff-qa
@@ -44,10 +44,10 @@ That's the whole setup. The rest of this README is detail.
 ### Why developers love it
 
 - **One command.** `npx sniff-qa` auto-detects your framework, your dev server, your test scenarios. If `npm run dev` is running, sniff finds it.
-- **Zero API keys by default.** Uses your local Claude Code if you have it. Works completely offline otherwise.
-- **Eight checks, every time.** Accessibility + visual regression + performance + dead links + API contracts + source scanning + broken imports + AI exploration — out of the box.
+- **Zero API keys by default.** Deterministic local QA is the default. Codex, Claude, Gemini, Ollama, Anthropic, and OpenAI providers are optional enhancements.
+- **Eight checks, every time.** Accessibility + visual regression + performance + dead links + API contracts + source scanning + broken imports + browser runtime hooks — out of the box.
 - **Talks to your editor.** Ships as an MCP server. Just say *"scan this project"* in Claude / Cursor / Copilot / Continue / Windsurf / Codex / Gemini.
-- **CI-ready.** `sniff ci` emits JUnit, tracks flakes, and fails on severity thresholds you set.
+- **CI-ready.** `sniff --ci` emits JUnit, tracks flakes, and fails on severity thresholds you set. `sniff ci` generates the GitHub Actions workflow.
 - **Actually explains the fix.** Every finding cites the rule, the file, the line — and `/sniff-fix` generates the patch.
 
 ---
@@ -70,7 +70,7 @@ npx sniff-qa --url http://localhost:3000    # specific local URL
 npx sniff-qa --url https://myapp.com        # production URL
 ```
 
-> **No API keys. No Playwright install. No config files.** Everything works out of the box. Browser checks auto-install Chromium on first run.
+> **No API keys. No manual Playwright install. No config files.** Everything works out of the box. Browser checks auto-install the configured Playwright browser projects on first CLI run.
 
 ### Use from your AI editor
 
@@ -159,7 +159,7 @@ clawhub install sniff-qa
 
 Then ask: *"Scan this project for issues"* or *"Check accessibility on localhost:3000"* or *"Discover and run E2E tests"*
 
-**MCP tools:** `sniff({ mode: "scan" | "run" | "discover" | "report" })` — unified entry point. Plus `sniff_install` when Playwright's Chromium is missing. The legacy per-mode tools (`sniff_scan`, `sniff_run`, `sniff_discover`, `sniff_report`) remain available but are deprecated in v0.5 and will be removed in v0.7.
+**MCP tools:** `sniff({ mode: "scan" | "run" | "discover" | "report" })` — unified entry point. Plus `sniff_install` when Playwright browser binaries are missing. MCP returns a structured `needsSetup` payload instead of doing a long install inside stdio; call `sniff_install` or run the shown `npx playwright install ...` command, then retry. The legacy per-mode tools (`sniff_scan`, `sniff_run`, `sniff_discover`, `sniff_report`) remain available but are deprecated in v0.5 and will be removed in v0.7.
 
 ### Install as a dev dependency
 
@@ -177,7 +177,7 @@ npm install -D sniff-qa
 
 That's all you need. Sniff auto-detects your dev server when it's running.
 
-Requires Node.js 22+. Playwright installs automatically on first browser scan.
+Requires Node.js 22+. Playwright installs automatically on first CLI browser scan; MCP asks you to run `sniff_install` when setup is missing.
 
 ---
 
@@ -188,6 +188,7 @@ npx sniff-qa                                        # scan source + auto-detect 
 npx sniff-qa --url https://myapp.com                # scan source + specific URL
 npx sniff-qa ./path/to/project                      # scan a specific directory
 npx sniff-qa --ci                                   # CI mode (JUnit output, no AI explorer)
+npx sniff-qa --url http://localhost:3000 --explore  # opt-in AI exploration
 npx sniff-qa --verbose                              # show classifier top 3 + matched signals
 npx sniff-qa discover --dry-run                     # preview generated scenarios, no browser
 npx sniff-qa discover --force-app-type saas         # skip classification, treat as SaaS
@@ -200,9 +201,9 @@ Sniff auto-detects your dev server by reading `package.json` scripts plus `vite.
 ## What it finds
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset=".github/assets/features-dark.svg">
-  <source media="(prefers-color-scheme: light)" srcset=".github/assets/features-light.svg">
-  <img alt="Sniff checks: source bugs, dead links, API endpoints, broken imports, accessibility, visual regression, performance, AI explorer" src=".github/assets/features-light.svg" width="100%">
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/Aboudjem/sniff/main/.github/assets/features-dark.svg">
+  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/Aboudjem/sniff/main/.github/assets/features-light.svg">
+  <img alt="Sniff checks: source bugs, dead links, API endpoints, broken imports, accessibility, visual regression, performance, optional AI explorer" src="https://raw.githubusercontent.com/Aboudjem/sniff/main/.github/assets/features-light.svg" width="100%">
 </picture>
 
 **Source checks** run on every scan. **Browser checks** run automatically when sniff detects a running dev server, or when you pass `--url`.
@@ -212,9 +213,9 @@ Sniff auto-detects your dev server by reading `package.json` scripts plus `vite.
 ## Example output
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset=".github/assets/report-dark.svg">
-  <source media="(prefers-color-scheme: light)" srcset=".github/assets/report-light.svg">
-  <img alt="Sniff terminal output" src=".github/assets/report-light.svg" width="100%">
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/Aboudjem/sniff/main/.github/assets/report-dark.svg">
+  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/Aboudjem/sniff/main/.github/assets/report-light.svg">
+  <img alt="Sniff terminal output" src="https://raw.githubusercontent.com/Aboudjem/sniff/main/.github/assets/report-light.svg" width="100%">
 </picture>
 
 ---
@@ -256,7 +257,8 @@ sniff --version                    Show version
 |:-----|:-------------|
 | `--url <url>` | Enable browser checks (accessibility, visual, performance, AI) |
 | `--ci` | CI mode: skip AI explorer, add JUnit output, track flaky tests |
-| `--no-explore` | Browser checks without AI explorer |
+| `--explore` | Opt into AI-assisted exploration after browser checks |
+| `--no-explore` | Compatibility flag; exploration is off by default |
 | `--no-browser` | Source only even if `--url` is set |
 | `--max-steps <n>` | Limit AI explorer steps (default: 50) |
 | `--no-headless` | Show the browser window |
@@ -312,7 +314,10 @@ import { defineConfig } from 'sniff-qa';
 
 export default defineConfig({
   // Save your URL so you can just run `sniff`
-  browser: { baseUrl: 'http://localhost:3000' },
+  browser: {
+    baseUrl: 'http://localhost:3000',
+    projects: ['chromium'], // also supports 'firefox' and 'webkit'
+  },
 
   // Viewports to test
   viewports: [
@@ -320,17 +325,26 @@ export default defineConfig({
     { name: 'desktop', width: 1280, height: 720 },
   ],
 
-  // Performance budgets (ms)
-  performance: { budgets: { lcp: 2500, fcp: 1800, tti: 3800 } },
+  // Toggle scanner groups
+  scanners: ['source', 'repo-analyzer', 'e2e', 'accessibility', 'visual', 'performance'],
+  accessibility: { enabled: true, standard: 'wcag21aa' },
+  visual: { enabled: true, threshold: 0.1 },
+  performance: { enabled: true, budgets: { lcp: 2500, fcp: 1800, tti: 3800 } },
 
-  // Visual regression threshold (0-1)
-  visual: { threshold: 0.1 },
+  // Optional AI providers. Default is deterministic local QA with provider: 'none'.
+  ai: {
+    provider: 'none', // codex-cli, claude-code, anthropic-api, openai-api, gemini-cli, ollama
+    model: undefined,
+    command: undefined,
+    baseUrl: undefined,
+  },
 
-  // AI explorer
-  exploration: { maxSteps: 50 },
+  // Optional AI explorer, run only with --explore
+  exploration: { enabled: true, maxSteps: 50 },
 
   // Dead link checker
   deadLinks: {
+    scanCode: false,         // docs/HTML by default; opt into JSX/TSX/JS/TS to reduce noise
     checkExternal: true,
     timeout: 5000,
     retries: 2,
@@ -353,6 +367,8 @@ export default defineConfig({
   },
 });
 ```
+
+Provider selection can also come from environment: `SNIFF_AI_PROVIDER`, `SNIFF_AI_MODEL`, `SNIFF_AI_COMMAND`, and `SNIFF_AI_BASE_URL`. API-backed providers use their normal keys: `ANTHROPIC_API_KEY` or `OPENAI_API_KEY`. If the selected provider is missing, Sniff skips AI generation and keeps the deterministic QA run moving.
 
 </details>
 
@@ -386,11 +402,19 @@ Set any to `'off'` to disable.
 
 ## CI integration
 
+Run Sniff directly in CI:
+
+```bash
+npx sniff-qa --ci --format html,json,junit
+```
+
+Generate a GitHub Actions workflow:
+
 ```bash
 npx sniff-qa ci
 ```
 
-Generates `.github/workflows/sniff.yml` with Playwright caching, JUnit output, and report artifacts.
+This writes `.github/workflows/sniff.yml` with Playwright caching, JUnit output, and report artifacts.
 
 **Flakiness quarantine:** Tests that fail 3 of 5 runs get quarantined. They still run, still report, but won't block your pipeline.
 
@@ -439,25 +463,25 @@ Pass `--verbose` to see the top-3 candidates and every matched signal — useful
 
 **Production-URL safety:** when the target is not a local address, sniff prints a 5-second countdown banner before running. Hit Ctrl+C to cancel. No `--allow-destructive` flag.
 
-**LLM polish (optional):** if the `claude` CLI is available, sniff uses it to break close-call app-type classifications. Responses are cached under `.sniff/discover/cache/`. Pass `--no-llm` to skip.
+**LLM polish (optional):** discovery can use the `claude` CLI to break close-call app-type classifications. Responses are cached under `.sniff/discover/cache/`. Pass `--no-llm` to skip.
 
 ---
 
 ## How it works
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset=".github/assets/pipeline-dark.svg">
-  <source media="(prefers-color-scheme: light)" srcset=".github/assets/pipeline-light.svg">
-  <img alt="Sniff pipeline" src=".github/assets/pipeline-light.svg" width="100%">
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/Aboudjem/sniff/main/.github/assets/pipeline-dark.svg">
+  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/Aboudjem/sniff/main/.github/assets/pipeline-light.svg">
+  <img alt="Sniff pipeline" src="https://raw.githubusercontent.com/Aboudjem/sniff/main/.github/assets/pipeline-light.svg" width="100%">
 </picture>
 
 <details>
 <summary><b>Architecture</b></summary>
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset=".github/assets/architecture-dark.svg">
-  <source media="(prefers-color-scheme: light)" srcset=".github/assets/architecture-light.svg">
-  <img alt="Sniff architecture" src=".github/assets/architecture-light.svg" width="100%">
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/Aboudjem/sniff/main/.github/assets/architecture-dark.svg">
+  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/Aboudjem/sniff/main/.github/assets/architecture-light.svg">
+  <img alt="Sniff architecture" src="https://raw.githubusercontent.com/Aboudjem/sniff/main/.github/assets/architecture-light.svg" width="100%">
 </picture>
 
 </details>
@@ -466,10 +490,10 @@ Pass `--verbose` to see the top-3 candidates and every matched signal — useful
 
 ## Privacy
 
-No telemetry. No signup. No data collection. No API keys. Your code stays on your machine.
+No telemetry. No signup. No data collection. No API keys required. Your code stays on your machine unless you explicitly configure an API-backed AI provider.
 
 > [!NOTE]
-> All 8 checks work without any API key. The AI explorer uses Claude Code as the AI provider when run through MCP, so no separate Anthropic key is needed. Dead link checking validates external URLs but never sends your code.
+> All deterministic checks work without any API key. Optional AI providers are off by default and must be selected through config or environment. Dead link checking validates external URLs but never sends your code.
 
 ---
 

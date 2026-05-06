@@ -8,6 +8,13 @@ export const DEFAULT_EXCLUDE = [
   '**/.sniff/**',
   '**/.git/**',
   '**/coverage/**',
+  '**/test/**',
+  '**/tests/**',
+  '**/__tests__/**',
+  '**/fixtures/**',
+  '**/*.test.*',
+  '**/*.spec.*',
+  '**/*.stories.*',
   '**/*.min.js',
   '**/*.map',
 ];

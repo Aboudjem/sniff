@@ -1,6 +1,7 @@
 import { resolve } from 'node:path';
 import { existsSync } from 'node:fs';
 import type { Finding, BrowserFinding } from '../core/types.js';
+import type { BrowserProject } from '../config/schema.js';
 
 export interface McpToolResult {
   [key: string]: unknown;
@@ -43,14 +44,12 @@ export async function handleSniffScan(rootDir: string): Promise<McpToolResult> {
   }
 
   const { loadConfig } = await import('../config/loader.js');
-  const { ScannerRegistry } = await import('../scanners/registry.js');
-  const { SourceScanner } = await import('../scanners/source/index.js');
+  const { runSourceScan } = await import('../core/quality-run.js');
+  const { saveResults } = await import('../core/persistence.js');
 
-  const config = await loadConfig(rootDir);
-  const registry = new ScannerRegistry();
-  registry.register(new SourceScanner());
-
-  const results = await registry.runAll({ config, rootDir });
+  await loadConfig(rootDir); // Preserve config validation errors in this path.
+  const { results } = await runSourceScan(rootDir);
+  await saveResults(rootDir, results);
   return {
     content: [{ type: 'text', text: JSON.stringify(results, null, 2) }],
   };
@@ -71,33 +70,39 @@ export async function handleSniffRun(
     return { content: [{ type: 'text', text: JSON.stringify({ error: urlErr }) }] };
   }
 
-  const { loadConfig } = await import('../config/loader.js');
-  const { BrowserRunner } = await import('../browser/runner.js');
-  const { AccessibilityScanner } = await import('../scanners/accessibility/index.js');
-  const { VisualRegressionScanner } = await import('../scanners/visual/index.js');
-  const { PerformanceScanner } = await import('../scanners/performance/index.js');
+  const { runSourceScan, routesFromAnalysis, runBrowserAudit } = await import('../core/quality-run.js');
+  const { saveResults } = await import('../core/persistence.js');
 
-  const config = await loadConfig(rootDir);
+  const sourceRun = await runSourceScan(rootDir);
+  const { checkPlaywrightBrowsers } = await import('../core/ensure-browsers.js');
+  const check = await checkPlaywrightBrowsers(sourceRun.config.browser?.projects);
+  if (check.status !== 'installed') {
+    return {
+      content: [{
+        type: 'text',
+        text: JSON.stringify({
+          needsSetup: 'playwright-browsers',
+          projects: check.status === 'missing' ? check.missingProjects : sourceRun.config.browser?.projects ?? ['chromium'],
+          installCommand: check.status === 'missing' ? check.installCommand : `npx playwright install ${(sourceRun.config.browser?.projects ?? ['chromium']).join(' ')}`,
+          installSizeMb: check.status === 'missing' ? check.installSizeMb : 165,
+          hint: 'Run the sniff_install MCP tool with the same projects, or run the install command manually, then retry.',
+        }),
+      }],
+    };
+  }
 
-  const runner = new BrowserRunner(config);
-  runner.registerScanner(new AccessibilityScanner());
-  runner.registerScanner(new VisualRegressionScanner());
-  runner.registerScanner(new PerformanceScanner());
-
-  const result = await runner.run({
+  const browserRun = await runBrowserAudit({
+    rootDir,
+    config: sourceRun.config,
     baseUrl,
-    testFiles: ['/'],
-    viewports: config.viewports ?? [{ name: 'desktop', width: 1280, height: 720 }],
+    routes: routesFromAnalysis(sourceRun.analysis),
     headless,
-    slowMo: 0,
-    timeout: config.browser?.timeout ?? 30000,
   });
 
-  // Type both groups explicitly to avoid Finding vs BrowserFinding incompatibility
-  const allFindings: Array<Finding | BrowserFinding> = [
-    ...result.scanResults.flatMap((r) => r.findings),
-    ...result.pageVisits.flatMap((v) => v.findings),
-  ];
+  const results = [...sourceRun.results, ...browserRun.results];
+  await saveResults(rootDir, results);
+
+  const allFindings: Array<Finding | BrowserFinding> = results.flatMap((r) => r.findings);
 
   return {
     content: [
@@ -106,8 +111,9 @@ export async function handleSniffRun(
         text: JSON.stringify(
           {
             findings: allFindings,
-            urls: result.urls,
-            duration: result.duration,
+            urls: browserRun.browserRun.urls,
+            duration: browserRun.duration,
+            scanners: results.map((r) => r.scanner),
             findingCount: allFindings.length,
           },
           null,
@@ -161,17 +167,20 @@ export async function handleSniffDiscover(options: SniffDiscoverOptions): Promis
 
   // Gate on Playwright install — skip when dryRun since no browser runs.
   if (!options.dryRun) {
+    const { loadConfig } = await import('../config/loader.js');
+    const config = await loadConfig(options.rootDir);
     const { checkPlaywrightBrowsers } = await import('../core/ensure-browsers.js');
-    const check = await checkPlaywrightBrowsers();
+    const check = await checkPlaywrightBrowsers(config.browser?.projects);
     if (check.status !== 'installed') {
       return {
         content: [{
           type: 'text',
           text: JSON.stringify({
-            needsSetup: 'playwright-chromium',
-            installCommand: check.status === 'missing' ? check.installCommand : 'npx playwright install chromium',
+            needsSetup: 'playwright-browsers',
+            projects: check.status === 'missing' ? check.missingProjects : config.browser?.projects ?? ['chromium'],
+            installCommand: check.status === 'missing' ? check.installCommand : `npx playwright install ${(config.browser?.projects ?? ['chromium']).join(' ')}`,
             installSizeMb: check.status === 'missing' ? check.installSizeMb : 165,
-            hint: 'Run the sniff_install MCP tool, or run the install command manually, then retry.',
+            hint: 'Run the sniff_install MCP tool with the same projects, or run the install command manually, then retry.',
           }),
         }],
       };
@@ -292,16 +301,17 @@ export async function handleSniffUnified(options: SniffUnifiedOptions): Promise<
   }
 }
 
-export async function handleSniffInstall(): Promise<McpToolResult> {
-  const { installPlaywrightBrowsers } = await import('../core/ensure-browsers.js');
-  const result = await installPlaywrightBrowsers();
+export async function handleSniffInstall(projects?: BrowserProject[]): Promise<McpToolResult> {
+  const { installPlaywrightBrowserProjects } = await import('../core/ensure-browsers.js');
+  const requestedProjects: BrowserProject[] = projects && projects.length > 0 ? projects : ['chromium'];
+  const result = await installPlaywrightBrowserProjects(requestedProjects);
   return {
     content: [{
       type: 'text',
       text: JSON.stringify(
         result.status === 'ok'
-          ? { status: 'installed', browser: 'chromium' }
-          : { status: 'failed', error: result.error, hint: 'Run `npx playwright install chromium` manually for full error output.' },
+          ? { status: 'installed', projects: result.projects }
+          : { status: 'failed', projects: result.projects, error: result.error, hint: `Run \`npx playwright install ${requestedProjects.join(' ')}\` manually for full error output.` },
       ),
     }],
   };
@@ -324,7 +334,7 @@ export async function handleSniffReport(
       content: [
         {
           type: 'text',
-          text: 'No previous sniff results found. Run sniff_scan or sniff_run first.',
+          text: 'No previous sniff results found. Run the unified sniff tool with mode "scan" or "run" first.',
         },
       ],
     };

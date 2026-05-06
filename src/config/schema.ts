@@ -15,14 +15,29 @@ export const analyzerConfigSchema = z.object({
   elementSelectors: z.array(z.string()).default(['data-testid', 'id', 'name', 'aria-label', 'role']),
 });
 
+export const aiProviderSchema = z.enum([
+  'none',
+  'codex-cli',
+  'claude-code',
+  'anthropic-api',
+  'openai-api',
+  'gemini-cli',
+  'ollama',
+]);
+
 export const aiConfigSchema = z.object({
-  provider: z.enum(['claude-code', 'anthropic-api']).default('claude-code'),
-  model: z.string().default('claude-sonnet-4-5-20250514'),
+  provider: aiProviderSchema.default('none'),
+  model: z.string().optional(),
+  command: z.string().optional(),
+  baseUrl: z.string().optional(),
   outputDir: z.string().default('sniff-tests'),
   maxConcurrency: z.number().default(5),
 });
 
+export const browserProjectSchema = z.enum(['chromium', 'firefox', 'webkit']);
+
 export const browserConfigSchema = z.object({
+  projects: z.array(browserProjectSchema).default(['chromium']),
   headless: z.boolean().default(true),
   slowMo: z.number().default(0),
   timeout: z.number().default(30000),
@@ -81,6 +96,7 @@ export const apiEndpointsConfigSchema = z.object({
 
 export const deadLinksConfigSchema = z.object({
   enabled: z.boolean().default(true),
+  scanCode: z.boolean().default(false),
   checkExternal: z.boolean().default(true),
   timeout: z.number().default(5000),
   retries: z.number().default(2),
@@ -101,7 +117,7 @@ export const sniffConfigSchema = z.object({
   exclude: z.array(z.string()).default(DEFAULT_EXCLUDE),
   include: z.array(z.string()).default(['**/*.{ts,tsx,js,jsx,html,css}']),
   rules: z.record(z.string(), ruleConfigSchema).default({}),
-  scanners: z.array(z.string()).default(['source', 'repo-analyzer']),
+  scanners: z.array(z.string()).default(['source', 'repo-analyzer', 'e2e', 'accessibility', 'visual', 'performance']),
   analyzer: analyzerConfigSchema.optional(),
   ai: aiConfigSchema.optional(),
   browser: browserConfigSchema.optional(),
@@ -134,3 +150,5 @@ export type ApiEndpointsConfig = z.output<typeof apiEndpointsConfigSchema>;
 export type DeadLinksConfig = z.output<typeof deadLinksConfigSchema>;
 export type FlakinessConfig = z.output<typeof flakinessConfigSchema>;
 export type ExplorationConfig = z.output<typeof explorationConfigSchema>;
+export type AIProviderName = z.output<typeof aiProviderSchema>;
+export type BrowserProject = z.output<typeof browserProjectSchema>;

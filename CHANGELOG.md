@@ -7,40 +7,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Added
-
-- **i18n classifier aliases** — the app-type classifier now matches French, Spanish, German, Portuguese (BR/PT), and Italian equivalents for every English signature token. Non-English apps (e.g. a French SaaS on `/fr/tableau-de-bord`, `/fr/parametres`, `/fr/facturation`) classify correctly instead of returning `blank`. Alias map in `src/discovery/classifier/signatures/i18n.ts`; matched aliases surface in evidence with an `(i18n: <alias>)` suffix. Covers route tokens (single-word) and element phrases (multi-word).
-- **Classification breakdown** — `sniff discover` (and the `sniff_discover` MCP tool) now returns a `classificationBreakdown` with the top-3 app-type candidates (type, confidence, raw score) and every matched signal grouped by dimension (routes, elements, deps, schema) with the app type that scored it. Useful for debugging why an app classified the way it did, especially the "100% blank with no context" case.
-- **`--verbose` flag** on `sniff` and `sniff discover` — pretty-prints the classification breakdown to the terminal (top 3 guesses + first 8 matched signals per dimension).
-- **`scoreAllSignatures` / `buildClassificationBreakdown` exports** from `src/discovery/classifier/index.ts` for downstream tooling.
-- **`forceAppType`** parameter — bypasses the classifier and generates scenarios for a chosen app type even when classification returned `blank`. Available as `--force-app-type <type>` on the CLI and `forceAppType: string` on the `sniff_discover` MCP tool. Fixes the case where a non-English SaaS classified as blank and `--app-type saas` produced zero scenarios.
-
-### Changed
-
-- **`--app-type` is now a filter, not a force.** The existing CLI flag and MCP `appType` param filter classifier guesses down to the listed types — they do NOT bypass classification. The internal option is renamed from `forceAppTypes` → `filterAppTypes` on `generateScenarios`; old name kept as a deprecated alias for one release.
-### Changed
-
-- **Dev-server detection hardened.** Removed ports `5000`, `8000`, and `8080` from the conservative probe fallback — these collide with macOS AirPlay Receiver, `python -m http.server`, and every Java/Tomcat/Jenkins default, and previously caused sniff to false-positive on unrelated services. Probe fallback now requires a framework marker (Next.js `__NEXT_DATA__`, Vite `/@vite/client`, Nuxt `__NUXT__`, Astro islands, SvelteKit, Angular, Remix) to accept a port as a dev server. Added parsing of `vite.config.{ts,js,mjs,cjs}`, `nuxt.config.{ts,js,mjs}`, `astro.config.{mjs,ts,js}`, and `angular.json` for explicit port overrides. Added auto-increment probe (defaultPort+1..+20) so sniff finds Next.js / Vite dev servers that rolled forward after a port-busy collision. `DetectionResult` now includes a `candidates` array for callers (CLI, MCP) to show or pick from.
-
-### Migration note
-
-If you were relying on sniff probing `:5000` / `:8000` / `:8080`, set `SNIFF_URL=http://localhost:<port>` or add the port to your dev script (`"dev": "vite --port 8080"`) and sniff will pick it up via `package.json`.
-- **`sniff_install` MCP tool** — explicitly installs Playwright's Chromium binary. Use this instead of hoping MCP tools trigger an install inline.
-- **`needsSetup` structured response** — `sniff_run` and `sniff_discover` now return `{ needsSetup: 'playwright-chromium', installCommand, installSizeMb, hint }` when the browser binary is missing instead of silently shelling out to `npx playwright install` (which can take 30-60s and time out MCP stdio transports).
-- **Shared `src/core/ensure-browsers.ts`** — `checkPlaywrightBrowsers` (non-invasive), `ensurePlaywrightBrowsers` (CLI install-inline), `installPlaywrightBrowsers` (programmatic install with structured result). CLI path unchanged in behavior.
-
-### Changed
-
-- **Playwright pinned** to `~1.59.1` (patch-only updates). Prevents drifting into 1.57+ memory regression reports without explicit review. Reference: [DEEP-DIVE §Playwright memory](`.planning/VERIFICATION-AUDIT-2026-04-18.md`).
-- **`--headed` CLI flag** as an alias for `--no-headless`. Matches Playwright's own convention (`playwright test --headed`) so muscle memory works. `--no-headless` remains supported for back-compat.
-### Changed
-
-- **`sniff init` auto-detects the config flavor.** TypeScript projects (detected via `tsconfig.json` or `typescript` in deps) get `sniff.config.ts`. ESM projects (`"type": "module"`) get `sniff.config.mjs`. Plain JS projects get `sniff.config.js` (CJS). Previously it always wrote `.ts`, which required users to install TypeScript.
+## [0.5.1] - 2026-05-06
 
 ### Added
 
-- **`sniff init --ts`** forces TypeScript flavor.
-- **`sniff init --js`** forces JS (ESM or CJS depending on `package.json`).
+- Agent-agnostic AI provider selection with deterministic `ai.provider: "none"` as the default and optional `codex-cli`, `claude-code`, `anthropic-api`, `openai-api`, `gemini-cli`, and `ollama` providers.
+- Multi-browser config via `browser.projects` with Chromium as the default and Firefox/WebKit opt-in.
+- `sniff_install` MCP support for requested Playwright browser projects.
+- Test typechecking through `tsconfig.test.json`.
+
+### Changed
+
+- Browser runtime console/network hook findings now flow into normal results, reports, persistence, MCP responses, and exit codes.
+- MCP `sniff({ mode: "run" })` now uses the shared source + browser path instead of a browser-only root route.
+- Browser audits use the current repo analysis routes before falling back to `/`, avoiding stale `.sniff/last-results.json` route reuse.
+- Scanner crashes now produce high-severity `scanner-error/*` findings instead of silent metadata-only errors.
+- Dead-link scanning now ignores code files by default and requires `deadLinks.scanCode: true` for JSX/TSX/JS/TS extraction.
+- `--explore` is now opt-in so default CLI scans remain deterministic and local.
+- README assets now use absolute GitHub URLs so npm rendering works.
+
+### Fixed
+
+- `BrowserRunner` now receives the target `rootDir`, so reports and visual baselines are written for the scanned project instead of the caller process.
+- Accessibility, visual, performance, and e2e scanners now honor `config.scanners` and their enabled flags consistently.
+- CI workflow generation now uploads `.sniff/reports/` and uses `npx sniff-qa --ci --format html,json,junit`.
 
 ## [0.4.0] - 2026-04-17
 

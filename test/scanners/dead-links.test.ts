@@ -98,7 +98,7 @@ describe('dead-links', () => {
       await writeFile(filePath, jsx);
 
       const findings = await scanFileForDeadLinks(
-        filePath, 'App.tsx', jsx, tmpDir, makeConfig(),
+        filePath, 'App.tsx', jsx, tmpDir, makeConfig({ scanCode: true }),
       );
 
       expect(findings).toHaveLength(1);
@@ -285,6 +285,34 @@ describe('dead-links', () => {
 
       const findings = await scanFileForDeadLinks(
         filePath, 'data.json', content, tmpDir, makeConfig({ checkExternal: true }),
+      );
+
+      expect(findings).toHaveLength(0);
+    });
+
+    it('does not scan code files by default', async () => {
+      const tsx = '<img src="./missing.png" alt="logo" />\n';
+      const filePath = join(tmpDir, 'Component.tsx');
+      await writeFile(filePath, tsx);
+
+      const findings = await scanFileForDeadLinks(
+        filePath, 'Component.tsx', tsx, tmpDir, makeConfig(),
+      );
+
+      expect(findings).toHaveLength(0);
+    });
+
+    it('ignores regex literals and sample localhost strings when code scan is enabled', async () => {
+      const code = [
+        'const routeRe = /\\/docs\\/missing/;',
+        'const sample = "http://localhost:3000/missing";',
+        'const fixture = `https://example.test/${id}`;',
+      ].join('\n');
+      const filePath = join(tmpDir, 'examples.ts');
+      await writeFile(filePath, code);
+
+      const findings = await scanFileForDeadLinks(
+        filePath, 'examples.ts', code, tmpDir, makeConfig({ scanCode: true, checkExternal: true }),
       );
 
       expect(findings).toHaveLength(0);

@@ -6,8 +6,11 @@ import type { GenerateOptions } from '../../src/ai/generator.js';
 const mockGenerateTests = vi.fn();
 vi.mock('../../src/ai/provider.js', () => ({
   resolveProvider: vi.fn(async () => ({
-    name: 'mock-provider',
-    generateTests: mockGenerateTests,
+    name: 'claude-code',
+    provider: {
+      name: 'claude-code',
+      generateTests: mockGenerateTests,
+    },
   })),
 }));
 
@@ -72,6 +75,22 @@ describe('generateTests', () => {
     const { resolveProvider } = await import('../../src/ai/provider.js');
     await generateTests(makeAnalysis(), makeOptions());
     expect(resolveProvider).toHaveBeenCalledOnce();
+  });
+
+  it('returns no generated tests when provider resolution falls back to none', async () => {
+    const { resolveProvider } = await import('../../src/ai/provider.js');
+    vi.mocked(resolveProvider).mockResolvedValueOnce({
+      name: 'none',
+      provider: null,
+      reason: 'ai.provider is "none"',
+    });
+
+    const { generateTests } = await import('../../src/ai/generator.js');
+    const results = await generateTests(makeAnalysis(2), makeOptions());
+
+    expect(results).toHaveLength(0);
+    expect(mockGenerateTests).not.toHaveBeenCalled();
+    expect(mockWriteFile).not.toHaveBeenCalled();
   });
 
   it('calls provider.generateTests once per route in the analysis', async () => {

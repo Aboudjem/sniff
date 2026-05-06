@@ -9,11 +9,14 @@ Display findings from the most recent scan.
 
 ## What to do
 
-1. Use `sniff_report` MCP tool with:
+1. Use the unified `sniff` MCP tool with:
+   - `mode`: `"report"`
    - `rootDir`: the current project's absolute path
    - `format`: 'summary' for readable output, 'json' for raw data
 
-2. Present the summary to the user:
+2. If the unified `sniff` tool is not available, use legacy `sniff_report` with the same rootDir and format.
+
+3. Present the summary to the user:
    - Total findings by severity
    - Top issues with file locations
    - Any corroborated findings (confirmed in source + browser)
@@ -32,6 +35,6 @@ You: Here are the results from your last scan:
 3. `README.md:28` - HIGH: Broken internal link
 
 Reports saved to:
-- sniff-reports/report.html
-- sniff-reports/report.json
+- .sniff/reports/report.html
+- .sniff/reports/report.json
 ```

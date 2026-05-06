@@ -6,35 +6,58 @@
 // MCP surface returns a structured `needsSetup` payload so the agent can
 // ask the user to run `sniff install` explicitly.
 
+import type { BrowserProject } from '../config/schema.js';
+
 export type BrowserCheckStatus =
-  | { status: 'installed' }
-  | { status: 'missing'; installCommand: string; installSizeMb: number }
+  | { status: 'installed'; projects: BrowserProject[] }
+  | { status: 'missing'; projects: BrowserProject[]; missingProjects: BrowserProject[]; installCommand: string; installSizeMb: number }
   | { status: 'error'; error: string };
 
 const CHROMIUM_INSTALL_SIZE_MB = 165;
+const ESTIMATED_BROWSER_SIZE_MB: Record<BrowserProject, number> = {
+  chromium: 165,
+  firefox: 95,
+  webkit: 120,
+};
+
+function normalizeProjects(projects?: BrowserProject[]): BrowserProject[] {
+  return projects && projects.length > 0 ? [...new Set(projects)] : ['chromium'];
+}
+
+function installCommand(projects: BrowserProject[]): string {
+  return `npx playwright install ${projects.join(' ')}`;
+}
 
 /**
  * Non-invasive check. Does NOT install. Safe to call from MCP handlers.
  */
-export async function checkPlaywrightBrowsers(): Promise<BrowserCheckStatus> {
+export async function checkPlaywrightBrowsers(projects?: BrowserProject[]): Promise<BrowserCheckStatus> {
+  const requestedProjects = normalizeProjects(projects);
   try {
-    const { chromium } = await import('playwright');
-    // executablePath throws if the binary isn't present.
-    chromium.executablePath();
-    return { status: 'installed' };
-  } catch (e) {
-    if (e instanceof Error && /Executable doesn't exist|browserType\.executablePath/i.test(e.message)) {
-      return {
-        status: 'missing',
-        installCommand: 'npx playwright install chromium',
-        installSizeMb: CHROMIUM_INSTALL_SIZE_MB,
-      };
+    const playwright = await import('playwright');
+    const missingProjects: BrowserProject[] = [];
+    for (const project of requestedProjects) {
+      // executablePath throws if the binary isn't present.
+      playwright[project].executablePath();
     }
+    if (missingProjects.length === 0) {
+      return { status: 'installed', projects: requestedProjects };
+    }
+    return {
+      status: 'missing',
+      projects: requestedProjects,
+      missingProjects,
+      installCommand: installCommand(missingProjects),
+      installSizeMb: missingProjects.reduce((sum, project) => sum + ESTIMATED_BROWSER_SIZE_MB[project], 0),
+    };
+  } catch (e) {
     // playwright itself not installed, or something else — expose as missing
     return {
       status: 'missing',
-      installCommand: 'npx playwright install chromium',
-      installSizeMb: CHROMIUM_INSTALL_SIZE_MB,
+      projects: requestedProjects,
+      missingProjects: requestedProjects,
+      installCommand: installCommand(requestedProjects),
+      installSizeMb: requestedProjects.reduce((sum, project) => sum + ESTIMATED_BROWSER_SIZE_MB[project], 0),
     };
   }
 }
@@ -43,22 +66,26 @@ export async function checkPlaywrightBrowsers(): Promise<BrowserCheckStatus> {
  * CLI path. Installs inline if missing. Exits the process on failure.
  * Do NOT call from MCP handlers — use `checkPlaywrightBrowsers` instead.
  */
-export async function ensurePlaywrightBrowsers(): Promise<void> {
-  const check = await checkPlaywrightBrowsers();
+export async function ensurePlaywrightBrowsers(projects?: BrowserProject[]): Promise<void> {
+  const requestedProjects = normalizeProjects(projects);
+  const check = await checkPlaywrightBrowsers(requestedProjects);
   if (check.status === 'installed') return;
 
   const pc = (await import('picocolors')).default;
   console.log(pc.yellow('\nPlaywright browsers not installed.'));
-  console.log(pc.dim(`Installing Chromium (~${CHROMIUM_INSTALL_SIZE_MB}MB, one-time)...\n`));
+  const installSizeMb = check.status === 'missing'
+    ? check.installSizeMb
+    : requestedProjects.reduce((sum, project) => sum + ESTIMATED_BROWSER_SIZE_MB[project], 0);
+  console.log(pc.dim(`Installing ${requestedProjects.join(', ')} (~${installSizeMb}MB, one-time)...\n`));
 
   const { execSync } = await import('node:child_process');
   try {
-    execSync('npx playwright install chromium', { stdio: 'inherit' });
+    execSync(installCommand(requestedProjects), { stdio: 'inherit' });
     console.log('');
   } catch {
     console.error(
       pc.red(
-        'Failed to install Playwright browsers. Run manually: npx playwright install chromium',
+        `Failed to install Playwright browsers. Run manually: ${installCommand(requestedProjects)}`,
       ),
     );
     process.exit(1);
@@ -74,13 +101,22 @@ export async function installPlaywrightBrowsers(): Promise<
   | { status: 'ok' }
   | { status: 'failed'; error: string }
 > {
+  return installPlaywrightBrowserProjects();
+}
+
+export async function installPlaywrightBrowserProjects(projects?: BrowserProject[]): Promise<
+  | { status: 'ok'; projects: BrowserProject[] }
+  | { status: 'failed'; projects: BrowserProject[]; error: string }
+> {
+  const requestedProjects = normalizeProjects(projects);
   const { execSync } = await import('node:child_process');
   try {
-    execSync('npx playwright install chromium', { stdio: 'pipe' });
-    return { status: 'ok' };
+    execSync(installCommand(requestedProjects), { stdio: 'pipe' });
+    return { status: 'ok', projects: requestedProjects };
   } catch (e) {
     return {
       status: 'failed',
+      projects: requestedProjects,
       error: e instanceof Error ? e.message : 'unknown error',
     };
   }

@@ -46,19 +46,11 @@ export async function unifiedCommand(options: UnifiedOptions): Promise<void> {
     console.log(`${pc.blue('[source]')} Scanning source code...`);
   }
 
-  const { loadConfig } = await import('../../config/loader.js');
-  const { ScannerRegistry } = await import('../../scanners/registry.js');
-  const { SourceScanner } = await import('../../scanners/source/index.js');
-  const { RepoAnalyzer } = await import('../../scanners/repo-analyzer.js');
   const { saveResults } = await import('../../core/persistence.js');
+  const { runSourceScan, generateAiTestsIfEnabled } = await import('../../core/quality-run.js');
 
-  const config = await loadConfig(options.rootDir);
-  const registry = new ScannerRegistry();
-  registry.register(new SourceScanner());
-  registry.register(new RepoAnalyzer());
-
-  const ctx = { config, rootDir: options.rootDir };
-  const sourceResults = await registry.runAll(ctx);
+  const sourceRun = await runSourceScan(options.rootDir);
+  const { config, results: sourceResults, analysis } = sourceRun;
   allResults.push(...sourceResults);
 
   const sourceFindings = sourceResults.flatMap((r) => r.findings);
@@ -69,16 +61,8 @@ export async function unifiedCommand(options: UnifiedOptions): Promise<void> {
   }
 
   // Generate AI tests from analysis (only when running browser audit)
-  const repoResult = sourceResults.find((r) => r.scanner === 'repo-analyzer');
-  if (options.url && repoResult?.metadata?.analysis) {
-    const { generateTests } = await import('../../ai/generator.js');
-    const analysis = repoResult.metadata.analysis as import('../../analyzers/types.js').AnalysisResult;
-    const aiConfig = (config as Record<string, unknown>).ai as Record<string, unknown> | undefined;
-    await generateTests(analysis, {
-      outputDir: (aiConfig?.outputDir as string) ?? 'sniff-tests',
-      maxConcurrency: (aiConfig?.maxConcurrency as number) ?? 5,
-      rootDir: options.rootDir,
-    });
+  if (options.url) {
+    await generateAiTestsIfEnabled(options.rootDir, config, analysis);
   }
 
   // ── Phase 2: Browser tests (if URL provided) ──────────────────
@@ -96,12 +80,7 @@ export async function unifiedCommand(options: UnifiedOptions): Promise<void> {
       console.log(`\n${pc.green('[browser]')} Testing ${options.url}...`);
     }
 
-    const { join } = await import('node:path');
-    const { readdir } = await import('node:fs/promises');
-    const { BrowserRunner } = await import('../../browser/runner.js');
-    const { AccessibilityScanner } = await import('../../scanners/accessibility/index.js');
-    const { VisualRegressionScanner } = await import('../../scanners/visual/index.js');
-    const { PerformanceScanner } = await import('../../scanners/performance/index.js');
+    const { routesFromAnalysis, runBrowserAudit } = await import('../../core/quality-run.js');
 
     const viewports = config.viewports ?? [
       { name: 'desktop', width: 1280, height: 720 },
@@ -109,86 +88,49 @@ export async function unifiedCommand(options: UnifiedOptions): Promise<void> {
       { name: 'tablet', width: 768, height: 1024 },
     ];
 
-    // Discover routes
-    let routes: string[] = ['/'];
+    const routes = routesFromAnalysis(analysis);
+    let browserAudit;
     try {
-      const { readFile } = await import('node:fs/promises');
-      const lastResults = JSON.parse(
-        await readFile(join(options.rootDir, '.sniff', 'last-results.json'), 'utf-8'),
-      );
-      if (lastResults?.results) {
-        const rr = lastResults.results.find((r: { scanner: string }) => r.scanner === 'repo-analyzer');
-        if (rr?.metadata?.analysis?.routes?.length > 0) {
-          routes = rr.metadata.analysis.routes.map((r: { path: string }) => r.path);
-        }
-      }
-    } catch {
-      // No previous analysis; use root route
-    }
-
-    const runner = new BrowserRunner(config);
-    const a11yScanner = new AccessibilityScanner();
-    const visualScanner = new VisualRegressionScanner();
-    const perfScanner = new PerformanceScanner();
-    runner.registerScanner(a11yScanner);
-    runner.registerScanner(visualScanner);
-    runner.registerScanner(perfScanner);
-
-    let result;
-    try {
-      result = await runner.run({
+      browserAudit = await runBrowserAudit({
+        rootDir: options.rootDir,
+        config,
         baseUrl: options.url,
-        testFiles: routes,
-        viewports,
+        routes,
         headless: options.headless ?? config.browser?.headless ?? true,
-        slowMo: config.browser?.slowMo ?? 0,
-        timeout: config.browser?.timeout ?? 30000,
       });
     } catch {
-      console.error(pc.red('Failed to launch browser. Run: npx playwright install chromium'));
+      const projects = config.browser?.projects?.join(' ') ?? 'chromium';
+      console.error(pc.red(`Failed to launch browser. Run: npx playwright install ${projects}`));
       process.exit(1);
     }
 
     if (!options.json) {
-      for (const visit of result.pageVisits) {
+      for (const visit of browserAudit.browserRun.pageVisits) {
         const count = visit.findings.length;
         const suffix = count === 0 ? pc.green('clean') : pc.yellow(`${count} finding${count !== 1 ? 's' : ''}`);
-        console.log(`  ${pc.dim(visit.url)} ${suffix}`);
+        console.log(`  ${pc.dim(`${visit.browser}/${visit.viewport}`)} ${pc.dim(visit.url)} ${suffix}`);
       }
     }
 
-    // Lighthouse performance
-    if (!options.json) {
-      console.log(`${pc.green('[perf]')} Measuring performance...`);
-    }
-    const perfResult = await perfScanner.measureAll();
-    if (!options.json) {
+    const perfResult = browserAudit.results.find((r) => r.scanner === 'performance' && !r.metadata?.urlsCollected);
+    if (perfResult && !options.json) {
       console.log(`${pc.green('[perf]')} ${perfResult.findings.length} budget violation${perfResult.findings.length !== 1 ? 's' : ''}`);
     }
 
-    allResults.push(...result.scanResults, perfResult);
+    allResults.push(...browserAudit.results);
 
     // Build and save report
     const { buildReport, saveReport } = await import('../../report/model.js');
-    const screenshots = result.pageVisits
-      .filter((v) => v.screenshotPath)
-      .map((v) => ({
-        path: v.screenshotPath!,
-        url: v.url,
-        viewport: v.viewport,
-        caption: `${v.viewport} - ${v.url}`,
-      }));
-
     const report = buildReport(
       allResults,
       {
         timestamp: new Date().toISOString(),
-        duration: result.duration,
+        duration: browserAudit.duration,
         targetUrl: options.url,
         viewports,
         commandUsed: 'sniff',
       },
-      screenshots,
+      browserAudit.screenshots,
     );
 
     const formats = options.format

@@ -460,7 +460,7 @@ export async function runScenarios(
     pipeline.register(new ConsoleErrorHook());
     pipeline.register(new NetworkFailureHook());
     pipeline.register(new ScreenshotHook());
-    pipeline.setupAll(page, viewportName);
+    pipeline.setupAll(page, viewportName, 'chromium');
     return {
       collect: () => pipeline.collectAll(),
       reset: () => pipeline.resetAll(),

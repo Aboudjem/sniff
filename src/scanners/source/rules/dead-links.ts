@@ -7,6 +7,13 @@ import type { Finding, Severity } from '../../../core/types.js';
 // ---------------------------------------------------------------------------
 
 export interface DeadLinkConfig {
+  enabled: boolean;
+  /**
+   * Code files are noisy for dead-link extraction because URL-like strings are
+   * often regexes, fixtures, sample localhost values, or generated examples.
+   * Keep docs/HTML on by default and require opt-in for JSX/TSX/JS/TS scans.
+   */
+  scanCode: boolean;
   checkExternal: boolean;
   timeout: number;
   retries: number;
@@ -16,6 +23,8 @@ export interface DeadLinkConfig {
 }
 
 export const defaultDeadLinkConfig: DeadLinkConfig = {
+  enabled: true,
+  scanCode: false,
   checkExternal: true,
   timeout: 5000,
   retries: 2,
@@ -54,6 +63,11 @@ const LINK_FILE_EXTENSIONS = new Set([
   '.vue', '.svelte', '.astro',
 ]);
 
+const CODE_FILE_EXTENSIONS = new Set([
+  '.jsx', '.tsx', '.js', '.ts',
+  '.vue', '.svelte', '.astro',
+]);
+
 // Patterns to skip (template variables, mailto, tel, javascript:)
 const SKIP_PATTERNS = [
   /^\{\{/,           // template variables {{ }}
@@ -64,6 +78,7 @@ const SKIP_PATTERNS = [
   /^data:/i,
   /^#$/,             // bare hash
   /^\/\//,           // protocol-relative (ambiguous)
+  /^https?:\/\/(?:localhost|127\.0\.0\.1|\[::1\])(?::\d+)?(?:[/?#]|$)/i,
 ];
 
 // ---------------------------------------------------------------------------
@@ -81,9 +96,11 @@ function classifyLink(url: string): 'internal' | 'external' | 'anchor' | 'skip' 
 // URL extraction from a single file
 // ---------------------------------------------------------------------------
 
-function extractLinks(content: string, filePath: string): ExtractedLink[] {
+function extractLinks(content: string, filePath: string, config: DeadLinkConfig): ExtractedLink[] {
   const ext = extname(filePath).toLowerCase();
   if (!LINK_FILE_EXTENSIONS.has(ext)) return [];
+  const isCodeFile = CODE_FILE_EXTENSIONS.has(ext);
+  if (isCodeFile && !config.scanCode) return [];
 
   const lines = content.split('\n');
   const links: ExtractedLink[] = [];
@@ -92,7 +109,9 @@ function extractLinks(content: string, filePath: string): ExtractedLink[] {
   for (let lineIdx = 0; lineIdx < lines.length; lineIdx++) {
     const line = lines[lineIdx];
 
-    const patterns: RegExp[] = [MD_LINK_RE, HTML_ATTR_RE, JSX_ATTR_RE, PLAIN_URL_RE];
+    const patterns: RegExp[] = isCodeFile
+      ? [HTML_ATTR_RE, JSX_ATTR_RE]
+      : [MD_LINK_RE, HTML_ATTR_RE, PLAIN_URL_RE];
 
     for (const pattern of patterns) {
       // Reset stateful regex
@@ -318,7 +337,7 @@ export async function scanFileForDeadLinks(
   rootDir: string,
   config: DeadLinkConfig,
 ): Promise<Finding[]> {
-  const links = extractLinks(content, filePath);
+  const links = extractLinks(content, filePath, config);
   if (links.length === 0) return [];
 
   const findings: Finding[] = [];

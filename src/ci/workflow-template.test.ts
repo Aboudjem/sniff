@@ -42,7 +42,7 @@ describe('generateGitHubActionsWorkflow', () => {
 
   it('contains npx sniff-qa --ci by default', () => {
     const yaml = generateGitHubActionsWorkflow(defaultOptions());
-    expect(yaml).toContain('npx sniff-qa --ci');
+    expect(yaml).toContain('npx sniff-qa --ci --format html,json,junit');
   });
 
   it('contains if: always() on upload-artifact step', () => {
@@ -58,8 +58,14 @@ describe('generateGitHubActionsWorkflow', () => {
 
   it('uses custom package name in npx command', () => {
     const yaml = generateGitHubActionsWorkflow(defaultOptions({ packageName: 'custom-name' }));
-    expect(yaml).toContain('npx custom-name --ci');
+    expect(yaml).toContain('npx custom-name --ci --format html,json,junit');
     expect(yaml).not.toContain('npx sniff-qa --ci');
+  });
+
+  it('uploads both current and legacy report directories', () => {
+    const yaml = generateGitHubActionsWorkflow(defaultOptions());
+    expect(yaml).toContain('.sniff/reports/');
+    expect(yaml).toContain('sniff-reports/');
   });
 
   it('uses custom branches', () => {

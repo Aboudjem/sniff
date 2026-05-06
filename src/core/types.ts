@@ -13,6 +13,7 @@ export interface Finding {
 export interface BrowserFinding extends Finding {
   url: string;
   viewport: string;
+  browser?: 'chromium' | 'firefox' | 'webkit';
   screenshotPath?: string;
   fixSuggestion?: string;
 }

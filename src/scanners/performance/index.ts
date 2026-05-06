@@ -97,6 +97,7 @@ export class PerformanceScanner implements BrowserScanner {
               snippet: '',
               url,
               viewport: 'desktop',
+              browser: 'chromium',
             });
             continue;
           }
@@ -131,6 +132,7 @@ export class PerformanceScanner implements BrowserScanner {
               snippet: `${def.label}: ${Math.round(value)}ms (budget: ${budget}ms)`,
               url,
               viewport: 'desktop',
+              browser: 'chromium',
               fixSuggestion: buildPerfSuggestion(metricName, value, budget),
             });
           }
@@ -146,6 +148,7 @@ export class PerformanceScanner implements BrowserScanner {
             snippet: '',
             url,
             viewport: 'desktop',
+            browser: 'chromium',
           });
         }
       }

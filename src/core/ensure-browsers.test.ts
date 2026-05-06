@@ -9,9 +9,22 @@ describe('checkPlaywrightBrowsers', () => {
     // care about is that the shape is stable and does NOT silently shell
     // out to `npx playwright install`.
     expect(['installed', 'missing', 'error']).toContain(result.status);
+    if (result.status === 'installed') {
+      expect(result.projects).toContain('chromium');
+    }
     if (result.status === 'missing') {
       expect(result.installCommand).toBe('npx playwright install chromium');
       expect(result.installSizeMb).toBeGreaterThan(0);
+    }
+  });
+
+  it('builds install hints for multiple requested browser projects', async () => {
+    const result = await checkPlaywrightBrowsers(['chromium', 'firefox']);
+    expect(['installed', 'missing', 'error']).toContain(result.status);
+    if (result.status === 'missing') {
+      expect(result.installCommand).toContain('chromium');
+      expect(result.installCommand).toContain('firefox');
+      expect(result.missingProjects).toEqual(['chromium', 'firefox']);
     }
   });
 });

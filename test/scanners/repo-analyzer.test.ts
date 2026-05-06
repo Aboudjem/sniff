@@ -134,9 +134,9 @@ describe('Config schema extensions', () => {
     expect(result.success).toBe(true);
   });
 
-  it('defaults ai.provider to claude-code', () => {
+  it('defaults ai.provider to none for deterministic local QA', () => {
     const result = sniffConfigSchema.parse({ ai: {} });
-    expect(result.ai?.provider).toBe('claude-code');
+    expect(result.ai?.provider).toBe('none');
   });
 
   it('defaults ai.outputDir to sniff-tests', () => {
@@ -153,5 +153,9 @@ describe('Config schema extensions', () => {
     const result = sniffConfigSchema.parse({});
     expect(result.scanners).toContain('source');
     expect(result.scanners).toContain('repo-analyzer');
+    expect(result.scanners).toContain('e2e');
+    expect(result.scanners).toContain('accessibility');
+    expect(result.scanners).toContain('visual');
+    expect(result.scanners).toContain('performance');
   });
 });

@@ -51,7 +51,7 @@ export class ExplorationRunner {
       pipeline.register(new ConsoleErrorHook());
       pipeline.register(new NetworkFailureHook());
       pipeline.register(new ScreenshotHook());
-      pipeline.setupAll(page, `${ctx.viewport.width}x${ctx.viewport.height}`);
+      pipeline.setupAll(page, `${ctx.viewport.width}x${ctx.viewport.height}`, 'chromium');
 
       // Route seeding (D-01): discover app routes for initial URL queue
       const pendingUrls = await this.buildUrlQueue(ctx);

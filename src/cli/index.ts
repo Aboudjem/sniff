@@ -24,11 +24,12 @@ if (process.argv.includes('--mcp')) {
   // `sniff --url X --ci`  → everything except exploration (deterministic for CI)
   program
     .argument('[target]', 'Project directory to scan (default: current directory)')
-    .option('--url <url>', 'Target URL — enables full audit (a11y, visual, perf, AI explorer)')
+    .option('--url <url>', 'Target URL — enables full browser audit (a11y, visual, perf, runtime hooks)')
     .option('--ci', 'CI mode: headless, JUnit XML, flakiness tracking, no AI exploration')
     .option('--no-browser', 'Force source-only scan even if URL is configured')
-    .option('--no-explore', 'Skip AI exploration (browser tests still run)')
-    .option('--max-steps <n>', 'Cap AI exploration steps (default: 50)')
+    .option('--explore', 'Run optional AI exploration after browser checks', false)
+    .option('--no-explore', 'Skip AI exploration (kept for compatibility; exploration is off by default)')
+    .option('--max-steps <n>', 'Cap AI exploration steps when --explore is used (default: 50)')
     .option('--headed', 'Show the browser window (alias for --no-headless)')
     .option('--no-headless', 'Show the browser window')
     .option('--format <formats>', 'Report formats: html, json, junit (comma-separated)')
@@ -55,8 +56,10 @@ if (process.argv.includes('--mcp')) {
       const rootDir = target ? (await import('node:path')).resolve(target) : process.cwd();
 
       if (options.discover || options.regenerate || options.regenerateOnly || options.forceRegenerate || options.dryRun) {
+        const { loadConfig } = await import('../config/loader.js');
+        const config = await loadConfig(rootDir);
         if (!options.regenerateOnly && !options.dryRun) {
-          await ensurePlaywrightBrowsers();
+          await ensurePlaywrightBrowsers(config.browser?.projects);
         }
         const { discoverCommand } = await import('./commands/discover.js');
         const appTypes = typeof options.appType === 'string'
@@ -110,12 +113,12 @@ if (process.argv.includes('--mcp')) {
 
       const wantsBrowser = !!url && options.browser !== false;
 
-      // Exploration is default-ON when browser tests run, default-OFF in CI
+      // Exploration is opt-in so default scans stay deterministic and local.
       const isCi = options.ci || !!process.env.CI;
-      const wantsExplore = wantsBrowser && options.explore !== false && !isCi;
+      const wantsExplore = wantsBrowser && options.explore === true && !isCi;
 
       if (wantsBrowser) {
-        await ensurePlaywrightBrowsers();
+        await ensurePlaywrightBrowsers(config.browser?.projects);
       }
 
       await unifiedCommand({
@@ -203,7 +206,10 @@ if (process.argv.includes('--mcp')) {
     .option('--dry-run', 'Generate scenarios + classify without running browser or writing reports')
     .action(async (target, options) => {
       if (!options.regenerateOnly && !options.dryRun) {
-        await ensurePlaywrightBrowsers();
+        const { loadConfig } = await import('../config/loader.js');
+        const rootDir = target ? (await import('node:path')).resolve(target) : process.cwd();
+        const config = await loadConfig(rootDir);
+        await ensurePlaywrightBrowsers(config.browser?.projects);
       }
       const rootDir = target ? (await import('node:path')).resolve(target) : process.cwd();
       const { discoverCommand } = await import('./commands/discover.js');

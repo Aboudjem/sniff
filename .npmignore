@@ -6,9 +6,7 @@ tests/
 .deep-research/
 .gsd/
 .claude/
-.claude-plugin/
 .mcp.json
-skills/
 *.test.ts
 *.spec.ts
 *.test.js

@@ -105,25 +105,30 @@ export class SourceScanner implements Scanner {
         ...ctx.config.deadLinks,
       };
 
-      // Include link-containing file types
-      const linkGlobs = ['**/*.{md,mdx,html,htm,jsx,tsx,js,ts,vue,svelte,astro}'];
-      const linkFiles = await fg(linkGlobs, {
-        cwd: ctx.rootDir,
-        ignore: ctx.config.exclude,
-        absolute: true,
-      });
+      if (dlConfig.enabled) {
+        // Code-file dead-link scanning is opt-in because URL-like strings in
+        // regex literals, tests, examples, and fixtures produce noisy results.
+        const linkGlobs = dlConfig.scanCode
+          ? ['**/*.{md,mdx,html,htm,jsx,tsx,js,ts,vue,svelte,astro}']
+          : ['**/*.{md,mdx,html,htm}'];
+        const linkFiles = await fg(linkGlobs, {
+          cwd: ctx.rootDir,
+          ignore: ctx.config.exclude,
+          absolute: true,
+        });
 
-      for (let i = 0; i < linkFiles.length; i += 50) {
-        const batch = linkFiles.slice(i, i + 50);
-        const batchResults = await Promise.all(
-          batch.map(async (filePath) => {
-            const content = await readFile(filePath, 'utf-8');
-            const relPath = relative(ctx.rootDir, filePath);
-            return scanFileForDeadLinks(filePath, relPath, content, ctx.rootDir, dlConfig);
-          }),
-        );
-        for (const result of batchResults) {
-          findings.push(...result);
+        for (let i = 0; i < linkFiles.length; i += 50) {
+          const batch = linkFiles.slice(i, i + 50);
+          const batchResults = await Promise.all(
+            batch.map(async (filePath) => {
+              const content = await readFile(filePath, 'utf-8');
+              const relPath = relative(ctx.rootDir, filePath);
+              return scanFileForDeadLinks(filePath, relPath, content, ctx.rootDir, dlConfig);
+            }),
+          );
+          for (const result of batchResults) {
+            findings.push(...result);
+          }
         }
       }
     }

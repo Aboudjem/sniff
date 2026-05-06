@@ -50,7 +50,7 @@ export async function ciCommand(options: {
   console.log(`  Package name: ${packageName}`);
   console.log(`  Triggers: push + PR to main/master`);
   console.log(`  Caches: Playwright browsers + node_modules`);
-  console.log(`\n${pc.dim('The workflow runs')} ${pc.bold('npx ' + packageName + ' run --ci')} ${pc.dim('which enables:')}`);
+  console.log(`\n${pc.dim('The workflow runs')} ${pc.bold('npx ' + packageName + ' --ci')} ${pc.dim('which enables:')}`);
   console.log(`  ${pc.dim('- Headless browser mode')}`);
   console.log(`  ${pc.dim('- JUnit XML output')}`);
   console.log(`  ${pc.dim('- Flakiness tracking + quarantine')}`);

@@ -67,7 +67,7 @@ ${pnpmSetupStep}
         run: npx playwright install-deps chromium
 
       - name: Run Sniff QA
-        run: npx ${packageName} --ci
+        run: npx ${packageName} --ci --format html,json,junit
         env:
           CI: true
 
@@ -76,7 +76,9 @@ ${pnpmSetupStep}
         uses: actions/upload-artifact@v4
         with:
           name: sniff-reports
-          path: sniff-reports/
+          path: |
+            .sniff/reports/
+            sniff-reports/
           retention-days: ${retentionDays}
 `;
 }
