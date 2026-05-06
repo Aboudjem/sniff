@@ -1,11 +1,12 @@
 {
   "name": "sniff-qa",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "description": "Local QA testing CLI. Source scanning, browser hooks, accessibility audits, visual regression, performance budgets, and optional AI exploration. Uses Playwright, axe-core, and Lighthouse. Zero config.",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "bin": {
+    "sniff-qa": "dist/cli/index.js",
     "sniff": "dist/cli/index.js"
   },
   "exports": {

@@ -1,6 +1,6 @@
 {
   "name": "sniff",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "description": "Local QA automation via sniff-qa: source scans, browser audits, discovery, and reports with no API key required by default",
   "author": {
     "name": "Adam Boudj",
