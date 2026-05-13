@@ -9,6 +9,7 @@
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-Apache_2.0-ef4444?style=flat-square" alt="License"></a>
   <a href="https://github.com/Aboudjem/sniff/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/Aboudjem/sniff/ci.yml?style=flat-square&label=CI" alt="CI"></a>
   <a href="https://nodejs.org"><img src="https://img.shields.io/badge/node-%E2%89%A522-339933?style=flat-square&logo=node.js&logoColor=white" alt="Node"></a>
+  <a href="https://github.com/Aboudjem/10x"><img src="https://img.shields.io/badge/10x-marketplace-ef4444?style=flat-square" alt="10x marketplace"></a>
   <a href="https://github.com/Aboudjem/sniff/stargazers"><img src="https://img.shields.io/github/stars/Aboudjem/sniff?style=flat-square&color=ef4444" alt="Stars"></a>
 </p>
 
@@ -70,7 +71,11 @@ npx sniff-qa --url http://localhost:3000    # specific local URL
 npx sniff-qa --url https://myapp.com        # production URL
 ```
 
-> **No API keys. No manual Playwright install. No config files.** Everything works out of the box. Browser checks auto-install the configured Playwright browser projects on first CLI run.
+> [!IMPORTANT]
+> No API keys. No manual Playwright install. No config files. Everything works out of the box. Browser checks auto-install the configured Playwright browser projects on first CLI run.
+
+> [!TIP]
+> Sniff is part of the [10x marketplace](https://github.com/Aboudjem/10x). One command pulls it plus the rest of the curated set: `claude plugin marketplace add Aboudjem/10x`.
 
 ### Use from your AI editor
 
