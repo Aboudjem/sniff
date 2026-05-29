@@ -5,7 +5,27 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [Unreleased] - 2026-05-29
+
+Documentation and presentation polish. No behaviour changes.
+
+### Added
+
+- Demo video: `.github/assets/demo.gif` (hero) plus an `.mp4` and an embed guide.
+
+### Changed
+
+- Rebuilt the features and hero SVGs around the flow-walk model, and removed emoji from them.
+- Named the slash commands and MCP tools in the README.
+
+### Removed
+
+- Stale pre-0.6.0 SVG assets and the internal rebuild docs.
+
+### Fixed
+
+- Animated SVGs now respect `prefers-reduced-motion`.
+- Removed sentence-break em-dashes from the docs.
 
 ## [0.6.1] - 2026-05-28
 
