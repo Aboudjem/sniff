@@ -74,8 +74,11 @@ precision proxy ≥ 0.8, and zero findings on the clean control page.
 - [~] Bad-input — graceful handling (invalid URL rejected); broaden coverage in a follow-up.
 - [~] Docs-example — quickstart commands run; the README's `npx sniff-qa` resolves to the published
       package only after release (the new build is verified via the local bin).
-- [~] First-time-user simulation — fresh-agent README-only run: see `docs/audit/FIRST-TIME-USER-SIM.md`.
-- [~] Independent verification — Skeptical Reviewer re-derivation: see `docs/audit/SKEPTIC-REVIEW.md`.
+- [x] First-time-user simulation — RED→GREEN. First fresh-agent run was MIXED
+      (`docs/audit/FIRST-TIME-USER-SIM.md`); after the CLI + README fixes, a second fresh-agent
+      README-only run returned **GREEN** — useful proof-backed result in ~55s, exit-code expectation
+      correctly set (`docs/audit/FIRST-TIME-USER-SIM-v2.md`).
+- [x] Independent verification — Skeptical Reviewer re-derivation: **CONFIRMED** (`docs/audit/SKEPTIC-REVIEW.md`).
 
 ## Phase 11 — multi-agent verification (independent)
 
@@ -103,4 +106,9 @@ were flagged and fixed in this pass:
 2. A successful walk exits non-zero when it finds bugs, undocumented → the CLI now prints a clear
    `✓ Scan complete` line explaining the exit code, and the README documents it (+ `--fail-on none`).
 
-Net: the documented `--url` path is GREEN; the two first-impression rough edges are resolved.
+Net: the documented `--url` path is GREEN; the two first-impression rough edges are resolved. A second
+fresh-agent README-only sim (`docs/audit/FIRST-TIME-USER-SIM-v2.md`) confirmed **VERDICT: GREEN** —
+useful proof-backed result in ~55s, the README set all three target expectations correctly (which
+command first, server vs no-server, and the non-zero exit-on-bugs, which it called the "standout win").
+Two trailing doc nits it noted (hero command consistency, `--report` vs `report` clarity) were then
+also fixed.

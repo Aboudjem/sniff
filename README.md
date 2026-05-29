@@ -40,10 +40,10 @@ It is **not** a linter and **not** a static scanner. It opens your pages, intera
 Every bug it reports comes with **proof**: the exact page, the ordered steps to reproduce it, a screenshot, and the console or network excerpt that caught it. A finding without reproduction proof is not a finding.
 
 ```bash
-npx sniff-qa
+npx sniff-qa --url http://localhost:3000
 ```
 
-That's the whole setup. Sniff auto-detects your running dev server and walks it. No API key. No Playwright setup. No config files.
+One command — no config, no API key, no Playwright setup. Point it at your running app, or just run `npx sniff-qa` from your project and it auto-detects a dev server on common ports.
 
 > Sniff walks a **running app**. If no dev server is running, it falls back to a source-code scan and tells you exactly how to start the real walk. See [Get started](#get-started).
 
@@ -84,7 +84,7 @@ npx sniff-qa --url https://staging.myapp.com
 Findings print to your terminal, grouped by severity, each with steps to reproduce. Want a shareable page?
 
 ```bash
-npx sniff-qa --report     # writes sniff-reports/sniff-report.html (self-contained, open in any browser)
+npx sniff-qa --url http://localhost:3000 --report   # runs a walk, then writes sniff-reports/sniff-report.html (self-contained)
 ```
 
 **No app running?** Sniff doesn't fail silently. It runs a source-only scan and prints a clear next step — start your dev server or pass `--url` — so you can get to the real flow-walk. You can also run the source scan on purpose:
