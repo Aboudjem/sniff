@@ -13,7 +13,7 @@
   <a href="https://github.com/Aboudjem/sniff/stargazers"><img src="https://img.shields.io/github/stars/Aboudjem/sniff?style=flat-square&color=ef4444" alt="Stars"></a>
 </p>
 
-<p align="center"><b>Point it at your running app. It walks your real user flows in a real browser and tells you what's actually broken — with proof.</b></p>
+<p align="center"><b>Point it at your running app. It walks your real user flows in a real browser and tells you what's actually broken, with proof.</b></p>
 
 <p align="center">
   <a href="#get-started">Get started</a> ·
@@ -33,7 +33,7 @@
 
 ## What is this?
 
-Sniff is an autonomous QA scanner. You point it at a running web app and it **walks your app's real user flows in a real (headless) browser** — clicking buttons, filling forms, following links — and reports what's actually broken.
+Sniff is an autonomous QA scanner. You point it at a running web app and it **walks your app's real user flows in a real (headless) browser** (clicking buttons, filling forms, following links) and reports what's actually broken.
 
 It is **not** a linter and **not** a static scanner. It opens your pages, interacts with them like a user would, and watches what happens.
 
@@ -43,7 +43,7 @@ Every bug it reports comes with **proof**: the exact page, the ordered steps to 
 npx sniff-qa --url http://localhost:3000
 ```
 
-One command — no config, no API key, no Playwright setup. Point it at your running app, or just run `npx sniff-qa` from your project and it auto-detects a dev server on common ports.
+One command, no config, no API key, no Playwright setup. Point it at your running app, or just run `npx sniff-qa` from your project and it auto-detects a dev server on common ports.
 
 > Sniff walks a **running app**. If no dev server is running, it falls back to a source-code scan and tells you exactly how to start the real walk. See [Get started](#get-started).
 
@@ -53,7 +53,7 @@ One command — no config, no API key, no Playwright setup. Point it at your run
 
 You need **Node.js 22+** and a web app you can run locally (or a URL).
 
-> **Naming:** the npm package is **`sniff-qa`** — use `npx sniff-qa` or `npm install -D sniff-qa`. Once installed, the binary is **`sniff`** (the `sniff-qa` binary works too). Don't run `npx sniff` — that's a different package.
+> **Naming:** the npm package is **`sniff-qa`**, so use `npx sniff-qa` or `npm install -D sniff-qa`. Once installed, the binary is **`sniff`** (the `sniff-qa` binary works too). Don't run `npx sniff`, that's a different package.
 
 ### 1. Start your app
 
@@ -69,13 +69,13 @@ In another terminal:
 npx sniff-qa --url http://localhost:3000     # point it at your running app
 ```
 
-That's the reliable one-liner. Sniff also **auto-detects** a dev server on common ports, so from your project folder you can often just run `npx sniff-qa` with no flags. If your app is on a non-standard port (or auto-detect misses it), pass `--url` — that always works. It also walks a deployed URL:
+That's the reliable one-liner. Sniff also **auto-detects** a dev server on common ports, so from your project folder you can often just run `npx sniff-qa` with no flags. If your app is on a non-standard port (or auto-detect misses it), pass `--url` (that always works). It also walks a deployed URL:
 
 ```bash
 npx sniff-qa --url https://staging.myapp.com
 ```
 
-> **Found bugs? It exits non-zero — on purpose.** A walk that finds issues exits with code `1` so CI fails the build; it is **not** a crash (you'll see a `✓ Scan complete` line). Pass `--fail-on none` to always exit `0`.
+> **Found bugs? It exits non-zero, on purpose.** A walk that finds issues exits with code `1` so CI fails the build; it is **not** a crash (you'll see a `✓ Scan complete` line). Pass `--fail-on none` to always exit `0`.
 
 > **First run downloads a browser.** The first time Sniff opens a browser it downloads a Chromium build (~165 MB, one-time). You'll see the progress. You need internet access for that first run; after that it's cached.
 
@@ -87,7 +87,7 @@ Findings print to your terminal, grouped by severity, each with steps to reprodu
 npx sniff-qa --url http://localhost:3000 --report   # runs a walk, then writes sniff-reports/sniff-report.html (self-contained)
 ```
 
-**No app running?** Sniff doesn't fail silently. It runs a source-only scan and prints a clear next step — start your dev server or pass `--url` — so you can get to the real flow-walk. You can also run the source scan on purpose:
+**No app running?** Sniff doesn't fail silently. It runs a source-only scan and prints a clear next step (start your dev server or pass `--url`) so you can get to the real flow-walk. You can also run the source scan on purpose:
 
 ```bash
 npx sniff-qa scan         # source-only scan, no browser
@@ -113,14 +113,14 @@ Sniff walks your app and looks for **12 classes of real bugs**:
 | 8 | **Bad loading & error states** | Infinite spinners, missing error states |
 | 9 | **Broken async outcomes** | Submitted but no success feedback (flagged "needs out-of-band verification") |
 | 10 | **Responsive issues** | Overflow and tiny tap targets (a 375px mobile pass) |
-| 11 | **Accessibility** | Missing alt text and labels, contrast — via [axe-core](https://github.com/dequelabs/axe-core) |
+| 11 | **Accessibility** | Missing alt text and labels, contrast, via [axe-core](https://github.com/dequelabs/axe-core) |
 | 12 | **Unclear primary actions** | The main call-to-action is buried or ambiguous |
 
 Each finding ships with:
 
-- **Reproduction proof** — the exact route, the ordered steps, a screenshot, and the console/network excerpt.
-- **A severity** — so you fix the right thing first.
-- **A confidence** — `confirmed`, `likely`, or `uncertain`. Uncertain findings are hidden by default; add `--all` to see them.
+- **Reproduction proof**: the exact route, the ordered steps, a screenshot, and the console/network excerpt.
+- **A severity**, so you fix the right thing first.
+- **A confidence**: `confirmed`, `likely`, or `uncertain`. Uncertain findings are hidden by default; add `--all` to see them.
 - **A suggested fix.**
 
 <picture>
@@ -142,14 +142,14 @@ We measured it on a fixture app planted with **21 bugs across all 12 classes**, 
 | Bugs found | 9 / 21 (43%) | **21 / 21 (100%)** |
 | Precision | ~13% | **100%** |
 | False positives | 125 | **0** |
-| Findings on the clean page | — | **0** |
+| Findings on the clean page | n/a | **0** |
 | Flagship command | crashed | works |
 
 Those numbers are locked as a regression test. The full suite is **441 tests**.
 
 **How it keeps false positives near zero:**
 
-- A first-party **noise filter** drops the junk that isn't your bug — favicons, analytics, hot-module-reload chatter, expected auth redirects, engine aborts.
+- A first-party **noise filter** drops the junk that isn't your bug: favicons, analytics, hot-module-reload chatter, expected auth redirects, engine aborts.
 - Accessibility findings are backed by **axe-core**, which is zero-false-positive by design.
 - **Uncertain findings are suppressed by default** (use `--all` to see them).
 - A broken page is reported **once**, not re-flagged on every link that points to it.
@@ -174,7 +174,7 @@ Linters read your source. End-to-end frameworks make *you* write the tests. Link
 | Self-contained HTML report | **Yes** | No | Partial | No | Dashboard |
 | Runs locally, no account, no API key | **Yes** | Yes | Yes | Yes | No (service) |
 
-What Sniff uniquely does in one command: catch **empty/placeholder data**, **state-loss**, and **broken async outcomes** — and hand you a single proof report — with **no scripts to write and no service to sign up for**.
+What Sniff uniquely does in one command: catch **empty/placeholder data**, **state-loss**, and **broken async outcomes**, and hand you a single proof report, with **no scripts to write and no service to sign up for**.
 
 ---
 
@@ -210,7 +210,7 @@ sniff --version        Show the version
 
 ## Demo
 
-A real run against a buggy app — 21 real issues, zero false positives, every finding with severity, confidence, reproduction steps, and a fix:
+A real run against a buggy app: 21 real issues, zero false positives, every finding with severity, confidence, reproduction steps, and a fix:
 
 <img alt="Sniff walking a buggy app and reporting 21 real issues with zero false positives" src="https://raw.githubusercontent.com/Aboudjem/sniff/main/.github/assets/demo.svg" width="100%">
 
@@ -218,15 +218,27 @@ A real run against a buggy app — 21 real issues, zero false positives, every f
 
 ## Use it from your AI editor
 
-Sniff ships as an MCP server too. Add it once, then just ask your assistant *"scan this project for bugs"* or *"walk my app."* If your app is running, Sniff auto-detects it — you don't have to pass a URL.
+Sniff ships as an MCP server too. Add it once, then just ask your assistant *"scan this project for bugs"* or *"walk my app."* If your app is running, Sniff auto-detects it, so you don't have to pass a URL.
 
 **One unified `sniff` tool, three modes:**
 
-- `walk` — **recommended.** Walks your running app's real flows (the flow-walk above).
-- `scan` — source-only scan, no browser.
-- `report` — show the last run's results.
+- `walk`: **recommended.** Walks your running app's real flows (the flow-walk above).
+- `scan`: source-only scan, no browser.
+- `report`: show the last run's results.
 
 (`run` and `discover` are legacy modes kept for back-compat.)
+
+### Slash commands and MCP tools
+
+As a Claude Code plugin, Sniff adds three slash commands:
+
+| Slash command | What it does |
+|:--------------|:-------------|
+| `/sniff` | Walk your running app and find real bugs (the flow-walk). |
+| `/sniff-fix` | Scan and auto-fix safe issues (stray `console.log`, `debugger`, etc.). |
+| `/sniff-report` | Show the results from the last run. |
+
+As an MCP server, the surface is **one unified `sniff` tool** that takes `{ mode, rootDir, baseUrl? }`. The three modes above (`walk` / `scan` / `report`) are how you drive it, and the unified tool is what you should use. Narrow, single-purpose tools (`sniff_scan`, `sniff_run`, `sniff_report`, plus `sniff_discover` and `sniff_install`) stay registered for back-compat and scoped capabilities, but new work should go through the unified `sniff` tool.
 
 <details>
 <summary><b>Claude Code</b></summary>
@@ -304,17 +316,17 @@ mcpServers:
 ```
 </details>
 
-> The first browser-based walk downloads Chromium (~165 MB). Over MCP, Sniff returns a structured `needsSetup` payload instead of blocking the editor on a long download — run the install it shows you, then ask again.
+> The first browser-based walk downloads Chromium (~165 MB). Over MCP, Sniff returns a structured `needsSetup` payload instead of blocking the editor on a long download: run the install it shows you, then ask again.
 
 ---
 
 ## How it works
 
 1. **Find the app.** Sniff auto-detects your running dev server (or you pass `--url`).
-2. **Walk the flows.** It opens pages in a headless browser and interacts with them like a user — clicking, filling forms, following links — across desktop and a 375px mobile pass.
+2. **Walk the flows.** It opens pages in a headless browser and interacts with them like a user (clicking, filling forms, following links) across desktop and a 375px mobile pass.
 3. **Watch everything.** It records console errors, failed network requests, broken renders, missing feedback, and accessibility issues as it goes.
 4. **Filter the noise.** The first-party noise filter and axe-core drop the false positives; uncertain findings are held back.
-5. **Report with proof.** Each surviving finding gets a severity, a confidence, reproduction steps, a screenshot, and a suggested fix — in the terminal and an optional HTML report.
+5. **Report with proof.** Each surviving finding gets a severity, a confidence, reproduction steps, a screenshot, and a suggested fix, in the terminal and an optional HTML report.
 
 <img alt="How sniff works: crawl, act, assert, prove, report" src="https://raw.githubusercontent.com/Aboudjem/sniff/main/.github/assets/how-it-works.svg" width="100%">
 
@@ -341,7 +353,7 @@ This writes `.github/workflows/sniff.yml` with browser caching and report artifa
 ## FAQ
 
 **Does it work without a dev server?**
-Sniff is built to walk a *running* app, so that's where it shines. If no server is running, it doesn't fail silently — it runs a source-only scan and tells you exactly how to start the real walk (start your dev server or pass `--url`). You can also run `npx sniff-qa scan` to get the source scan on purpose.
+Sniff is built to walk a *running* app, so that's where it shines. If no server is running, it doesn't fail silently: it runs a source-only scan and tells you exactly how to start the real walk (start your dev server or pass `--url`). You can also run `npx sniff-qa scan` to get the source scan on purpose.
 
 **What gets downloaded on first run?**
 The first time Sniff opens a browser, it downloads a Chromium build (~165 MB, one-time, then cached). You'll see the progress, and you need internet access for that first run. Nothing else is installed and no account is created.
@@ -350,22 +362,22 @@ The first time Sniff opens a browser, it downloads a Chromium build (~165 MB, on
 No. Sniff runs entirely on your machine with no API key and no signup. Your code and your app never leave your computer.
 
 **How is it different from a linter?**
-A linter reads your source files and never runs your app, so it can't see a dead submit button, an infinite spinner, a wiped form, or a 500 page. Sniff opens your real app, interacts with it, and reports what actually broke — with a screenshot and steps to reproduce.
+A linter reads your source files and never runs your app, so it can't see a dead submit button, an infinite spinner, a wiped form, or a 500 page. Sniff opens your real app, interacts with it, and reports what actually broke, with a screenshot and steps to reproduce.
 
 **How is it different from Playwright codegen (or writing E2E tests)?**
-Playwright codegen records a script that *you* author and maintain; it tests only the path you clicked. Sniff writes nothing for you to maintain — it explores your flows on its own and judges the outcome, catching things a recorded happy-path never checks (empty/placeholder data, state-loss, missing success feedback).
+Playwright codegen records a script that *you* author and maintain; it tests only the path you clicked. Sniff writes nothing for you to maintain: it explores your flows on its own and judges the outcome, catching things a recorded happy-path never checks (empty/placeholder data, state-loss, missing success feedback).
 
 **Will it change my code?**
 No, not during a walk. Walking and scanning are read-only. The separate `sniff fix` command applies safe auto-fixes (like stray `console.log`/`debugger`) and only when you run it.
 
 **What stacks does it work with?**
-Any web app you can open in a browser — React, Next.js, Vue, Svelte, Angular, Remix, SvelteKit, Astro, plain HTML, and more. It walks the rendered app, so the framework doesn't matter for the browser checks.
+Any web app you can open in a browser: React, Next.js, Vue, Svelte, Angular, Remix, SvelteKit, Astro, plain HTML, and more. It walks the rendered app, so the framework doesn't matter for the browser checks.
 
 ---
 
 ## Works first-class in
 
-Claude Code · Cursor · VS Code (Copilot) · Codex · Gemini CLI · Windsurf · Continue.dev — via the MCP server (command `npx`, args `["-y", "sniff-qa", "--mcp"]`) or the CLI directly.
+Claude Code · Cursor · VS Code (Copilot) · Codex · Gemini CLI · Windsurf · Continue.dev, via the MCP server (command `npx`, args `["-y", "sniff-qa", "--mcp"]`) or the CLI directly.
 
 ---
 

@@ -2,7 +2,7 @@
   "mcpServers": {
     "sniff": {
       "command": "npx",
-      "args": ["sniff-qa", "--mcp"],
+      "args": ["-y", "sniff-qa", "--mcp"],
       "env": {}
     }
   }
