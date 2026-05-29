@@ -117,7 +117,27 @@ In an AI editor (MCP): "walk my app and find bugs" → the `sniff` tool, `mode:"
 4. **Updated `README.md` + examples + `llms.txt` + `AGENTS.md`** — dead-simple, accurate to the new default.
 5. **The new engine + fixture** — `src/crawl/` and `sniff-tests/planted-bugs/` (+ scorer + regression gate).
 6. **Before/after metrics** — 9/21 → 21/21 recall; 13% → 100% precision proxy; 126 → 0 false positives.
-7. **Release artifacts** — version bump, CHANGELOG entry, tag, push _(pending — see below)_.
-8. **Next commands for you** _(filled at release)_.
+7. **Release artifacts** — bumped to **0.6.0** (package.json + plugin manifest), CHANGELOG `[0.6.0]`
+   entry, merged to `main`, tagged **v0.6.0**, pushed to `origin` (commit `a0ac124`). Verified by the
+   Skeptical Reviewer (CONFIRMED) and the first-time-user sim (MIXED → friction fixed). `ci.yml` runs
+   on the release commit.
+8. **Next commands for you:**
 
-<!-- RELEASE STATUS: pending Skeptical Reviewer sign-off, first-time-user GREEN sim, polish merge, and release. -->
+```bash
+# Use the plugin now (installs from GitHub — already live):
+claude plugin marketplace add Aboudjem/10x && claude plugin install sniff@10x
+
+# Or run the released build directly against your app:
+git pull && npm ci && npm run build && node dist/cli/index.js --url http://localhost:3000
+
+# In your AI editor (MCP): "walk my app and find bugs" → the sniff tool, mode:"walk".
+```
+
+**Two optional actions left to you (deliberately not done autonomously — broad/irreversible):**
+- **Publish 0.6.0 to npm** so `npx sniff-qa` serves it. The repo's `release.yml` auto-publishes on a
+  `v*` tag via npm trusted publishing, but its `npm test` step now needs a browser — add
+  `npx playwright install --with-deps chromium` before the test step and confirm npm trusted publishing
+  is configured for `sniff-qa`, then re-run the Release workflow (or `npm publish`). Left to you because
+  publishing to the public registry is effectively irreversible.
+- **Upload the social preview**: `.github/assets/social-preview.png` (1280×640) via repo
+  Settings → Social preview (no API for this).

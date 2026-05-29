@@ -15,10 +15,19 @@ Durable phase tracker (survives compaction). Branch: `rebuild/qa-engine`.
       WIRED: default `sniff [--url]` → flow-walk (real CLI smoke 21/21); `sniff scan` = source-only;
       no-app guidance added; legacy `discover --url` crash fixed; MCP `sniff` tool gains `walk` mode
       (recommended) + HTML report (`--report`).
-- [~] 10. Testing — fixture regression gate + unit tests (441 pass). CLI smoke (flow-walk/report/scan/
-      discover) ✓. MCP stdio smoke (mode:walk) running. PENDING: bad-input, docs-example, second editor.
-- [ ] 11. Multi-agent verification — Skeptical Reviewer + GREEN first-time-user sim (after README rewrite)
-- [ ] 12. /repo-polish (README, llms.txt, AGENTS.md, SVG hero, CHANGELOG, demo, CI) + final report + release
+- [x] 10. Testing — 441 tests pass incl. fixture regression gate; CLI smoke (flow-walk/report/scan/
+      discover) + MCP stdio smoke (mode:walk, 20 findings/6 pages) ✓.
+- [x] 11. Multi-agent verification — Skeptical Reviewer CONFIRMED (GREEN, incl. clean-site 0-findings
+      anti-overfit + exact RED reproduction); first-time-user sim MIXED → 2 friction points fixed
+      (CLI '✓ Scan complete'/exit-code line + README). Artifacts: SKEPTIC-REVIEW.md, FIRST-TIME-USER-SIM.md.
+- [x] 12. /repo-polish (README, llms.txt, AGENTS.md, how-it-works.svg, demo.svg, CHANGELOG 0.6.0, CI,
+      skill) + TOOLS_AUDIT_AND_REBUILD_REPORT.md + RELEASED: bumped 0.6.0, merged main, tagged v0.6.0,
+      pushed (commit a0ac124). About description updated. ci.yml running on the release commit.
+
+## Remaining (left to the user — deliberately not done autonomously)
+- npm publish of 0.6.0 (irreversible/broad) — release.yml needs a chromium step + trusted-publishing
+  confirmation; documented in the final report's "next commands".
+- Manual upload of .github/assets/social-preview.png via repo Settings (no API).
 
 ## New engine (`src/crawl/`) — shipped modules
 types, noise (filter), evidence (per-page console/network), crawler (BFS + link-check),
