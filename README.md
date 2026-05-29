@@ -63,18 +63,19 @@ npm run dev        # or however you start your app
 
 ### 2. Walk it
 
-In another terminal, from your project folder:
+In another terminal:
 
 ```bash
-npx sniff-qa
+npx sniff-qa --url http://localhost:3000     # point it at your running app
 ```
 
-Sniff auto-detects the running dev server and walks it. Or point it anywhere:
+That's the reliable one-liner. Sniff also **auto-detects** a dev server on common ports, so from your project folder you can often just run `npx sniff-qa` with no flags. If your app is on a non-standard port (or auto-detect misses it), pass `--url` — that always works. It also walks a deployed URL:
 
 ```bash
-npx sniff-qa --url http://localhost:3000     # a specific local URL
-npx sniff-qa --url https://staging.myapp.com # a deployed URL
+npx sniff-qa --url https://staging.myapp.com
 ```
+
+> **Found bugs? It exits non-zero — on purpose.** A walk that finds issues exits with code `1` so CI fails the build; it is **not** a crash (you'll see a `✓ Scan complete` line). Pass `--fail-on none` to always exit `0`.
 
 > **First run downloads a browser.** The first time Sniff opens a browser it downloads a Chromium build (~165 MB, one-time). You'll see the progress. You need internet access for that first run; after that it's cached.
 

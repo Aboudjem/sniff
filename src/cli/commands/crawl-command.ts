@@ -56,16 +56,23 @@ export async function crawlCommand(opts: CrawlCommandOptions): Promise<number> {
     if (!opts.json) console.log(pc.dim(`  HTML report: ${htmlPath}`));
   }
 
-  if (opts.json) {
-    console.log(JSON.stringify(report, null, 2));
-  } else {
-    console.log(formatReportText(report, { all: opts.all }));
-  }
-
   // Exit code: fail on shown findings at/above the configured severities.
   const failOn = (opts.failOn ?? 'critical,high')
     .split(',').map((s) => s.trim()).filter((s): s is Severity => VALID_SEVERITIES.has(s));
   const shown = report.findings.filter((f) => opts.all || f.confidence !== 'uncertain');
   const hasFailure = shown.some((f) => failOn.includes(f.severity));
+
+  if (opts.json) {
+    console.log(JSON.stringify(report, null, 2));
+  } else {
+    console.log(formatReportText(report, { all: opts.all }));
+    // Make "ran fine, found bugs" unmistakable — a non-zero exit must not read
+    // like a crash (first-time-user feedback).
+    if (hasFailure) {
+      console.log(pc.green('✓ Scan complete') + pc.dim(` — ${shown.length} issue(s) found. Exit code 1 so CI fails on bugs; pass `) + pc.bold('--fail-on none') + pc.dim(' to always exit 0.'));
+    } else {
+      console.log(pc.green('✓ Scan complete') + pc.dim(` — ${shown.length} issue(s) found.`));
+    }
+  }
   return hasFailure ? 1 : 0;
 }

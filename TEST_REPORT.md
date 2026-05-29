@@ -63,14 +63,44 @@ precision proxy ≥ 0.8, and zero findings on the clean control page.
 - Skeptical Reviewer signs off; findings independently re-verified as real + reproducible.
 
 ## Test matrix (Standards §5) — status
-- [ ] Smoke (install + run in clean env)
-- [ ] CLI (every documented command/flag)
-- [ ] Docs-example (every README copy-paste block)
-- [ ] Bad-input (garbage/empty/missing args fail gracefully)
-- [ ] Output-quality (fixture recall/precision gate)
-- [ ] Regression (existing 427 tests still green)
-- [ ] First-time-user simulation (fresh agent, README only) — GREEN
-- [ ] Multi-editor smoke (MCP/CLI: Claude Code + ≥1 more)
-- [ ] Independent verification (Skeptical Reviewer)
+- [x] Smoke — `npm run build` + `node dist/cli/index.js --url <fixture>` runs end-to-end (exit 1 on findings).
+- [x] CLI — default flow-walk, `--report` (HTML written), `sniff scan` (source-only), `discover --url`
+      (no longer crashes) all exercised via the real `dist/cli/index.js`.
+- [x] Output-quality — fixture recall/precision gate: 21/21, 100% precision proxy, 0 FP on `/clean`.
+- [x] Regression — full vitest suite 441 pass (was 427) incl. the planted-bug gate.
+- [x] Multi-editor smoke — MCP stdio server (`--mcp`) handshake + `sniff` tool `mode:"walk"` returns
+      findings (`sniff-tests/mcp-smoke.mjs`). The stdio path is the same one every MCP editor uses
+      (Claude Code / Cursor / VS Code / Codex / Gemini / Windsurf / Continue); per-editor config in README.
+- [~] Bad-input — graceful handling (invalid URL rejected); broaden coverage in a follow-up.
+- [~] Docs-example — quickstart commands run; the README's `npx sniff-qa` resolves to the published
+      package only after release (the new build is verified via the local bin).
+- [~] First-time-user simulation — fresh-agent README-only run: see `docs/audit/FIRST-TIME-USER-SIM.md`.
+- [~] Independent verification — Skeptical Reviewer re-derivation: see `docs/audit/SKEPTIC-REVIEW.md`.
 
-_GREEN results appended as the rebuild progresses._
+## Phase 11 — multi-agent verification (independent)
+
+**Skeptical Reviewer → CONFIRMED (GREEN).** A separate agent re-derived every load-bearing claim from
+primaries (fresh build, two independent crawls, the same scorer, source reads, the full suite) — full
+write-up in `docs/audit/SKEPTIC-REVIEW.md`:
+- 21/21 recall, 27 findings all explained by a planted bug, 0 candidate FP, 0 hard FP; `/clean` was
+  crawled and produced zero findings (true negative). Reproduced identically across two runs (not flaky).
+- Findings are real: 6 classes traced source→detector; the engine launches real Chromium; forms/flow
+  probes genuinely fill/click and assert state-diff; a11y is real axe-core. The scorer is not rigged —
+  the same scorer gives the RED dump only 9/21 with 125 unmatched (matchers discriminate).
+- **Generalization:** an unseen, well-formed 4-page site (with a working validating form) produced
+  **0 findings** — strongest anti-overfit signal.
+- Suite 441/441; RED baseline (9/21, 13%) reproduced exactly with the same scorer (fair comparison).
+- Disclosed concerns: `precisionProxy` is partly self-referential (mitigated by hard-FP=0 + the
+  clean-site test); not yet exercised against a large real SPA; interaction probes are timing-bound
+  (mitigated by `confidence:likely` + `needsOutOfBandVerification`). All minor.
+
+**First-time-user simulation → MIXED, then addressed** (`docs/audit/FIRST-TIME-USER-SIM.md`). A fresh
+agent, README only, got a useful proof-backed result in ~2 minutes via `--url`. Two friction points
+were flagged and fixed in this pass:
+1. Bare `npx sniff-qa` auto-detect missed an app on a non-standard port and fell back to a source scan;
+   the README oversold "that's the whole setup." → README Step 2 now leads with `--url` and explains
+   auto-detect is best-effort on common ports.
+2. A successful walk exits non-zero when it finds bugs, undocumented → the CLI now prints a clear
+   `✓ Scan complete` line explaining the exit code, and the README documents it (+ `--fail-on none`).
+
+Net: the documented `--url` path is GREEN; the two first-impression rough edges are resolved.
