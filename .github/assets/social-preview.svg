@@ -13,14 +13,14 @@
   <rect x="0" y="0" width="8" height="640" fill="url(#accent)"/>
   <circle cx="1100" cy="160" r="220" fill="#ef4444" opacity="0.08"/>
   <text x="96" y="240" font-family="Inter, system-ui, -apple-system, sans-serif" font-size="148" font-weight="900" fill="#ffffff" letter-spacing="-4">sniff</text>
-  <text x="96" y="320" font-family="Inter, system-ui, -apple-system, sans-serif" font-size="40" font-weight="600" fill="#ef4444">QA for your codebase. Zero config.</text>
-  <text x="96" y="390" font-family="Inter, system-ui, -apple-system, sans-serif" font-size="28" fill="#cbd5e1">Source scan + accessibility + visual regression + performance</text>
-  <text x="96" y="430" font-family="Inter, system-ui, -apple-system, sans-serif" font-size="28" fill="#cbd5e1">+ autonomous E2E discovery. Drops into any project.</text>
+  <text x="96" y="320" font-family="Inter, system-ui, -apple-system, sans-serif" font-size="40" font-weight="600" fill="#ef4444">Walks your app. Finds real bugs. Zero config.</text>
+  <text x="96" y="390" font-family="Inter, system-ui, -apple-system, sans-serif" font-size="28" fill="#cbd5e1">Autonomous flow-walk engine: broken pages, forms, a11y,</text>
+  <text x="96" y="430" font-family="Inter, system-ui, -apple-system, sans-serif" font-size="28" fill="#cbd5e1">console errors — each with screenshot proof. No API key.</text>
   <g transform="translate(96, 510)">
     <rect x="0" y="0" width="130" height="40" rx="20" fill="#ef4444" opacity="0.15"/>
-    <text x="65" y="27" font-family="Inter, monospace" font-size="18" font-weight="700" fill="#ef4444" text-anchor="middle">v0.4.0</text>
+    <text x="65" y="27" font-family="Inter, monospace" font-size="18" font-weight="700" fill="#ef4444" text-anchor="middle">v0.6.1</text>
     <rect x="145" y="0" width="190" height="40" rx="20" fill="#22c55e" opacity="0.12"/>
-    <text x="240" y="27" font-family="Inter, monospace" font-size="18" font-weight="700" fill="#22c55e" text-anchor="middle">374 tests pass</text>
+    <text x="240" y="27" font-family="Inter, monospace" font-size="18" font-weight="700" fill="#22c55e" text-anchor="middle">441 tests pass</text>
     <rect x="355" y="0" width="155" height="40" rx="20" fill="#ffffff" opacity="0.08"/>
     <text x="432" y="27" font-family="Inter, monospace" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">npx sniff-qa</text>
   </g>

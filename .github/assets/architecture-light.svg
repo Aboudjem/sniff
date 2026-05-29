@@ -19,16 +19,16 @@
   <!-- MCP Layer -->
   <rect x="30" y="150" width="200" height="60" rx="10" fill="#f0f9ff" stroke="#3b82f6" stroke-width="1.5" filter="url(#s)"/>
   <text x="130" y="176" text-anchor="middle" font-size="13" font-weight="700" fill="#1e40af">MCP Server</text>
-  <text x="130" y="194" text-anchor="middle" font-size="9" fill="#6b7280">sniff_scan / sniff_run / sniff_report</text>
+  <text x="130" y="194" text-anchor="middle" font-size="9" fill="#6b7280">unified sniff tool (mode: walk | scan | report)</text>
 
   <!-- Config -->
   <rect x="30" y="228" width="200" height="50" rx="10" fill="#fff" stroke="#e5e7eb" stroke-width="1" filter="url(#s)"/>
   <text x="130" y="250" text-anchor="middle" font-size="12" font-weight="600" fill="#374151">Config Loader</text>
   <text x="130" y="266" text-anchor="middle" font-size="9" fill="#9ca3af">cosmiconfig + zod</text>
 
-  <!-- Source Scanner -->
+  <!-- Flow-Walk Engine -->
   <rect x="300" y="56" width="340" height="230" rx="12" fill="#fff" stroke="#e5e7eb" stroke-width="1" filter="url(#s)"/>
-  <text x="470" y="82" text-anchor="middle" font-size="14" font-weight="700" fill="#1f2937">Source Scanner</text>
+  <text x="470" y="82" text-anchor="middle" font-size="14" font-weight="700" fill="#1f2937">Flow-Walk Engine</text>
 
   <rect x="320" y="96" width="140" height="28" rx="5" fill="#fef2f2" stroke="#fca5a5"/>
   <text x="390" y="114" text-anchor="middle" font-size="10" fill="#991b1b">Debug Rules</text>

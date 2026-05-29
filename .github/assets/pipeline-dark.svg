@@ -9,7 +9,7 @@
   <rect width="1200" height="480" rx="16" fill="#0f172a"/>
 
   <!-- Title -->
-  <text x="600" y="40" text-anchor="middle" font-size="18" font-weight="700" fill="#f1f5f9">Sniff Pipeline: 8 Checks in One Command</text>
+  <text x="600" y="40" text-anchor="middle" font-size="18" font-weight="700" fill="#f1f5f9">Sniff: Autonomous Flow-Walk QA Pipeline</text>
 
   <!-- Input -->
   <rect x="30" y="70" width="160" height="70" rx="12" fill="#451a03" stroke="#ef4444" stroke-width="1.5" filter="url(#shadow)"/>

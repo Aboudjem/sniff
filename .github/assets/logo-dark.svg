@@ -217,5 +217,5 @@
   <text x="220" y="78" font-family="system-ui, -apple-system, sans-serif" font-size="56" font-weight="900" fill="url(#title-d)" letter-spacing="-2.5">sniff</text>
   <text x="220" y="105" font-family="system-ui, -apple-system, sans-serif" font-size="15" fill="#ff7f9c" font-weight="700">a tiny cat that sniffs out bugs before your users do</text>
   <text x="220" y="132" font-family="ui-monospace, Menlo, monospace" font-size="12" fill="#ffb87a">$ npx sniff-qa</text>
-  <text x="220" y="152" font-family="system-ui, sans-serif" font-size="11" fill="#a07858">one command · eight checks · zero config · zero api keys</text>
+  <text x="220" y="152" font-family="system-ui, sans-serif" font-size="11" fill="#a07858">walks your app · finds real bugs · zero config · no api key</text>
 </svg>
