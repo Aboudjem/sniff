@@ -1,6 +1,6 @@
 {
   "name": "sniff-qa",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "description": "Autonomous QA scanner: point it at your running app and it walks the real user flows in a headless browser and reports what's actually broken — broken pages/links, console & network errors, empty/placeholder data, broken forms, state-loss, bad loading/error states, responsive and accessibility issues — each with reproduction proof, severity, confidence, and a fix. CLI + MCP server. No API key. Uses Playwright and axe-core.",
   "type": "module",
   "main": "./dist/index.js",

@@ -7,6 +7,36 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.1] - 2026-05-28
+
+Alignment release: no behaviour changes. Fixes the release pipeline so future tags can publish to npm,
+updates stale copy across assets and docs to reflect the v0.6.0 flow-walk model, and adds 10x
+marketplace cross-links.
+
+### Fixed
+
+- `release.yml`: added `npx playwright install --with-deps chromium` before the Test step so the
+  real-browser fixture gate no longer blocks the publish job (root cause of npm being stuck at 0.5.2).
+- Logo SVGs (`logo-light.svg`, `logo-dark.svg`): replaced stale "eight checks" tagline with
+  "walks your app · finds real bugs · zero config · no api key".
+- `social-preview.svg`: updated from `v0.4.0` / "374 tests pass" / old multi-scanner copy to
+  `v0.6.1` / "441 tests pass" / flow-walk description.
+- `description.txt`: rewrote recommended GitHub About from old multi-scanner model to flow-walk model.
+- Pipeline SVGs: updated title from "8 Checks in One Command" to "Autonomous Flow-Walk QA Pipeline".
+- Report SVGs + HTML preview + `src/report/template.html`: updated version labels from `v0.2.0`/`v0.2.1`
+  to `v0.6.1`; updated `[source]` labels to `[walk]`.
+- Architecture SVGs: updated MCP tool names from `sniff_scan / sniff_run / sniff_report` to unified
+  `sniff tool (mode: walk | scan | report)`; renamed "Source Scanner" block to "Flow-Walk Engine".
+- `modes.svg`: updated "source scan" label to "sniff scan".
+- `bug_report.yml`: updated version placeholder from `0.5.2` to `0.6.1`.
+- `feature_request.yml`: replaced old scanner taxonomy with current flow-walk / sniff-scan options.
+- `CLAUDE.md`: updated project description from old source-scan model to flow-walk model.
+- `docs/VIDEO-PLAN.md`: replaced "Eight checks" script lines with flow-walk wording.
+- `.claude/skills/sniff-scan.md`, `sniff-fix.md`, `sniff-report.md`: aligned to unified `sniff` tool
+  (mode: walk/scan/report); legacy tool names kept as fallback references only.
+- `llms.txt`: added 10x marketplace install path and "part of the 10x marketplace" line.
+- `AGENTS.md`: added 10x marketplace section.
+
 ## [0.6.0] - 2026-05-29
 
 This release rebuilds Sniff around an autonomous **flow-walk** engine that drives your running app in a real headless browser and reports what is actually broken, with reproduction proof on every finding. The flow-walk is now the default; the old source-code regex scan moves to an explicit `sniff scan` subcommand.
