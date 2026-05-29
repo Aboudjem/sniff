@@ -10,7 +10,7 @@ Scan the project, then automatically fix safe issues.
 
 ## What to do
 
-1. Use `sniff_scan` MCP tool with the project's `rootDir` to get all findings
+1. Use the unified `sniff` MCP tool with `mode: "scan"` and the project's `rootDir` to get all findings. If the unified tool is not available, use legacy `sniff_scan`.
 
 2. For each finding, fix it if safe:
    - `debug-debugger`: Remove the `debugger;` line
@@ -21,7 +21,7 @@ Scan the project, then automatically fix safe issues.
 
 3. Do NOT auto-fix without telling the user what you're changing
 
-4. After fixing, re-run `sniff_scan` to verify issues are resolved
+4. After fixing, re-run `sniff` (mode:"scan") to verify issues are resolved
 
 ## Example
 

@@ -1,21 +1,22 @@
 ---
 name: sniff
-description: Scan the current project for bugs. Runs source code analysis (debug statements, dead links, API endpoints, broken imports, placeholder text, hardcoded URLs). If a dev server is running, also checks accessibility, visual regression, and performance. No API key needed.
+description: Scan the current project for bugs. Uses the unified sniff MCP tool to walk your running app in a real browser (mode:"walk") — or source-only scan (mode:"scan") if no app is running. No API key needed.
 command: /sniff
 ---
 
 # /sniff - Scan this project
 
-Run a full quality scan on the current project.
+Run a full quality scan on the current project using the autonomous flow-walk engine.
 
 ## What to do
 
-1. Use the `sniff_run` MCP tool with:
+1. Use the unified `sniff` MCP tool with:
+   - `mode`: `"walk"` (default — drives a real browser, walks user flows, returns real bugs with proof)
    - `rootDir`: the current project's absolute path
-   - Do NOT pass `baseUrl` -- sniff auto-detects running dev servers
-   - `headless`: true
+   - `baseUrl`: omit to auto-detect the running dev server
+   - If no app is running, sniff degrades to a source scan and returns a `note` field
 
-2. If `sniff_run` is not available, use `sniff_scan` with just `rootDir`
+2. If the unified `sniff` tool is not available, use legacy `sniff_run` with just `rootDir`
 
 3. Present the findings to the user grouped by severity:
    - CRITICAL and HIGH first
@@ -28,7 +29,7 @@ Run a full quality scan on the current project.
 User: /sniff
 You: I'll scan your project for issues.
 
-[calls sniff_run with rootDir=/Users/user/projects/my-app]
+[calls sniff with mode:"walk", rootDir=/Users/user/projects/my-app]
 
 Found 12 issues:
 

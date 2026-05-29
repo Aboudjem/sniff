@@ -10,9 +10,11 @@ Display findings from the most recent scan.
 
 ## What to do
 
-1. Use `sniff_report` MCP tool with:
+1. Use the unified `sniff` MCP tool with:
+   - `mode`: `"report"`
    - `rootDir`: the current project's absolute path
-   - `format`: 'summary' for readable output, 'json' for raw data
+   - `format`: `"summary"` for readable output, `"json"` for raw data
+   - If the unified tool is not available, use legacy `sniff_report` with the same args.
 
 2. Present the summary to the user:
    - Total findings by severity
