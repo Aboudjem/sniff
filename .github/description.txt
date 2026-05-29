@@ -2,4 +2,4 @@
 # Set this in: Repository Settings > About > Description
 #
 # Current recommendation:
-Local QA testing CLI. Source scans, browser runtime hooks, accessibility, visual regression, performance, dead links, API checks, discovery, and optional AI exploration. Works with React, Next.js, Vue, Svelte, Angular. Zero config. Native MCP integration.
+Autonomous QA scanner: one command walks your running app in a real browser and reports what's actually broken — broken pages, forms, accessibility, console errors — each with screenshot proof. Zero config. No API key. CLI + MCP server.

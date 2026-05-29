@@ -3,7 +3,7 @@
 
 **Sniff**
 
-An autonomous AI-powered QA testing framework that reads your codebase, generates test scenarios automatically, runs comprehensive tests (E2E, accessibility, visual regression, performance, source scanning), and delivers brutal reports with fix suggestions. Distributed as an npm CLI and Claude Code plugin — no API key required for default usage.
+An autonomous QA scanner that walks your running app in a real headless browser, follows real user flows, and reports what is actually broken — broken pages, forms, accessibility, console errors, responsive issues — each with screenshot proof. The flow-walk is the default (`sniff` or `sniff --url`); `sniff scan` is the source-only mode. Distributed as an npm CLI and Claude Code plugin — no API key required.
 
 **Core Value:** One command finds bugs across every dimension (functional, visual, accessibility, performance) before users do — no manual test writing, ever.
 

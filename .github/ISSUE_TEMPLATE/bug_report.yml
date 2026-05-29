@@ -38,7 +38,7 @@ body:
     attributes:
       label: Sniff version
       description: Run `npx sniff-qa --version`
-      placeholder: "0.5.2"
+      placeholder: "0.6.1"
     validations:
       required: true
   - type: dropdown

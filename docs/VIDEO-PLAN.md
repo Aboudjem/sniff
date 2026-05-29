@@ -15,7 +15,7 @@ Three videos, three lengths, three audiences. Shoot once, cut three ways from th
 > 0:12 — *`npx sniff-qa`* typed on-screen — nothing else.
 > 0:16 — Terminal spinners, sniff finds: missing alt text, bad contrast, slow LCP, broken link.
 > 0:22 — *`/sniff-fix`* — the bugs get patched, diff flashes on screen.
-> 0:27 — "One command. Eight checks. Zero config. Zero API keys."
+> 0:27 — "One command. Walks your app. Finds real bugs. Zero config."
 > 0:30 — Mascot blinks. Logo. GitHub URL.
 
 **Shots:**
@@ -41,7 +41,7 @@ Three videos, three lengths, three audiences. Shoot once, cut three ways from th
 |------|------|--------|
 | 0–5s | Hook — "QA is boring so you skip it. Until you can't." | Fast montage: red screens, user complaints, PR comments |
 | 5–20s | What sniff does | Mascot wakes up · terminal · one command runs |
-| 20–50s | Live scan on a real Next.js app | Source scan → browser opens → AI explores → findings appear |
+| 20–50s | Live scan on a real Next.js app | Flow-walk → browser opens → sniff walks flows → findings appear |
 | 50–70s | The fix loop | `/sniff-fix` applies safe fixes, diff view, re-run → green |
 | 70–85s | Editor integration | Claude / Cursor / VSCode asks: *"Scan this project"* — same output inline |
 | 85–90s | Close | `npx sniff-qa` — GitHub · npm · free forever |
@@ -69,7 +69,7 @@ Three videos, three lengths, three audiences. Shoot once, cut three ways from th
 5. **2:20 — Fix loop** · `/sniff-fix`, manual fix review, re-run (30s)
 6. **2:50 — CI integration** · `sniff ci`, GitHub Actions, JUnit output (20s)
 7. **3:10 — Editor integration** · MCP demo in Cursor (20s)
-8. **3:30 — Outro** · "One command. Eight checks. Zero config."
+8. **3:30 — Outro** · "One command. Walks your app. Zero config."
 
 **Stock footage tricks:**
 - For the "boring QA" montage: royalty-free dev footage from [Pexels](https://pexels.com) + [Coverr](https://coverr.co).

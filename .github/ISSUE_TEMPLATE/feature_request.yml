@@ -33,11 +33,11 @@ body:
       label: Related scanner
       description: Which part of Sniff does this relate to?
       options:
-        - Source scanner
-        - Accessibility scanner
-        - Visual regression scanner
-        - Performance scanner
-        - Optional AI exploration
+        - Flow-walk engine
+        - Source scanner (sniff scan)
+        - Accessibility checks
+        - Responsive / visual checks
+        - Performance checks
         - CI integration
         - CLI / config
         - MCP server
