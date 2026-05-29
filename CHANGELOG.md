@@ -7,6 +7,36 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.0] - 2026-05-29
+
+This release rebuilds Sniff around an autonomous **flow-walk** engine that drives your running app in a real headless browser and reports what is actually broken, with reproduction proof on every finding. The flow-walk is now the default; the old source-code regex scan moves to an explicit `sniff scan` subcommand.
+
+### Added
+
+- **Flow-walk engine (now the default)**: `sniff` auto-detects your running dev server and walks its real user flows in a headless browser, falling back to a source scan with clear guidance when no app is running. Point it at any URL with `sniff --url <url>`.
+- **12 issue classes detected during the walk**: broken pages/routes (4xx/5xx, blank renders, crash screens), broken links (internal + external), console errors / uncaught exceptions / failed network requests, empty data + placeholder/fake data, broken forms (dead submit buttons, validation that never fires), state-loss on back navigation, flow regressions / dead-ends, bad loading states + missing error states, broken async outcomes (flagged "needs out-of-band verification"), responsive issues (overflow, tiny tap targets), accessibility (via axe-core), and unclear/buried primary actions.
+- **Reproduction proof on every finding**: exact route, ordered steps, a screenshot, and the console/network excerpt, plus a severity, a confidence level (confirmed / likely / uncertain), and a suggested fix. A finding without reproduction proof is not a finding.
+- **`walk` MCP mode** on the unified `sniff` tool (recommended), alongside `scan` (source only) and `report` (last results). Auto-detects the dev server when `baseUrl` is omitted, so "scan this project for bugs" / "walk my app" works out of the box.
+- **`sniff scan` subcommand**: source-only scan with no browser (placeholder/TODO/console.log/dead links and more).
+- **Self-contained HTML report** via `--report`, written to `sniff-reports/sniff-report.html`.
+- **`--all` flag** to surface low-confidence (uncertain) findings, which are hidden by default.
+- **Planted-bug fixture + regression gate**: 21 planted bugs across all 12 issue classes plus a clean control page, with a scorer at `sniff-tests/`, locked in as a regression test.
+
+### Changed
+
+- **Default behavior**: `sniff` now performs the autonomous flow-walk instead of a source-code regex scan. The source scan is still available as `sniff scan`.
+- **Responsive pass** runs a 375px mobile viewport by default; skip it with `--no-mobile`.
+- **Noise filtering**: a first-party noise filter drops favicons, analytics, HMR, expected-auth, and engine-abort noise so the report stays high-signal; broken pages are reported once rather than re-flagged.
+- **Confidence model**: uncertain findings are suppressed by default and axe-core (zero-false-positive by design) backs the accessibility findings.
+
+### Fixed
+
+- **`discover --url` crash**: the flow-walker entry point no longer crashes when given a URL; it is now the supported default path.
+
+### Proof
+
+- Measured on the planted-bug fixture (21 bugs across all 12 classes + a clean control page): the previous engine found 9/21 (43%) at ~13% precision with 125 false positives and its flagship command crashed. The new engine finds **21/21 (100%) at 100% precision with 0 false positives** and reports 0 findings on the clean page. The full suite is 441 tests.
+
 ## [0.5.2] - 2026-05-06
 
 ### Fixed

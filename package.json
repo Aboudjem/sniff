@@ -1,7 +1,7 @@
 {
   "name": "sniff-qa",
   "version": "0.5.2",
-  "description": "Local QA testing CLI. Source scanning, browser hooks, accessibility audits, visual regression, performance budgets, and optional AI exploration. Uses Playwright, axe-core, and Lighthouse. Zero config.",
+  "description": "Autonomous QA scanner: point it at your running app and it walks the real user flows in a headless browser and reports what's actually broken — broken pages/links, console & network errors, empty/placeholder data, broken forms, state-loss, bad loading/error states, responsive and accessibility issues — each with reproduction proof, severity, confidence, and a fix. CLI + MCP server. No API key. Uses Playwright and axe-core.",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",

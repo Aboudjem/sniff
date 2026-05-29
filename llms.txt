@@ -1,0 +1,146 @@
+# sniff
+
+> sniff is an autonomous QA scanner: you point it at a running web app and it walks the app's real
+> user flows in a real (headless) browser and reports what's actually broken — with proof. It is not
+> a static linter and it does not write or maintain a test suite. Every finding ships reproduction
+> proof (exact route + ordered steps + a screenshot + the console/network excerpt), a severity, a
+> confidence level, and a suggested fix. npm package `sniff-qa`. Binaries `sniff` and `sniff-qa`.
+> Ships as both a CLI and an MCP server (Claude Code plugin). No API key required. Node >= 22.
+> Apache-2.0.
+
+A finding without reproduction proof is not a finding. sniff walks the app like a user — clicking,
+filling forms, navigating, going back — and only reports an issue it can demonstrate. On a planted-bug
+fixture (21 bugs across all 12 issue classes plus a clean control page) it finds 21/21 (100%) at 100%
+precision with 0 false positives and 0 findings on the clean page. That before/after is locked as a
+regression test, backed by a 441-test suite.
+
+Last updated: 2026-05-29.
+
+## What it is / who it's for
+
+- What it is: an autonomous, browser-driven QA scanner. It auto-detects your running dev server (or
+  takes a `--url`), drives a real headless Chromium through your app's real flows, and reports
+  confirmed, reproducible bugs. When no app is running it falls back to a source-only scan with clear
+  guidance on how to start one.
+- Who it's for: web app developers, indie hackers, and teams who want to catch broken flows, broken
+  pages, dead links, console errors, broken forms, bad loading/error states, responsive issues, and
+  accessibility problems before users do — without hand-writing E2E tests and without an API key.
+- Why trust it (low false positives): a first-party noise filter drops favicons, analytics, HMR,
+  expected-auth redirects, and engine aborts; axe-core (zero-false-positive by design) backs the
+  accessibility findings; uncertain findings are suppressed by default (shown with `--all`); a broken
+  page is reported once, not re-flagged on every link into it.
+- First run note: the first browser run downloads a Chromium build (~165 MB) automatically.
+
+## Operating modes — CLI
+
+The autonomous flow-walk is the DEFAULT.
+
+- `sniff` — auto-detect the running dev server and walk it. Falls back to a source scan with guidance
+  if no app is running.
+- `sniff --url <url>` — walk that URL.
+- `sniff scan` — source-only scan (no browser): placeholder/TODO/console.log/dead links and similar.
+- `sniff report` — view the last results.
+- `sniff doctor` — environment check (Node, browser, config, dev server).
+- `sniff ci` — generate a GitHub Actions workflow.
+- `sniff fix` — auto-fix safe issues.
+
+Useful flags: `--url <url>`, `--report` (writes a self-contained HTML report to
+`sniff-reports/sniff-report.html`), `--all` (also show low-confidence/uncertain findings),
+`--max-pages <n>` (default 25), `--no-mobile` (skip the 375px responsive pass), `--json`, `--ci`,
+`--fail-on <sev>`, `--headed`.
+
+## Operating modes — MCP (`sniff` tool)
+
+One unified `sniff` tool. On a running app, just say "scan this project for bugs" or "walk my app".
+The dev server is auto-detected when `baseUrl` is omitted.
+
+- mode `walk` — RECOMMENDED. The autonomous flow-walk in a real headless browser.
+- mode `scan` — source-only scan (no browser).
+- mode `report` — return the last results.
+- (`run` and `discover` are legacy modes.)
+
+Arguments: `rootDir` (project directory), `baseUrl` (URL to walk; auto-detected if omitted),
+`headless` (run the browser headless), `maxPages` (page budget, default 25), `mobile` (run the 375px
+responsive pass), `all` (include low-confidence/uncertain findings).
+
+## The 12 issue classes
+
+1. Broken pages / routes — 4xx/5xx, blank renders, crash screens.
+2. Broken links — internal and external.
+3. Console errors / uncaught exceptions / failed network requests during interaction.
+4. Empty data + placeholder/fake data — lorem ipsum, TODO, `test@test.com`.
+5. Broken forms — dead submit button, validation that never fires.
+6. State-loss — fill a form, navigate back, and it's wiped.
+7. Flow regressions / dead-ends — a journey that can't complete.
+8. Bad loading states (infinite spinner) + missing error states.
+9. Broken async outcomes — submitted but no success feedback (flagged "needs out-of-band verification").
+10. Responsive issues — overflow, tiny tap targets (via the 375px mobile pass).
+11. Accessibility — missing alt text/labels, contrast, via axe-core.
+12. Unclear / buried primary actions.
+
+## Finding output shape
+
+Every finding is an object of the form:
+
+```
+{
+  ruleId,            // stable identifier for the check that fired
+  issueClass,        // one of the 12 classes above
+  title,             // short human-readable summary
+  severity,          // critical | high | medium | low
+  confidence,        // confirmed | likely | uncertain  (uncertain hidden by default; show with --all)
+  reproduction: {
+    route,           // exact route where it reproduces
+    steps,           // ordered list of the actions to reproduce
+    screenshot,      // path to the captured screenshot
+    console          // the console / network excerpt that proves it
+  },
+  suggestedFix       // a concrete suggested fix
+}
+```
+
+## Install
+
+- CLI: `npx sniff-qa` (in your project, with the dev server running) — or `npx sniff-qa --url <url>`.
+- Claude Code plugin (also exposes the MCP server): install the `sniff` plugin. As an MCP server, the
+  command is `npx` with args `["-y", "sniff-qa", "--mcp"]`.
+- Works first-class in: Claude Code, Cursor, VS Code (Copilot), Codex, Gemini CLI, Windsurf, and
+  Continue.dev.
+
+## Q&A
+
+Q: How is sniff different from a linter or a static scanner?
+A: A linter reads source text. sniff opens your running app in a real headless browser and walks its
+actual user flows — clicking, filling forms, navigating, going back — so it reports what's actually
+broken at runtime, with a screenshot and the console/network excerpt as proof. (It also offers a
+`sniff scan` source-only mode for when no app is running, but the flow-walk is the default.)
+
+Q: Will it flood me with false positives?
+A: No. uncertain findings are hidden by default (use `--all` to see them), a first-party noise filter
+drops favicons/analytics/HMR/expected-auth/engine-aborts, accessibility findings come from axe-core
+(zero-false-positive by design), and a broken page is reported once rather than re-flagged. On the
+clean control page of the test fixture it reports 0 findings; across the 21-bug fixture it runs at
+100% precision with 0 false positives.
+
+Q: Do I need an API key or any configuration?
+A: No. sniff requires no API key and works with zero config. It auto-detects your running dev server;
+the only one-time cost is the ~165 MB Chromium build it downloads automatically on first run.
+
+Q: What does "needs out-of-band verification" mean?
+A: For broken async outcomes (issue class 9) — e.g. a form that submits but shows no success feedback —
+sniff cannot see whether a confirmation email or backend side effect actually happened. It flags the
+missing in-app feedback as a finding and labels it so you can confirm the out-of-band outcome yourself.
+
+Q: Can I run it in CI?
+A: Yes. Use `--ci` and `--fail-on <sev>` to gate the pipeline on severity, and `sniff ci` to generate
+a ready-to-use GitHub Actions workflow.
+
+## What sniff does NOT do
+
+- It does NOT write or maintain a test suite. It walks your app and reports bugs; it does not generate
+  or store test files you have to keep.
+- It does NOT require an API key, and it does not need one to do its core work.
+- It can NOT confirm out-of-band outcomes (e.g. whether a confirmation email was actually sent or a
+  backend job ran). When it sees an action with no in-app feedback it flags it as "needs out-of-band
+  verification" rather than claiming success or failure.
+- It is NOT a static linter — runtime, browser-driven, proof-backed findings are the whole point.

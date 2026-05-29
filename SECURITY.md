@@ -6,7 +6,7 @@ If you discover a security vulnerability in Sniff, please report it responsibly.
 
 **Do NOT open a public GitHub issue for security vulnerabilities.**
 
-Instead, email **adam@integralayer.com** with:
+Instead, email **boudjemaa.adam@gmail.com** with:
 
 1. Description of the vulnerability
 2. Steps to reproduce
@@ -29,5 +29,5 @@ Sniff runs locally on your machine. Security concerns include:
 
 | Version | Supported |
 |---------|-----------|
-| 0.5.x   | Yes       |
-| <0.5    | No        |
+| 0.6.x   | Yes       |
+| <0.6    | No        |

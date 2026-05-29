@@ -11,35 +11,9 @@ permissions:
 
 jobs:
   test:
-    name: Test
+    name: Test (Node 22)
     runs-on: ubuntu-latest
-    timeout-minutes: 10
-
-    strategy:
-      matrix:
-        node-version: [22]
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: ${{ matrix.node-version }}
-          cache: npm
-
-      - run: npm ci
-
-      - run: npm run build
-
-      - run: npm test -- --run
-
-      - name: Verify CLI
-        run: node dist/cli/index.js --help
-
-  lint:
-    name: Typecheck
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 15
 
     steps:
       - uses: actions/checkout@v4
@@ -49,6 +23,72 @@ jobs:
           node-version: 22
           cache: npm
 
-      - run: npm ci
+      - name: Install dependencies
+        run: npm ci
 
-      - run: npx tsc --noEmit
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Build
+        run: npm run build
+
+      # The test suite includes a real-browser fixture gate (Playwright walks a
+      # planted-bug app), so Chromium must be installed before tests run.
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Run tests
+        run: npx vitest run
+
+      - name: Verify CLI
+        run: node dist/cli/index.js --help
+
+  secret-scan:
+    name: Secret & hardcoded-value scan
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # Scan only shipped source. sniff-tests/, test/, and co-located *.test.ts
+      # files intentionally contain fixtures (test@test.com, fake keys, localhost
+      # URLs) used to exercise the scanner, so they are excluded.
+      - name: Scan shipped source for secrets and hardcoded values
+        shell: bash
+        run: |
+          set -uo pipefail
+
+          # Lines to ignore: anything outside shipped src, co-located test files,
+          # and build output. Fixtures intentionally live under test/ and sniff-tests/.
+          EXCLUDES='(^src/.*\.test\.ts:|^test/|^sniff-tests/|^dist/|^node_modules/)'
+
+          # One rule per line: "<label>|<extended-regex>".
+          RULES='AWS access key id|AKIA[0-9A-Z]{16}
+          AWS secret access key|aws_secret_access_key[[:space:]]*[:=][[:space:]]*["'"'"'][A-Za-z0-9/+=]{40}["'"'"']
+          Private key block|-----BEGIN ([A-Z ]+ )?PRIVATE KEY-----
+          GitHub token|gh[pousr]_[A-Za-z0-9]{36,}
+          Slack token|xox[baprs]-[A-Za-z0-9-]{10,}
+          Placeholder email test@test.com|test@test\.com
+          Placeholder example.com email|[A-Za-z0-9._%+-]+@example\.com'
+
+          failed=0
+          while IFS='|' read -r label pattern; do
+            label="$(echo "$label" | sed 's/^[[:space:]]*//')"
+            [ -z "$pattern" ] && continue
+            # -r recursive, -n line numbers, -I skip binary, -E extended regex.
+            matches="$(grep -rnIE "$pattern" src 2>/dev/null | grep -vE "$EXCLUDES" || true)"
+            if [ -n "$matches" ]; then
+              echo "::error::Potential secret / hardcoded value found: $label"
+              echo "$matches"
+              failed=1
+            fi
+          done <<< "$RULES"
+
+          if [ "$failed" -ne 0 ]; then
+            echo ""
+            echo "Secret scan failed. If a match is an intentional fixture, move it under sniff-tests/ or test/."
+            exit 1
+          fi
+
+          echo "Secret scan passed: no accidental secrets or hardcoded values in shipped source."

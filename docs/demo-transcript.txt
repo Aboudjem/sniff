@@ -1,0 +1,20 @@
+$ npx sniff-qa --url http://localhost:3000
+
+  sniff — walking http://localhost:3000
+
+  CRITICAL
+    • [confirmed] Page returns HTTP 500            /crash
+  HIGH
+    • [confirmed] Broken link -> /dead (HTTP 404)  /
+    • [confirmed] Uncaught: renderWelcomeBanner is not defined   /dashboard
+    • [likely]    Submit button does nothing       /signup
+    • [likely]    Form state lost on back nav       /wizard
+    • [likely]    Submitted, but no success shown   /checkout
+  MEDIUM
+    • [confirmed] GET /api/stats -> 500             /dashboard
+    • [confirmed] Placeholder email (test@test.com) /profile
+    • [likely]    Empty table, no empty-state       /orders
+    • [confirmed] Horizontal overflow at 375px      /wide
+    • [confirmed] Image has no alt text             /
+
+  21 real issues - 0 false positives - proof + fix on every finding (8.4s)

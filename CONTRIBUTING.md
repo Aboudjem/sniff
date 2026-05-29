@@ -15,10 +15,13 @@ npm install
 # Build once to make sure things work
 npm run build
 
-# Run the test suite
-npm test
+# Run the test suite (one-shot; `npm test` runs Vitest in watch mode)
+npx vitest run
 
-# Try the CLI locally
+# Try the CLI locally — the flow-walk against a running app is the default
+node dist/cli/index.js --url http://localhost:3000
+
+# Or run a source-only scan (no browser)
 node dist/cli/index.js scan
 ```
 
@@ -41,6 +44,28 @@ src/
   scanners/        # The actual scanners (source, accessibility, visual, performance)
 ```
 
+## Testing against the planted-bug fixture
+
+The flow-walk engine is held to a regression gate by a fixture of deliberately planted
+bugs. Everything lives under `sniff-tests/`:
+
+- `sniff-tests/planted-bugs/` · a small app with 21 planted bugs across all 12 issue
+  classes plus a clean control page, with `MANIFEST.json` as the ground truth
+- `sniff-tests/score-fixture.mjs` + `sniff-tests/score-lib.mjs` · the scorer that grades a
+  Sniff JSON report against the manifest (precision, recall, false positives)
+- `sniff-tests/run-crawl.mjs` · a dev harness to run a manual scan against any URL
+
+To run a manual scan against a running app (build first):
+
+```bash
+npm run build
+node sniff-tests/run-crawl.mjs http://localhost:3000
+```
+
+The same fixture run is wired into the Vitest suite as a locked regression test, so if you
+touch the walk engine, run `npx vitest run` and keep the fixture at 21/21 with 0 false
+positives.
+
 ## Ways to contribute
 
 ### Report a bug
@@ -58,7 +83,7 @@ Got an idea? Use the [feature request form](https://github.com/Aboudjem/sniff/is
 3. **Follow what's already there** · look at a similar file for patterns
 4. **Make sure it passes** before opening the PR:
    ```bash
-   npm run build && npm test
+   npm run build && npx vitest run
    ```
 5. **Open the PR** with a short explanation of what changed and why
 

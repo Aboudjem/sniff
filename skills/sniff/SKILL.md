@@ -1,47 +1,42 @@
 ---
 name: sniff
-description: Scan the current project for bugs. Runs source code analysis (debug statements, dead links, API endpoints, broken imports, placeholder text, hardcoded URLs). If a dev server is running, also checks accessibility, visual regression, and performance. No API key needed.
+description: Use when the user types /sniff, or asks to "scan this project for bugs", "find bugs in my app", "QA my site", or "walk my app and tell me what's broken". For a running web app, finds real, reproducible issues — broken pages/links, console & network errors, broken forms, empty/placeholder data, state-loss, bad loading/error states, responsive and accessibility problems — each with reproduction proof, severity, confidence, and a fix. No API key needed.
 ---
 
-# /sniff - Scan this project
-
-Run a full quality scan on the current project.
+# /sniff — find real bugs in this project
 
 ## What to do
 
-1. Use the unified `sniff` MCP tool with:
-   - `mode`: `"run"`
+1. Call the unified `sniff` MCP tool with:
+   - `mode`: `"walk"` — the autonomous flow-walk that drives a real browser and finds runtime bugs (this is the one that matters; `"scan"` is source-only)
    - `rootDir`: the current project's absolute path
-   - Do NOT pass `baseUrl` -- sniff auto-detects running dev servers
-   - `headless`: true
-
-2. If the unified `sniff` tool is not available, use legacy `sniff_run`; if that is not available, use `sniff_scan` with just `rootDir`
-
-3. Present the findings to the user grouped by severity:
-   - CRITICAL and HIGH first
-   - Show file path, line number, and the issue
-   - Suggest fixes for the top issues
+   - omit `baseUrl` to auto-detect the running dev server, or pass it if the user gives a URL
+2. If the response is `{ needsSetup: "playwright-browsers" }`, call the `sniff_install` tool, then retry the walk.
+3. If no app is running, sniff returns a note + a source-only scan. Tell the user to start their dev server (or pass a URL) for the full flow-walk that finds the real runtime bugs.
+4. Present findings grouped by severity (CRITICAL and HIGH first). For each, show the **route**, the **reproduction steps**, the **confidence** (confirmed / likely / uncertain), and the **suggested fix**. Mention any finding marked `needsOutOfBandVerification` (e.g. "submitted but no success shown — confirm the email/job actually ran"). Offer `/sniff-fix` for the safe, auto-fixable ones.
 
 ## Example
 
 ```
 User: /sniff
-You: I'll scan your project for issues.
+You: Walking your running app for real bugs…
 
-[calls sniff with mode=run rootDir=/Users/user/projects/my-app]
+[calls sniff with mode="walk", rootDir=/Users/user/projects/my-app]
 
-Found 12 issues:
+Found 9 real issues (0 false positives) across 12 pages:
 
 **Critical (1)**
-- `src/routes.ts:14` - Hardcoded Stripe key in route handler
+- /checkout — Page returns HTTP 500 (crash screen shown to the user)
 
 **High (3)**
-- `src/handler.ts:42` - debugger statement
-- `README.md:28` - Broken link to ./missing-guide.md
-- `src/Page.tsx:15` - Lorem ipsum placeholder text
+- / — Broken link → /pricing-old (HTTP 404)
+- /dashboard — Uncaught exception: cannot read 'map' of undefined
+- /signup — Submit button does nothing (no request, no message, no change)
 
-**Medium (8)**
-- ...
+**Medium (5)**
+- /orders — Empty table with no empty-state ("Your Orders")
+- /profile — Placeholder data shipped (test@test.com)
+- …each with reproduction steps + a screenshot + a fix.
 
-Want me to fix any of these?
+Want me to fix the safe ones with /sniff-fix?
 ```
