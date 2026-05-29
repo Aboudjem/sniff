@@ -1,4 +1,13 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 816.8000000000001 519" width="100%" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="14.5">
+  <style>
+    /* The terminal types itself out via SMIL opacity reveals. When the reader
+       prefers reduced motion, reveal every line immediately so nothing is
+       left invisible. */
+    @media (prefers-reduced-motion: reduce) {
+      text { opacity: 1 !important; }
+      animate { display: none; }
+    }
+  </style>
   <rect x="0" y="0" width="816.8000000000001" height="519" rx="12" fill="#0b0e14"/>
   <rect x="0" y="0" width="816.8000000000001" height="34" rx="12" fill="#11151f"/>
   <rect x="0" y="22" width="816.8000000000001" height="12" fill="#11151f"/>

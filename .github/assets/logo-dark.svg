@@ -44,6 +44,14 @@
     .p3 { animation: sniff-p 2.2s ease-out infinite 1.4s; --dx: -1px; transform-origin: center; transform-box: fill-box; }
     .spk-1 { animation: sparkle 3s ease-in-out infinite; transform-origin: center; transform-box: fill-box; }
     .spk-2 { animation: sparkle 3s ease-in-out infinite 1.5s; transform-origin: center; transform-box: fill-box; }
+
+    @media (prefers-reduced-motion: reduce) {
+      /* Stop all motion. The cat and text have no base opacity:0, so they stay
+         fully visible. The ephemeral particles (hearts, sniff puffs, sparkles)
+         only exist mid-animation, so hide them rather than freeze them visible. */
+      .cat, .body-shape, .eyes, .nose, .tail, .arm-l, .arm-r { animation: none !important; }
+      .heart, .p1, .p2, .p3, .spk-1, .spk-2 { animation: none !important; opacity: 0 !important; }
+    }
   </style>
 
   <defs>

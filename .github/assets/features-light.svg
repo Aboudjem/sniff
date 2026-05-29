@@ -1,74 +1,112 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 320" font-family="system-ui, -apple-system, sans-serif">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 372" font-family="system-ui, -apple-system, sans-serif" role="img" aria-label="The 12 classes of real bugs sniff finds while walking your running app">
   <defs>
     <filter id="s"><feDropShadow dx="0" dy="1" stdDeviation="2" flood-color="#00000008"/></filter>
+    <style>
+      .card { animation: rise .5s ease-out both; }
+      .c2 { animation-delay: .04s } .c3 { animation-delay: .08s } .c4 { animation-delay: .12s }
+      .c5 { animation-delay: .16s } .c6 { animation-delay: .20s } .c7 { animation-delay: .24s }
+      .c8 { animation-delay: .28s } .c9 { animation-delay: .32s } .c10 { animation-delay: .36s }
+      .c11 { animation-delay: .40s } .c12 { animation-delay: .44s }
+      @keyframes rise { from { opacity: 0; transform: translateY(6px) } to { opacity: 1; transform: translateY(0) } }
+      @media (prefers-reduced-motion: reduce) { * { animation: none !important; opacity: 1 !important; transform: none !important; } }
+    </style>
   </defs>
-  <rect width="840" height="320" rx="16" fill="#fafafa"/>
+  <rect width="840" height="372" rx="16" fill="#fafafa"/>
 
-  <!-- Row 1: Source checks (always run) -->
-  <text x="20" y="30" font-size="11" font-weight="600" fill="#94a3b8" letter-spacing="1">SOURCE CHECKS</text>
-  <text x="230" y="30" font-size="10" fill="#cbd5e1">always run, no browser needed</text>
+  <text x="20" y="32" font-size="13" font-weight="700" fill="#1f2937" letter-spacing=".3">12 classes of real bugs sniff finds</text>
+  <text x="20" y="50" font-size="10.5" fill="#94a3b8">while walking your running app in a real browser, each with reproduction proof</text>
 
-  <rect x="20" y="42" width="190" height="88" rx="12" fill="white" stroke="#fecaca" stroke-width="1" filter="url(#s)"/>
-  <text x="36" y="66" font-size="22">🐛</text>
-  <text x="64" y="68" font-size="13" font-weight="700" fill="#1f2937">Source Bugs</text>
-  <text x="36" y="88" font-size="10.5" fill="#64748b">debugger, console.log,</text>
-  <text x="36" y="102" font-size="10.5" fill="#64748b">TODO, FIXME, lorem ipsum</text>
-  <text x="36" y="120" font-size="9" fill="#f87171" font-weight="600">6 rules</text>
+  <!-- Row 1 -->
+  <g class="card">
+    <rect x="18" y="64" width="188" height="80" rx="12" fill="white" stroke="#fecaca" stroke-width="1" filter="url(#s)"/>
+    <circle cx="42" cy="90" r="11" fill="#fee2e2"/><text x="42" y="94" text-anchor="middle" font-size="11" font-weight="700" fill="#ef4444">1</text>
+    <text x="60" y="86" font-size="12.5" font-weight="700" fill="#1f2937">Broken pages / routes</text>
+    <text x="60" y="104" font-size="10" fill="#64748b">4xx/5xx, blank renders,</text>
+    <text x="60" y="118" font-size="10" fill="#64748b">crash screens</text>
+  </g>
+  <g class="card c2">
+    <rect x="222" y="64" width="188" height="80" rx="12" fill="white" stroke="#fecaca" stroke-width="1" filter="url(#s)"/>
+    <circle cx="246" cy="90" r="11" fill="#fee2e2"/><text x="246" y="94" text-anchor="middle" font-size="11" font-weight="700" fill="#ef4444">2</text>
+    <text x="264" y="86" font-size="12.5" font-weight="700" fill="#1f2937">Broken links</text>
+    <text x="264" y="104" font-size="10" fill="#64748b">Dead internal and</text>
+    <text x="264" y="118" font-size="10" fill="#64748b">external links</text>
+  </g>
+  <g class="card c3">
+    <rect x="426" y="64" width="188" height="80" rx="12" fill="white" stroke="#fecaca" stroke-width="1" filter="url(#s)"/>
+    <circle cx="450" cy="90" r="11" fill="#fee2e2"/><text x="450" y="94" text-anchor="middle" font-size="11" font-weight="700" fill="#ef4444">3</text>
+    <text x="468" y="86" font-size="12.5" font-weight="700" fill="#1f2937">Console &amp; network</text>
+    <text x="468" y="104" font-size="10" fill="#64748b">Uncaught exceptions,</text>
+    <text x="468" y="118" font-size="10" fill="#64748b">failed requests</text>
+  </g>
+  <g class="card c4">
+    <rect x="630" y="64" width="188" height="80" rx="12" fill="white" stroke="#fecaca" stroke-width="1" filter="url(#s)"/>
+    <circle cx="654" cy="90" r="11" fill="#fee2e2"/><text x="654" y="94" text-anchor="middle" font-size="11" font-weight="700" fill="#ef4444">4</text>
+    <text x="672" y="86" font-size="12.5" font-weight="700" fill="#1f2937">Empty &amp; fake data</text>
+    <text x="672" y="104" font-size="10" fill="#64748b">Missing data, lorem</text>
+    <text x="672" y="118" font-size="10" fill="#64748b">ipsum, TODO, test@</text>
+  </g>
 
-  <rect x="224" y="42" width="190" height="88" rx="12" fill="white" stroke="#fecaca" stroke-width="1" filter="url(#s)"/>
-  <text x="240" y="66" font-size="22">🔗</text>
-  <text x="268" y="68" font-size="13" font-weight="700" fill="#1f2937">Dead Links</text>
-  <text x="240" y="88" font-size="10.5" fill="#64748b">Internal files, external URLs,</text>
-  <text x="240" y="102" font-size="10.5" fill="#64748b">anchor targets (#section)</text>
-  <text x="240" y="120" font-size="9" fill="#f87171" font-weight="600">HTTP HEAD + retry</text>
+  <!-- Row 2 -->
+  <g class="card c5">
+    <rect x="18" y="156" width="188" height="80" rx="12" fill="white" stroke="#fed7aa" stroke-width="1" filter="url(#s)"/>
+    <circle cx="42" cy="182" r="11" fill="#ffedd5"/><text x="42" y="186" text-anchor="middle" font-size="11" font-weight="700" fill="#ea580c">5</text>
+    <text x="60" y="178" font-size="12.5" font-weight="700" fill="#1f2937">Broken forms</text>
+    <text x="60" y="196" font-size="10" fill="#64748b">Dead submit buttons,</text>
+    <text x="60" y="210" font-size="10" fill="#64748b">validation never fires</text>
+  </g>
+  <g class="card c6">
+    <rect x="222" y="156" width="188" height="80" rx="12" fill="white" stroke="#fed7aa" stroke-width="1" filter="url(#s)"/>
+    <circle cx="246" cy="182" r="11" fill="#ffedd5"/><text x="246" y="186" text-anchor="middle" font-size="11" font-weight="700" fill="#ea580c">6</text>
+    <text x="264" y="178" font-size="12.5" font-weight="700" fill="#1f2937">State loss</text>
+    <text x="264" y="196" font-size="10" fill="#64748b">Fill a form, hit back,</text>
+    <text x="264" y="210" font-size="10" fill="#64748b">and it's wiped</text>
+  </g>
+  <g class="card c7">
+    <rect x="426" y="156" width="188" height="80" rx="12" fill="white" stroke="#fed7aa" stroke-width="1" filter="url(#s)"/>
+    <circle cx="450" cy="182" r="11" fill="#ffedd5"/><text x="450" y="186" text-anchor="middle" font-size="11" font-weight="700" fill="#ea580c">7</text>
+    <text x="468" y="178" font-size="12.5" font-weight="700" fill="#1f2937">Flow dead-ends</text>
+    <text x="468" y="196" font-size="10" fill="#64748b">A journey that can't</text>
+    <text x="468" y="210" font-size="10" fill="#64748b">be completed</text>
+  </g>
+  <g class="card c8">
+    <rect x="630" y="156" width="188" height="80" rx="12" fill="white" stroke="#fed7aa" stroke-width="1" filter="url(#s)"/>
+    <circle cx="654" cy="182" r="11" fill="#ffedd5"/><text x="654" y="186" text-anchor="middle" font-size="11" font-weight="700" fill="#ea580c">8</text>
+    <text x="672" y="178" font-size="12.5" font-weight="700" fill="#1f2937">Loading / error states</text>
+    <text x="672" y="196" font-size="10" fill="#64748b">Infinite spinners,</text>
+    <text x="672" y="210" font-size="10" fill="#64748b">missing error states</text>
+  </g>
 
-  <rect x="428" y="42" width="190" height="88" rx="12" fill="white" stroke="#fecaca" stroke-width="1" filter="url(#s)"/>
-  <text x="444" y="66" font-size="22">🛣️</text>
-  <text x="474" y="68" font-size="13" font-weight="700" fill="#1f2937">API Endpoints</text>
-  <text x="444" y="88" font-size="10.5" fill="#64748b">Express, Next.js, Hono,</text>
-  <text x="444" y="102" font-size="10.5" fill="#64748b">SvelteKit, tRPC, GraphQL</text>
-  <text x="444" y="120" font-size="9" fill="#f87171" font-weight="600">8 frameworks</text>
+  <!-- Row 3 -->
+  <g class="card c9">
+    <rect x="18" y="248" width="188" height="80" rx="12" fill="white" stroke="#c4b5fd" stroke-width="1" filter="url(#s)"/>
+    <circle cx="42" cy="274" r="11" fill="#ede9fe"/><text x="42" y="278" text-anchor="middle" font-size="11" font-weight="700" fill="#7c3aed">9</text>
+    <text x="60" y="270" font-size="12.5" font-weight="700" fill="#1f2937">Broken async outcomes</text>
+    <text x="60" y="288" font-size="10" fill="#64748b">Submitted but no</text>
+    <text x="60" y="302" font-size="10" fill="#64748b">success feedback</text>
+  </g>
+  <g class="card c10">
+    <rect x="222" y="248" width="188" height="80" rx="12" fill="white" stroke="#c4b5fd" stroke-width="1" filter="url(#s)"/>
+    <circle cx="246" cy="274" r="11" fill="#ede9fe"/><text x="246" y="278" text-anchor="middle" font-size="11" font-weight="700" fill="#7c3aed">10</text>
+    <text x="264" y="270" font-size="12.5" font-weight="700" fill="#1f2937">Responsive issues</text>
+    <text x="264" y="288" font-size="10" fill="#64748b">Overflow, tiny tap</text>
+    <text x="264" y="302" font-size="10" fill="#64748b">targets (375px pass)</text>
+  </g>
+  <g class="card c11">
+    <rect x="426" y="248" width="188" height="80" rx="12" fill="white" stroke="#c4b5fd" stroke-width="1" filter="url(#s)"/>
+    <circle cx="450" cy="274" r="11" fill="#ede9fe"/><text x="450" y="278" text-anchor="middle" font-size="11" font-weight="700" fill="#7c3aed">11</text>
+    <text x="468" y="270" font-size="12.5" font-weight="700" fill="#1f2937">Accessibility</text>
+    <text x="468" y="288" font-size="10" fill="#64748b">Missing alt / labels,</text>
+    <text x="468" y="302" font-size="10" fill="#64748b">contrast, via axe-core</text>
+  </g>
+  <g class="card c12">
+    <rect x="630" y="248" width="188" height="80" rx="12" fill="white" stroke="#c4b5fd" stroke-width="1" filter="url(#s)"/>
+    <circle cx="654" cy="274" r="11" fill="#ede9fe"/><text x="654" y="278" text-anchor="middle" font-size="11" font-weight="700" fill="#7c3aed">12</text>
+    <text x="672" y="270" font-size="12.5" font-weight="700" fill="#1f2937">Unclear primary action</text>
+    <text x="672" y="288" font-size="10" fill="#64748b">The main call-to-action</text>
+    <text x="672" y="302" font-size="10" fill="#64748b">is buried or ambiguous</text>
+  </g>
 
-  <rect x="632" y="42" width="190" height="88" rx="12" fill="white" stroke="#fecaca" stroke-width="1" filter="url(#s)"/>
-  <text x="648" y="66" font-size="22">📦</text>
-  <text x="676" y="68" font-size="13" font-weight="700" fill="#1f2937">Broken Imports</text>
-  <text x="648" y="88" font-size="10.5" fill="#64748b">Unresolved relative imports</text>
-  <text x="648" y="102" font-size="10.5" fill="#64748b">with TS extension mapping</text>
-  <text x="648" y="120" font-size="9" fill="#f87171" font-weight="600">auto-resolve</text>
-
-  <!-- Row 2: Browser checks (need the url flag) -->
-  <text x="20" y="162" font-size="11" font-weight="600" fill="#94a3b8" letter-spacing="1">BROWSER CHECKS</text>
-  <text x="230" y="162" font-size="10" fill="#cbd5e1">add --url to enable</text>
-
-  <rect x="20" y="174" width="190" height="88" rx="12" fill="white" stroke="#c4b5fd" stroke-width="1" filter="url(#s)"/>
-  <text x="36" y="198" font-size="22">♿</text>
-  <text x="64" y="200" font-size="13" font-weight="700" fill="#1f2937">Accessibility</text>
-  <text x="36" y="220" font-size="10.5" fill="#64748b">WCAG 2.x via axe-core</text>
-  <text x="36" y="234" font-size="10.5" fill="#64748b">with fix guidance</text>
-  <text x="36" y="252" font-size="9" fill="#7c3aed" font-weight="600">every route + viewport</text>
-
-  <rect x="224" y="174" width="190" height="88" rx="12" fill="white" stroke="#fde68a" stroke-width="1" filter="url(#s)"/>
-  <text x="240" y="198" font-size="22">🖼</text>
-  <text x="268" y="200" font-size="13" font-weight="700" fill="#1f2937">Visual Regression</text>
-  <text x="240" y="220" font-size="10.5" fill="#64748b">Pixel diffing with pixelmatch</text>
-  <text x="240" y="234" font-size="10.5" fill="#64748b">Commit baselines to git</text>
-  <text x="240" y="252" font-size="9" fill="#d97706" font-weight="600">screenshot comparison</text>
-
-  <rect x="428" y="174" width="190" height="88" rx="12" fill="white" stroke="#86efac" stroke-width="1" filter="url(#s)"/>
-  <text x="444" y="198" font-size="22">⚡</text>
-  <text x="468" y="200" font-size="13" font-weight="700" fill="#1f2937">Performance</text>
-  <text x="444" y="220" font-size="10.5" fill="#64748b">LCP, FCP, TTI budgets</text>
-  <text x="444" y="234" font-size="10.5" fill="#64748b">via Lighthouse</text>
-  <text x="444" y="252" font-size="9" fill="#059669" font-weight="600">Core Web Vitals</text>
-
-  <rect x="632" y="174" width="190" height="88" rx="12" fill="white" stroke="#fda4af" stroke-width="1" filter="url(#s)"/>
-  <text x="648" y="198" font-size="22">🤖</text>
-  <text x="676" y="200" font-size="13" font-weight="700" fill="#1f2937">AI Explorer</text>
-  <text x="648" y="220" font-size="10.5" fill="#64748b">Roams your app, fills forms</text>
-  <text x="648" y="234" font-size="10.5" fill="#64748b">with adversarial inputs</text>
-  <text x="648" y="252" font-size="9" fill="#e11d48" font-weight="600">chaos monkey</text>
-
-  <!-- Cross-reference banner -->
-  <rect x="20" y="280" width="802" height="30" rx="8" fill="#f0fdf4" stroke="#86efac" stroke-width="1"/>
-  <text x="420" y="300" text-anchor="middle" font-size="11" fill="#166534" font-weight="600">🔀 Cross-Reference Engine: findings confirmed in both source and browser get bumped severity + HIGH confidence</text>
+  <!-- Proof banner -->
+  <rect x="18" y="340" width="800" height="22" rx="8" fill="#f0fdf4" stroke="#86efac" stroke-width="1"/>
+  <text x="418" y="355" text-anchor="middle" font-size="10.5" fill="#166534" font-weight="600">Every finding ships with reproduction proof: exact route, ordered steps, screenshot, console/network excerpt. No proof, no finding.</text>
 </svg>
