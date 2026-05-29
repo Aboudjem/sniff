@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Checkout — Acme Shop</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <nav>
+    <a href="/">Home</a>
+    <a href="/checkout">Checkout</a>
+  </nav>
+
+  <h1>Checkout</h1>
+
+  <form id="checkout-form">
+    <label for="card">Card number</label>
+    <input id="card" name="card" type="text" placeholder="4242 4242 4242 4242">
+    <button id="pay" type="button">Place order</button>
+  </form>
+
+  <!-- B15: after the POST succeeds, this never updates — no success feedback (silent async) -->
+  <div id="result"></div>
+
+  <script>
+    document.getElementById('pay').addEventListener('click', () => {
+      fetch('/api/checkout', { method: 'POST', headers: { 'content-type': 'application/json' }, body: '{}' })
+        .then((r) => r.json())
+        .then(() => {
+          // BUG: response ignored. No success message, no redirect, no spinner cleared.
+        });
+    });
+  </script>
+</body>
+</html>

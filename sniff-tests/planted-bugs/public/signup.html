@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sign up — Acme Shop</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <nav>
+    <a href="/">Home</a>
+    <a href="/signup">Sign up</a>
+  </nav>
+
+  <h1>Create your account</h1>
+
+  <!-- B09: clicking Submit does nothing (no submit handler, no action, type=button) -->
+  <!-- B10: the email field never validates (accepts "notanemail") -->
+  <!-- B19: the email input has no <label> and no aria-label -->
+  <form id="signup-form">
+    <label for="name">Full name</label>
+    <input id="name" name="name" type="text" placeholder="Jane Doe">
+
+    <input id="email" name="email" type="text" placeholder="Email address">
+
+    <label for="password">Password</label>
+    <input id="password" name="password" type="password">
+
+    <button id="create" type="button">Create account</button>
+  </form>
+
+  <p id="status"></p>
+
+  <script>
+    // Deliberately no handler wired to #create — clicking does nothing.
+    // No validation logic at all.
+  </script>
+</body>
+</html>

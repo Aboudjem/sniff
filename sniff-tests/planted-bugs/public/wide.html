@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pricing — Acme Shop</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <nav>
+    <a href="/">Home</a>
+    <a href="/wide">Wide</a>
+  </nav>
+
+  <h1>Pricing</h1>
+
+  <!-- B16: fixed 1400px block forces horizontal overflow on mobile widths -->
+  <div class="too-wide">
+    <p>This comparison table is locked to 1400px wide and will overflow small screens.</p>
+    <table>
+      <tr><th>Plan</th><th>Free</th><th>Pro</th><th>Team</th><th>Enterprise</th><th>Custom</th></tr>
+      <tr><td>Price</td><td>$0</td><td>$9</td><td>$29</td><td>$99</td><td>Call us</td></tr>
+    </table>
+  </div>
+
+  <!-- B17: tap targets far below 44x44px -->
+  <p>
+    <button class="tiny-tap">Buy</button>
+    <button class="tiny-tap">Cancel</button>
+    <button class="tiny-tap">Help</button>
+  </p>
+</body>
+</html>

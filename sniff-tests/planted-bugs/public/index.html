@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Acme Shop — Home</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <nav>
+    <a href="/">Home</a>
+    <a href="/orders">Orders</a>
+    <a href="/profile">Profile</a>
+    <a href="/signup">Sign up</a>
+    <a href="/wizard">Wizard</a>
+    <a href="/dashboard">Dashboard</a>
+    <a href="/checkout">Checkout</a>
+    <a href="/wide">Wide</a>
+    <a href="/clean">Clean</a>
+  </nav>
+
+  <h1>Welcome to Acme Shop</h1>
+
+  <!-- B18: image with no alt text -->
+  <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='80'><rect width='200' height='80' fill='%230b5fff'/></svg>" width="200" height="80">
+
+  <!-- B20: low-contrast paragraph (fails WCAG AA contrast) -->
+  <p class="faint">Trusted by thousands of shoppers worldwide. Shop the latest deals today.</p>
+
+  <h2>Explore</h2>
+  <ul>
+    <!-- B03: internal broken link (/dead is not served → 404) -->
+    <li><a href="/dead">Today's deals</a></li>
+    <!-- B01: link to a broken route (/missing → 404) -->
+    <li><a href="/missing">Gift cards</a></li>
+    <!-- B02: link to a page that returns HTTP 500 -->
+    <li><a href="/crash">Order status</a></li>
+    <!-- B04: external broken link (DNS will not resolve) -->
+    <li><a href="https://nonexistent-sniff-test-xyz.invalid/">Our blog</a></li>
+  </ul>
+
+  <p>Ready to buy? Find the checkout link below.</p>
+
+  <!-- B21: the primary action is rendered as near-invisible tiny grey text (unclear flow) -->
+  <a href="/checkout" class="buried-cta">checkout</a>
+</body>
+</html>

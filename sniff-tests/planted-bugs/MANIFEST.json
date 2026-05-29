@@ -1,0 +1,36 @@
+{
+  "fixture": "sniff planted-bug fixture",
+  "description": "A zero-dependency runnable app with 21 deliberately planted QA bugs spanning all 12 sniff issue classes, plus a clean control page (/clean) carrying NONE of them. Used as the RED baseline and the precision/recall regression gate for the sniff QA engine. Ground truth below: each bug has a stable id, the issue class it represents, the route it lives on, and what a correct finding must demonstrate (with reproduction proof).",
+  "server": "node server.mjs [port]  — prints 'SNIFF_FIXTURE_LISTENING http://localhost:<port>' (default 4321)",
+  "scoring": {
+    "truePositive": "sniff reports a finding that maps to a planted bug id on the correct route with reproduction proof",
+    "falseNegative": "a planted bug with no matching finding (a MISS)",
+    "falsePositive": "a reported finding that does not map to any planted bug, OR any finding on the /clean control page",
+    "recall": "truePositives / 21",
+    "precision": "truePositives / (truePositives + falsePositives)"
+  },
+  "cleanRoutes": ["/clean"],
+  "bugs": [
+    { "id": "B01", "issueClass": 1, "name": "broken-route-404", "route": "/missing (linked from /)", "severity": "high", "expect": "Following the 'Gift cards' link to /missing returns HTTP 404." },
+    { "id": "B02", "issueClass": 1, "name": "broken-page-500", "route": "/crash (linked from /)", "severity": "critical", "expect": "Following 'Order status' to /crash returns HTTP 500 and shows a raw stack trace to the user." },
+    { "id": "B03", "issueClass": 2, "name": "broken-link-internal", "route": "/ -> /dead", "severity": "high", "expect": "The 'Today's deals' anchor href=/dead resolves to HTTP 404." },
+    { "id": "B04", "issueClass": 2, "name": "broken-link-external", "route": "/ -> https://nonexistent-sniff-test-xyz.invalid/", "severity": "medium", "expect": "The 'Our blog' external anchor fails to resolve (DNS/connection error)." },
+    { "id": "B05", "issueClass": 3, "name": "console-uncaught-error", "route": "/dashboard", "severity": "high", "expect": "Loading /dashboard throws an uncaught ReferenceError (renderWelcomeBanner is not defined) visible in the console." },
+    { "id": "B06", "issueClass": 3, "name": "failed-network-request", "route": "/dashboard -> /api/stats", "severity": "high", "expect": "/dashboard issues GET /api/stats which returns HTTP 500." },
+    { "id": "B07", "issueClass": 4, "name": "empty-data-no-empty-state", "route": "/orders", "severity": "medium", "expect": "The 'Your Orders' table renders a header but zero rows and shows no empty-state message." },
+    { "id": "B08", "issueClass": 4, "name": "placeholder-fake-data", "route": "/profile", "severity": "medium", "expect": "Profile shows lorem ipsum, email test@test.com, and 'TODO: replace with real address' left in." },
+    { "id": "B09", "issueClass": 5, "name": "broken-form-submit-noop", "route": "/signup", "severity": "critical", "expect": "Clicking 'Create account' does nothing — no handler, no navigation, no feedback." },
+    { "id": "B10", "issueClass": 5, "name": "validation-never-fires", "route": "/signup", "severity": "high", "expect": "Entering an invalid email (e.g. 'notanemail') is accepted with no validation error." },
+    { "id": "B11", "issueClass": 6, "name": "state-loss-on-back", "route": "/wizard", "severity": "high", "expect": "Fill name in step 1, go to step 2, click Back — the name field is wiped." },
+    { "id": "B12", "issueClass": 7, "name": "flow-dead-end", "route": "/wizard", "severity": "high", "expect": "Step 2's 'Finish' button is permanently disabled — the multi-step flow dead-ends with no way forward." },
+    { "id": "B13", "issueClass": 8, "name": "infinite-spinner", "route": "/dashboard", "severity": "medium", "expect": "The activity-feed spinner never resolves because /api/hang never responds." },
+    { "id": "B14", "issueClass": 8, "name": "missing-error-state", "route": "/dashboard", "severity": "medium", "expect": "When /api/stats fails, the stats area shows nothing — no error message or retry." },
+    { "id": "B15", "issueClass": 9, "name": "silent-async-no-success", "route": "/checkout", "severity": "high", "expect": "Clicking 'Place order' POSTs /api/checkout (200 ok) but the UI never shows success, redirect, or any feedback." },
+    { "id": "B16", "issueClass": 10, "name": "responsive-horizontal-overflow", "route": "/wide", "severity": "medium", "expect": "A 1400px fixed-width block forces horizontal scrolling at mobile widths (e.g. 375px)." },
+    { "id": "B17", "issueClass": 10, "name": "tap-targets-too-small", "route": "/wide", "severity": "low", "expect": "The Buy/Cancel/Help buttons are ~9px — far below the 44x44px touch-target guideline." },
+    { "id": "B18", "issueClass": 11, "name": "a11y-image-no-alt", "route": "/", "severity": "medium", "expect": "The hero image has no alt attribute." },
+    { "id": "B19", "issueClass": 11, "name": "a11y-input-no-label", "route": "/signup", "severity": "medium", "expect": "The email input has no associated <label> and no aria-label." },
+    { "id": "B20", "issueClass": 11, "name": "a11y-low-contrast", "route": "/", "severity": "medium", "expect": "The .faint paragraph (#bbb on #fff) fails WCAG AA contrast." },
+    { "id": "B21", "issueClass": 12, "name": "unclear-buried-primary-action", "route": "/", "severity": "low", "expect": "The primary 'checkout' action is rendered as near-invisible 11px light-grey text — non-obvious." }
+  ]
+}

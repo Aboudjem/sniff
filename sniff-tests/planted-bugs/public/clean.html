@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>About — Acme Shop</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <nav>
+    <a href="/">Home</a>
+    <a href="/clean">About</a>
+  </nav>
+
+  <h1>About Acme Shop</h1>
+
+  <!-- Control page: NO planted bugs. A correct scanner should report nothing here.
+       Proper alt text, labelled input, good contrast, working links, real content. -->
+  <img
+    src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='80'><rect width='200' height='80' fill='%23104a9c'/></svg>"
+    width="200" height="80" alt="Acme Shop company logo">
+
+  <p>Acme Shop has shipped quality goods to customers since 2014. Our team of 40 people
+     operates from Lisbon and Berlin.</p>
+
+  <h2>Contact us</h2>
+  <form id="contact" action="/">
+    <label for="cname">Your name</label>
+    <input id="cname" name="cname" type="text">
+    <button type="submit">Send message</button>
+  </form>
+
+  <p><a href="/orders">View your orders</a> or <a href="/">return home</a>.</p>
+</body>
+</html>

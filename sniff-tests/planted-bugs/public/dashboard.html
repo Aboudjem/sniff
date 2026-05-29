@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dashboard — Acme Shop</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <nav>
+    <a href="/">Home</a>
+    <a href="/dashboard">Dashboard</a>
+  </nav>
+
+  <h1>Dashboard</h1>
+
+  <h2>Live stats</h2>
+  <div id="stats"></div>
+
+  <h2>Activity feed</h2>
+  <div id="feed"><div class="spinner" aria-label="Loading"></div></div>
+
+  <!-- Isolated script blocks: a throw in one block must not prevent the
+       others from running, so all three planted behaviours manifest. -->
+  <script>
+    renderWelcomeBanner();
+  </script>
+  <script>
+    fetch('/api/stats')
+      .then((r) => r.json())
+      .then((d) => { document.getElementById('stats').textContent = JSON.stringify(d); })
+      .catch(() => { /* swallowed; nothing shown */ });
+  </script>
+  <script>
+    fetch('/api/hang')
+      .then((r) => r.json())
+      .then(() => { document.getElementById('feed').innerHTML = '<p>Done</p>'; });
+  </script>
+</body>
+</html>
