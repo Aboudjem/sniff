@@ -22,7 +22,7 @@
 
   <!-- Source Scanner Block -->
   <rect x="230" y="60" width="320" height="200" rx="12" fill="#fff" stroke="#e5e7eb" stroke-width="1" filter="url(#shadow)"/>
-  <text x="390" y="85" text-anchor="middle" font-size="14" font-weight="700" fill="#1f2937">Source Scanner</text>
+  <text x="390" y="85" text-anchor="middle" font-size="14" font-weight="700" fill="#1f2937">Source Scan (sniff scan)</text>
 
   <!-- Source rules -->
   <rect x="250" y="96" width="130" height="32" rx="6" fill="#fef2f2" stroke="#fca5a5" stroke-width="1"/>

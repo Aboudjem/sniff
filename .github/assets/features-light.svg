@@ -36,7 +36,7 @@
   <text x="648" y="102" font-size="10.5" fill="#64748b">with TS extension mapping</text>
   <text x="648" y="120" font-size="9" fill="#f87171" font-weight="600">auto-resolve</text>
 
-  <!-- Row 2: Browser checks (need --url) -->
+  <!-- Row 2: Browser checks (need the url flag) -->
   <text x="20" y="162" font-size="11" font-weight="600" fill="#94a3b8" letter-spacing="1">BROWSER CHECKS</text>
   <text x="230" y="162" font-size="10" fill="#cbd5e1">add --url to enable</text>
 

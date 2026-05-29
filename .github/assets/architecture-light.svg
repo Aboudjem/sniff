@@ -76,7 +76,7 @@
   <text x="800" y="232" text-anchor="middle" font-size="13" font-weight="700" fill="#166534">Cross-Reference</text>
   <text x="800" y="250" text-anchor="middle" font-size="10" fill="#166534">Correlation Engine</text>
   <text x="800" y="268" text-anchor="middle" font-size="10" fill="#15803d">5 strategies</text>
-  <text x="800" y="292" text-anchor="middle" font-size="8" font-weight="600" fill="#15803d">NEW in v0.2</text>
+  <text x="800" y="292" text-anchor="middle" font-size="8" font-weight="600" fill="#15803d">all modes</text>
 
   <!-- Report Engine -->
   <rect x="920" y="120" width="150" height="170" rx="12" fill="#1e293b" stroke="#334155" stroke-width="1.5" filter="url(#s)"/>
