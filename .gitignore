@@ -37,3 +37,7 @@ PROJECT-BRIEF.md
 # crawl-engine dev artifacts (regenerable)
 docs/audit/green/screens/
 docs/audit/green/*.log
+
+# Demo video build artifacts (scenes, frames, audio, mp4 — regenerable).
+# The committed hero asset is .github/assets/demo.gif, which is NOT ignored.
+demo-output/

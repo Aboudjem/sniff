@@ -24,6 +24,8 @@
   <a href="#faq">FAQ</a>
 </p>
 
+![sniff demo](.github/assets/demo.gif)
+
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/Aboudjem/sniff/main/.github/assets/sniff-diagram.svg">
   <img alt="Sniff flow: your running app -> headless browser walk -> findings with proof" src="https://raw.githubusercontent.com/Aboudjem/sniff/main/.github/assets/sniff-diagram.svg" width="100%">
@@ -210,7 +212,9 @@ sniff --version        Show the version
 
 ## Demo
 
-A real run against a buggy app: 21 real issues, zero false positives, every finding with severity, confidence, reproduction steps, and a fix:
+A real run against a buggy app: 21 real issues, zero false positives, every finding with severity, confidence, reproduction steps, and a fix. Watch Sniff walk the app and stream findings in (the animated demo plays at the top of this README, [`.github/assets/demo.gif`](.github/assets/demo.gif)).
+
+Below is the same run as a stylized terminal still:
 
 <img alt="Sniff walking a buggy app and reporting 21 real issues with zero false positives" src="https://raw.githubusercontent.com/Aboudjem/sniff/main/.github/assets/demo.svg" width="100%">
 
