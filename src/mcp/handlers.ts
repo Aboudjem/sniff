@@ -124,6 +124,87 @@ export async function handleSniffRun(
   };
 }
 
+export interface SniffWalkOptions {
+  rootDir: string;
+  baseUrl?: string;
+  headless?: boolean;
+  maxPages?: number;
+  mobile?: boolean;
+  all?: boolean;
+}
+
+/**
+ * The recommended action: drive a real browser, walk the app's user flows, and
+ * return real issues with reproduction proof (route + steps + console/network),
+ * severity, confidence, and a suggested fix. Auto-detects a running dev server
+ * if baseUrl is omitted; falls back to a source scan when no app is running.
+ */
+export async function handleSniffWalk(options: SniffWalkOptions): Promise<McpToolResult> {
+  const rootErr = validateRootDir(options.rootDir);
+  if (rootErr) return { content: [{ type: 'text', text: JSON.stringify({ error: rootErr }) }] };
+
+  let url = options.baseUrl;
+  if (!url) {
+    const { detectDevServerUrl } = await import('../config/dev-server-detector.js');
+    const detection = await detectDevServerUrl(options.rootDir);
+    url = detection.url;
+  }
+  if (!url) {
+    // No running app — degrade gracefully to a source scan so the agent still
+    // gets something useful, and say so.
+    const scan = await handleSniffScan(options.rootDir);
+    return {
+      content: [{
+        type: 'text',
+        text: JSON.stringify({
+          note: 'No running app detected (no baseUrl, no dev server). Ran a source-only scan instead. Start your dev server or pass baseUrl to walk the live app and find runtime bugs.',
+          sourceScan: JSON.parse(scan.content[0]!.text),
+        }),
+      }],
+    };
+  }
+
+  const urlErr = validateBaseUrl(url);
+  if (urlErr) return { content: [{ type: 'text', text: JSON.stringify({ error: urlErr }) }] };
+
+  const { loadConfig } = await import('../config/loader.js');
+  const config = await loadConfig(options.rootDir);
+  const { checkPlaywrightBrowsers } = await import('../core/ensure-browsers.js');
+  const check = await checkPlaywrightBrowsers(config.browser?.projects);
+  if (check.status !== 'installed') {
+    return {
+      content: [{
+        type: 'text',
+        text: JSON.stringify({
+          needsSetup: 'playwright-browsers',
+          projects: check.status === 'missing' ? check.missingProjects : config.browser?.projects ?? ['chromium'],
+          installCommand: check.status === 'missing' ? check.installCommand : `npx playwright install ${(config.browser?.projects ?? ['chromium']).join(' ')}`,
+          installSizeMb: check.status === 'missing' ? check.installSizeMb : 165,
+          hint: 'Run the sniff_install MCP tool with the same projects, or run the install command manually, then retry.',
+        }),
+      }],
+    };
+  }
+
+  const { join } = await import('node:path');
+  const { runCrawl } = await import('../crawl/index.js');
+  const report = await runCrawl({
+    startUrl: url,
+    headless: options.headless ?? true,
+    includeMobile: options.mobile ?? true,
+    ...(options.maxPages ? { maxPages: options.maxPages } : {}),
+    outputDir: join(options.rootDir, 'sniff-reports', 'crawl'),
+  });
+
+  const shown = options.all ? report.findings : report.findings.filter((f) => f.confidence !== 'uncertain');
+  return {
+    content: [{
+      type: 'text',
+      text: JSON.stringify({ stats: report.stats, summary: report.summary, findings: shown }, null, 2),
+    }],
+  };
+}
+
 export interface SniffDiscoverOptions {
   rootDir: string;
   baseUrl?: string;
@@ -239,10 +320,13 @@ export async function handleSniffDiscover(options: SniffDiscoverOptions): Promis
 }
 
 export interface SniffUnifiedOptions {
-  mode: 'scan' | 'run' | 'discover' | 'report';
+  mode: 'walk' | 'scan' | 'run' | 'discover' | 'report';
   rootDir: string;
   baseUrl?: string;
   headless?: boolean;
+  maxPages?: number;
+  mobile?: boolean;
+  all?: boolean;
   format?: 'json' | 'summary';
   maxScenarios?: number;
   maxVariantsPerScenario?: number;
@@ -262,6 +346,15 @@ export interface SniffUnifiedOptions {
  */
 export async function handleSniffUnified(options: SniffUnifiedOptions): Promise<McpToolResult> {
   switch (options.mode) {
+    case 'walk':
+      return handleSniffWalk({
+        rootDir: options.rootDir,
+        ...(options.baseUrl ? { baseUrl: options.baseUrl } : {}),
+        headless: options.headless ?? true,
+        ...(options.maxPages !== undefined ? { maxPages: options.maxPages } : {}),
+        ...(options.mobile !== undefined ? { mobile: options.mobile } : {}),
+        ...(options.all !== undefined ? { all: options.all } : {}),
+      });
     case 'scan':
       return handleSniffScan(options.rootDir);
     case 'run': {

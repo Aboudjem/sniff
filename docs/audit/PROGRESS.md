@@ -11,12 +11,14 @@ Durable phase tracker (survives compaction). Branch: `rebuild/qa-engine`.
 - [x] 6. Competitive research — `docs/audit/06-competitive-research.md`
 - [x] 7. Plugin-vs-skill decision — plugin (MCP+CLI) primary + thin skill. `DECISIONS.md` D2.
 - [x] 8. Improvement plan (ranked, evidence blocks) → `DECISIONS.md` (D1-D4).
-- [~] 9. Safe implementation — NEW ENGINE BUILT (`src/crawl/`): GREEN 21/21 recall, 100% precision, 0 FP.
-      PENDING: wire as default CLI path + MCP tool; demote source scan to `sniff scan`.
-- [~] 10. Testing — fixture regression gate written (`test/crawl/fixture.test.ts`) + unit tests; full suite running.
-      PENDING: CLI/bad-input/docs-example/multi-editor smoke.
-- [ ] 11. Multi-agent verification — Skeptical Reviewer + GREEN first-time-user sim
-- [ ] 12. Final report + next commands → `TOOLS_AUDIT_AND_REBUILD_REPORT.md`
+- [x] 9. Safe implementation — NEW ENGINE (`src/crawl/`): GREEN 21/21 recall, 100% precision, 0 FP.
+      WIRED: default `sniff [--url]` → flow-walk (real CLI smoke 21/21); `sniff scan` = source-only;
+      no-app guidance added; legacy `discover --url` crash fixed; MCP `sniff` tool gains `walk` mode
+      (recommended) + HTML report (`--report`).
+- [~] 10. Testing — fixture regression gate + unit tests (441 pass). CLI smoke (flow-walk/report/scan/
+      discover) ✓. MCP stdio smoke (mode:walk) running. PENDING: bad-input, docs-example, second editor.
+- [ ] 11. Multi-agent verification — Skeptical Reviewer + GREEN first-time-user sim (after README rewrite)
+- [ ] 12. /repo-polish (README, llms.txt, AGENTS.md, SVG hero, CHANGELOG, demo, CI) + final report + release
 
 ## New engine (`src/crawl/`) — shipped modules
 types, noise (filter), evidence (per-page console/network), crawler (BFS + link-check),

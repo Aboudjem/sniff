@@ -35,6 +35,10 @@ if (process.argv.includes('--mcp')) {
     .option('--format <formats>', 'Report formats: html, json, junit (comma-separated)')
     .option('--fail-on <severities>', 'Exit non-zero on these severities (default: critical,high)', 'critical,high')
     .option('--json', 'Output results as JSON')
+    .option('--report', 'Write a self-contained HTML report to sniff-reports/sniff-report.html')
+    .option('--all', 'Show low-confidence findings too (hidden by default)')
+    .option('--max-pages <n>', 'Max pages to crawl during the flow-walk (default: 25)')
+    .option('--no-mobile', 'Skip the mobile (375px) responsive pass')
     .option('--track-flakes', 'Track test flakiness across runs')
     .option('--discover', 'Run autonomous E2E discovery (scenarios + edge cases)')
     .option('--max-scenarios <n>', 'Cap total scenarios for discovery (default: 50)')
@@ -112,21 +116,42 @@ if (process.argv.includes('--mcp')) {
       }
 
       const wantsBrowser = !!url && options.browser !== false;
-
-      // Exploration is opt-in so default scans stay deterministic and local.
       const isCi = options.ci || !!process.env.CI;
-      const wantsExplore = wantsBrowser && options.explore === true && !isCi;
+      const pc = (await import('picocolors')).default;
 
+      // Default experience: a running app → walk its real user flows.
       if (wantsBrowser) {
         await ensurePlaywrightBrowsers(config.browser?.projects);
+        const { crawlCommand } = await import('./commands/crawl-command.js');
+        const code = await crawlCommand({
+          rootDir,
+          url: url!,
+          headless: options.headed ? false : options.headless,
+          json: options.json,
+          report: options.report,
+          all: options.all,
+          ...(options.maxPages ? { maxPages: parseInt(options.maxPages, 10) } : {}),
+          mobile: options.mobile !== false,
+          failOn: options.failOn,
+          ci: isCi,
+        });
+        process.exit(code);
+      }
+
+      // No running app → source-only scan, with clear guidance (don't go silent).
+      if (!options.json) {
+        const { getDevCommand } = await import('../config/dev-server-detector.js');
+        const devCmd = await getDevCommand(rootDir).catch(() => null);
+        console.log(`${pc.yellow('No running app detected')} — no --url and no dev server.`);
+        console.log(pc.dim('Running a source-only scan. For the full flow-walk that finds real bugs,'));
+        console.log(`${pc.dim(`start your app${devCmd ? ` (${devCmd})` : ''} then re-run, or pass`)} ${pc.bold('--url <url>')}${pc.dim('.')} ${pc.dim('See')} ${pc.bold('sniff doctor')}${pc.dim('.')}\n`);
       }
 
       await unifiedCommand({
         rootDir,
-        url: wantsBrowser ? url : undefined,
-        explore: wantsExplore,
+        url: undefined,
+        explore: false,
         maxSteps: options.maxSteps,
-        headless: options.headed ? false : options.headless,
         format: options.format,
         failOn: options.failOn,
         json: options.json,
@@ -157,6 +182,18 @@ if (process.argv.includes('--mcp')) {
     .action(async (options) => {
       const { ciCommand } = await import('./commands/ci.js');
       await ciCommand(options);
+    });
+
+  program
+    .command('scan')
+    .description('Source-only scan (no browser) — placeholder/TODO/console.log/dead links/etc.')
+    .argument('[target]', 'Project directory (default: current directory)')
+    .option('--json', 'Output results as JSON')
+    .option('--fail-on <severities>', 'Exit non-zero on these severities (default: critical,high)', 'critical,high')
+    .action(async (target, options) => {
+      const rootDir = target ? (await import('node:path')).resolve(target) : process.cwd();
+      const { unifiedCommand } = await import('./commands/unified.js');
+      await unifiedCommand({ rootDir, explore: false, json: options.json, failOn: options.failOn });
     });
 
   program
@@ -218,7 +255,10 @@ if (process.argv.includes('--mcp')) {
         : undefined;
       const result = await discoverCommand({
         rootDir,
-        url: options.url,
+        // commander 14 can route --url to the program (default command) opts when
+        // both the default command and this subcommand declare it; fall back so
+        // `sniff discover --url <url>` works.
+        url: options.url ?? program.opts().url,
         headless: options.headed ? false : options.headless,
         ci: options.ci,
         json: options.json,

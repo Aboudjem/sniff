@@ -1,4 +1,5 @@
 export { runCrawl } from './engine.js';
+export { renderHtmlReport } from './report-html.js';
 export type { CrawlOptions } from './engine.js';
 export type {
   QaFinding,

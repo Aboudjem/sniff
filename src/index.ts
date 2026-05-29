@@ -6,5 +6,5 @@ export type { AIProvider, RouteTestContext, GeneratedTest } from './ai/types.js'
 export { generateTests } from './ai/generator.js';
 
 // New crawl/flow-walk engine (the default browser experience).
-export { runCrawl, formatReportText } from './crawl/index.js';
+export { runCrawl, formatReportText, renderHtmlReport } from './crawl/index.js';
 export type { CrawlOptions, QaFinding, CrawlReport, Confidence, Reproduction } from './crawl/index.js';

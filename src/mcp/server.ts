@@ -17,12 +17,15 @@ export async function startMcpServer(): Promise<void> {
   // (sniff-qa/DEEP-DIVE.md:1108). Marked deprecated in v0.5, removal planned v0.7.
   server.tool(
     'sniff',
-    'Unified entry point. Pass { mode: "scan" | "run" | "discover" | "report", rootDir, ...} to dispatch. Prefer this over the narrow tools (sniff_scan / sniff_run / sniff_discover / sniff_report) which are kept only for back-compat.',
+    'Find real, reproducible QA bugs in a web app. Pass { mode, rootDir, baseUrl? }. Use mode:"walk" (RECOMMENDED) to drive a real browser, walk the app\'s user flows, and report broken pages/links, console & network errors, empty/placeholder data, broken forms, state-loss, dead-ends, bad loading/error states, responsive issues and accessibility — each with reproduction proof, severity, confidence, and a fix. mode:"scan" = source-only (no browser). mode:"report" = load last results. (mode:"run"/"discover" are legacy.) Auto-detects a running dev server if baseUrl is omitted. Prefer this over the narrow tools (sniff_scan / sniff_run / sniff_discover / sniff_report).',
     {
-      mode: z.enum(['scan', 'run', 'discover', 'report']).describe('scan = source only, run = source + browser audit, discover = autonomous E2E, report = load last results'),
+      mode: z.enum(['walk', 'scan', 'run', 'discover', 'report']).describe('walk = autonomous flow-walk that finds real bugs (RECOMMENDED for a running app); scan = source only; run/discover = legacy; report = load last results'),
       rootDir: z.string().describe('Absolute path to the project root directory'),
-      baseUrl: z.string().optional(),
+      baseUrl: z.string().optional().describe('URL of the running app (walk/run/discover). Optional — auto-detected if omitted.'),
       headless: z.boolean().optional(),
+      maxPages: z.number().int().min(1).max(200).optional().describe('walk: max pages to crawl (default 25)'),
+      mobile: z.boolean().optional().describe('walk: include the mobile (375px) responsive pass (default true)'),
+      all: z.boolean().optional().describe('walk: include low-confidence findings too (default false)'),
       format: z.enum(['json', 'summary']).optional(),
       maxScenarios: z.number().int().min(1).max(200).optional(),
       maxVariantsPerScenario: z.number().int().min(0).max(20).optional(),
