@@ -33,6 +33,28 @@ Noise sample (candidate FPs): favicon.ico 404 repeated per page × 3 viewports, 
 non-findings on first run, `perf/lighthouse-error`, every console line flagged `high`. This 13% signal
 ratio is the live evidence behind D4 (trust mechanics).
 
+## GREEN — new crawl/flow-walk engine (`src/crawl/`) vs the same fixture
+
+Command: `node sniff-tests/run-crawl.mjs http://localhost:4321` → `node sniff-tests/score-fixture.mjs`.
+
+| Metric | RED (v0.5.2) | GREEN (new engine) |
+|---|---|---|
+| Recall (planted bugs found) | 9/21 (43%) | **21/21 (100%)** |
+| Precision proxy | 13% | **100%** |
+| Candidate false positives | 125 | **0** |
+| Hard FP on `/clean` | 1 | **0** |
+| Total findings | ~143 (noise) | **27 (all on-target)** |
+| Runtime | — | ~63s (9 pages, desktop+mobile, link-check) |
+
+All 12 issue classes detected with reproduction proof (route + ordered steps + screenshot +
+console/network excerpt), severity, confidence, and a suggested fix. Tuning that got from 18/21→21/21
+and 68%→100% precision: skip detectors on broken (4xx/5xx) pages; add "Failed to load resource" to the
+console-noise filter; restrict the unclear-action detector to anchors; add deterministic tap-target and
+missing-label detectors; fix two fixture artifacts (dashboard error-swallow, spinner `role=status`).
+
+The fixture is locked as a vitest regression gate (`test/crawl/fixture.test.ts`): asserts recall ≥ 0.85,
+precision proxy ≥ 0.8, and zero findings on the clean control page.
+
 ## GREEN target (rewrite gate — must hold to ship)
 - Recall ≥ 18/21 with reproduction proof + severity + confidence + suggested fix on each.
 - Precision proxy ≥ 70%; **zero** hard false positives on `/clean`.

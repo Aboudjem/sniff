@@ -33,3 +33,7 @@ Thumbs.db
 
 .omc/
 PROJECT-BRIEF.md
+
+# crawl-engine dev artifacts (regenerable)
+docs/audit/green/screens/
+docs/audit/green/*.log

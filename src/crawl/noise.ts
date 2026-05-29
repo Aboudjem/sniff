@@ -54,7 +54,7 @@ export function isEngineInducedFailure(errorText: string | undefined): boolean {
 }
 
 /** Console lines that are dev/library chatter, never the app's own defect. */
-const CONSOLE_NOISE = /(Download the React DevTools|\[vite\]|\[HMR\]|\[webpack|Lighthouse|DevTools failed to load|source ?map|React Router Future Flag|was preloaded using link preload but not used|Slow network is detected|Tracking Prevention|net::ERR_|favicon)/i;
+const CONSOLE_NOISE = /(Download the React DevTools|\[vite\]|\[HMR\]|\[webpack|Lighthouse|DevTools failed to load|source ?map|React Router Future Flag|was preloaded using link preload but not used|Slow network is detected|Tracking Prevention|net::ERR_|favicon|Failed to load resource)/i;
 
 export function isConsoleNoise(text: string): boolean {
   return CONSOLE_NOISE.test(text);

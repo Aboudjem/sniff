@@ -5,19 +5,30 @@ Durable phase tracker (survives compaction). Branch: `rebuild/qa-engine`.
 ## Phase status (12-phase template)
 - [x] 1. Discovery & repo mapping — TS, ~21.7k LOC src, 427 tests green, typecheck clean, chromium installed. 3 engines mapped.
 - [x] 2. Product audit — `docs/audit/01-product-audit.md`
-- [~] 3. Technical audit / reproduce complaint — engine `02`, qa-gap `04` done; **RED baseline run in progress** (planted-bug fixture built: `sniff-tests/planted-bugs/`).
-- [ ] 4. First-time-user simulation (fresh agent, README only) — RED
+- [x] 3. Technical audit / reproduce complaint — engine `02`, qa-gap `04`; **RED baseline measured**: 9/21 recall, 13% precision, discover crashes. `docs/audit/red/`.
+- [x] 4. First-time-user sim (DX): re-running dx-ux agent → `docs/audit/03-dx-ux-audit.md`. Fresh-agent README sim pending GREEN CLI.
 - [x] 5. Online research — `docs/audit/05-online-research.md`
 - [x] 6. Competitive research — `docs/audit/06-competitive-research.md`
-- [ ] 7. Plugin-vs-skill decision (Architect) — leaning plugin-primary (drives browser + long scan); hybrid thin skill for /sniff UX.
-- [ ] 8. Improvement plan (ranked, evidence blocks) → `DECISIONS.md`
-- [ ] 9. Safe implementation — engine rewrite of traversal/assertion core (gated by fixture + skeptical reviewer)
-- [ ] 10. Testing — full suite incl. planted-bug regression gate → `TEST_REPORT.md`
+- [x] 7. Plugin-vs-skill decision — plugin (MCP+CLI) primary + thin skill. `DECISIONS.md` D2.
+- [x] 8. Improvement plan (ranked, evidence blocks) → `DECISIONS.md` (D1-D4).
+- [~] 9. Safe implementation — NEW ENGINE BUILT (`src/crawl/`): GREEN 21/21 recall, 100% precision, 0 FP.
+      PENDING: wire as default CLI path + MCP tool; demote source scan to `sniff scan`.
+- [~] 10. Testing — fixture regression gate written (`test/crawl/fixture.test.ts`) + unit tests; full suite running.
+      PENDING: CLI/bad-input/docs-example/multi-editor smoke.
 - [ ] 11. Multi-agent verification — Skeptical Reviewer + GREEN first-time-user sim
 - [ ] 12. Final report + next commands → `TOOLS_AUDIT_AND_REBUILD_REPORT.md`
 
-## Note: missing artifact
-- `docs/audit/03-dx-ux-audit.md` was NOT written (dx-ux agent failed to return structured output). DX concerns are covered by 01 (CLI overload, mis-default) + 04. Re-run if a standalone DX artifact is needed.
+## New engine (`src/crawl/`) — shipped modules
+types, noise (filter), evidence (per-page console/network), crawler (BFS + link-check),
+detectors/{page-health, runtime-errors, content, a11y, responsive, forms, loading, flow}, engine, index.
+Exported from `src/index.ts` (`runCrawl`, `formatReportText`). Dev harness: `sniff-tests/run-crawl.mjs`.
+
+## RED→GREEN (planted-bug fixture)
+| | RED v0.5.2 | GREEN new engine |
+|---|---|---|
+| recall | 9/21 | 21/21 |
+| precision proxy | 13% | 100% |
+| FPs | 125 + 1 hard | 0 + 0 |
 
 ## Consolidated verdict (from audit)
 TUNE the system + REWRITE the flow-traversal/assertion core into ONE goal-directed walker:

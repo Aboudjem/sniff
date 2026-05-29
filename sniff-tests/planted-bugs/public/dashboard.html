@@ -18,7 +18,7 @@
   <div id="stats"></div>
 
   <h2>Activity feed</h2>
-  <div id="feed"><div class="spinner" aria-label="Loading"></div></div>
+  <div id="feed"><div class="spinner" role="status" aria-label="Loading"></div></div>
 
   <!-- Isolated script blocks: a throw in one block must not prevent the
        others from running, so all three planted behaviours manifest. -->
@@ -27,9 +27,9 @@
   </script>
   <script>
     fetch('/api/stats')
-      .then((r) => r.json())
+      .then((r) => { if (!r.ok) throw new Error('stats failed'); return r.json(); })
       .then((d) => { document.getElementById('stats').textContent = JSON.stringify(d); })
-      .catch(() => { /* swallowed; nothing shown */ });
+      .catch(() => { /* swallowed; nothing rendered, no error state shown */ });
   </script>
   <script>
     fetch('/api/hang')
