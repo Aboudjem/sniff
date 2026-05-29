@@ -104,6 +104,8 @@ Every finding is an object of the form:
 - CLI: `npx sniff-qa` (in your project, with the dev server running) — or `npx sniff-qa --url <url>`.
 - Claude Code plugin (also exposes the MCP server): install the `sniff` plugin. As an MCP server, the
   command is `npx` with args `["-y", "sniff-qa", "--mcp"]`.
+- Via the 10x marketplace (recommended for Claude Code users): `claude plugin marketplace add Aboudjem/10x`,
+  then `claude plugin install sniff@10x`. Part of the 10x plugin marketplace — github.com/Aboudjem/10x.
 - Works first-class in: Claude Code, Cursor, VS Code (Copilot), Codex, Gemini CLI, Windsurf, and
   Continue.dev.
 

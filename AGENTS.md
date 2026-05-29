@@ -85,3 +85,8 @@ Confidence semantics: `confirmed` = deterministically reproduced with proof (HTT
 - **Regression fixture & scorer** (`sniff-tests/`): `planted-bugs/` is a deliberately broken app (21 planted bugs across all 12 issue classes plus a clean control page at `/clean`); `score-fixture.mjs` (using `score-lib.mjs`) scores a sniff JSON report against `planted-bugs/MANIFEST.json` for recall, precision proxy, and hard false positives on the clean page. The locked target is 21/21 found at 100% precision with 0 false positives. `run-crawl.mjs` drives a crawl against the fixture; `mcp-smoke.mjs` smoke-tests the MCP server.
 - **MCP surface lives in `src/mcp/`** (`server.ts` registers tools; `handlers.ts` implements them). The flow-walk engine is in `src/crawl/`; the finding/report types are in `src/crawl/types.ts` and `src/core/types.ts`.
 - Keep authoring and verification as separate passes. After any engine change, re-run the fixture scorer and the vitest suite; do not declare done until both pass.
+
+## 10x marketplace
+
+sniff is part of the 10x plugin marketplace — github.com/Aboudjem/10x. Install via:
+`claude plugin marketplace add Aboudjem/10x` then `claude plugin install sniff@10x`.
