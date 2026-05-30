@@ -5,12 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased] - 2026-05-29
+## [0.7.0] - 2026-05-29
 
-Documentation and presentation polish. No behaviour changes.
+Portability and discoverability layer: a multi-CLI installer, auto-discovery manifests, a GitHub Pages demo, and localized READMEs, on top of the earlier documentation polish. No change to the scanner engine or its findings.
 
 ### Added
 
+- Multi-CLI installer: `install.sh` and `install.ps1` symlink the `/sniff`, `/sniff-fix`, and `/sniff-report` skills into a target CLI's skills directory, with `--update` and `--uninstall` and a one-line curl install. The MCP server stays the universal fallback.
+- Auto-discovery manifests: `.cursor-plugin/plugin.json` and `.copilot-plugin/plugin.json`, mirroring `.claude-plugin/plugin.json`.
+- GitHub Pages demo: `site/index.html` plus `.github/workflows/deploy-pages.yml`, reusing the existing demo assets and a sample report.
+- README: a language-switcher row, a multi-platform install matrix with a one-line curl, an npm downloads badge, and a Star History chart.
+- Localized READMEs under `READMEs/` for zh-CN, ja, es, and fr (machine-assisted; English stays the source of truth).
 - Demo video: `.github/assets/demo.gif` (hero) plus an `.mp4` and an embed guide.
 
 ### Changed
@@ -24,6 +29,7 @@ Documentation and presentation polish. No behaviour changes.
 
 ### Fixed
 
+- `.github/FUNDING.yml`: corrected the GitHub Sponsors handle to `Aboudjem` (the previous value did not resolve).
 - Animated SVGs now respect `prefers-reduced-motion`.
 - Removed sentence-break em-dashes from the docs.
 
