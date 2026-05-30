@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Fixed
+
+- `READMEs/fr.md`: rewrote the French translation to remove injected placeholder text and a corrupted install command that slipped in during machine translation. It is now structurally faithful to the English README (code blocks, asset URLs, tables, and the install command all match; em-dash count 0).
+
 ## [0.7.0] - 2026-05-29
 
 Portability and discoverability layer: a multi-CLI installer, auto-discovery manifests, a GitHub Pages demo, and localized READMEs, on top of the earlier documentation polish. No change to the scanner engine or its findings.
