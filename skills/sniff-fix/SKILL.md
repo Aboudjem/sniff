@@ -1,6 +1,7 @@
 ---
 name: sniff-fix
 description: Scan the project and auto-fix safe issues (remove debugger statements, console.log calls, and other auto-fixable problems).
+user-invocable: false
 ---
 
 # /sniff-fix - Scan and fix issues
