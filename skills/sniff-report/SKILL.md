@@ -1,6 +1,7 @@
 ---
 name: sniff-report
 description: Show the results from the last sniff scan.
+user-invocable: false
 ---
 
 # /sniff-report - Show last scan results

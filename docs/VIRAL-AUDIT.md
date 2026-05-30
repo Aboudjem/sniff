@@ -10,8 +10,8 @@
 
 | Pass | Score | Tier |
 |:--|:--|:--|
-| **Baseline (pre-pass)** | 91 / 100 | Tier 1 — production-ready / viral-ready |
-| **Post-pass** | 100 / 100 | Tier 1 — production-ready / viral-ready |
+| Baseline (pre-pass) | 91 / 100 | Tier 1 — production-ready / viral-ready |
+| Post-pass | 100 / 100 | Tier 1 — production-ready / viral-ready |
 
 ---
 
@@ -22,7 +22,7 @@
 | `description_quality` — GitHub description 20–160 chars, keyword-first | +5 | Already passing (155 chars, keyword-first) — engine flagged as gap but description was present and strong | No change needed |
 | `examples/ directory present` | +4 | Missing | Added `examples/` with 5 sub-examples (local walk, source scan, HTML report, MCP server, CI) |
 
-**Engine note:** The `description_quality` gap was a false positive. The live GitHub description was 155 characters, keyword-first, and well-formed. The engine appears to have scored it as missing during the audit pass. Topics were also already comprehensive (19 topics including `claude-code`, `mcp`, `mcp-server`, `claude`, `testing`). No repo edit was made.
+**Engine note:** The `description_quality` gap was a false positive. The live GitHub description was 155 characters, keyword-first, well-formed. Topics were also already comprehensive (19 topics including `claude-code`, `mcp`, `mcp-server`, `claude`, `testing`). No repo edit was made.
 
 ---
 
@@ -34,10 +34,10 @@ README present · package.json valid · LICENSE present · CHANGELOG present · 
 
 ## Engine assessment
 
-The supernova engine correctly identified sniff as **Tier 1 / type=claude-plugin / packaging=plugin**. The single genuine gap was the missing `examples/` directory — fixed in this pass. The `description_quality` signal was a false positive (description was already set and strong). The engine is otherwise accurate.
+Sniff scored Tier 1 correctly: type=claude-plugin, packaging=plugin. The one real gap was the missing `examples/` directory — five working usage patterns now cover local walk, source scan, HTML report, MCP server, and CI. The `description_quality` signal was a false positive; no metadata changes were needed.
 
 ---
 
 ## Read
 
-Sniff is the most demoable and most mature target in the Supernova dogfood corpus: 100% precision on 21 planted bugs, 441 tests, CLI + MCP server, multi-CLI install script, GitHub Pages site, and a demo GIF. The only structural gap was a missing `examples/` directory, now remedied with five working usage patterns (local walk, source scan, HTML report, MCP server, CI). The engine's `description_quality` flag was a false positive — no repo metadata changes were required.
+sniff is the most demoable target in the Supernova dogfood corpus: 100% precision on 21 planted bugs, 441 tests, CLI + MCP server, multi-CLI install script, GitHub Pages site, and a demo GIF. The only structural gap was a missing `examples/` directory, now fixed with five working usage patterns. The `description_quality` flag was a false positive.

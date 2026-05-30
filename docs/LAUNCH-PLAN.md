@@ -4,17 +4,17 @@
 
 ---
 
-## The one-law framing
+## The one rule
 
-Stars come from velocity on a channel whose audience you don't own. Sniff's job is not "post the repo" — it is: **engineer a post-worthy artifact → get borrowed reach to point at it → stack 2+ referrers in one window → let Trending compound.**
+Stars come from velocity on a channel whose audience you don't own. The job is not "post the repo" — it's: engineer a post-worthy artifact → get borrowed reach to point at it → stack 2+ referrers in one window → let Trending compound.
 
-Sniff is the strongest launch candidate in the dogfood corpus: 100% precision, 441 tests, CLI + MCP server, demo GIF, multi-CLI installer, GitHub Pages site, and a zero-API-key install story that fits in one sentence.
+sniff is the strongest launch candidate in the dogfood corpus: 100% precision, 441 tests, CLI + MCP server, demo GIF, multi-CLI installer, GitHub Pages site, and a zero-API-key install story that fits in one sentence.
 
 ---
 
 ## Phase 0 — Dark prep (now → launch day)
 
-Prepare these artifacts before any public post:
+Prepare these before any public post:
 
 - [ ] A 2–4-tweet thread (GIF first, one-sentence hook, 21/21 bugs stat, install command)
 - [ ] A niche-subreddit body for r/ClaudeAI and r/mcp (problem-first: "I got tired of writing Playwright tests so I built a scanner that walks my app for me")
@@ -26,7 +26,7 @@ Prepare these artifacts before any public post:
 
 ## Phase 1 — Registry submissions (highest ROI, do first)
 
-Sniff ships an MCP server (`npx -y sniff-qa --mcp`). These registries are always-on discovery channels:
+sniff ships an MCP server (`npx -y sniff-qa --mcp`). These registries are always-on discovery channels.
 
 ### 1. Official MCP Registry
 - URL: `registry.mcp.run` (via `mcp-publisher` CLI)
@@ -42,10 +42,10 @@ Sniff ships an MCP server (`npx -y sniff-qa --mcp`). These registries are always
 ### 3. awesome-mcp-servers (punkpeye/awesome-mcp-servers)
 - Method: open a PR adding sniff to the "Testing & QA" section
 - One-liner: `| [sniff-qa](https://github.com/Aboudjem/sniff) | Autonomous QA scanner — walks your running app in a browser and reports bugs with proof. CLI + MCP. No API key. | |`
-- This repo has ~25 k stars and is indexed by every MCP directory aggregator
+- This repo has ~25k stars and is indexed by every MCP directory aggregator
 
 ### 4. hesreallyhim/awesome-claude-code
-- Method: **web-UI issue form ONLY** — do NOT open a PR, it is auto-closed
+- Method: web-UI issue form only — do NOT open a PR, it is auto-closed
 - Navigate to the repo's Issues tab → "Add a tool / plugin" template → fill in sniff details
 - Category: QA / Testing
 
@@ -64,7 +64,7 @@ Open a 2-hour window and stack all channels simultaneously:
 | 5 | Publish dev.to origin-story post | dev.to |
 | 6 | Drop the Loom link in Claude Code Discord / any dev Slack you're in | Discord |
 
-Do NOT cold-post to Hacker News as the author. Engineer the demo so a third party carries it (ask a respected HN user who's used sniff to submit; or wait for the dev.to post to get picked up).
+Do NOT cold-post to Hacker News as the author. Get a respected HN user who's used sniff to submit it, or wait for the dev.to post to get picked up organically.
 
 ---
 
@@ -78,11 +78,11 @@ Do NOT cold-post to Hacker News as the author. Engineer the demo so a third part
 
 ## Key messages (copy-paste ready)
 
-**One-liner:** "Point it at your running app. It walks the real user flows in a browser and tells you what's actually broken — with proof."
+One-liner: "Point it at your running app. It walks the real user flows in a browser and tells you what's actually broken — with proof."
 
-**Stat hook:** "21 planted bugs. 21 found. 0 false positives. 441 tests. One command, no API key."
+Stat hook: "21 planted bugs. 21 found. 0 false positives. 441 tests. One command, no API key."
 
-**MCP angle:** "It's also an MCP server — `npx -y sniff-qa --mcp` and any MCP client (Claude Code, Cursor, VS Code) can run a QA walk as a tool call."
+MCP angle: "It's also an MCP server — `npx -y sniff-qa --mcp` and any MCP client (Claude Code, Cursor, VS Code) can run a QA walk as a tool call."
 
 ---
 
