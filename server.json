@@ -1,0 +1,7 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.Aboudjem/sniff",
+  "description": "QA + a11y scanner: walks your running app's real user flows and reports what's broken.",
+  "repository": { "url": "https://github.com/Aboudjem/sniff", "source": "github" },
+  "version": "0.7.1"
+}
