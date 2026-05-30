@@ -6,11 +6,20 @@
 
 <p align="center">
   <a href="https://www.npmjs.com/package/sniff-qa"><img src="https://img.shields.io/npm/v/sniff-qa?color=ef4444&logo=npm&label=npm&style=flat-square" alt="npm"></a>
+  <a href="https://www.npmjs.com/package/sniff-qa"><img src="https://img.shields.io/npm/dm/sniff-qa?color=ef4444&logo=npm&label=downloads&style=flat-square" alt="npm downloads"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-Apache_2.0-ef4444?style=flat-square" alt="License"></a>
   <a href="https://github.com/Aboudjem/sniff/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/Aboudjem/sniff/ci.yml?style=flat-square&label=CI" alt="CI"></a>
   <a href="https://nodejs.org"><img src="https://img.shields.io/badge/node-%E2%89%A522-339933?style=flat-square&logo=node.js&logoColor=white" alt="Node"></a>
   <a href="https://github.com/Aboudjem/10x"><img src="https://img.shields.io/badge/10x-marketplace-ef4444?style=flat-square" alt="10x marketplace"></a>
   <a href="https://github.com/Aboudjem/sniff/stargazers"><img src="https://img.shields.io/github/stars/Aboudjem/sniff?style=flat-square&color=ef4444" alt="Stars"></a>
+</p>
+
+<p align="center">
+  <b>English</b> ·
+  <a href="READMEs/zh-CN.md">简体中文</a> ·
+  <a href="READMEs/ja.md">日本語</a> ·
+  <a href="READMEs/es.md">Español</a> ·
+  <a href="READMEs/fr.md">Français</a>
 </p>
 
 <p align="center"><b>Point it at your running app. It walks your real user flows in a real browser and tells you what's actually broken, with proof.</b></p>
@@ -244,6 +253,29 @@ As a Claude Code plugin, Sniff adds three slash commands:
 
 As an MCP server, the surface is **one unified `sniff` tool** that takes `{ mode, rootDir, baseUrl? }`. The three modes above (`walk` / `scan` / `report`) are how you drive it, and the unified tool is what you should use. Narrow, single-purpose tools (`sniff_scan`, `sniff_run`, `sniff_report`, plus `sniff_discover` and `sniff_install`) stay registered for back-compat and scoped capabilities, but new work should go through the unified `sniff` tool.
 
+### Install the skills into any AI CLI
+
+The MCP server above works in every MCP-capable client. To also load the `/sniff` skills directly into another CLI, run the one-line installer. It symlinks the three skills into that CLI's skills directory; `--update` pulls the latest and relinks, `--uninstall` removes them.
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/Aboudjem/sniff/main/install.sh | bash -s codex
+```
+
+On Windows, run `install.ps1 <platform>` from a checkout (Developer Mode or an elevated shell is needed for symlinks).
+
+| Platform | Skills directory | One-liner |
+|:--|:--|:--|
+| Claude Code | (plugin) | `claude plugin install sniff@10x` |
+| Codex / Gemini / OpenCode / Pi | `~/.agents/skills` | `install.sh codex` |
+| VS Code (Copilot) | `~/.copilot/skills` | `install.sh copilot` |
+| Trae | `~/.trae/skills` | `install.sh trae` |
+| Vibe | `~/.vibe/skills` | `install.sh vibe` |
+| OpenClaw | `~/.openclaw/skills` | `install.sh openclaw` |
+| Antigravity | `~/.gemini/antigravity/skills` | `install.sh antigravity` |
+| Hermes / Cline / Kimi | `~/.<cli>/skills` | `install.sh hermes` |
+
+Skill-directory conventions change between CLI releases. If a link does not resolve, fall back to the MCP server (it works everywhere). Run `install.sh all` to link every platform at once.
+
 <details>
 <summary><b>Claude Code</b></summary>
 
@@ -382,6 +414,18 @@ Any web app you can open in a browser: React, Next.js, Vue, Svelte, Angular, Rem
 ## Works first-class in
 
 Claude Code · Cursor · VS Code (Copilot) · Codex · Gemini CLI · Windsurf · Continue.dev, via the MCP server (command `npx`, args `["-y", "sniff-qa", "--mcp"]`) or the CLI directly.
+
+---
+
+## Star History
+
+<a href="https://star-history.com/#Aboudjem/sniff&Date">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=Aboudjem/sniff&type=Date&theme=dark" />
+    <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=Aboudjem/sniff&type=Date" />
+    <img alt="Star history chart for Aboudjem/sniff" src="https://api.star-history.com/svg?repos=Aboudjem/sniff&type=Date" width="70%" />
+  </picture>
+</a>
 
 ---
 
