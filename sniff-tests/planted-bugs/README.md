@@ -39,9 +39,9 @@ route → expected finding). Summary:
 
 ## Scoring
 
-- **True positive** — a finding maps to a planted bug id on the correct route, with reproduction proof.
-- **False negative** — a planted bug with no matching finding (a miss).
-- **False positive** — a finding that maps to no planted bug, **or any finding on `/clean`**.
+- **True positive**: a finding maps to a planted bug id on the correct route, with reproduction proof.
+- **False negative**: a planted bug with no matching finding (a miss).
+- **False positive**: a finding that maps to no planted bug, **or any finding on `/clean`**.
 - `recall = TP / 21`, `precision = TP / (TP + FP)`.
 
 The scorer lives at `../score-fixture.mjs` (added during the rebuild) and the regression test asserts

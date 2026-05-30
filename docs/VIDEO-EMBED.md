@@ -1,8 +1,8 @@
-# Demo video — embedding the native HTML5 player
+# Demo video: embedding the native HTML5 player
 
 The README hero is the silent, autoplaying **GIF** at [`.github/assets/demo.gif`](../.github/assets/demo.gif). That is the only fully-autonomous embed GitHub renders inline, so it is what ships in the README.
 
-There is also a **voiced MP4** (`demo-output/output.mp4`, ~45s, H.264, 1920×1080, ~2 MB) with narration. GitHub will not play an MP4 that lives in the repo via a `<video>` tag pointing at a repo file — the only way to get an inline HTML5 player is to upload the file through GitHub's own attachment flow and use the resulting `user-attachments` URL.
+There is also a **voiced MP4** (`demo-output/output.mp4`, ~45s, H.264, 1920×1080, ~2 MB) with narration. GitHub will not play an MP4 that lives in the repo via a `<video>` tag pointing at a repo file; the only way to get an inline HTML5 player is to upload the file through GitHub's own attachment flow and use the resulting `user-attachments` URL.
 
 ## How to add the native player (manual, one-time)
 
@@ -13,7 +13,7 @@ There is also a **voiced MP4** (`demo-output/output.mp4`, ~45s, H.264, 1920×108
 ### Limits
 - **Size:** 10 MB on the free tier, 100 MB on paid. Our `output.mp4` is ~2 MB, so it fits the free tier.
 - **Formats:** `.mp4`, `.mov`, `.webm`. Must be **H.264** for the inline player (ours is `libx264` / `yuv420p`).
-- A `<video src="...repo file...">` tag pointing at a file committed in the repo does **not** play inline — you must use the `user-attachments` URL from the upload flow above.
+- A `<video src="...repo file...">` tag pointing at a file committed in the repo does **not** play inline; you must use the `user-attachments` URL from the upload flow above.
 
 ## Rebuilding the demo
 
@@ -24,7 +24,7 @@ All build inputs live under `demo-output/` (gitignored): `scenes/*.html`, `narra
 3. Concat with 0.3s crossfades (`xfade` + `acrossfade`) into `output.mp4`.
 4. GIF from `output.mp4` via `palettegen`/`paletteuse` (fps 12, width 960) then `gifsicle -O3 --lossy=80 --colors 200`.
 
-> **zsh note:** pass the `xfade` filtergraph via `ffmpeg -filter_complex_script <file>` rather than inline — zsh glob-expands the `[stream]` brackets and mangles the filter string, producing an empty `offset` error.
+> **zsh note:** pass the `xfade` filtergraph via `ffmpeg -filter_complex_script <file>` rather than inline; zsh glob-expands the `[stream]` brackets and mangles the filter string, producing an empty `offset` error.
 
 ## Narration / TTS note
 

@@ -3,7 +3,7 @@
   "version": "0.7.0",
   "description": "Autonomous QA scanner via sniff-qa: walks your running app in a real browser and reports real bugs (broken pages/links, console/network errors, broken forms, state-loss, empty/placeholder data, bad loading/error states, responsive + a11y) with reproduction proof, severity, confidence, and a fix. No API key.",
   "author": {
-    "name": "Adam Boudj",
+    "name": "Adam Boudjemaa",
     "url": "https://github.com/Aboudjem/sniff"
   },
   "homepage": "https://github.com/Aboudjem/sniff",

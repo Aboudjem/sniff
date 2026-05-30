@@ -62,7 +62,7 @@
     "code-quality",
     "wcag"
   ],
-  "author": "Adam Boudj <adam@integralayer.com>",
+  "author": "Adam Boudjemaa <adam@integralayer.com>",
   "license": "Apache-2.0",
   "homepage": "https://github.com/Aboudjem/sniff#readme",
   "repository": {

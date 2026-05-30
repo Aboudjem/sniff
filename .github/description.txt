@@ -2,4 +2,4 @@
 # Set this in: Repository Settings > About > Description
 #
 # Current recommendation:
-Autonomous QA scanner: one command walks your running app in a real browser and reports what's actually broken — broken pages, forms, accessibility, console errors — each with screenshot proof. Zero config. No API key. CLI + MCP server.
+Autonomous QA scanner: one command walks your running app in a real browser and reports what's actually broken (broken pages, forms, accessibility, console errors), each with screenshot proof. Zero config. No API key. CLI + MCP server.

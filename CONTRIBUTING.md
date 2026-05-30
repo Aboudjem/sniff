@@ -18,7 +18,7 @@ npm run build
 # Run the test suite (one-shot; `npm test` runs Vitest in watch mode)
 npx vitest run
 
-# Try the CLI locally — the flow-walk against a running app is the default
+# Try the CLI locally (the flow-walk against a running app is the default)
 node dist/cli/index.js --url http://localhost:3000
 
 # Or run a source-only scan (no browser)
