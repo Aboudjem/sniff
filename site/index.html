@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sniff - autonomous QA scanner for your running app</title>
+  <meta name="description" content="Point Sniff at your running app. It walks your real user flows in a real browser and tells you what is actually broken, with proof. No API key." />
+  <meta property="og:title" content="Sniff - autonomous QA scanner" />
+  <meta property="og:description" content="Walks your running app in a real browser and reports real bugs with reproduction proof." />
+  <meta property="og:image" content="assets/demo.svg" />
+  <style>
+    :root {
+      --bg: #0b0d10;
+      --panel: #14181d;
+      --ink: #e8ebef;
+      --muted: #9aa4af;
+      --accent: #ef4444;
+      --border: #232a31;
+      --radius: 12px;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font: 16px/1.6 ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .wrap { max-width: 920px; margin: 0 auto; padding: 0 20px; }
+    header { padding: 64px 0 24px; text-align: center; }
+    header img.logo { width: min(520px, 90%); height: auto; }
+    .tagline { font-size: 1.15rem; color: var(--muted); margin: 18px auto 0; max-width: 640px; }
+    .cta { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin: 28px 0 8px; }
+    .btn {
+      display: inline-block; padding: 11px 18px; border-radius: 10px;
+      border: 1px solid var(--border); color: var(--ink); font-weight: 600;
+    }
+    .btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .demo { margin: 36px 0; border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; background: var(--panel); }
+    .demo img { display: block; width: 100%; height: auto; }
+    section { margin: 44px 0; }
+    h2 { font-size: 1.4rem; margin: 0 0 14px; }
+    pre {
+      background: var(--panel); border: 1px solid var(--border); border-radius: 10px;
+      padding: 14px 16px; overflow-x: auto; font-size: 0.92rem;
+    }
+    code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; }
+    .card { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 18px; }
+    .card h3 { margin: 0 0 6px; font-size: 1rem; }
+    .card p { margin: 0; color: var(--muted); font-size: 0.92rem; }
+    footer { color: var(--muted); text-align: center; padding: 40px 0 64px; font-size: 0.9rem; border-top: 1px solid var(--border); margin-top: 48px; }
+  </style>
+</head>
+<body>
+  <header class="wrap">
+    <img class="logo" src="assets/logo-dark.svg" alt="Sniff" onerror="this.style.display='none'" />
+    <p class="tagline">Point it at your running app. It walks your real user flows in a real browser and tells you what is actually broken, with proof. No API key.</p>
+    <div class="cta">
+      <a class="btn primary" href="https://github.com/Aboudjem/sniff">View on GitHub</a>
+      <a class="btn" href="sample-report.html">See a sample report</a>
+      <a class="btn" href="https://www.npmjs.com/package/sniff-qa">npm: sniff-qa</a>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <div class="demo">
+      <img src="assets/demo.gif" alt="Sniff walking a buggy app and streaming real findings" onerror="this.src='assets/demo.svg'" />
+    </div>
+
+    <section>
+      <h2>Try it in one command</h2>
+      <pre><code>npx sniff-qa --url http://localhost:3000</code></pre>
+      <p>One command, no config, no API key, no Playwright setup. It also auto-detects a dev server on common ports.</p>
+    </section>
+
+    <section>
+      <h2>Install into your AI CLI</h2>
+      <p>One line links the Sniff skills into your CLI's skills directory. The MCP server is the universal fallback.</p>
+      <pre><code>curl -fsSL https://raw.githubusercontent.com/Aboudjem/sniff/main/install.sh | bash -s codex</code></pre>
+      <pre><code>claude mcp add sniff-qa npx -- -y sniff-qa --mcp</code></pre>
+    </section>
+
+    <section>
+      <h2>What it finds</h2>
+      <div class="grid">
+        <div class="card"><h3>Broken pages and links</h3><p>4xx/5xx, blank renders, dead internal and external links.</p></div>
+        <div class="card"><h3>Console and network errors</h3><p>Uncaught exceptions and failed requests during interaction.</p></div>
+        <div class="card"><h3>Empty and fake data</h3><p>Missing data, plus placeholders like lorem ipsum and TODO.</p></div>
+        <div class="card"><h3>Broken forms and state-loss</h3><p>Dead submit buttons, validation that never fires, wiped fields.</p></div>
+        <div class="card"><h3>Loading and error states</h3><p>Infinite spinners and missing error states.</p></div>
+        <div class="card"><h3>Accessibility and responsive</h3><p>axe-core checks plus a 375px mobile pass.</p></div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Proof, not noise</h2>
+      <p>Measured on a fixture app planted with 21 bugs across all 12 classes: 21 of 21 found, 100% precision, zero false positives, zero findings on the clean control page. Those numbers are locked as a regression test in a suite of 441 tests. Every finding ships with the exact route, ordered steps, a screenshot, and the console or network excerpt that caught it.</p>
+    </section>
+  </main>
+
+  <footer class="wrap">
+    Built by <a href="https://github.com/Aboudjem">Adam Boudjemaa</a>. Apache 2.0.
+    <br />
+    <a href="https://github.com/Aboudjem/sniff">github.com/Aboudjem/sniff</a>
+  </footer>
+</body>
+</html>
