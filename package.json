@@ -1,6 +1,6 @@
 {
   "name": "sniff-qa",
-  "version": "0.7.0",
+  "version": "0.7.1",
   "description": "Autonomous QA scanner: point it at your running app and it walks the real user flows in a headless browser and reports what's actually broken — broken pages/links, console & network errors, empty/placeholder data, broken forms, state-loss, bad loading/error states, responsive and accessibility issues — each with reproduction proof, severity, confidence, and a fix. CLI + MCP server. No API key. Uses Playwright and axe-core.",
   "type": "module",
   "main": "./dist/index.js",
@@ -105,5 +105,6 @@
     "basic-ftp": "^6.0.1",
     "ip-address": "^10.2.0",
     "postcss": "^8.5.14"
-  }
+  },
+  "mcpName": "io.github.Aboudjem/sniff"
 }
