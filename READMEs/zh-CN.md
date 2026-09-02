@@ -1,454 +1,177 @@
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/Aboudjem/sniff/main/.github/assets/logo-dark.svg">
-  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/Aboudjem/sniff/main/.github/assets/logo-light.svg">
-  <img alt="Sniff" src="https://raw.githubusercontent.com/Aboudjem/sniff/main/.github/assets/logo-light.svg" width="100%">
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/Aboudjem/sniff/main/.github/assets/hero-dark.svg">
+  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/Aboudjem/sniff/main/.github/assets/hero-light.svg">
+  <img alt="sniff" src="https://raw.githubusercontent.com/Aboudjem/sniff/main/.github/assets/hero-light.svg" width="100%">
 </picture>
 
 <p align="center">
-  <a href="https://www.npmjs.com/package/sniff-qa"><img src="https://img.shields.io/npm/v/sniff-qa?color=ef4444&logo=npm&label=npm&style=flat-square" alt="npm"></a>
-  <a href="https://www.npmjs.com/package/sniff-qa"><img src="https://img.shields.io/npm/dm/sniff-qa?color=ef4444&logo=npm&label=downloads&style=flat-square" alt="npm downloads"></a>
-  <a href="LICENSE"><img src="https://img.shields.io/badge/license-Apache_2.0-ef4444?style=flat-square" alt="License"></a>
-  <a href="https://github.com/Aboudjem/sniff/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/Aboudjem/sniff/ci.yml?style=flat-square&label=CI" alt="CI"></a>
-  <a href="https://nodejs.org"><img src="https://img.shields.io/badge/node-%E2%89%A522-339933?style=flat-square&logo=node.js&logoColor=white" alt="Node"></a>
-  <a href="https://github.com/Aboudjem/10x"><img src="https://img.shields.io/badge/10x-marketplace-ef4444?style=flat-square" alt="10x marketplace"></a>
-  <a href="https://github.com/Aboudjem/sniff/stargazers"><img src="https://img.shields.io/github/stars/Aboudjem/sniff?style=flat-square&color=ef4444" alt="Stars"></a>
+  <a href="https://www.npmjs.com/package/sniff-qa"><img src="https://img.shields.io/npm/v/sniff-qa?style=flat-square&color=FF006E&logo=npm&label=npm" alt="npm version"></a>
+  <a href="https://github.com/Aboudjem/sniff/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/Aboudjem/sniff/ci.yml?style=flat-square&color=00D4FF&label=CI" alt="CI"></a>
+  <a href="../LICENSE"><img src="https://img.shields.io/badge/license-Apache_2.0-7C3AED?style=flat-square" alt="License Apache 2.0"></a>
+  <a href="https://github.com/Aboudjem/sniff/stargazers"><img src="https://img.shields.io/github/stars/Aboudjem/sniff?style=flat-square&color=2BE8C8" alt="Stars"></a>
 </p>
 
-<p align="center">
-  <a href="../README.md">English</a> ·
-  <b>简体中文</b> ·
-  <a href="ja.md">日本語</a> ·
-  <a href="es.md">Español</a> ·
-  <a href="fr.md">Français</a>
-</p>
+<p align="center"><a href="../README.md">English</a> · <b>简体中文</b> · <a href="ja.md">日本語</a> · <a href="es.md">Español</a> · <a href="fr.md">Français</a></p>
 
-<p align="center"><b>将其指向正在运行的应用，它会在真实浏览器中走完真实用户流程，并告诉你哪里真的坏了，附带证明。</b></p>
+<p align="center"><b>把它指向你正在运行的应用。它会用真实浏览器走一遍你真实的用户流程，并带着证据告诉你哪里真的坏了。</b></p>
 
-<p align="center">
-  <a href="#快速开始">快速开始</a> ·
-  <a href="#它能发现什么">它能发现什么</a> ·
-  <a href="#为什么可以信任它">为何值得信任</a> ·
-  <a href="#它是如何工作的">工作原理</a> ·
-  <a href="#演示">演示</a> ·
-  <a href="#常见问题">常见问题</a>
-</p>
+<p align="center"><a href="#它做什么">它做什么</a> · <a href="#安装">安装</a> · <a href="#使用方法">使用方法</a> · <a href="#你会得到什么">你会得到什么</a> · <a href="#在你的编辑器中使用">在你的编辑器中使用</a> · <a href="#需要知道的事">需要知道的事</a></p>
 
-![sniff demo](../.github/assets/demo.gif)
-
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/Aboudjem/sniff/main/.github/assets/sniff-diagram.svg">
-  <img alt="Sniff 流程：你的运行中应用 -> 无头浏览器遍历 -> 附带证明的发现结果" src="https://raw.githubusercontent.com/Aboudjem/sniff/main/.github/assets/sniff-diagram.svg" width="100%">
-</picture>
-
----
-
-## 这是什么？
-
-Sniff 是一款自主 QA 扫描工具。你将其指向一个正在运行的 Web 应用，它会**在真实（无头）浏览器中走完应用的真实用户流程**（点击按钮、填写表单、跟随链接），并报告哪里真的出了问题。
-
-它**不是**代码检查工具，也**不是**静态扫描器。它会打开你的页面，像用户一样与之交互，并观察发生了什么。
-
-它报告的每个 Bug 都附带**证明**：确切的页面、有序的复现步骤、截图，以及捕获问题的控制台或网络摘录。没有复现证明的发现不算发现。
-
-```bash
-npx sniff-qa --url http://localhost:3000
-```
-
-一条命令，无需配置，无需 API 密钥，无需 Playwright 安装。将其指向正在运行的应用，或者直接在项目中运行 `npx sniff-qa`，它会自动检测常用端口上的开发服务器。
-
-> Sniff 需要遍历**正在运行的应用**。如果没有开发服务器在运行，它会退回到源代码扫描模式，并告诉你如何启动真正的遍历流程。详见[快速开始](#快速开始)。
-
----
-
-## 快速开始
-
-你需要 **Node.js 22+** 以及一个可以在本地运行的 Web 应用（或一个 URL）。
-
-> **命名说明：** npm 包名为 **`sniff-qa`**，请使用 `npx sniff-qa` 或 `npm install -D sniff-qa`。安装后，二进制文件名为 **`sniff`**（`sniff-qa` 二进制也可用）。不要运行 `npx sniff`，那是另一个包。
-
-### 1. 启动你的应用
-
-```bash
-npm run dev        # 或者你启动应用的其他方式
-```
-
-### 2. 开始遍历
-
-在另一个终端中：
-
-```bash
-npx sniff-qa --url http://localhost:3000     # 指向正在运行的应用
-```
-
-这是最可靠的单行命令。Sniff 还会**自动检测**常用端口上的开发服务器，因此在项目目录下通常可以直接运行 `npx sniff-qa` 而无需任何参数。如果你的应用运行在非标准端口（或自动检测未命中），请传入 `--url`（始终有效）。它也可以遍历已部署的 URL：
-
-```bash
-npx sniff-qa --url https://staging.myapp.com
-```
-
-> **发现 Bug 时会以非零状态退出，这是故意的。** 发现问题的遍历会以退出码 `1` 退出，从而让 CI 构建失败；这**不是**崩溃（你会看到 `✓ Scan complete` 这一行）。传入 `--fail-on none` 可使其始终以 `0` 退出。
-
-> **首次运行会下载浏览器。** Sniff 首次打开浏览器时，会下载一个 Chromium 构建版本（约 165 MB，仅需一次）。你会看到下载进度。首次运行需要互联网连接，之后会缓存在本地。
-
-### 3. 阅读报告
-
-发现结果会打印到终端，按严重程度分组，每条都带有复现步骤。想要一个可分享的页面？
-
-```bash
-npx sniff-qa --url http://localhost:3000 --report   # 运行遍历后生成 sniff-reports/sniff-report.html（自包含文件）
-```
-
-**没有应用在运行？** Sniff 不会静默失败。它会执行源代码扫描并打印清晰的下一步提示（启动开发服务器或传入 `--url`），让你能够进行真正的流程遍历。你也可以主动运行源代码扫描：
-
-```bash
-npx sniff-qa scan         # 仅源代码扫描，不打开浏览器
-```
-
-遇到问题？运行 `npx sniff-qa doctor` 检查你的环境（Node、浏览器、开发服务器）。
-
----
-
-## 它能发现什么
-
-Sniff 遍历你的应用，查找 **12 类真实 Bug**：
-
-| # | 类别 | 示例 |
-|:--|:------|:---------|
-| 1 | **页面/路由损坏** | 4xx/5xx 响应、空白渲染、崩溃页面 |
-| 2 | **链接失效** | 无效的内部和外部链接 |
-| 3 | **控制台和网络错误** | *交互过程中*未捕获的异常和失败的请求 |
-| 4 | **空数据和假数据** | 数据缺失，以及 `lorem ipsum`、`TODO`、`test@test.com` 等占位符 |
-| 5 | **表单损坏** | 失效的提交按钮、从不触发的验证 |
-| 6 | **状态丢失** | 填完表单后点击返回，内容被清空 |
-| 7 | **流程回退/死路** | 无法完成的用户旅程 |
-| 8 | **加载和错误状态异常** | 无限转圈、缺少错误状态 |
-| 9 | **异步结果损坏** | 已提交但无成功反馈（标记为"需要带外验证"） |
-| 10 | **响应式问题** | 内容溢出和过小的点击目标（375px 移动端检测） |
-| 11 | **无障碍性** | 缺少 alt 文字和标签、对比度不足，通过 [axe-core](https://github.com/dequelabs/axe-core) 检测 |
-| 12 | **主要操作不明确** | 核心行动号召被埋没或含糊不清 |
-
-每条发现结果都包含：
-
-- **复现证明**：确切的路由、有序的步骤、截图，以及控制台/网络摘录。
-- **严重程度**，让你优先修复最重要的问题。
-- **置信度**：`confirmed`（已确认）、`likely`（可能）或 `uncertain`（不确定）。不确定的发现默认隐藏，添加 `--all` 可查看。
-- **修复建议。**
-
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/Aboudjem/sniff/main/.github/assets/features-dark.svg">
-  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/Aboudjem/sniff/main/.github/assets/features-light.svg">
-  <img alt="Sniff 能发现的 Bug 类别" src="https://raw.githubusercontent.com/Aboudjem/sniff/main/.github/assets/features-light.svg" width="100%">
-</picture>
-
----
-
-## 为什么可以信任它
-
-大多数扫描工具会用大量误报淹没你，直到你停止阅读它们。Sniff 的设计方向恰恰相反。
-
-我们在一个预先植入了 **21 个 Bug（覆盖全部 12 类）** 的固定应用上进行了测量，同时还有一个干净的对照页面（应产生零发现结果）：
-
-| | 旧引擎 | 新引擎 |
-|:--|:--|:--|
-| 发现的 Bug | 9 / 21 (43%) | **21 / 21 (100%)** |
-| 精确率 | ~13% | **100%** |
-| 误报数 | 125 | **0** |
-| 干净页面上的发现数 | 不适用 | **0** |
-| 核心命令 | 崩溃 | 正常运行 |
-
-这些数字已作为回归测试锁定。完整测试套件共 **441 个测试**。
-
-**它如何将误报保持在接近零的水平：**
-
-- 内置**噪声过滤器**，过滤掉与你的 Bug 无关的杂项：favicon、分析请求、热模块替换日志、预期的认证重定向、引擎中止。
-- 无障碍性发现由 **axe-core** 支撑，该工具本身的设计目标就是零误报。
-- **不确定的发现默认被抑制**（使用 `--all` 可查看）。
-- 一个损坏的页面只报告**一次**，不会在每个指向它的链接处重复标记。
-
-如果 Sniff 无法证明一个 Bug，它就不会声称存在这个 Bug。
-
----
-
-## 它有何不同？
-
-代码检查工具读取你的源文件，从不运行你的应用。端到端框架要求*你*来编写测试。链接检查工具只检查链接。Sniff 驱动你的真实应用并对结果作出判断。
-
-| | **Sniff** | linkinator | pa11y | Playwright codegen | QA-Wolf 类服务 |
-|:--|:--|:--|:--|:--|:--|
-| 在浏览器中走真实用户流程 | **是** | 否 | 否 | 由你编写脚本 | 是 |
-| 零配置、无需编写测试 | **是** | 是 | 是 | 否（需编写测试） | 否（需入驻） |
-| 链接失效检测 | **是** | 是 | 否 | 手动 | 手动 |
-| 无障碍性检测 (axe-core) | **是** | 否 | **是** | 手动 | 部分 |
-| 空数据/占位符/假数据检测 | **是** | 否 | 否 | 否 | 否 |
-| 状态丢失（返回键清空表单） | **是** | 否 | 否 | 手动 | 手动 |
-| 每条发现附带一份复现证明 | **是** | 否 | 部分 | 否 | 不定 |
-| 自包含 HTML 报告 | **是** | 否 | 部分 | 否 | 控制台面板 |
-| 本地运行、无需账号和 API 密钥 | **是** | 是 | 是 | 是 | 否（需注册服务） |
-
-Sniff 通过一条命令独特地实现了：捕获**空数据/占位符数据**、**状态丢失**和**异步结果损坏**，并提供一份完整的证明报告，**无需编写任何脚本，也无需注册任何服务**。
-
----
-
-## 命令
-
-```
-sniff                  遍历你的应用（自动检测开发服务器）。默认模式。
-sniff --url <url>      遍历指定的 URL
-sniff scan             仅源代码扫描，不打开浏览器（占位符、TODO、死链等）
-sniff report           显示上次运行的结果
-sniff doctor           检查你的环境（Node、浏览器、配置、开发服务器）
-sniff ci               生成 GitHub Actions 工作流
-sniff fix              自动修复安全问题（console.log、debugger 等）
-sniff --help           显示所有命令和参数
-sniff --version        显示版本号
-```
-
-### 常用参数
-
-| 参数 | 功能说明 |
-|:-----|:-------------|
-| `--url <url>` | 遍历此 URL，而非自动检测 |
-| `--report` | 将自包含 HTML 报告写入 `sniff-reports/sniff-report.html` |
-| `--all` | 同时显示低置信度（`uncertain`）的发现结果 |
-| `--max-pages <n>` | 限制遍历页面数量上限（默认：25） |
-| `--no-mobile` | 跳过 375px 响应式检测 |
-| `--headed` | 遍历时显示浏览器窗口 |
-| `--json` | 机器可读的 JSON 输出 |
-| `--ci` | CI 模式（输出稳定，非交互式） |
-| `--fail-on <sev>` | 在严重程度达到或超过此级别时以非零状态退出 |
-
----
-
-## 演示
-
-针对一个有问题的应用的真实运行：21 个真实问题、零误报，每条发现结果都附有严重程度、置信度、复现步骤和修复建议。观看 Sniff 遍历应用并实时输出发现结果（动态演示在本 README 顶部播放，[`.github/assets/demo.gif`](../.github/assets/demo.gif)）。
-
-以下是同一次运行的终端静态截图：
-
-<img alt="Sniff 遍历一个有问题的应用并报告 21 个真实问题，零误报" src="https://raw.githubusercontent.com/Aboudjem/sniff/main/.github/assets/demo.svg" width="100%">
-
----
-
-## 在 AI 编辑器中使用
-
-Sniff 同时也作为 MCP 服务器发布。添加一次后，直接让你的助手"扫描这个项目中的 Bug"或"遍历我的应用"即可。如果你的应用正在运行，Sniff 会自动检测它，无需传入 URL。
-
-**一个统一的 `sniff` 工具，三种模式：**
-
-- `walk`：**推荐。** 遍历正在运行的应用的真实流程（即上文的流程遍历）。
-- `scan`：仅源代码扫描，不打开浏览器。
-- `report`：显示上次运行的结果。
-
-（`run` 和 `discover` 是为向后兼容而保留的旧版模式。）
-
-### 斜杠命令和 MCP 工具
-
-作为 Claude Code 插件，Sniff 添加了三个斜杠命令：
-
-| 斜杠命令 | 功能说明 |
-|:--------------|:-------------|
-| `/sniff` | 遍历正在运行的应用并发现真实 Bug（流程遍历）。 |
-| `/sniff-fix` | 扫描并自动修复安全问题（多余的 `console.log`、`debugger` 等）。 |
-| `/sniff-report` | 显示上次运行的结果。 |
-
-作为 MCP 服务器，接口为**一个统一的 `sniff` 工具**，接受 `{ mode, rootDir, baseUrl? }` 参数。上述三种模式（`walk` / `scan` / `report`）是驱动它的方式，你应该使用这个统一工具。单一用途的独立工具（`sniff_scan`、`sniff_run`、`sniff_report`，以及 `sniff_discover` 和 `sniff_install`）为向后兼容和范围化能力而保留注册，但新工作应通过统一的 `sniff` 工具进行。
-
-### 将技能安装到任意 AI CLI
-
-上述 MCP 服务器适用于所有支持 MCP 的客户端。如需将 `/sniff` 技能直接加载到其他 CLI，请运行单行安装命令。它会将三个技能符号链接到该 CLI 的技能目录；`--update` 可拉取最新版本并重新链接，`--uninstall` 可移除它们。
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/Aboudjem/sniff/main/install.sh | bash -s codex
-```
-
-在 Windows 上，请从检出目录运行 `install.ps1 <platform>`（符号链接需要开发者模式或提升权限的 Shell）。
-
-| 平台 | 技能目录 | 单行命令 |
-|:--|:--|:--|
-| Claude Code | （插件） | `claude plugin install sniff@10x` |
-| Codex / Gemini / OpenCode / Pi | `~/.agents/skills` | `install.sh codex` |
-| VS Code (Copilot) | `~/.copilot/skills` | `install.sh copilot` |
-| Trae | `~/.trae/skills` | `install.sh trae` |
-| Vibe | `~/.vibe/skills` | `install.sh vibe` |
-| OpenClaw | `~/.openclaw/skills` | `install.sh openclaw` |
-| Antigravity | `~/.gemini/antigravity/skills` | `install.sh antigravity` |
-| Hermes / Cline / Kimi | `~/.<cli>/skills` | `install.sh hermes` |
-
-CLI 版本之间技能目录的约定可能会变化。如果某个链接无法解析，请退回到 MCP 服务器（适用于所有平台）。运行 `install.sh all` 可一次性链接所有平台。
-
-<details>
-<summary><b>Claude Code</b></summary>
-
-从 [10x marketplace](https://github.com/Aboudjem/10x) 一键安装插件：
+<img alt="sniff walking a buggy app and streaming findings with severity, confidence, steps to reproduce, and a fix" src="https://raw.githubusercontent.com/Aboudjem/sniff/main/.github/assets/demo.gif" width="100%">
 
 ```bash
 claude plugin marketplace add Aboudjem/10x
 claude plugin install sniff@10x
 ```
 
-或仅添加 MCP 服务器：
+## 它做什么
+
+静态检查工具只读你的源码，从不运行你的应用。端到端测试框架则要求你自己编写并维护测试。sniff 会用真实
+浏览器打开你正在运行的应用，像用户那样点击和填写，然后判断实际发生了什么。
+
+- **它能发现 12 类缺陷**，从 HTTP 500 路由和失效链接，到占位数据、点了没反应的提交按钮、被浏览器后退
+  按钮清空的表单、卡住的加载动画，以及移动端横向溢出。
+- **每一条都有证据。** 一条结果会带上路由、可复现的操作步骤、一张截图，以及捕捉到它的控制台或网络片段。
+  没有证据，就不算结果。
+- **它经过实测。** 在一个植入了 21 个缺陷、覆盖全部 12 类，并额外带一个干净对照页面的样例应用上，
+  sniff 找出了 21 个中的 21 个，并且在对照页面上没有报出任何结果。
+
+## 安装
+
+上面那段命令是 Claude Code 的安装方式，通过 [10x 插件市场](https://github.com/Aboudjem/10x)。对于其他
+任何智能体，用 Vercel 的 skills CLI 安装同样的三个技能：
+
+```bash
+npx skills add Aboudjem/sniff
+```
+
+如果只想把它当作一个普通的命令行工具使用，不涉及任何编辑器：
+
+```bash
+npx sniff-qa --url http://localhost:3000
+```
+
+npm 包名是 `sniff-qa`，它安装出来的可执行文件名是 `sniff`。不要运行 `npx sniff`，那是一个无关的包。
+
+<details>
+<summary>Node 版本、项目内安装与 CI</summary>
+
+需要 Node.js 22 或更高版本。`npm install -D sniff-qa` 可以把它固定在项目里，而 `npx sniff-qa ci` 会
+生成一个带浏览器缓存和报告产物的 GitHub Actions 工作流。
+</details>
+
+## 使用方法
+
+**1. 启动你的应用。** 任何开发服务器，任何框架都可以。
+
+```bash
+npm run dev
+```
+
+**2. 走一遍，** 在第二个终端里执行。sniff 会自动探测常用端口上的开发服务器，所以 `--url` 是可选的，
+但显式传入总是有效。
+
+```bash
+npx sniff-qa --url http://localhost:3000
+```
+
+**3. 阅读结果。** 结果按严重程度分组打印。下面是针对本仓库自带的植入缺陷样例应用的一次真实运行的节选，
+命令为 `npx sniff-qa --url http://localhost:4321 --ci --max-pages 12`：
+
+```text
+sniff v0.8.0  walking http://localhost:4321
+
+  26 findings (+1 low-confidence hidden; use --all)
+
+  CRITICAL (1)
+    • [confirmed] Page returns HTTP 500
+      /crash  (route/broken-page)
+        - Navigate to /crash
+        - Server responded with HTTP 500
+      fix: The route throws server-side. Check the server logs/handler for this path and return a valid page or a proper error page.
+      shot: sniff-reports/crawl/_crash-desktop.png
+
+✓ Scan complete: 26 issue(s) found. Exit code 1 so CI fails on bugs; pass --fail-on none to always exit 0.
+```
+
+加上 `--report` 可以得到一个可以直接发给别人的、自包含的 HTML 页面。如果环境看起来不对，运行
+`npx sniff-qa doctor`。
+
+<img alt="How sniff works: crawl, act, assert, prove, report" src="https://raw.githubusercontent.com/Aboudjem/sniff/main/.github/assets/how-it-works.svg" width="100%">
+
+## 你会得到什么
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/Aboudjem/sniff/main/.github/assets/features-dark.svg">
+  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/Aboudjem/sniff/main/.github/assets/features-light.svg">
+  <img alt="The 12 classes of bugs sniff finds" src="https://raw.githubusercontent.com/Aboudjem/sniff/main/.github/assets/features-light.svg" width="100%">
+</picture>
+
+- **一份终端报告**，按严重程度分组，每条结果都带步骤、截图路径和修复建议。
+- **一个可分享的文件**，用 `--report` 得到自包含的 HTML 报告，或用 `--json` 得到 JSON。
+- **一个退出码**，当结果达到 `--fail-on` 指定的严重程度时返回非零值，于是 CI 会因真实缺陷而失败。
+- **每条结果上的置信度标签**。标为 `uncertain` 的结果默认隐藏，除非你传入 `--all`。
+
+0.8.0 的新增内容：
+
+- `--caps scan,report` 把 MCP 服务器收窄到源码扫描和已保存结果的读取，不启动浏览器，也不下载浏览器。
+- `--storage-state auth.json` 可以走一遍已登录的应用，并且该文件里的 cookie 和令牌值会从每一份写出的
+  报告中被脱敏。
+- `sniff.config` 里的 `assert` 块可以按严重程度给结果数量设上限（`maxCritical`、`maxHigh`、
+  `maxTotal`），由遍历、源码扫描和场景发现共同执行。
+
+## 在你的编辑器中使用
+
+可以在 Claude Code、Cursor、Codex、Copilot、Gemini CLI，以及另外 70 多个智能体中使用，通过
+`npx skills add`。这些技能就是 Markdown 文件，所以它们运行在你的编辑器所指向的任何模型上。
+
+| 智能体 | 一行安装命令 |
+|:--|:--|
+| Claude Code | `claude plugin install sniff@10x` |
+| 70 多个智能体中的任意一个 | `npx skills add Aboudjem/sniff` |
+| Codex、Gemini CLI、OpenCode、Pi | `install.sh codex` |
+| VS Code (Copilot) | `install.sh copilot` |
+| 其他所有 | 见 [docs/editors.md](../docs/editors.md) |
+
+<details>
+<summary>改为以 MCP 服务器方式添加</summary>
 
 ```bash
 claude mcp add sniff-qa npx -- -y sniff-qa --mcp
-```
-</details>
-
-<details>
-<summary><b>Cursor</b></summary>
-
-添加到 `~/.cursor/mcp.json`：
-
-```json
-{ "mcpServers": { "sniff-qa": { "command": "npx", "args": ["-y", "sniff-qa", "--mcp"] } } }
-```
-</details>
-
-<details>
-<summary><b>VS Code (Copilot)</b></summary>
-
-添加到 `.vscode/mcp.json`：
-
-```json
-{ "servers": { "sniff-qa": { "type": "stdio", "command": "npx", "args": ["-y", "sniff-qa", "--mcp"] } } }
-```
-</details>
-
-<details>
-<summary><b>Codex CLI</b></summary>
-
-```bash
 codex mcp add sniff-qa -- npx -y sniff-qa --mcp
 ```
+
+Cursor、VS Code、Gemini CLI、Windsurf、Continue、OpenCode 和 Zed 接受同一条命令，形式为 JSON 或 TOML
+条目。每个编辑器的具体片段都在 [docs/editors.md](../docs/editors.md) 里。
 </details>
 
-<details>
-<summary><b>Gemini CLI</b></summary>
+## 需要知道的事
 
-添加到 `~/.gemini/mcp_config.json`：
+> [!IMPORTANT]
+> 不需要 API key，不需要账号，不需要注册。sniff 在你自己的机器上运行，你的源码从不外传。
+> 遍历和扫描都不会改动你的代码。`sniff fix` 是唯一会修改源文件的命令，而且只在你主动运行时才会执行。
 
-```json
-{ "mcpServers": { "sniff-qa": { "command": "npx", "args": ["-y", "sniff-qa", "--mcp"] } } }
-```
-</details>
+> [!NOTE]
+> 第一次进行浏览器遍历时会下载一份 Chromium 构建，仅此一次，之后会被缓存。在 MCP 场景下，sniff 会返回
+> 一个 `needsSetup` 载荷，而不是让你的编辑器卡在这次下载上。
 
-<details>
-<summary><b>Windsurf</b></summary>
+- **它需要一个正在运行的应用。** 如果没有开发服务器在跑，它会退回到仅源码扫描，并告诉你如何开始真正的
+  遍历。`npx sniff-qa scan` 可以专门运行这个扫描。
+- **失效链接检查会跟进外部链接，** 所以一次遍历会向你自己的页面已经链接到的第三方 URL 发出请求。
+- **发现缺陷的遍历会以 1 退出**，这是有意为之，好让 CI 判定构建失败。这不是崩溃。传入
+  `--fail-on none` 可以始终以 0 退出。
 
-添加到 `~/.codeium/windsurf/mcp_config.json`：
+## 了解更多
 
-```json
-{ "mcpServers": { "sniff-qa": { "command": "npx", "args": ["-y", "sniff-qa", "--mcp"] } } }
-```
-</details>
-
-<details>
-<summary><b>Continue.dev</b></summary>
-
-添加到 `.continue/mcpServers/sniff-qa.yaml`：
-
-```yaml
-mcpServers:
-  sniff-qa: { command: npx, args: ["-y", "sniff-qa", "--mcp"], type: stdio }
-```
-</details>
-
-> 首次基于浏览器的遍历会下载 Chromium（约 165 MB）。通过 MCP 使用时，Sniff 会返回一个结构化的 `needsSetup` 响应，而非在编辑器中阻塞等待漫长的下载：按照提示完成安装后，再次发起请求即可。
+- [docs/editors.md](../docs/editors.md)，每个受支持智能体的安装方式和 MCP 片段
+- [docs/authenticated-walks.md](../docs/authenticated-walks.md)，用 `--storage-state` 遍历已登录的应用
+- [docs/assert-budgets.md](../docs/assert-budgets.md)，在 `sniff.config` 里按严重程度给结果设上限
+- [docs/comparison.md](../docs/comparison.md)，sniff 与静态检查工具、链接检查器和 E2E 框架的区别
+- [docs/faq.md](../docs/faq.md)，本页没有回答的问题
+- [CHANGELOG.md](../CHANGELOG.md) · [CONTRIBUTING.md](../CONTRIBUTING.md) · [LICENSE](../LICENSE)
 
 ---
 
-## 它是如何工作的
+<p align="center"><sub>Built by <a href="https://github.com/Aboudjem">Adam Boudjemaa</a> · <a href="../LICENSE">Apache 2.0</a> · standing on <a href="https://playwright.dev">Playwright</a> and <a href="https://github.com/dequelabs/axe-core">axe-core</a></sub></p>
 
-1. **找到应用。** Sniff 自动检测正在运行的开发服务器（或由你传入 `--url`）。
-2. **遍历流程。** 它在无头浏览器中打开页面，像用户一样与之交互（点击、填写表单、跟随链接），覆盖桌面端和 375px 移动端检测。
-3. **监控一切。** 遍历过程中记录控制台错误、失败的网络请求、渲染异常、缺少反馈以及无障碍性问题。
-4. **过滤噪声。** 内置噪声过滤器和 axe-core 剔除误报；不确定的发现被保留不展示。
-5. **附证明报告。** 每条存留的发现结果都包含严重程度、置信度、复现步骤、截图和修复建议，在终端中显示，并可选生成 HTML 报告。
-
-<img alt="Sniff 的工作原理：爬取、交互、断言、证明、报告" src="https://raw.githubusercontent.com/Aboudjem/sniff/main/.github/assets/how-it-works.svg" width="100%">
-
----
-
-## CI 集成
-
-在流水线中运行 Sniff，并在发现真实 Bug 时使构建失败：
-
-```bash
-npx sniff-qa --ci --fail-on high
-```
-
-生成一个可直接提交的 GitHub Actions 工作流：
-
-```bash
-npx sniff-qa ci
-```
-
-这会写入 `.github/workflows/sniff.yml`，包含浏览器缓存和报告产物配置。
-
----
-
-## 常见问题
-
-**没有开发服务器时能用吗？**
-Sniff 的设计目标是遍历*正在运行*的应用，那是它最能发挥价值的地方。如果没有服务器在运行，它不会静默失败：它会执行源代码扫描，并告诉你确切的下一步（启动开发服务器或传入 `--url`）。你也可以主动运行 `npx sniff-qa scan` 来获取源代码扫描结果。
-
-**首次运行会下载什么？**
-Sniff 首次打开浏览器时，会下载一个 Chromium 构建版本（约 165 MB，仅需一次，之后缓存在本地）。你会看到下载进度，首次运行需要互联网连接。不会安装其他任何东西，也不会创建账号。
-
-**需要 API 密钥吗？**
-不需要。Sniff 完全在你的本地机器上运行，无需 API 密钥，无需注册。你的代码和应用不会离开你的电脑。
-
-**它与代码检查工具有何不同？**
-代码检查工具读取源文件，从不运行你的应用，因此它看不到失效的提交按钮、无限转圈、被清空的表单或 500 页面。Sniff 打开你的真实应用，与之交互，并报告真正出错的内容，附带截图和复现步骤。
-
-**它与 Playwright codegen（或编写端到端测试）有何不同？**
-Playwright codegen 录制一个由*你*编写和维护的脚本，它只测试你点击的路径。Sniff 不需要你维护任何东西：它自行探索你的流程并对结果作出判断，能捕获录制的快乐路径从不检查的内容（空数据/占位符数据、状态丢失、缺少成功反馈）。
-
-**它会修改我的代码吗？**
-遍历过程中不会。遍历和扫描是只读操作。单独的 `sniff fix` 命令会应用安全的自动修复（如多余的 `console.log`/`debugger`），且仅在你主动运行时生效。
-
-**支持哪些技术栈？**
-任何可以在浏览器中打开的 Web 应用：React、Next.js、Vue、Svelte、Angular、Remix、SvelteKit、Astro、纯 HTML 等。它遍历渲染后的应用，因此框架对浏览器检测没有影响。
-
----
-
-## 一流支持的平台
-
-Claude Code · Cursor · VS Code (Copilot) · Codex · Gemini CLI · Windsurf · Continue.dev，通过 MCP 服务器（命令 `npx`，参数 `["-y", "sniff-qa", "--mcp"]`）或直接使用 CLI。
-
----
-
-## Star 历史
-
-<a href="https://star-history.com/#Aboudjem/sniff&Date">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=Aboudjem/sniff&type=Date&theme=dark" />
-    <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=Aboudjem/sniff&type=Date" />
-    <img alt="Aboudjem/sniff 的 Star 历史图表" src="https://api.star-history.com/svg?repos=Aboudjem/sniff&type=Date" width="70%" />
-  </picture>
-</a>
-
----
-
-## 贡献
-
-欢迎提交 Issue 和 PR。详见 [CONTRIBUTING.md](../CONTRIBUTING.md)。
-
----
-
-<p align="center">
-  <sub>
-    构建于 <a href="https://playwright.dev">Playwright</a> · <a href="https://github.com/dequelabs/axe-core">axe-core</a> · <a href="https://developer.chrome.com/docs/lighthouse">Lighthouse</a> · <a href="https://github.com/mapbox/pixelmatch">pixelmatch</a> · <a href="https://zod.dev">Zod</a> · <a href="https://github.com/modelcontextprotocol/typescript-sdk">MCP SDK</a>
-  </sub>
-</p>
-
-<p align="center">
-  <a href="https://www.linkedin.com/in/adam-boudjemaa/"><img src="https://img.shields.io/badge/LinkedIn-0A66C2?style=flat-square&logo=linkedin&logoColor=white" alt="LinkedIn"></a>
-  <a href="https://x.com/AdamBoudj"><img src="https://img.shields.io/badge/X-000000?style=flat-square&logo=x&logoColor=white" alt="X"></a>
-  <a href="https://adam-boudjemaa.com/"><img src="https://img.shields.io/badge/Website-ef4444?style=flat-square&logo=googlechrome&logoColor=white" alt="网站"></a>
-</p>
-
-<p align="center">
-  <sub>由 <a href="https://github.com/Aboudjem">Adam Boudjemaa</a> 构建 · <a href="../LICENSE">Apache 2.0</a></sub>
-</p>
-
-*本译文由机器辅助生成。欢迎母语为中文的贡献者提交 PR 进行修正和改进。英文版 README（[../README.md](../README.md)）为最终参考来源。*
+<p align="center"><sub>本文档由机器辅助翻译，英文版 <a href="../README.md">README.md</a> 为准。</sub></p>

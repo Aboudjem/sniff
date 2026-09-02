@@ -1,452 +1,180 @@
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/Aboudjem/sniff/main/.github/assets/logo-dark.svg">
-  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/Aboudjem/sniff/main/.github/assets/logo-light.svg">
-  <img alt="Sniff" src="https://raw.githubusercontent.com/Aboudjem/sniff/main/.github/assets/logo-light.svg" width="100%">
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/Aboudjem/sniff/main/.github/assets/hero-dark.svg">
+  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/Aboudjem/sniff/main/.github/assets/hero-light.svg">
+  <img alt="sniff" src="https://raw.githubusercontent.com/Aboudjem/sniff/main/.github/assets/hero-light.svg" width="100%">
 </picture>
 
 <p align="center">
-  <a href="https://www.npmjs.com/package/sniff-qa"><img src="https://img.shields.io/npm/v/sniff-qa?color=ef4444&logo=npm&label=npm&style=flat-square" alt="npm"></a>
-  <a href="https://www.npmjs.com/package/sniff-qa"><img src="https://img.shields.io/npm/dm/sniff-qa?color=ef4444&logo=npm&label=downloads&style=flat-square" alt="npm downloads"></a>
-  <a href="LICENSE"><img src="https://img.shields.io/badge/license-Apache_2.0-ef4444?style=flat-square" alt="License"></a>
-  <a href="https://github.com/Aboudjem/sniff/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/Aboudjem/sniff/ci.yml?style=flat-square&label=CI" alt="CI"></a>
-  <a href="https://nodejs.org"><img src="https://img.shields.io/badge/node-%E2%89%A522-339933?style=flat-square&logo=node.js&logoColor=white" alt="Node"></a>
-  <a href="https://github.com/Aboudjem/10x"><img src="https://img.shields.io/badge/10x-marketplace-ef4444?style=flat-square" alt="10x marketplace"></a>
-  <a href="https://github.com/Aboudjem/sniff/stargazers"><img src="https://img.shields.io/github/stars/Aboudjem/sniff?style=flat-square&color=ef4444" alt="Stars"></a>
+  <a href="https://www.npmjs.com/package/sniff-qa"><img src="https://img.shields.io/npm/v/sniff-qa?style=flat-square&color=FF006E&logo=npm&label=npm" alt="npm version"></a>
+  <a href="https://github.com/Aboudjem/sniff/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/Aboudjem/sniff/ci.yml?style=flat-square&color=00D4FF&label=CI" alt="CI"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-Apache_2.0-7C3AED?style=flat-square" alt="License Apache 2.0"></a>
+  <a href="https://github.com/Aboudjem/sniff/stargazers"><img src="https://img.shields.io/github/stars/Aboudjem/sniff?style=flat-square&color=2BE8C8" alt="Stars"></a>
 </p>
 
-<p align="center">
-  <b>English</b> ·
-  <a href="READMEs/zh-CN.md">简体中文</a> ·
-  <a href="READMEs/ja.md">日本語</a> ·
-  <a href="READMEs/es.md">Español</a> ·
-  <a href="READMEs/fr.md">Français</a>
-</p>
+<p align="center"><b>English</b> · <a href="READMEs/zh-CN.md">简体中文</a> · <a href="READMEs/ja.md">日本語</a> · <a href="READMEs/es.md">Español</a> · <a href="READMEs/fr.md">Français</a></p>
 
-<p align="center"><b>Point it at your running app. It walks your real user flows in a real browser and tells you what's actually broken, with proof.</b></p>
+<p align="center"><b>Point it at your running app. It walks your real user flows in a real browser and tells you what is actually broken, with proof.</b></p>
 
-<p align="center">
-  <a href="#get-started">Get started</a> ·
-  <a href="#what-it-finds">What it finds</a> ·
-  <a href="#why-you-can-trust-it">Why trust it</a> ·
-  <a href="#how-it-works">How it works</a> ·
-  <a href="#demo">Demo</a> ·
-  <a href="#faq">FAQ</a>
-</p>
+<p align="center"><a href="#what-it-does">What it does</a> · <a href="#install">Install</a> · <a href="#use-it">Use it</a> · <a href="#what-you-get">What you get</a> · <a href="#works-in-your-editor">Works in your editor</a> · <a href="#good-to-know">Good to know</a></p>
 
-![sniff demo](.github/assets/demo.gif)
-
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/Aboudjem/sniff/main/.github/assets/sniff-diagram.svg">
-  <img alt="Sniff flow: your running app -> headless browser walk -> findings with proof" src="https://raw.githubusercontent.com/Aboudjem/sniff/main/.github/assets/sniff-diagram.svg" width="100%">
-</picture>
-
----
-
-## What is this?
-
-Sniff is an autonomous QA scanner. You point it at a running web app and it **walks your app's real user flows in a real (headless) browser** (clicking buttons, filling forms, following links) and reports what's actually broken.
-
-It is **not** a linter and **not** a static scanner. It opens your pages, interacts with them like a user would, and watches what happens.
-
-Every bug it reports comes with **proof**: the exact page, the ordered steps to reproduce it, a screenshot, and the console or network excerpt that caught it. A finding without reproduction proof is not a finding.
-
-```bash
-npx sniff-qa --url http://localhost:3000
-```
-
-One command, no config, no API key, no Playwright setup. Point it at your running app, or just run `npx sniff-qa` from your project and it auto-detects a dev server on common ports.
-
-> Sniff walks a **running app**. If no dev server is running, it falls back to a source-code scan and tells you exactly how to start the real walk. See [Get started](#get-started).
-
----
-
-## Get started
-
-You need **Node.js 22+** and a web app you can run locally (or a URL).
-
-> **Naming:** the npm package is **`sniff-qa`**, so use `npx sniff-qa` or `npm install -D sniff-qa`. Once installed, the binary is **`sniff`** (the `sniff-qa` binary works too). Don't run `npx sniff`, that's a different package.
-
-### 1. Start your app
-
-```bash
-npm run dev        # or however you start your app
-```
-
-### 2. Walk it
-
-In another terminal:
-
-```bash
-npx sniff-qa --url http://localhost:3000     # point it at your running app
-```
-
-That's the reliable one-liner. Sniff also **auto-detects** a dev server on common ports, so from your project folder you can often just run `npx sniff-qa` with no flags. If your app is on a non-standard port (or auto-detect misses it), pass `--url` (that always works). It also walks a deployed URL:
-
-```bash
-npx sniff-qa --url https://staging.myapp.com
-```
-
-> **Found bugs? It exits non-zero, on purpose.** A walk that finds issues exits with code `1` so CI fails the build; it is **not** a crash (you'll see a `✓ Scan complete` line). Pass `--fail-on none` to always exit `0`.
-
-> **First run downloads a browser.** The first time Sniff opens a browser it downloads a Chromium build (~165 MB, one-time). You'll see the progress. You need internet access for that first run; after that it's cached.
-
-### 3. Read the report
-
-Findings print to your terminal, grouped by severity, each with steps to reproduce. Want a shareable page?
-
-```bash
-npx sniff-qa --url http://localhost:3000 --report   # runs a walk, then writes sniff-reports/sniff-report.html (self-contained)
-```
-
-**No app running?** Sniff doesn't fail silently. It runs a source-only scan and prints a clear next step (start your dev server or pass `--url`) so you can get to the real flow-walk. You can also run the source scan on purpose:
-
-```bash
-npx sniff-qa scan         # source-only scan, no browser
-```
-
-Stuck? Run `npx sniff-qa doctor` to check your environment (Node, browser, dev server).
-
----
-
-## What it finds
-
-Sniff walks your app and looks for **12 classes of real bugs**:
-
-| # | Class | Examples |
-|:--|:------|:---------|
-| 1 | **Broken pages / routes** | 4xx/5xx responses, blank renders, crash screens |
-| 2 | **Broken links** | Dead internal and external links |
-| 3 | **Console & network errors** | Uncaught exceptions and failed requests *during interaction* |
-| 4 | **Empty & fake data** | Missing data, plus placeholders like `lorem ipsum`, `TODO`, `test@test.com` |
-| 5 | **Broken forms** | Dead submit buttons, validation that never fires |
-| 6 | **State loss** | Fill a form, hit back, and it's wiped |
-| 7 | **Flow regressions / dead-ends** | A journey that can't be completed |
-| 8 | **Bad loading & error states** | Infinite spinners, missing error states |
-| 9 | **Broken async outcomes** | Submitted but no success feedback (flagged "needs out-of-band verification") |
-| 10 | **Responsive issues** | Overflow and tiny tap targets (a 375px mobile pass) |
-| 11 | **Accessibility** | Missing alt text and labels, contrast, via [axe-core](https://github.com/dequelabs/axe-core) |
-| 12 | **Unclear primary actions** | The main call-to-action is buried or ambiguous |
-
-Each finding ships with:
-
-- **Reproduction proof**: the exact route, the ordered steps, a screenshot, and the console/network excerpt.
-- **A severity**, so you fix the right thing first.
-- **A confidence**: `confirmed`, `likely`, or `uncertain`. Uncertain findings are hidden by default; add `--all` to see them.
-- **A suggested fix.**
-
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/Aboudjem/sniff/main/.github/assets/features-dark.svg">
-  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/Aboudjem/sniff/main/.github/assets/features-light.svg">
-  <img alt="The bug classes Sniff finds" src="https://raw.githubusercontent.com/Aboudjem/sniff/main/.github/assets/features-light.svg" width="100%">
-</picture>
-
----
-
-## Why you can trust it
-
-Most scanners drown you in false positives until you stop reading them. Sniff is built the opposite way.
-
-We measured it on a fixture app planted with **21 bugs across all 12 classes**, plus a clean control page that should produce zero findings:
-
-| | Old engine | New engine |
-|:--|:--|:--|
-| Bugs found | 9 / 21 (43%) | **21 / 21 (100%)** |
-| Precision | ~13% | **100%** |
-| False positives | 125 | **0** |
-| Findings on the clean page | n/a | **0** |
-| Flagship command | crashed | works |
-
-Those numbers are locked as a regression test. The full suite is **441 tests**.
-
-**How it keeps false positives near zero:**
-
-- A first-party **noise filter** drops the junk that isn't your bug: favicons, analytics, hot-module-reload chatter, expected auth redirects, engine aborts.
-- Accessibility findings are backed by **axe-core**, which is zero-false-positive by design.
-- **Uncertain findings are suppressed by default** (use `--all` to see them).
-- A broken page is reported **once**, not re-flagged on every link that points to it.
-
-If Sniff can't prove a bug, it doesn't claim one.
-
----
-
-## How is it different?
-
-Linters read your source. End-to-end frameworks make *you* write the tests. Link checkers only check links. Sniff drives your real app and judges the result.
-
-| | **Sniff** | linkinator | pa11y | Playwright codegen | QA-Wolf-style services |
-|:--|:--|:--|:--|:--|:--|
-| Walks real user flows in a browser | **Yes** | No | No | You script it | Yes |
-| Zero setup, zero test-writing | **Yes** | Yes | Yes | No (you write tests) | No (onboarding) |
-| Broken links | **Yes** | Yes | No | Manual | Manual |
-| Accessibility (axe-core) | **Yes** | No | **Yes** | Manual | Some |
-| Empty / placeholder / fake data | **Yes** | No | No | No | No |
-| State-loss (back-button wipes a form) | **Yes** | No | No | Manual | Manual |
-| One-shot reproduction proof per finding | **Yes** | No | Partial | No | Varies |
-| Self-contained HTML report | **Yes** | No | Partial | No | Dashboard |
-| Runs locally, no account, no API key | **Yes** | Yes | Yes | Yes | No (service) |
-
-What Sniff uniquely does in one command: catch **empty/placeholder data**, **state-loss**, and **broken async outcomes**, and hand you a single proof report, with **no scripts to write and no service to sign up for**.
-
----
-
-## Commands
-
-```
-sniff                  Walk your app (auto-detects the dev server). The default.
-sniff --url <url>      Walk a specific URL
-sniff scan             Source-only scan, no browser (placeholders, TODOs, dead links, etc.)
-sniff report           Show the results from the last run
-sniff doctor           Check your environment (Node, browser, config, dev server)
-sniff ci               Generate a GitHub Actions workflow
-sniff fix              Auto-fix safe issues (console.log, debugger, etc.)
-sniff --help           Show every command and flag
-sniff --version        Show the version
-```
-
-### Useful flags
-
-| Flag | What it does |
-|:-----|:-------------|
-| `--url <url>` | Walk this URL instead of auto-detecting |
-| `--report` | Write a self-contained HTML report to `sniff-reports/sniff-report.html` |
-| `--all` | Also show low-confidence (`uncertain`) findings |
-| `--max-pages <n>` | Cap how many pages to walk (default: 25) |
-| `--no-mobile` | Skip the 375px responsive pass |
-| `--headed` | Show the browser window while it walks |
-| `--json` | Machine-readable JSON output |
-| `--ci` | CI mode (stable output, non-interactive) |
-| `--fail-on <sev>` | Exit non-zero on findings at or above this severity |
-
----
-
-## Demo
-
-A real run against a buggy app: 21 real issues, zero false positives, every finding with severity, confidence, reproduction steps, and a fix. Watch Sniff walk the app and stream findings in (the animated demo plays at the top of this README, [`.github/assets/demo.gif`](.github/assets/demo.gif)).
-
-Below is the same run as a stylized terminal still:
-
-<img alt="Sniff walking a buggy app and reporting 21 real issues with zero false positives" src="https://raw.githubusercontent.com/Aboudjem/sniff/main/.github/assets/demo.svg" width="100%">
-
----
-
-## Use it from your AI editor
-
-Sniff ships as an MCP server too. Add it once, then just ask your assistant *"scan this project for bugs"* or *"walk my app."* If your app is running, Sniff auto-detects it, so you don't have to pass a URL.
-
-**One unified `sniff` tool, three modes:**
-
-- `walk`: **recommended.** Walks your running app's real flows (the flow-walk above).
-- `scan`: source-only scan, no browser.
-- `report`: show the last run's results.
-
-(`run` and `discover` are legacy modes kept for back-compat.)
-
-### Slash commands and MCP tools
-
-As a Claude Code plugin, Sniff adds three slash commands:
-
-| Slash command | What it does |
-|:--------------|:-------------|
-| `/sniff` | Walk your running app and find real bugs (the flow-walk). |
-| `/sniff-fix` | Scan and auto-fix safe issues (stray `console.log`, `debugger`, etc.). |
-| `/sniff-report` | Show the results from the last run. |
-
-As an MCP server, the surface is **one unified `sniff` tool** that takes `{ mode, rootDir, baseUrl? }`. The three modes above (`walk` / `scan` / `report`) are how you drive it, and the unified tool is what you should use. Narrow, single-purpose tools (`sniff_scan`, `sniff_run`, `sniff_report`, plus `sniff_discover` and `sniff_install`) stay registered for back-compat and scoped capabilities, but new work should go through the unified `sniff` tool.
-
-### Install the skills into any AI CLI
-
-The MCP server above works in every MCP-capable client. To also load the `/sniff` skills directly into another CLI, run the one-line installer. It symlinks the three skills into that CLI's skills directory; `--update` pulls the latest and relinks, `--uninstall` removes them.
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/Aboudjem/sniff/main/install.sh | bash -s codex
-```
-
-On Windows, run `install.ps1 <platform>` from a checkout (Developer Mode or an elevated shell is needed for symlinks).
-
-| Platform | Skills directory | One-liner |
-|:--|:--|:--|
-| Claude Code | (plugin) | `claude plugin install sniff@10x` |
-| Codex / Gemini / OpenCode / Pi | `~/.agents/skills` | `install.sh codex` |
-| VS Code (Copilot) | `~/.copilot/skills` | `install.sh copilot` |
-| Trae | `~/.trae/skills` | `install.sh trae` |
-| Vibe | `~/.vibe/skills` | `install.sh vibe` |
-| OpenClaw | `~/.openclaw/skills` | `install.sh openclaw` |
-| Antigravity | `~/.gemini/antigravity/skills` | `install.sh antigravity` |
-| Hermes / Cline / Kimi | `~/.<cli>/skills` | `install.sh hermes` |
-
-Skill-directory conventions change between CLI releases. If a link does not resolve, fall back to the MCP server (it works everywhere). Run `install.sh all` to link every platform at once.
-
-<details>
-<summary><b>Claude Code</b></summary>
-
-One-command plugin install from the [10x marketplace](https://github.com/Aboudjem/10x):
+<img alt="sniff walking a buggy app and streaming findings with severity, confidence, steps to reproduce, and a fix" src="https://raw.githubusercontent.com/Aboudjem/sniff/main/.github/assets/demo.gif" width="100%">
 
 ```bash
 claude plugin marketplace add Aboudjem/10x
 claude plugin install sniff@10x
 ```
 
-Or add just the MCP server:
+## What it does
+
+Linters read your source and never run your app. End-to-end frameworks make you write and maintain
+the tests. sniff opens your running app in a real browser, clicks and fills things like a user
+would, and judges what actually happened.
+
+- **It finds 12 classes of bugs**, from HTTP 500 routes and dead links to placeholder data, dead
+  submit buttons, forms wiped by the back button, stuck spinners, and mobile overflow.
+- **It proves every one.** A finding carries the route, the ordered steps to reproduce it, a
+  screenshot, and the console or network excerpt that caught it. No proof, no finding.
+- **It has been measured.** On a fixture app planted with 21 bugs across all 12 classes, plus a
+  clean control page, sniff finds 21 of 21 and reports nothing on the control page.
+
+## Install
+
+The block above is the Claude Code path, through the [10x marketplace](https://github.com/Aboudjem/10x).
+For any other agent, the Vercel skills CLI installs the same three skills:
 
 ```bash
-claude mcp add sniff-qa npx -- -y sniff-qa --mcp
+npx skills add Aboudjem/sniff
 ```
-</details>
 
-<details>
-<summary><b>Cursor</b></summary>
-
-Add to `~/.cursor/mcp.json`:
-
-```json
-{ "mcpServers": { "sniff-qa": { "command": "npx", "args": ["-y", "sniff-qa", "--mcp"] } } }
-```
-</details>
-
-<details>
-<summary><b>VS Code (Copilot)</b></summary>
-
-Add to `.vscode/mcp.json`:
-
-```json
-{ "servers": { "sniff-qa": { "type": "stdio", "command": "npx", "args": ["-y", "sniff-qa", "--mcp"] } } }
-```
-</details>
-
-<details>
-<summary><b>Codex CLI</b></summary>
+To use it as a plain command line tool, with no editor involved:
 
 ```bash
-codex mcp add sniff-qa -- npx -y sniff-qa --mcp
+npx sniff-qa --url http://localhost:3000
 ```
-</details>
+
+The npm package is `sniff-qa` and the binary it installs is `sniff`. Do not run `npx sniff`, which
+is an unrelated package.
 
 <details>
-<summary><b>Gemini CLI</b></summary>
+<summary>Node version, project install, and CI</summary>
 
-Add to `~/.gemini/mcp_config.json`:
-
-```json
-{ "mcpServers": { "sniff-qa": { "command": "npx", "args": ["-y", "sniff-qa", "--mcp"] } } }
-```
+Node.js 22 or newer. `npm install -D sniff-qa` pins it in a project, and `npx sniff-qa ci` writes a
+GitHub Actions workflow with browser caching and report artifacts.
 </details>
 
-<details>
-<summary><b>Windsurf</b></summary>
+## Use it
 
-Add to `~/.codeium/windsurf/mcp_config.json`:
+**1. Start your app.** Any dev server, any framework.
 
-```json
-{ "mcpServers": { "sniff-qa": { "command": "npx", "args": ["-y", "sniff-qa", "--mcp"] } } }
+```bash
+npm run dev
 ```
-</details>
 
-<details>
-<summary><b>Continue.dev</b></summary>
+**2. Walk it,** from a second terminal. sniff auto-detects a dev server on the common ports, so
+`--url` is optional, but passing it always works.
 
-Add to `.continue/mcpServers/sniff-qa.yaml`:
-
-```yaml
-mcpServers:
-  sniff-qa: { command: npx, args: ["-y", "sniff-qa", "--mcp"], type: stdio }
+```bash
+npx sniff-qa --url http://localhost:3000
 ```
-</details>
 
-> The first browser-based walk downloads Chromium (~165 MB). Over MCP, Sniff returns a structured `needsSetup` payload instead of blocking the editor on a long download: run the install it shows you, then ask again.
+**3. Read the findings.** They print grouped by severity. Below is an abridged real run against this
+repo's own planted-bug fixture, from `npx sniff-qa --url http://localhost:4321 --ci --max-pages 12`:
 
----
+```text
+sniff v0.8.0  walking http://localhost:4321
 
-## How it works
+  26 findings (+1 low-confidence hidden; use --all)
 
-1. **Find the app.** Sniff auto-detects your running dev server (or you pass `--url`).
-2. **Walk the flows.** It opens pages in a headless browser and interacts with them like a user (clicking, filling forms, following links) across desktop and a 375px mobile pass.
-3. **Watch everything.** It records console errors, failed network requests, broken renders, missing feedback, and accessibility issues as it goes.
-4. **Filter the noise.** The first-party noise filter and axe-core drop the false positives; uncertain findings are held back.
-5. **Report with proof.** Each surviving finding gets a severity, a confidence, reproduction steps, a screenshot, and a suggested fix, in the terminal and an optional HTML report.
+  CRITICAL (1)
+    • [confirmed] Page returns HTTP 500
+      /crash  (route/broken-page)
+        - Navigate to /crash
+        - Server responded with HTTP 500
+      fix: The route throws server-side. Check the server logs/handler for this path and return a valid page or a proper error page.
+      shot: sniff-reports/crawl/_crash-desktop.png
+
+✓ Scan complete: 26 issue(s) found. Exit code 1 so CI fails on bugs; pass --fail-on none to always exit 0.
+```
+
+Add `--report` for a self-contained HTML page you can send to someone. Run `npx sniff-qa doctor` if
+the environment looks wrong.
 
 <img alt="How sniff works: crawl, act, assert, prove, report" src="https://raw.githubusercontent.com/Aboudjem/sniff/main/.github/assets/how-it-works.svg" width="100%">
 
----
+## What you get
 
-## CI integration
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/Aboudjem/sniff/main/.github/assets/features-dark.svg">
+  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/Aboudjem/sniff/main/.github/assets/features-light.svg">
+  <img alt="The 12 classes of bugs sniff finds" src="https://raw.githubusercontent.com/Aboudjem/sniff/main/.github/assets/features-light.svg" width="100%">
+</picture>
 
-Run Sniff in your pipeline and fail the build on real bugs:
+- **A terminal report** grouped by severity, each finding with steps, a screenshot path, and a fix.
+- **A shareable file**, a self-contained HTML report with `--report` or JSON with `--json`.
+- **An exit code**, non-zero when findings reach the `--fail-on` severity, so CI fails on real bugs.
+- **A confidence label** on each finding. `uncertain` ones stay hidden unless you pass `--all`.
+
+New in 0.8.0:
+
+- `--caps scan,report` narrows the MCP server to the source scan and the saved-results reader, with
+  no browser launch and no browser download.
+- `--storage-state auth.json` walks a logged-in app, and cookie and token values from that file are
+  redacted from every written report.
+- An `assert` block in `sniff.config` caps findings by severity (`maxCritical`, `maxHigh`,
+  `maxTotal`), enforced by the walk, the source scan, and discovery.
+
+## Works in your editor
+
+Works in Claude Code, Cursor, Codex, Copilot, Gemini CLI, and 70+ other agents through
+`npx skills add`. The skills are Markdown, so they run on whatever model your editor points at.
+
+| Agent | One-line install |
+|:--|:--|
+| Claude Code | `claude plugin install sniff@10x` |
+| Any of 70+ agents | `npx skills add Aboudjem/sniff` |
+| Codex, Gemini CLI, OpenCode, Pi | `install.sh codex` |
+| VS Code (Copilot) | `install.sh copilot` |
+| Everything else | see [docs/editors.md](docs/editors.md) |
+
+<details>
+<summary>Add it as an MCP server instead</summary>
 
 ```bash
-npx sniff-qa --ci --fail-on high
+claude mcp add sniff-qa npx -- -y sniff-qa --mcp
+codex mcp add sniff-qa -- npx -y sniff-qa --mcp
 ```
 
-Generate a ready-to-commit GitHub Actions workflow:
+Cursor, VS Code, Gemini CLI, Windsurf, Continue, OpenCode, and Zed take the same command as a JSON
+or TOML entry. Every per-editor snippet is in [docs/editors.md](docs/editors.md).
+</details>
 
-```bash
-npx sniff-qa ci
-```
+## Good to know
 
-This writes `.github/workflows/sniff.yml` with browser caching and report artifacts.
+> [!IMPORTANT]
+> No API key, no account, no signup. sniff runs on your machine and your source never leaves it.
+> Walking and scanning never change your code. `sniff fix` is the only command that edits source
+> files, and only when you run it.
 
----
+> [!NOTE]
+> The first browser walk downloads a Chromium build once and then caches it. Over MCP, sniff returns
+> a `needsSetup` payload instead of blocking your editor on the download.
 
-## FAQ
+- **It wants a running app.** With no dev server up it falls back to a source-only scan and tells
+  you how to start the real walk. `npx sniff-qa scan` runs that scan on purpose.
+- **Dead-link checking follows external links,** so a walk makes requests to the third-party URLs
+  your own pages already link to.
+- **A walk that finds bugs exits 1** on purpose, so CI fails the build. That is not a crash. Pass
+  `--fail-on none` to always exit 0.
 
-**Does it work without a dev server?**
-Sniff is built to walk a *running* app, so that's where it shines. If no server is running, it doesn't fail silently: it runs a source-only scan and tells you exactly how to start the real walk (start your dev server or pass `--url`). You can also run `npx sniff-qa scan` to get the source scan on purpose.
+## Learn more
 
-**What gets downloaded on first run?**
-The first time Sniff opens a browser, it downloads a Chromium build (~165 MB, one-time, then cached). You'll see the progress, and you need internet access for that first run. Nothing else is installed and no account is created.
-
-**Do I need an API key?**
-No. Sniff runs entirely on your machine with no API key and no signup. Your code and your app never leave your computer.
-
-**How is it different from a linter?**
-A linter reads your source files and never runs your app, so it can't see a dead submit button, an infinite spinner, a wiped form, or a 500 page. Sniff opens your real app, interacts with it, and reports what actually broke, with a screenshot and steps to reproduce.
-
-**How is it different from Playwright codegen (or writing E2E tests)?**
-Playwright codegen records a script that *you* author and maintain; it tests only the path you clicked. Sniff writes nothing for you to maintain: it explores your flows on its own and judges the outcome, catching things a recorded happy-path never checks (empty/placeholder data, state-loss, missing success feedback).
-
-**Will it change my code?**
-No, not during a walk. Walking and scanning are read-only. The separate `sniff fix` command applies safe auto-fixes (like stray `console.log`/`debugger`) and only when you run it.
-
-**What stacks does it work with?**
-Any web app you can open in a browser: React, Next.js, Vue, Svelte, Angular, Remix, SvelteKit, Astro, plain HTML, and more. It walks the rendered app, so the framework doesn't matter for the browser checks.
+- [docs/editors.md](docs/editors.md), install and MCP snippets for every supported agent
+- [docs/authenticated-walks.md](docs/authenticated-walks.md), walking a logged-in app with `--storage-state`
+- [docs/assert-budgets.md](docs/assert-budgets.md), capping findings by severity in `sniff.config`
+- [docs/comparison.md](docs/comparison.md), how sniff differs from linters, link checkers, and E2E frameworks
+- [docs/faq.md](docs/faq.md), the questions this page does not answer
+- [CHANGELOG.md](CHANGELOG.md) · [CONTRIBUTING.md](CONTRIBUTING.md) · [LICENSE](LICENSE)
 
 ---
 
-## Works first-class in
-
-Claude Code · Cursor · VS Code (Copilot) · Codex · Gemini CLI · Windsurf · Continue.dev, via the MCP server (command `npx`, args `["-y", "sniff-qa", "--mcp"]`) or the CLI directly.
-
----
-
-## Star History
-
-<a href="https://star-history.com/#Aboudjem/sniff&Date">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=Aboudjem/sniff&type=Date&theme=dark" />
-    <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=Aboudjem/sniff&type=Date" />
-    <img alt="Star history chart for Aboudjem/sniff" src="https://api.star-history.com/svg?repos=Aboudjem/sniff&type=Date" width="70%" />
-  </picture>
-</a>
-
----
-
-## Contributing
-
-Issues and PRs welcome. See [CONTRIBUTING.md](CONTRIBUTING.md).
-
----
-
-<p align="center">
-  <sub>
-    Built on <a href="https://playwright.dev">Playwright</a> · <a href="https://github.com/dequelabs/axe-core">axe-core</a> · <a href="https://developer.chrome.com/docs/lighthouse">Lighthouse</a> · <a href="https://github.com/mapbox/pixelmatch">pixelmatch</a> · <a href="https://zod.dev">Zod</a> · <a href="https://github.com/modelcontextprotocol/typescript-sdk">MCP SDK</a>
-  </sub>
-</p>
-
-<p align="center">
-  <a href="https://www.linkedin.com/in/adam-boudjemaa/"><img src="https://img.shields.io/badge/LinkedIn-0A66C2?style=flat-square&logo=linkedin&logoColor=white" alt="LinkedIn"></a>
-  <a href="https://x.com/AdamBoudj"><img src="https://img.shields.io/badge/X-000000?style=flat-square&logo=x&logoColor=white" alt="X"></a>
-  <a href="https://adam-boudjemaa.com/"><img src="https://img.shields.io/badge/Website-ef4444?style=flat-square&logo=googlechrome&logoColor=white" alt="Website"></a>
-</p>
-
-<p align="center">
-  <sub>Built by <a href="https://github.com/Aboudjem">Adam Boudjemaa</a> · <a href="LICENSE">Apache 2.0</a></sub>
-</p>
+<p align="center"><sub>Built by <a href="https://github.com/Aboudjem">Adam Boudjemaa</a> · <a href="LICENSE">Apache 2.0</a> · standing on <a href="https://playwright.dev">Playwright</a> and <a href="https://github.com/dequelabs/axe-core">axe-core</a></sub></p>
