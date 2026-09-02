@@ -34,7 +34,7 @@ jobs:
           mkdir -p _site/assets
           cp -r site/. _site/
           # Reuse the already-shipped demo assets; never rebuild them here.
-          for f in demo.gif demo.svg logo-light.svg logo-dark.svg sniff-diagram.svg how-it-works.svg; do
+          for f in demo.gif demo.svg logo-light.svg logo-dark.svg how-it-works.svg; do
             [ -f ".github/assets/$f" ] && cp ".github/assets/$f" "_site/assets/$f" || true
           done
           # Ship a real sample report so visitors can open it.

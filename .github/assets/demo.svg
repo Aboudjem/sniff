@@ -1,37 +1,77 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 816.8000000000001 519" width="100%" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="14.5">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 816.8 519" xml:space="preserve" fill="none" role="img" aria-label="sniff walking a buggy app and reporting 21 real issues with zero false positives">
+  <defs>
+    <linearGradient id="ground" x1="0" y1="0" x2="0.35" y2="1">
+      <stop offset="0%" stop-color="#0E1524"/>
+      <stop offset="100%" stop-color="#080C16"/>
+    </linearGradient>
+    <linearGradient id="barline" gradientUnits="userSpaceOnUse" x1="0" y1="34" x2="816.8" y2="34">
+      <stop offset="0%" stop-color="#00D4FF" stop-opacity="0"/>
+      <stop offset="40%" stop-color="#C77DFF" stop-opacity="0.35"/>
+      <stop offset="80%" stop-color="#FF4D8D" stop-opacity="0.5"/>
+      <stop offset="100%" stop-color="#FF2D78" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+
   <style>
-    /* The terminal types itself out via SMIL opacity reveals. When the reader
-       prefers reduced motion, reveal every line immediately so nothing is
-       left invisible. */
-    @media (prefers-reduced-motion: reduce) {
-      text { opacity: 1 !important; }
-      animate { display: none; }
-    }
+    .mono { font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace; font-size: 14.5px; white-space: pre; }
+    .cmd  { fill: #FF4D8D; }
+    .dim  { fill: #8494B0; }
+    .body { fill: #B6C2DA; }
+    .crit { fill: #FF2D78; font-weight: 700; }
+    .high { fill: #FF4D8D; font-weight: 700; }
+    .med  { fill: #FFB341; font-weight: 700; }
+    .sum  { fill: #3DFFAB; }
+    .ttl  { fill: #8494B0; font-size: 12px; letter-spacing: 1px; }
+
+    /* the transcript types itself out with CSS opacity reveals, so the
+       reduced-motion guard below can actually stop it and leave every line visible */
+    @keyframes reveal { from { opacity: 0; } to { opacity: 1; } }
+    .l1  { animation: reveal 0.18s linear 0.00s both; }
+    .l2  { animation: reveal 0.18s linear 0.22s both; }
+    .l3  { animation: reveal 0.18s linear 0.44s both; }
+    .l4  { animation: reveal 0.18s linear 0.66s both; }
+    .l5  { animation: reveal 0.18s linear 0.88s both; }
+    .l6  { animation: reveal 0.18s linear 1.10s both; }
+    .l7  { animation: reveal 0.18s linear 1.32s both; }
+    .l8  { animation: reveal 0.18s linear 1.54s both; }
+    .l9  { animation: reveal 0.18s linear 1.76s both; }
+    .l10 { animation: reveal 0.18s linear 1.98s both; }
+    .l11 { animation: reveal 0.18s linear 2.20s both; }
+    .l12 { animation: reveal 0.18s linear 2.42s both; }
+    .l13 { animation: reveal 0.18s linear 2.64s both; }
+    .l14 { animation: reveal 0.18s linear 2.86s both; }
+    .l15 { animation: reveal 0.18s linear 3.08s both; }
+    .l16 { animation: reveal 0.18s linear 3.30s both; }
+    .l17 { animation: reveal 0.18s linear 3.52s both; }
+
+    @keyframes caret { 0%, 45% { opacity: 1; } 55%, 100% { opacity: 0.1; } }
+    .caret { animation: caret 1.2s steps(1, end) infinite 3.74s both; }
+
+    @media (prefers-reduced-motion: reduce) { * { animation: none !important; } }
   </style>
-  <rect x="0" y="0" width="816.8000000000001" height="519" rx="12" fill="#0b0e14"/>
-  <rect x="0" y="0" width="816.8000000000001" height="34" rx="12" fill="#11151f"/>
-  <rect x="0" y="22" width="816.8000000000001" height="12" fill="#11151f"/>
-  <circle cx="20" cy="17" r="6" fill="#ff5f57"/><circle cx="40" cy="17" r="6" fill="#febc2e"/><circle cx="60" cy="17" r="6" fill="#28c840"/>
-  <text x="408.40000000000003" y="21" fill="#5b6275" text-anchor="middle" font-size="12">sniff — autonomous QA walk</text>
-  <text x="22" y="56" fill="#8ab4ff" opacity="0">$ npx sniff-qa --url http://localhost:3000<animate attributeName="opacity" from="0" to="1" begin="0.00s" dur="0.18s" fill="freeze"/></text>
-  <text x="22" y="77" fill="#aeb6c7" opacity="0"> <animate attributeName="opacity" from="0" to="1" begin="0.22s" dur="0.18s" fill="freeze"/></text>
-  <text x="22" y="98" fill="#8ab4ff" opacity="0">  sniff — walking http://localhost:3000<animate attributeName="opacity" from="0" to="1" begin="0.44s" dur="0.18s" fill="freeze"/></text>
-  <text x="22" y="119" fill="#aeb6c7" opacity="0"> <animate attributeName="opacity" from="0" to="1" begin="0.66s" dur="0.18s" fill="freeze"/></text>
-  <text x="22" y="140" fill="#ff5c7a" opacity="0">  CRITICAL<animate attributeName="opacity" from="0" to="1" begin="0.88s" dur="0.18s" fill="freeze"/></text>
-  <text x="22" y="161" fill="#cbd5e1" opacity="0">    • [confirmed] Page returns HTTP 500            /crash<animate attributeName="opacity" from="0" to="1" begin="1.10s" dur="0.18s" fill="freeze"/></text>
-  <text x="22" y="182" fill="#ff8a5c" opacity="0">  HIGH<animate attributeName="opacity" from="0" to="1" begin="1.32s" dur="0.18s" fill="freeze"/></text>
-  <text x="22" y="203" fill="#cbd5e1" opacity="0">    • [confirmed] Broken link -&gt; /dead (HTTP 404)  /<animate attributeName="opacity" from="0" to="1" begin="1.54s" dur="0.18s" fill="freeze"/></text>
-  <text x="22" y="224" fill="#cbd5e1" opacity="0">    • [confirmed] Uncaught: renderWelcomeBanner is not defined   /dashboard<animate attributeName="opacity" from="0" to="1" begin="1.76s" dur="0.18s" fill="freeze"/></text>
-  <text x="22" y="245" fill="#cbd5e1" opacity="0">    • [likely]    Submit button does nothing       /signup<animate attributeName="opacity" from="0" to="1" begin="1.98s" dur="0.18s" fill="freeze"/></text>
-  <text x="22" y="266" fill="#cbd5e1" opacity="0">    • [likely]    Form state lost on back nav       /wizard<animate attributeName="opacity" from="0" to="1" begin="2.20s" dur="0.18s" fill="freeze"/></text>
-  <text x="22" y="287" fill="#cbd5e1" opacity="0">    • [likely]    Submitted, but no success shown   /checkout<animate attributeName="opacity" from="0" to="1" begin="2.42s" dur="0.18s" fill="freeze"/></text>
-  <text x="22" y="308" fill="#ffd166" opacity="0">  MEDIUM<animate attributeName="opacity" from="0" to="1" begin="2.64s" dur="0.18s" fill="freeze"/></text>
-  <text x="22" y="329" fill="#cbd5e1" opacity="0">    • [confirmed] GET /api/stats -&gt; 500             /dashboard<animate attributeName="opacity" from="0" to="1" begin="2.86s" dur="0.18s" fill="freeze"/></text>
-  <text x="22" y="350" fill="#cbd5e1" opacity="0">    • [confirmed] Placeholder email (test@test.com) /profile<animate attributeName="opacity" from="0" to="1" begin="3.08s" dur="0.18s" fill="freeze"/></text>
-  <text x="22" y="371" fill="#cbd5e1" opacity="0">    • [likely]    Empty table, no empty-state       /orders<animate attributeName="opacity" from="0" to="1" begin="3.30s" dur="0.18s" fill="freeze"/></text>
-  <text x="22" y="392" fill="#94a3b8" opacity="0">    • [confirmed] Horizontal overflow at 375px      /wide<animate attributeName="opacity" from="0" to="1" begin="3.52s" dur="0.18s" fill="freeze"/></text>
-  <text x="22" y="413" fill="#cbd5e1" opacity="0">    • [confirmed] Image has no alt text             /<animate attributeName="opacity" from="0" to="1" begin="3.74s" dur="0.18s" fill="freeze"/></text>
-  <text x="22" y="434" fill="#aeb6c7" opacity="0"> <animate attributeName="opacity" from="0" to="1" begin="3.96s" dur="0.18s" fill="freeze"/></text>
-  <text x="22" y="455" fill="#aeb6c7" opacity="0">  21 real issues - 0 false positives - proof + fix on every finding (8.4s)<animate attributeName="opacity" from="0" to="1" begin="4.18s" dur="0.18s" fill="freeze"/></text>
-  <text x="22" y="476" fill="#aeb6c7" opacity="0"> <animate attributeName="opacity" from="0" to="1" begin="4.40s" dur="0.18s" fill="freeze"/></text>
+
+  <rect x="0" y="0" width="816.8" height="519" rx="12" fill="url(#ground)"/>
+  <path d="M0 12 a12 12 0 0 1 12 -12 h792.8 a12 12 0 0 1 12 12 v22 h-816.8 z" fill="#141C2E"/>
+  <line x1="0" y1="34" x2="816.8" y2="34" stroke="url(#barline)" stroke-width="1.25"/>
+  <g fill="#5C6A85"><circle cx="20" cy="17" r="5"/><circle cx="40" cy="17" r="5"/><circle cx="60" cy="17" r="5"/></g>
+  <text class="mono ttl" x="408.4" y="21" text-anchor="middle">sniff · autonomous QA walk</text>
+
+  <text class="mono cmd l1" x="22" y="56">$ npx sniff-qa --url localhost:3000</text>
+  <text class="mono dim l2" x="22" y="98">  sniff · walking localhost:3000</text>
+  <text class="mono crit l3" x="22" y="140">  CRITICAL</text>
+  <text class="mono body l4" x="22" y="161">    • [confirmed] Page returns HTTP 500            /crash</text>
+  <text class="mono high l5" x="22" y="182">  HIGH</text>
+  <text class="mono body l6" x="22" y="203">    • [confirmed] Broken link -&gt; /dead (HTTP 404)  /</text>
+  <text class="mono body l7" x="22" y="224">    • [confirmed] Uncaught: renderWelcomeBanner is not defined   /dashboard</text>
+  <text class="mono body l8" x="22" y="245">    • [likely]    Submit button does nothing       /signup</text>
+  <text class="mono body l9" x="22" y="266">    • [likely]    Form state lost on back nav      /wizard</text>
+  <text class="mono body l10" x="22" y="287">    • [likely]    Submitted, but no success shown  /checkout</text>
+  <text class="mono med l11" x="22" y="308">  MEDIUM</text>
+  <text class="mono body l12" x="22" y="329">    • [confirmed] GET /api/stats -&gt; 500            /dashboard</text>
+  <text class="mono body l13" x="22" y="350">    • [confirmed] Placeholder email (test@test.com) /profile</text>
+  <text class="mono body l14" x="22" y="371">    • [likely]    Empty table, no empty-state      /orders</text>
+  <text class="mono dim l15" x="22" y="392">    • [confirmed] Horizontal overflow at 375px     /wide</text>
+  <text class="mono body l16" x="22" y="413">    • [confirmed] Image has no alt text            /</text>
+  <text class="mono sum l17" x="22" y="455">  21 real issues · 0 false positives · proof + fix on every finding</text>
+  <rect class="caret" x="22" y="466" width="9" height="17" fill="#FF4D8D"/>
 </svg>

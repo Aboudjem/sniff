@@ -1,28 +1,60 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 640" width="1280" height="640">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 640" fill="none" role="img" aria-label="sniff: walks your app, finds real bugs, zero config">
   <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#0a0a0a"/>
-      <stop offset="100%" stop-color="#1a0a0a"/>
+    <linearGradient id="ground" x1="0" y1="0" x2="0.35" y2="1">
+      <stop offset="0%" stop-color="#0A0F1C"/>
+      <stop offset="60%" stop-color="#080C16"/>
+      <stop offset="100%" stop-color="#07070C"/>
     </linearGradient>
-    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0">
-      <stop offset="0%" stop-color="#ef4444"/>
-      <stop offset="100%" stop-color="#f97316"/>
+
+    <radialGradient id="bloomg" cx="0.5" cy="1" r="0.75">
+      <stop offset="0%" stop-color="#FF2D78" stop-opacity="0.28"/>
+      <stop offset="38%" stop-color="#7C3AED" stop-opacity="0.13"/>
+      <stop offset="100%" stop-color="#7C3AED" stop-opacity="0"/>
+    </radialGradient>
+
+    <linearGradient id="brand" x1="0" y1="0" x2="1" y2="0.25" gradientUnits="objectBoundingBox">
+      <stop offset="0%" stop-color="#FF4D8D"/>
+      <stop offset="100%" stop-color="#FF2D78"/>
+    </linearGradient>
+
+    <linearGradient id="horizonline" gradientUnits="userSpaceOnUse" x1="92" y1="548" x2="1188" y2="548">
+      <stop offset="0%" stop-color="#00D4FF" stop-opacity="0"/>
+      <stop offset="22%" stop-color="#00D4FF" stop-opacity="0.5"/>
+      <stop offset="55%" stop-color="#C77DFF" stop-opacity="0.8"/>
+      <stop offset="82%" stop-color="#FF2D78" stop-opacity="0.6"/>
+      <stop offset="100%" stop-color="#FF2D78" stop-opacity="0"/>
     </linearGradient>
   </defs>
-  <rect width="1280" height="640" fill="url(#bg)"/>
-  <rect x="0" y="0" width="8" height="640" fill="url(#accent)"/>
-  <circle cx="1100" cy="160" r="220" fill="#ef4444" opacity="0.08"/>
-  <text x="96" y="240" font-family="Inter, system-ui, -apple-system, sans-serif" font-size="148" font-weight="900" fill="#ffffff" letter-spacing="-4">sniff</text>
-  <text x="96" y="320" font-family="Inter, system-ui, -apple-system, sans-serif" font-size="40" font-weight="600" fill="#ef4444">Walks your app. Finds real bugs. Zero config.</text>
-  <text x="96" y="390" font-family="Inter, system-ui, -apple-system, sans-serif" font-size="28" fill="#cbd5e1">Autonomous flow-walk engine: broken pages, forms, a11y,</text>
-  <text x="96" y="430" font-family="Inter, system-ui, -apple-system, sans-serif" font-size="28" fill="#cbd5e1">console errors — each with screenshot proof. No API key.</text>
-  <g transform="translate(96, 510)">
-    <rect x="0" y="0" width="130" height="40" rx="20" fill="#ef4444" opacity="0.15"/>
-    <text x="65" y="27" font-family="Inter, monospace" font-size="18" font-weight="700" fill="#ef4444" text-anchor="middle">v0.6.1</text>
-    <rect x="145" y="0" width="190" height="40" rx="20" fill="#22c55e" opacity="0.12"/>
-    <text x="240" y="27" font-family="Inter, monospace" font-size="18" font-weight="700" fill="#22c55e" text-anchor="middle">441 tests pass</text>
-    <rect x="355" y="0" width="155" height="40" rx="20" fill="#ffffff" opacity="0.08"/>
-    <text x="432" y="27" font-family="Inter, monospace" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">npx sniff-qa</text>
+
+  <style>
+    .disp { font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; }
+    .mono { font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace; }
+    .eyebrow { font-size: 15px; font-weight: 600; letter-spacing: 5px; fill: #FF4D8D; }
+    .head { font-size: 34px; font-weight: 700; fill: #F2F6FF; letter-spacing: -0.5px; }
+    .sub  { font-size: 20px; font-weight: 500; fill: #B6C2DA; }
+    .chip { font-size: 13px; letter-spacing: 1.2px; fill: #B6C2DA; }
+    .foot { font-size: 15px; letter-spacing: 1.4px; fill: #8494B0; }
+  </style>
+
+  <rect width="1280" height="640" fill="url(#ground)"/>
+  <ellipse cx="640" cy="650" rx="760" ry="170" fill="url(#bloomg)"/>
+
+  <text class="mono eyebrow" x="92" y="186">BROWSER QA FOR YOUR RUNNING APP</text>
+  <text class="disp" x="92" y="312" font-size="130" font-weight="800" letter-spacing="-2" fill="url(#brand)">sniff</text>
+
+  <text class="disp head" x="92" y="376">Walks your app. Finds real bugs. Zero config.</text>
+  <text class="disp sub"  x="92" y="418">Autonomous flow-walk engine: broken pages, forms, a11y, console errors,</text>
+  <text class="disp sub"  x="92" y="446">each with screenshot proof. No API key.</text>
+
+  <g>
+    <rect x="92"  y="486" width="166" height="30" rx="15" fill="none" stroke="#1E2A42" stroke-width="1"/>
+    <rect x="272" y="486" width="148" height="30" rx="15" fill="none" stroke="#1E2A42" stroke-width="1"/>
+    <text class="mono chip" x="112" y="506">441 tests pass</text>
+    <text class="mono chip" x="292" y="506">npx sniff-qa</text>
   </g>
-  <text x="1184" y="592" font-family="Inter, monospace" font-size="20" fill="#64748b" text-anchor="end">github.com/Aboudjem/sniff</text>
+
+  <line x1="92" y1="548" x2="1188" y2="548" stroke="url(#horizonline)" stroke-width="1.25"/>
+  <text class="mono foot" x="92" y="592">github.com/Aboudjem/sniff</text>
+
+  <!-- reserved square for the composited PNG mark: x 930 to 1150, y 210 to 430. Draw nothing here. -->
 </svg>

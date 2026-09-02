@@ -1,112 +1,185 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 372" font-family="system-ui, -apple-system, sans-serif" role="img" aria-label="The 12 classes of real bugs sniff finds while walking your running app">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 372" fill="none" role="img" aria-label="The 12 classes of real bugs sniff finds while walking your running app">
   <defs>
-    <filter id="s"><feDropShadow dx="0" dy="1" stdDeviation="2" flood-color="#00000030"/></filter>
-    <style>
-      .card { animation: rise .5s ease-out both; }
-      .c2 { animation-delay: .04s } .c3 { animation-delay: .08s } .c4 { animation-delay: .12s }
-      .c5 { animation-delay: .16s } .c6 { animation-delay: .20s } .c7 { animation-delay: .24s }
-      .c8 { animation-delay: .28s } .c9 { animation-delay: .32s } .c10 { animation-delay: .36s }
-      .c11 { animation-delay: .40s } .c12 { animation-delay: .44s }
-      @keyframes rise { from { opacity: 0; transform: translateY(6px) } to { opacity: 1; transform: translateY(0) } }
-      @media (prefers-reduced-motion: reduce) { * { animation: none !important; opacity: 1 !important; transform: none !important; } }
-    </style>
+    <linearGradient id="ground" x1="0" y1="0" x2="0.35" y2="1">
+      <stop offset="0%" stop-color="#0A0F1C"/>
+      <stop offset="60%" stop-color="#080C16"/>
+      <stop offset="100%" stop-color="#07070C"/>
+    </linearGradient>
+
+    <radialGradient id="bloomg" cx="0.5" cy="1" r="0.8">
+      <stop offset="0%" stop-color="#FF2D78" stop-opacity="0.13"/>
+      <stop offset="100%" stop-color="#FF2D78" stop-opacity="0"/>
+    </radialGradient>
+
+    <linearGradient id="brand" x1="0" y1="0" x2="1" y2="0.25" gradientUnits="objectBoundingBox">
+      <stop offset="0%" stop-color="#FF4D8D"/>
+      <stop offset="100%" stop-color="#FF2D78"/>
+      <animateTransform attributeName="gradientTransform" type="translate"
+        values="-0.1 0; 0.1 0; -0.1 0" dur="18s" repeatCount="indefinite"/>
+    </linearGradient>
+
+    <linearGradient id="topline" gradientUnits="userSpaceOnUse" x1="18" y1="60" x2="822" y2="60">
+      <stop offset="0%" stop-color="#00D4FF" stop-opacity="0"/>
+      <stop offset="32%" stop-color="#C77DFF" stop-opacity="0.3"/>
+      <stop offset="72%" stop-color="#FF4D8D" stop-opacity="0.5"/>
+      <stop offset="100%" stop-color="#FF2D78" stop-opacity="0"/>
+    </linearGradient>
+
+    <filter id="glow-sm" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="3.2" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
   </defs>
-  <rect width="840" height="372" rx="16" fill="#0f172a"/>
 
-  <text x="20" y="32" font-size="13" font-weight="700" fill="#f1f5f9" letter-spacing=".3">12 classes of real bugs sniff finds</text>
-  <text x="20" y="50" font-size="10.5" fill="#64748b">while walking your running app in a real browser, each with reproduction proof</text>
+  <style>
+    .disp { font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; }
+    .mono { font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace; }
+    .h1   { font-size: 21px; font-weight: 700; letter-spacing: -0.3px; fill: #F2F6FF; }
+    .h2   { font-size: 12px; font-weight: 500; fill: #B6C2DA; }
+    .num  { font-size: 10.5px; font-weight: 600; letter-spacing: 1.4px; }
+    .ct   { font-size: 13px; font-weight: 700; letter-spacing: -0.1px; fill: #F2F6FF; }
+    .cd   { font-size: 10.5px; font-weight: 500; fill: #B6C2DA; }
+    .foot { font-size: 9.2px; letter-spacing: 0.15px; fill: #8494B0; }
 
-  <!-- Row 1 -->
-  <g class="card">
-    <rect x="18" y="64" width="188" height="80" rx="12" fill="#1e293b" stroke="#7f1d1d" stroke-width="1" filter="url(#s)"/>
-    <circle cx="42" cy="90" r="11" fill="#450a0a"/><text x="42" y="94" text-anchor="middle" font-size="11" font-weight="700" fill="#fb7185">1</text>
-    <text x="60" y="86" font-size="12.5" font-weight="700" fill="#f1f5f9">Broken pages / routes</text>
-    <text x="60" y="104" font-size="10" fill="#94a3b8">4xx/5xx, blank renders,</text>
-    <text x="60" y="118" font-size="10" fill="#94a3b8">crash screens</text>
+    @keyframes pip { 0%,100% { opacity: 0.45; } 50% { opacity: 1; } }
+    .p1  { animation: pip 5s ease-in-out infinite 0.0s; }
+    .p2  { animation: pip 5s ease-in-out infinite 0.18s; }
+    .p3  { animation: pip 5s ease-in-out infinite 0.36s; }
+    .p4  { animation: pip 5s ease-in-out infinite 0.54s; }
+    .p5  { animation: pip 5s ease-in-out infinite 0.72s; }
+    .p6  { animation: pip 5s ease-in-out infinite 0.9s; }
+    .p7  { animation: pip 5s ease-in-out infinite 1.08s; }
+    .p8  { animation: pip 5s ease-in-out infinite 1.26s; }
+    .p9  { animation: pip 5s ease-in-out infinite 1.44s; }
+    .p10 { animation: pip 5s ease-in-out infinite 1.62s; }
+    .p11 { animation: pip 5s ease-in-out infinite 1.8s; }
+    .p12 { animation: pip 5s ease-in-out infinite 1.98s; }
+
+    @keyframes rise { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+    .c1  { animation: rise 0.6s ease-out 0.25s both; }
+    .c2  { animation: rise 0.6s ease-out 0.36s both; }
+    .c3  { animation: rise 0.6s ease-out 0.47s both; }
+    .c4  { animation: rise 0.6s ease-out 0.58s both; }
+    .c5  { animation: rise 0.6s ease-out 0.69s both; }
+    .c6  { animation: rise 0.6s ease-out 0.8s both; }
+    .c7  { animation: rise 0.6s ease-out 0.91s both; }
+    .c8  { animation: rise 0.6s ease-out 1.02s both; }
+    .c9  { animation: rise 0.6s ease-out 1.13s both; }
+    .c10 { animation: rise 0.6s ease-out 1.24s both; }
+    .c11 { animation: rise 0.6s ease-out 1.35s both; }
+    .c12 { animation: rise 0.6s ease-out 1.46s both; }
+    .cf  { animation: rise 0.6s ease-out 1.75s both; }
+
+    @media (prefers-reduced-motion: reduce) { * { animation: none !important; } }
+  </style>
+
+  <rect width="840" height="372" fill="url(#ground)"/>
+  <ellipse cx="420" cy="378" rx="520" ry="130" fill="url(#bloomg)"/>
+
+  <text class="disp h1" x="18" y="34">12 classes of real bugs sniff finds</text>
+  <text class="disp h2" x="18" y="53">while walking your running app in a real browser, each with reproduction proof</text>
+  <line x1="18" y1="60" x2="822" y2="60" stroke="url(#topline)" stroke-width="1.25"/>
+
+  <g class="c1">
+    <rect x="18" y="68" width="188" height="80" rx="11" fill="#0E1524" stroke="#1E2A42" stroke-width="1"/>
+    <circle class="p1" cx="34" cy="86" r="3.2" fill="#FF2D78" filter="url(#glow-sm)"/>
+    <text class="mono num" x="45" y="90" fill="#FF2D78">1</text>
+    <text class="disp ct"  x="34" y="110">Broken pages / routes</text>
+    <text class="disp cd"  x="34" y="126">4xx/5xx, blank renders,</text>
+    <text class="disp cd"  x="34" y="139">crash screens</text>
   </g>
-  <g class="card c2">
-    <rect x="222" y="64" width="188" height="80" rx="12" fill="#1e293b" stroke="#7f1d1d" stroke-width="1" filter="url(#s)"/>
-    <circle cx="246" cy="90" r="11" fill="#450a0a"/><text x="246" y="94" text-anchor="middle" font-size="11" font-weight="700" fill="#fb7185">2</text>
-    <text x="264" y="86" font-size="12.5" font-weight="700" fill="#f1f5f9">Broken links</text>
-    <text x="264" y="104" font-size="10" fill="#94a3b8">Dead internal and</text>
-    <text x="264" y="118" font-size="10" fill="#94a3b8">external links</text>
+  <g class="c2">
+    <rect x="222" y="68" width="188" height="80" rx="11" fill="#0E1524" stroke="#1E2A42" stroke-width="1"/>
+    <circle class="p2" cx="238" cy="86" r="3.2" fill="#FF2D78" filter="url(#glow-sm)"/>
+    <text class="mono num" x="249" y="90" fill="#FF2D78">2</text>
+    <text class="disp ct"  x="238" y="110">Broken links</text>
+    <text class="disp cd"  x="238" y="126">Dead internal and</text>
+    <text class="disp cd"  x="238" y="139">external links</text>
   </g>
-  <g class="card c3">
-    <rect x="426" y="64" width="188" height="80" rx="12" fill="#1e293b" stroke="#7f1d1d" stroke-width="1" filter="url(#s)"/>
-    <circle cx="450" cy="90" r="11" fill="#450a0a"/><text x="450" y="94" text-anchor="middle" font-size="11" font-weight="700" fill="#fb7185">3</text>
-    <text x="468" y="86" font-size="12.5" font-weight="700" fill="#f1f5f9">Console &amp; network</text>
-    <text x="468" y="104" font-size="10" fill="#94a3b8">Uncaught exceptions,</text>
-    <text x="468" y="118" font-size="10" fill="#94a3b8">failed requests</text>
+  <g class="c3">
+    <rect x="426" y="68" width="188" height="80" rx="11" fill="#0E1524" stroke="#1E2A42" stroke-width="1"/>
+    <circle class="p3" cx="442" cy="86" r="3.2" fill="#FF2D78" filter="url(#glow-sm)"/>
+    <text class="mono num" x="453" y="90" fill="#FF2D78">3</text>
+    <text class="disp ct"  x="442" y="110">Console &amp; network</text>
+    <text class="disp cd"  x="442" y="126">Uncaught exceptions,</text>
+    <text class="disp cd"  x="442" y="139">failed requests</text>
   </g>
-  <g class="card c4">
-    <rect x="630" y="64" width="188" height="80" rx="12" fill="#1e293b" stroke="#7f1d1d" stroke-width="1" filter="url(#s)"/>
-    <circle cx="654" cy="90" r="11" fill="#450a0a"/><text x="654" y="94" text-anchor="middle" font-size="11" font-weight="700" fill="#fb7185">4</text>
-    <text x="672" y="86" font-size="12.5" font-weight="700" fill="#f1f5f9">Empty &amp; fake data</text>
-    <text x="672" y="104" font-size="10" fill="#94a3b8">Missing data, lorem</text>
-    <text x="672" y="118" font-size="10" fill="#94a3b8">ipsum, TODO, test@</text>
+  <g class="c4">
+    <rect x="630" y="68" width="188" height="80" rx="11" fill="#0E1524" stroke="#1E2A42" stroke-width="1"/>
+    <circle class="p4" cx="646" cy="86" r="3.2" fill="#FF2D78" filter="url(#glow-sm)"/>
+    <text class="mono num" x="657" y="90" fill="#FF2D78">4</text>
+    <text class="disp ct"  x="646" y="110">Empty &amp; fake data</text>
+    <text class="disp cd"  x="646" y="126">Missing data, lorem</text>
+    <text class="disp cd"  x="646" y="139">ipsum, TODO, test@</text>
+  </g>
+  <g class="c5">
+    <rect x="18" y="160" width="188" height="80" rx="11" fill="#0E1524" stroke="#1E2A42" stroke-width="1"/>
+    <circle class="p5" cx="34" cy="178" r="3.2" fill="#FF4D8D" filter="url(#glow-sm)"/>
+    <text class="mono num" x="45" y="182" fill="#FF4D8D">5</text>
+    <text class="disp ct"  x="34" y="202">Broken forms</text>
+    <text class="disp cd"  x="34" y="218">Dead submit buttons,</text>
+    <text class="disp cd"  x="34" y="231">validation never fires</text>
+  </g>
+  <g class="c6">
+    <rect x="222" y="160" width="188" height="80" rx="11" fill="#0E1524" stroke="#1E2A42" stroke-width="1"/>
+    <circle class="p6" cx="238" cy="178" r="3.2" fill="#FF4D8D" filter="url(#glow-sm)"/>
+    <text class="mono num" x="249" y="182" fill="#FF4D8D">6</text>
+    <text class="disp ct"  x="238" y="202">State loss</text>
+    <text class="disp cd"  x="238" y="218">Fill a form, hit back,</text>
+    <text class="disp cd"  x="238" y="231">and it&apos;s wiped</text>
+  </g>
+  <g class="c7">
+    <rect x="426" y="160" width="188" height="80" rx="11" fill="#0E1524" stroke="#1E2A42" stroke-width="1"/>
+    <circle class="p7" cx="442" cy="178" r="3.2" fill="#FF4D8D" filter="url(#glow-sm)"/>
+    <text class="mono num" x="453" y="182" fill="#FF4D8D">7</text>
+    <text class="disp ct"  x="442" y="202">Flow dead-ends</text>
+    <text class="disp cd"  x="442" y="218">A journey that can&apos;t</text>
+    <text class="disp cd"  x="442" y="231">be completed</text>
+  </g>
+  <g class="c8">
+    <rect x="630" y="160" width="188" height="80" rx="11" fill="#0E1524" stroke="#1E2A42" stroke-width="1"/>
+    <circle class="p8" cx="646" cy="178" r="3.2" fill="#FF4D8D" filter="url(#glow-sm)"/>
+    <text class="mono num" x="657" y="182" fill="#FF4D8D">8</text>
+    <text class="disp ct"  x="646" y="202">Loading / error states</text>
+    <text class="disp cd"  x="646" y="218">Infinite spinners,</text>
+    <text class="disp cd"  x="646" y="231">missing error states</text>
+  </g>
+  <g class="c9">
+    <rect x="18" y="252" width="188" height="80" rx="11" fill="#0E1524" stroke="#1E2A42" stroke-width="1"/>
+    <circle class="p9" cx="34" cy="270" r="3.2" fill="#C77DFF" filter="url(#glow-sm)"/>
+    <text class="mono num" x="45" y="274" fill="#C77DFF">9</text>
+    <text class="disp ct"  x="34" y="294">Broken async outcomes</text>
+    <text class="disp cd"  x="34" y="310">Submitted but no</text>
+    <text class="disp cd"  x="34" y="323">success feedback</text>
+  </g>
+  <g class="c10">
+    <rect x="222" y="252" width="188" height="80" rx="11" fill="#0E1524" stroke="#1E2A42" stroke-width="1"/>
+    <circle class="p10" cx="238" cy="270" r="3.2" fill="#C77DFF" filter="url(#glow-sm)"/>
+    <text class="mono num" x="249" y="274" fill="#C77DFF">10</text>
+    <text class="disp ct"  x="238" y="294">Responsive issues</text>
+    <text class="disp cd"  x="238" y="310">Overflow, tiny tap</text>
+    <text class="disp cd"  x="238" y="323">targets at mobile width</text>
+  </g>
+  <g class="c11">
+    <rect x="426" y="252" width="188" height="80" rx="11" fill="#0E1524" stroke="#1E2A42" stroke-width="1"/>
+    <circle class="p11" cx="442" cy="270" r="3.2" fill="#C77DFF" filter="url(#glow-sm)"/>
+    <text class="mono num" x="453" y="274" fill="#C77DFF">11</text>
+    <text class="disp ct"  x="442" y="294">Accessibility</text>
+    <text class="disp cd"  x="442" y="310">Missing alt / labels,</text>
+    <text class="disp cd"  x="442" y="323">contrast, via axe-core</text>
+  </g>
+  <g class="c12">
+    <rect x="630" y="252" width="188" height="80" rx="11" fill="#0E1524" stroke="#1E2A42" stroke-width="1"/>
+    <circle class="p12" cx="646" cy="270" r="3.2" fill="#C77DFF" filter="url(#glow-sm)"/>
+    <text class="mono num" x="657" y="274" fill="#C77DFF">12</text>
+    <text class="disp ct"  x="646" y="294">Unclear primary action</text>
+    <text class="disp cd"  x="646" y="310">The main call-to-action</text>
+    <text class="disp cd"  x="646" y="323">is buried or ambiguous</text>
   </g>
 
-  <!-- Row 2 -->
-  <g class="card c5">
-    <rect x="18" y="156" width="188" height="80" rx="12" fill="#1e293b" stroke="#92400e" stroke-width="1" filter="url(#s)"/>
-    <circle cx="42" cy="182" r="11" fill="#431407"/><text x="42" y="186" text-anchor="middle" font-size="11" font-weight="700" fill="#fdba74">5</text>
-    <text x="60" y="178" font-size="12.5" font-weight="700" fill="#f1f5f9">Broken forms</text>
-    <text x="60" y="196" font-size="10" fill="#94a3b8">Dead submit buttons,</text>
-    <text x="60" y="210" font-size="10" fill="#94a3b8">validation never fires</text>
+  <g class="cf">
+    <rect x="18" y="338" width="804" height="26" rx="13" fill="none" stroke="#3DFFAB" stroke-opacity="0.45" stroke-width="1"/>
+    <path d="M34 351 l4 4 l7 -8" stroke="#3DFFAB" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <text class="mono foot" x="54" y="355" fill="#3DFFAB">Every finding ships with reproduction proof: exact route, ordered steps, screenshot, console/network excerpt. No proof, no finding.</text>
   </g>
-  <g class="card c6">
-    <rect x="222" y="156" width="188" height="80" rx="12" fill="#1e293b" stroke="#92400e" stroke-width="1" filter="url(#s)"/>
-    <circle cx="246" cy="182" r="11" fill="#431407"/><text x="246" y="186" text-anchor="middle" font-size="11" font-weight="700" fill="#fdba74">6</text>
-    <text x="264" y="178" font-size="12.5" font-weight="700" fill="#f1f5f9">State loss</text>
-    <text x="264" y="196" font-size="10" fill="#94a3b8">Fill a form, hit back,</text>
-    <text x="264" y="210" font-size="10" fill="#94a3b8">and it's wiped</text>
-  </g>
-  <g class="card c7">
-    <rect x="426" y="156" width="188" height="80" rx="12" fill="#1e293b" stroke="#92400e" stroke-width="1" filter="url(#s)"/>
-    <circle cx="450" cy="182" r="11" fill="#431407"/><text x="450" y="186" text-anchor="middle" font-size="11" font-weight="700" fill="#fdba74">7</text>
-    <text x="468" y="178" font-size="12.5" font-weight="700" fill="#f1f5f9">Flow dead-ends</text>
-    <text x="468" y="196" font-size="10" fill="#94a3b8">A journey that can't</text>
-    <text x="468" y="210" font-size="10" fill="#94a3b8">be completed</text>
-  </g>
-  <g class="card c8">
-    <rect x="630" y="156" width="188" height="80" rx="12" fill="#1e293b" stroke="#92400e" stroke-width="1" filter="url(#s)"/>
-    <circle cx="654" cy="182" r="11" fill="#431407"/><text x="654" y="186" text-anchor="middle" font-size="11" font-weight="700" fill="#fdba74">8</text>
-    <text x="672" y="178" font-size="12.5" font-weight="700" fill="#f1f5f9">Loading / error states</text>
-    <text x="672" y="196" font-size="10" fill="#94a3b8">Infinite spinners,</text>
-    <text x="672" y="210" font-size="10" fill="#94a3b8">missing error states</text>
-  </g>
-
-  <!-- Row 3 -->
-  <g class="card c9">
-    <rect x="18" y="248" width="188" height="80" rx="12" fill="#1e293b" stroke="#5b21b6" stroke-width="1" filter="url(#s)"/>
-    <circle cx="42" cy="274" r="11" fill="#2e1065"/><text x="42" y="278" text-anchor="middle" font-size="11" font-weight="700" fill="#c4b5fd">9</text>
-    <text x="60" y="270" font-size="12.5" font-weight="700" fill="#f1f5f9">Broken async outcomes</text>
-    <text x="60" y="288" font-size="10" fill="#94a3b8">Submitted but no</text>
-    <text x="60" y="302" font-size="10" fill="#94a3b8">success feedback</text>
-  </g>
-  <g class="card c10">
-    <rect x="222" y="248" width="188" height="80" rx="12" fill="#1e293b" stroke="#5b21b6" stroke-width="1" filter="url(#s)"/>
-    <circle cx="246" cy="274" r="11" fill="#2e1065"/><text x="246" y="278" text-anchor="middle" font-size="11" font-weight="700" fill="#c4b5fd">10</text>
-    <text x="264" y="270" font-size="12.5" font-weight="700" fill="#f1f5f9">Responsive issues</text>
-    <text x="264" y="288" font-size="10" fill="#94a3b8">Overflow, tiny tap</text>
-    <text x="264" y="302" font-size="10" fill="#94a3b8">targets (375px pass)</text>
-  </g>
-  <g class="card c11">
-    <rect x="426" y="248" width="188" height="80" rx="12" fill="#1e293b" stroke="#5b21b6" stroke-width="1" filter="url(#s)"/>
-    <circle cx="450" cy="274" r="11" fill="#2e1065"/><text x="450" y="278" text-anchor="middle" font-size="11" font-weight="700" fill="#c4b5fd">11</text>
-    <text x="468" y="270" font-size="12.5" font-weight="700" fill="#f1f5f9">Accessibility</text>
-    <text x="468" y="288" font-size="10" fill="#94a3b8">Missing alt / labels,</text>
-    <text x="468" y="302" font-size="10" fill="#94a3b8">contrast, via axe-core</text>
-  </g>
-  <g class="card c12">
-    <rect x="630" y="248" width="188" height="80" rx="12" fill="#1e293b" stroke="#5b21b6" stroke-width="1" filter="url(#s)"/>
-    <circle cx="654" cy="274" r="11" fill="#2e1065"/><text x="654" y="278" text-anchor="middle" font-size="11" font-weight="700" fill="#c4b5fd">12</text>
-    <text x="672" y="270" font-size="12.5" font-weight="700" fill="#f1f5f9">Unclear primary action</text>
-    <text x="672" y="288" font-size="10" fill="#94a3b8">The main call-to-action</text>
-    <text x="672" y="302" font-size="10" fill="#94a3b8">is buried or ambiguous</text>
-  </g>
-
-  <!-- Proof banner -->
-  <rect x="18" y="340" width="800" height="22" rx="8" fill="#052e16" stroke="#22c55e" stroke-width="1"/>
-  <text x="418" y="355" text-anchor="middle" font-size="10.5" fill="#86efac" font-weight="600">Every finding ships with reproduction proof: exact route, ordered steps, screenshot, console/network excerpt. No proof, no finding.</text>
 </svg>

@@ -1,0 +1,213 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 400" fill="none" role="img" aria-label="sniff, browser QA for your running app: finds what is actually broken, with proof">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0.35" y2="1">
+      <stop offset="0%" stop-color="#0A0F1C"/>
+      <stop offset="60%" stop-color="#080C16"/>
+      <stop offset="100%" stop-color="#07070C"/>
+    </linearGradient>
+
+    <radialGradient id="bloomg" cx="0.5" cy="1" r="0.75">
+      <stop offset="0%" stop-color="#FF2D78" stop-opacity="0.30"/>
+      <stop offset="38%" stop-color="#7C3AED" stop-opacity="0.14"/>
+      <stop offset="100%" stop-color="#7C3AED" stop-opacity="0"/>
+    </radialGradient>
+
+    <linearGradient id="brand" x1="0" y1="0" x2="1" y2="0.25" gradientUnits="objectBoundingBox">
+      <stop offset="0%" stop-color="#FF4D8D"/>
+      <stop offset="100%" stop-color="#FF2D78"/>
+      <animateTransform attributeName="gradientTransform" type="translate"
+        values="-0.12 0; 0.12 0; -0.12 0" dur="18s" repeatCount="indefinite"/>
+    </linearGradient>
+
+    <linearGradient id="sun" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#FFD59A"/>
+      <stop offset="30%" stop-color="#FFB341"/>
+      <stop offset="66%" stop-color="#FF4D8D"/>
+      <stop offset="100%" stop-color="#C77DFF"/>
+    </linearGradient>
+
+    <linearGradient id="rule" gradientUnits="userSpaceOnUse" x1="452" y1="112" x2="452" y2="272">
+      <stop offset="0%" stop-color="#FF4D8D" stop-opacity="0"/>
+      <stop offset="45%" stop-color="#FF4D8D" stop-opacity="0.75"/>
+      <stop offset="100%" stop-color="#FF2D78" stop-opacity="0"/>
+    </linearGradient>
+
+    <linearGradient id="horizonline" gradientUnits="userSpaceOnUse" x1="60" y1="332" x2="1140" y2="332">
+      <stop offset="0%" stop-color="#00D4FF" stop-opacity="0"/>
+      <stop offset="22%" stop-color="#00D4FF" stop-opacity="0.5"/>
+      <stop offset="55%" stop-color="#C77DFF" stop-opacity="0.8"/>
+      <stop offset="82%" stop-color="#FF2D78" stop-opacity="0.6"/>
+      <stop offset="100%" stop-color="#FF2D78" stop-opacity="0"/>
+    </linearGradient>
+
+    <linearGradient id="gridfade" gradientUnits="userSpaceOnUse" x1="0" y1="332" x2="0" y2="400">
+      <stop offset="0%" stop-color="#00D4FF" stop-opacity="0.55"/>
+      <stop offset="55%" stop-color="#8E7BFF" stop-opacity="0.28"/>
+      <stop offset="100%" stop-color="#FF2D78" stop-opacity="0.05"/>
+    </linearGradient>
+
+    <linearGradient id="sheeng" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#F2F6FF" stop-opacity="0"/>
+      <stop offset="50%" stop-color="#F2F6FF" stop-opacity="0.55"/>
+      <stop offset="100%" stop-color="#F2F6FF" stop-opacity="0"/>
+    </linearGradient>
+
+    <filter id="glow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="10" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+
+    <filter id="glow-sm" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="3.2" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+
+    <filter id="glow-atmo" x="-70%" y="-70%" width="240%" height="240%">
+      <feGaussianBlur stdDeviation="22" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+
+    <clipPath id="sunclip"><circle cx="1096" cy="268" r="64"/></clipPath>
+    <clipPath id="gridclip"><rect x="0" y="332" width="1200" height="68"/></clipPath>
+    <clipPath id="wordclip">
+      <text x="82" y="236" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif"
+            font-size="164" font-weight="800" letter-spacing="-2">sniff</text>
+    </clipPath>
+  </defs>
+
+  <style>
+    .disp { font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; }
+    .mono { font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace; }
+    .eyebrow { font-size: 13px; font-weight: 600; letter-spacing: 4.5px; fill: #FF4D8D; }
+    .head    { font-size: 32px; font-weight: 700; fill: #F2F6FF; letter-spacing: -0.5px; }
+    .sub     { font-size: 16px; font-weight: 500; fill: #B6C2DA; }
+    .tag     { font-size: 11.5px; letter-spacing: 1.6px; fill: #8494B0; }
+    .chip    { font-size: 11.5px; letter-spacing: 1.2px; fill: #B6C2DA; }
+
+    @keyframes breathe { 0%,100% { opacity: 0.55; } 50% { opacity: 0.95; } }
+    .bloom { animation: breathe 9s ease-in-out infinite; }
+
+    @keyframes sunpulse { 0%,100% { opacity: 0.42; } 50% { opacity: 0.62; } }
+    .sun { animation: sunpulse 10s ease-in-out infinite; }
+
+    @keyframes flow { to { stroke-dashoffset: -240; } }
+    .flowline { animation: flow 14s linear infinite; }
+
+    @keyframes pip { 0%,100% { opacity: 0.4; } 50% { opacity: 1; } }
+    .d1  { animation: pip 5s ease-in-out infinite 0s; }
+    .d2  { animation: pip 5s ease-in-out infinite 0.18s; }
+    .d3  { animation: pip 5s ease-in-out infinite 0.36s; }
+    .d4  { animation: pip 5s ease-in-out infinite 0.54s; }
+    .d5  { animation: pip 5s ease-in-out infinite 0.72s; }
+    .d6  { animation: pip 5s ease-in-out infinite 0.9s; }
+    .d7  { animation: pip 5s ease-in-out infinite 1.08s; }
+    .d8  { animation: pip 5s ease-in-out infinite 1.26s; }
+    .d9  { animation: pip 5s ease-in-out infinite 1.44s; }
+    .d10 { animation: pip 5s ease-in-out infinite 1.62s; }
+    .d11 { animation: pip 5s ease-in-out infinite 1.8s; }
+    .d12 { animation: pip 5s ease-in-out infinite 1.98s; }
+
+    @keyframes sheen {
+      0%   { transform: translateX(0); }
+      34%  { transform: translateX(700px); }
+      100% { transform: translateX(700px); }
+    }
+    .sheen { animation: sheen 7.5s linear infinite; }
+
+    @media (prefers-reduced-motion: reduce) { * { animation: none !important; } }
+  </style>
+
+  <rect width="1200" height="400" fill="url(#bg)"/>
+  <ellipse class="bloom" cx="600" cy="404" rx="720" ry="190" fill="url(#bloomg)"/>
+
+  <!-- sun disc, sitting on the horizon at the right, behind everything -->
+  <g class="sun">
+    <g filter="url(#glow-atmo)"><circle cx="1096" cy="268" r="64" fill="url(#sun)"/></g>
+    <g clip-path="url(#sunclip)" fill="#080C16">
+      <rect x="1024" y="278" width="144" height="3"/>
+      <rect x="1024" y="288" width="144" height="4"/>
+      <rect x="1024" y="299.5" width="144" height="5.5"/>
+      <rect x="1024" y="313" width="144" height="7.5"/>
+      <rect x="1024" y="329" width="144" height="10"/>
+    </g>
+  </g>
+
+  <!-- perspective grid below the horizon, shipped off -->
+  <g id="grid" clip-path="url(#gridclip)" opacity="0">
+    <g stroke="url(#gridfade)" stroke-width="1" fill="none">
+      <path d="M600 332 L-1180 400"/><path d="M600 332 L-560 400"/><path d="M600 332 L-190 400"/>
+      <path d="M600 332 L40 400"/>   <path d="M600 332 L200 400"/>  <path d="M600 332 L320 400"/>
+      <path d="M600 332 L415 400"/>  <path d="M600 332 L490 400"/>  <path d="M600 332 L548 400"/>
+      <path d="M600 332 L600 400"/>
+      <path d="M600 332 L652 400"/>  <path d="M600 332 L710 400"/>  <path d="M600 332 L785 400"/>
+      <path d="M600 332 L880 400"/>  <path d="M600 332 L1000 400"/> <path d="M600 332 L1160 400"/>
+      <path d="M600 332 L1390 400"/> <path d="M600 332 L1760 400"/> <path d="M600 332 L2380 400"/>
+    </g>
+    <g stroke="url(#gridfade)" stroke-width="1" fill="none">
+      <line x1="0" y1="335" x2="1200" y2="335"/>
+      <line x1="0" y1="339.5" x2="1200" y2="339.5"/>
+      <line x1="0" y1="345.5" x2="1200" y2="345.5"/>
+      <line x1="0" y1="353.5" x2="1200" y2="353.5"/>
+      <line x1="0" y1="364" x2="1200" y2="364"/>
+      <line x1="0" y1="378" x2="1200" y2="378"/>
+      <line x1="0" y1="396" x2="1200" y2="396"/>
+    </g>
+  </g>
+
+  <g opacity="0.95">
+    <line x1="60" y1="332" x2="1140" y2="332" stroke="url(#horizonline)" stroke-width="1.25"/>
+    <line class="flowline" x1="60" y1="332" x2="1140" y2="332" stroke="url(#horizonline)"
+          stroke-width="1.25" stroke-dasharray="3 9" opacity="0.85"/>
+  </g>
+
+  <g filter="url(#glow)">
+    <text class="disp" x="82" y="236" font-size="164" font-weight="800" letter-spacing="-2" fill="url(#brand)">sniff</text>
+  </g>
+
+  <g clip-path="url(#wordclip)">
+    <g transform="skewX(-18)">
+      <rect class="sheen" x="-200" y="60" width="120" height="220" fill="url(#sheeng)" opacity="0.7"/>
+    </g>
+  </g>
+
+  <line x1="452" y1="112" x2="452" y2="272" stroke="url(#rule)" stroke-width="1.5"/>
+
+  <g transform="translate(500,0)">
+    <rect x="0" y="112" width="413" height="26" rx="13" fill="#0E1524" stroke="#1E2A42" stroke-width="1"/>
+    <text class="mono eyebrow" x="16" y="130">BROWSER QA FOR YOUR RUNNING APP</text>
+    <text class="disp head"    x="0" y="180">Finds what is actually broken, with proof</text>
+    <text class="disp sub"     x="0" y="214">Walks your real user flows in a real browser. No API key.</text>
+
+    <g transform="translate(0,252)">
+      <g fill="#FF4D8D">
+        <g class="d1"><circle  cx="0"   cy="0" r="4" filter="url(#glow-sm)"/></g>
+        <g class="d2"><circle  cx="17"  cy="0" r="4" filter="url(#glow-sm)"/></g>
+        <g class="d3"><circle  cx="34"  cy="0" r="4" filter="url(#glow-sm)"/></g>
+        <g class="d4"><circle  cx="51"  cy="0" r="4" filter="url(#glow-sm)"/></g>
+        <g class="d5"><circle  cx="68"  cy="0" r="4" filter="url(#glow-sm)"/></g>
+        <g class="d6"><circle  cx="85"  cy="0" r="4" filter="url(#glow-sm)"/></g>
+        <g class="d7"><circle  cx="102" cy="0" r="4" filter="url(#glow-sm)"/></g>
+        <g class="d8"><circle  cx="119" cy="0" r="4" filter="url(#glow-sm)"/></g>
+        <g class="d9"><circle  cx="136" cy="0" r="4" filter="url(#glow-sm)"/></g>
+        <g class="d10"><circle cx="153" cy="0" r="4" filter="url(#glow-sm)"/></g>
+        <g class="d11"><circle cx="170" cy="0" r="4" filter="url(#glow-sm)"/></g>
+        <g class="d12"><circle cx="187" cy="0" r="4" filter="url(#glow-sm)"/></g>
+      </g>
+      <text class="mono tag" x="212" y="4">12 CLASSES OF BUGS</text>
+    </g>
+  </g>
+
+  <!-- footer chips: three honest traits -->
+  <g transform="translate(82,300)">
+    <g fill="none" stroke="#1E2A42" stroke-width="1">
+      <rect x="0"   y="0" width="98"  height="26" rx="13"/>
+      <rect x="110" y="0" width="112" height="26" rx="13"/>
+      <rect x="234" y="0" width="112" height="26" rx="13"/>
+    </g>
+    <g class="mono chip">
+      <text x="16"  y="17">no api key</text>
+      <text x="126" y="17">real browser</text>
+      <text x="250" y="17">runs locally</text>
+    </g>
+  </g>
+</svg>

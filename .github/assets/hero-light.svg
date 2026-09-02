@@ -1,0 +1,155 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 400" fill="none" role="img" aria-label="sniff, browser QA for your running app: finds what is actually broken, with proof">
+  <defs>
+    <linearGradient id="brand" x1="0" y1="0" x2="1" y2="0.25" gradientUnits="objectBoundingBox">
+      <stop offset="0%" stop-color="#EB0054"/>
+      <stop offset="100%" stop-color="#A836FF"/>
+      <animateTransform attributeName="gradientTransform" type="translate"
+        values="-0.12 0; 0.12 0; -0.12 0" dur="18s" repeatCount="indefinite"/>
+    </linearGradient>
+
+    <linearGradient id="rule" gradientUnits="userSpaceOnUse" x1="452" y1="112" x2="452" y2="272">
+      <stop offset="0%" stop-color="#EB0054" stop-opacity="0"/>
+      <stop offset="45%" stop-color="#EB0054" stop-opacity="0.55"/>
+      <stop offset="100%" stop-color="#A836FF" stop-opacity="0"/>
+    </linearGradient>
+
+    <linearGradient id="horizonline" gradientUnits="userSpaceOnUse" x1="60" y1="332" x2="1140" y2="332">
+      <stop offset="0%" stop-color="#00819C" stop-opacity="0"/>
+      <stop offset="22%" stop-color="#00819C" stop-opacity="0.35"/>
+      <stop offset="55%" stop-color="#A836FF" stop-opacity="0.5"/>
+      <stop offset="82%" stop-color="#EB0054" stop-opacity="0.45"/>
+      <stop offset="100%" stop-color="#EB0054" stop-opacity="0"/>
+    </linearGradient>
+
+    <linearGradient id="gridfade" gradientUnits="userSpaceOnUse" x1="0" y1="332" x2="0" y2="400">
+      <stop offset="0%" stop-color="#00819C" stop-opacity="0.4"/>
+      <stop offset="55%" stop-color="#725BFF" stop-opacity="0.2"/>
+      <stop offset="100%" stop-color="#EB0054" stop-opacity="0.05"/>
+    </linearGradient>
+
+    <linearGradient id="sheeng" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0"/>
+      <stop offset="50%" stop-color="#FFFFFF" stop-opacity="0.55"/>
+      <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0"/>
+    </linearGradient>
+
+    <clipPath id="gridclip"><rect x="0" y="332" width="1200" height="68"/></clipPath>
+    <clipPath id="wordclip">
+      <text x="82" y="236" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif"
+            font-size="164" font-weight="800" letter-spacing="-2">sniff</text>
+    </clipPath>
+  </defs>
+
+  <style>
+    .disp { font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; }
+    .mono { font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace; }
+    .eyebrow { font-size: 13px; font-weight: 600; letter-spacing: 4.5px; fill: #EB0054; }
+    .head    { font-size: 32px; font-weight: 700; fill: #07070C; letter-spacing: -0.5px; }
+    .sub     { font-size: 16px; font-weight: 500; fill: #1A2233; }
+    .tag     { font-size: 11.5px; letter-spacing: 1.6px; fill: #48546B; }
+    .chip    { font-size: 11.5px; letter-spacing: 1.2px; fill: #1A2233; }
+
+    @keyframes flow { to { stroke-dashoffset: -240; } }
+    .flowline { animation: flow 14s linear infinite; }
+
+    @keyframes pip { 0%,100% { opacity: 0.4; } 50% { opacity: 1; } }
+    .d1  { animation: pip 5s ease-in-out infinite 0s; }
+    .d2  { animation: pip 5s ease-in-out infinite 0.18s; }
+    .d3  { animation: pip 5s ease-in-out infinite 0.36s; }
+    .d4  { animation: pip 5s ease-in-out infinite 0.54s; }
+    .d5  { animation: pip 5s ease-in-out infinite 0.72s; }
+    .d6  { animation: pip 5s ease-in-out infinite 0.9s; }
+    .d7  { animation: pip 5s ease-in-out infinite 1.08s; }
+    .d8  { animation: pip 5s ease-in-out infinite 1.26s; }
+    .d9  { animation: pip 5s ease-in-out infinite 1.44s; }
+    .d10 { animation: pip 5s ease-in-out infinite 1.62s; }
+    .d11 { animation: pip 5s ease-in-out infinite 1.8s; }
+    .d12 { animation: pip 5s ease-in-out infinite 1.98s; }
+
+    @keyframes sheen {
+      0%   { transform: translateX(0); }
+      34%  { transform: translateX(700px); }
+      100% { transform: translateX(700px); }
+    }
+    .sheen { animation: sheen 7.5s linear infinite; }
+
+    @media (prefers-reduced-motion: reduce) { * { animation: none !important; } }
+  </style>
+
+  <rect width="1200" height="400" fill="#F7F8FB"/>
+
+  <!-- perspective grid below the horizon, shipped off -->
+  <g id="grid" clip-path="url(#gridclip)" opacity="0">
+    <g stroke="url(#gridfade)" stroke-width="1" fill="none">
+      <path d="M600 332 L-1180 400"/><path d="M600 332 L-560 400"/><path d="M600 332 L-190 400"/>
+      <path d="M600 332 L40 400"/>   <path d="M600 332 L200 400"/>  <path d="M600 332 L320 400"/>
+      <path d="M600 332 L415 400"/>  <path d="M600 332 L490 400"/>  <path d="M600 332 L548 400"/>
+      <path d="M600 332 L600 400"/>
+      <path d="M600 332 L652 400"/>  <path d="M600 332 L710 400"/>  <path d="M600 332 L785 400"/>
+      <path d="M600 332 L880 400"/>  <path d="M600 332 L1000 400"/> <path d="M600 332 L1160 400"/>
+      <path d="M600 332 L1390 400"/> <path d="M600 332 L1760 400"/> <path d="M600 332 L2380 400"/>
+    </g>
+    <g stroke="url(#gridfade)" stroke-width="1" fill="none">
+      <line x1="0" y1="335" x2="1200" y2="335"/>
+      <line x1="0" y1="339.5" x2="1200" y2="339.5"/>
+      <line x1="0" y1="345.5" x2="1200" y2="345.5"/>
+      <line x1="0" y1="353.5" x2="1200" y2="353.5"/>
+      <line x1="0" y1="364" x2="1200" y2="364"/>
+      <line x1="0" y1="378" x2="1200" y2="378"/>
+      <line x1="0" y1="396" x2="1200" y2="396"/>
+    </g>
+  </g>
+
+  <line x1="60" y1="332" x2="1140" y2="332" stroke="#D8DEE9" stroke-width="1.25"/>
+  <line class="flowline" x1="60" y1="332" x2="1140" y2="332" stroke="url(#horizonline)"
+        stroke-width="1.25" stroke-dasharray="3 9"/>
+
+  <text class="disp" x="82" y="236" font-size="164" font-weight="800" letter-spacing="-2" fill="url(#brand)">sniff</text>
+
+  <g clip-path="url(#wordclip)">
+    <g transform="skewX(-18)">
+      <rect class="sheen" x="-200" y="60" width="120" height="220" fill="url(#sheeng)" opacity="0.55"/>
+    </g>
+  </g>
+
+  <line x1="452" y1="112" x2="452" y2="272" stroke="url(#rule)" stroke-width="1.5"/>
+
+  <g transform="translate(500,0)">
+    <rect x="0" y="112" width="413" height="26" rx="13" fill="#FFFFFF" stroke="#D8DEE9" stroke-width="1"/>
+    <text class="mono eyebrow" x="16" y="130">BROWSER QA FOR YOUR RUNNING APP</text>
+    <text class="disp head"    x="0" y="180">Finds what is actually broken, with proof</text>
+    <text class="disp sub"     x="0" y="214">Walks your real user flows in a real browser. No API key.</text>
+
+    <g transform="translate(0,252)">
+      <g fill="#EB0054">
+        <g class="d1"><circle  cx="0"   cy="0" r="4"/></g>
+        <g class="d2"><circle  cx="17"  cy="0" r="4"/></g>
+        <g class="d3"><circle  cx="34"  cy="0" r="4"/></g>
+        <g class="d4"><circle  cx="51"  cy="0" r="4"/></g>
+        <g class="d5"><circle  cx="68"  cy="0" r="4"/></g>
+        <g class="d6"><circle  cx="85"  cy="0" r="4"/></g>
+        <g class="d7"><circle  cx="102" cy="0" r="4"/></g>
+        <g class="d8"><circle  cx="119" cy="0" r="4"/></g>
+        <g class="d9"><circle  cx="136" cy="0" r="4"/></g>
+        <g class="d10"><circle cx="153" cy="0" r="4"/></g>
+        <g class="d11"><circle cx="170" cy="0" r="4"/></g>
+        <g class="d12"><circle cx="187" cy="0" r="4"/></g>
+      </g>
+      <text class="mono tag" x="212" y="4">12 CLASSES OF BUGS</text>
+    </g>
+  </g>
+
+  <!-- footer chips: three honest traits -->
+  <g transform="translate(82,300)">
+    <g fill="#FFFFFF" stroke="#D8DEE9" stroke-width="1">
+      <rect x="0"   y="0" width="98"  height="26" rx="13"/>
+      <rect x="110" y="0" width="112" height="26" rx="13"/>
+      <rect x="234" y="0" width="112" height="26" rx="13"/>
+    </g>
+    <g class="mono chip">
+      <text x="16"  y="17">no api key</text>
+      <text x="126" y="17">real browser</text>
+      <text x="250" y="17">runs locally</text>
+    </g>
+  </g>
+</svg>
