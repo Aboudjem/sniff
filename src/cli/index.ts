@@ -2,8 +2,17 @@
 
 // MCP server mode bypasses CLI entirely
 if (process.argv.includes('--mcp')) {
+  const { parseCaps, CapsError } = await import('../mcp/caps.js');
+  let caps;
+  try {
+    caps = parseCaps(process.argv);
+  } catch (err) {
+    // stdout is the MCP protocol channel, so a startup error goes to stderr.
+    console.error(err instanceof CapsError ? err.message : String(err));
+    process.exit(1);
+  }
   const { startMcpServer } = await import('../mcp/server.js');
-  await startMcpServer();
+  await startMcpServer(caps);
 } else {
   const { Command } = await import('commander');
 
@@ -24,7 +33,7 @@ if (process.argv.includes('--mcp')) {
   // `sniff --url X --ci`  → everything except exploration (deterministic for CI)
   program
     .argument('[target]', 'Project directory to scan (default: current directory)')
-    .option('--url <url>', 'Target URL — enables full browser audit (a11y, visual, perf, runtime hooks)')
+    .option('--url <url>', 'Target URL, enables full browser audit (a11y, visual, perf, runtime hooks)')
     .option('--ci', 'CI mode: headless, JUnit XML, flakiness tracking, no AI exploration')
     .option('--no-browser', 'Force source-only scan even if URL is configured')
     .option('--explore', 'Run optional AI exploration after browser checks', false)
@@ -47,7 +56,7 @@ if (process.argv.includes('--mcp')) {
     .option('--realism <profile>', 'Discovery realism: robot, careful-user, casual-user, frustrated-user, power-user')
     .option('--seed <n>', 'Replay a specific random seed')
     .option('--only <filter>', 'Filter discovery scenarios by id substring or app type')
-    .option('--app-type <types>', 'Filter discovery app types (comma-separated) — only generates scenarios for these types if the classifier matches them')
+    .option('--app-type <types>', 'Filter discovery app types (comma-separated); only generates scenarios for these types if the classifier matches them')
     .option('--force-app-type <type>', 'Force a single app type, bypassing the classifier entirely (use when classification returns blank)')
     .option('--no-llm', 'Disable LLM-backed discovery polish')
     .option('--non-interactive', 'Non-interactive mode for discovery (skips prompts and countdown)')
@@ -142,7 +151,7 @@ if (process.argv.includes('--mcp')) {
       if (!options.json) {
         const { getDevCommand } = await import('../config/dev-server-detector.js');
         const devCmd = await getDevCommand(rootDir).catch(() => null);
-        console.log(`${pc.yellow('No running app detected')} — no --url and no dev server.`);
+        console.log(`${pc.yellow('No running app detected')}: no --url and no dev server.`);
         console.log(pc.dim('Running a source-only scan. For the full flow-walk that finds real bugs,'));
         console.log(`${pc.dim(`start your app${devCmd ? ` (${devCmd})` : ''} then re-run, or pass`)} ${pc.bold('--url <url>')}${pc.dim('.')} ${pc.dim('See')} ${pc.bold('sniff doctor')}${pc.dim('.')}\n`);
       }
@@ -186,7 +195,7 @@ if (process.argv.includes('--mcp')) {
 
   program
     .command('scan')
-    .description('Source-only scan (no browser) — placeholder/TODO/console.log/dead links/etc.')
+    .description('Source-only scan (no browser): placeholder/TODO/console.log/dead links/etc.')
     .argument('[target]', 'Project directory (default: current directory)')
     .option('--json', 'Output results as JSON')
     .option('--fail-on <severities>', 'Exit non-zero on these severities (default: critical,high)', 'critical,high')
@@ -232,7 +241,7 @@ if (process.argv.includes('--mcp')) {
     .option('--realism <profile>', 'Realism: robot, careful-user, casual-user, frustrated-user, power-user')
     .option('--seed <n>', 'Replay a specific random seed')
     .option('--only <filter>', 'Filter scenarios by id substring or app type')
-    .option('--app-type <types>', 'Filter discovery app types (comma-separated) — only generates scenarios for these types if the classifier matches them')
+    .option('--app-type <types>', 'Filter discovery app types (comma-separated); only generates scenarios for these types if the classifier matches them')
     .option('--force-app-type <type>', 'Force a single app type, bypassing the classifier entirely (use when classification returns blank)')
     .option('--no-llm', 'Disable LLM-backed polish')
     .option('--non-interactive', 'Skip prompts and the production-URL countdown')

@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+import type { Capability } from './caps.js';
 
 describe('MCP Server', () => {
   describe('module exports', () => {
@@ -15,6 +16,144 @@ describe('MCP Server', () => {
     it('resolves @modelcontextprotocol/sdk StdioServerTransport import', async () => {
       const mod = await import('@modelcontextprotocol/sdk/server/stdio.js');
       expect(mod.StdioServerTransport).toBeDefined();
+    });
+  });
+
+  describe('capability gating', () => {
+    it('defaults to every capability when --caps is absent', async () => {
+      const { parseCaps, CAPABILITIES } = await import('./caps.js');
+      expect(parseCaps(['node', 'sniff', '--mcp'])).toEqual([...CAPABILITIES]);
+    });
+
+    it('parses a comma-separated subset', async () => {
+      const { parseCaps } = await import('./caps.js');
+      expect(parseCaps(['node', 'sniff', '--mcp', '--caps', 'scan,report'])).toEqual(['scan', 'report']);
+    });
+
+    it('accepts the --caps=<list> form and tolerates whitespace', async () => {
+      const { parseCaps } = await import('./caps.js');
+      expect(parseCaps(['--mcp', '--caps= scan , report '])).toEqual(['scan', 'report']);
+    });
+
+    it('de-duplicates repeated names', async () => {
+      const { parseCaps } = await import('./caps.js');
+      expect(parseCaps(['--mcp', '--caps', 'scan,scan,report'])).toEqual(['scan', 'report']);
+    });
+
+    it('rejects an unknown capability instead of silently granting nothing', async () => {
+      const { parseCaps, CapsError } = await import('./caps.js');
+      expect(() => parseCaps(['--mcp', '--caps', 'scan,nope'])).toThrow(CapsError);
+      expect(() => parseCaps(['--mcp', '--caps', 'scan,nope'])).toThrow(/Unknown capability: nope/);
+    });
+
+    it('rejects an empty --caps list', async () => {
+      const { parseCaps, CapsError } = await import('./caps.js');
+      expect(() => parseCaps(['--mcp', '--caps', ''])).toThrow(CapsError);
+      expect(() => parseCaps(['--mcp', '--caps'])).toThrow(CapsError);
+    });
+
+    it('registers all six tools and all five modes by default', async () => {
+      const { resolveTools, CAPABILITIES } = await import('./caps.js');
+      const { tools, modes } = resolveTools(CAPABILITIES);
+      expect(tools).toEqual([
+        'sniff',
+        'sniff_scan',
+        'sniff_run',
+        'sniff_discover',
+        'sniff_install',
+        'sniff_report',
+      ]);
+      expect(modes).toEqual(['walk', 'scan', 'run', 'discover', 'report']);
+    });
+
+    it('shrinks the tool list and the unified mode enum under --caps scan,report', async () => {
+      const { parseCaps, resolveTools } = await import('./caps.js');
+      const { tools, modes } = resolveTools(parseCaps(['--mcp', '--caps', 'scan,report']));
+      expect(tools).toEqual(['sniff', 'sniff_scan', 'sniff_report']);
+      expect(modes).toEqual(['scan', 'report']);
+      // No browser launch and no browser download reachable from this profile.
+      expect(tools).not.toContain('sniff_run');
+      expect(tools).not.toContain('sniff_discover');
+      expect(tools).not.toContain('sniff_install');
+    });
+
+    it('maps the legacy run mode to the walk capability', async () => {
+      const { resolveTools } = await import('./caps.js');
+      const { modes } = resolveTools(['walk']);
+      expect(modes).toContain('walk');
+      expect(modes).toContain('run');
+    });
+
+    it('expands walk to include scan, because a walk falls back to a source scan', async () => {
+      const { expandCaps, resolveTools } = await import('./caps.js');
+      expect(expandCaps(['walk'])).toEqual(['walk', 'scan']);
+      const { tools, modes } = resolveTools(['walk']);
+      expect(tools).toEqual(['sniff', 'sniff_scan', 'sniff_run']);
+      expect(modes).toEqual(['walk', 'scan', 'run']);
+    });
+
+    it('drops the unified tool when only install is granted', async () => {
+      const { resolveTools } = await import('./caps.js');
+      const { tools, modes } = resolveTools(['install']);
+      expect(tools).toEqual(['sniff_install']);
+      expect(modes).toEqual([]);
+    });
+  });
+
+  describe('tools/list over a real MCP connection', () => {
+    async function listTools(caps?: Capability[]): Promise<{
+      names: string[];
+      modes: string[] | undefined;
+    }> {
+      const { Client } = await import('@modelcontextprotocol/sdk/client/index.js');
+      const { InMemoryTransport } = await import('@modelcontextprotocol/sdk/inMemory.js');
+      const { startMcpServer } = await import('./server.js');
+      const { CAPABILITIES } = await import('./caps.js');
+
+      const [clientTransport, serverTransport] = InMemoryTransport.createLinkedPair();
+      const client = new Client({ name: 'test', version: '0' }, { capabilities: {} });
+
+      await startMcpServer(caps ?? [...CAPABILITIES], serverTransport);
+      await client.connect(clientTransport);
+
+      const res = await client.listTools();
+      const unified = res.tools.find((t) => t.name === 'sniff');
+      const schema = unified?.inputSchema as
+        | { properties?: { mode?: { enum?: string[] } } }
+        | undefined;
+      await client.close();
+      return {
+        names: res.tools.map((t) => t.name),
+        modes: schema?.properties?.mode?.enum,
+      };
+    }
+
+    it('registers all six tools and all five modes by default', async () => {
+      const { names, modes } = await listTools();
+      expect(names).toEqual([
+        'sniff',
+        'sniff_scan',
+        'sniff_run',
+        'sniff_discover',
+        'sniff_install',
+        'sniff_report',
+      ]);
+      expect(modes).toEqual(['walk', 'scan', 'run', 'discover', 'report']);
+    });
+
+    it('exposes only the scan and report surface under --caps scan,report', async () => {
+      const { names, modes } = await listTools(['scan', 'report']);
+      expect(names).toEqual(['sniff', 'sniff_scan', 'sniff_report']);
+      expect(modes).toEqual(['scan', 'report']);
+      expect(names).not.toContain('sniff_run');
+      expect(names).not.toContain('sniff_discover');
+      expect(names).not.toContain('sniff_install');
+    });
+
+    it('exposes only the install tool under --caps install', async () => {
+      const { names, modes } = await listTools(['install']);
+      expect(names).toEqual(['sniff_install']);
+      expect(modes).toBeUndefined();
     });
   });
 

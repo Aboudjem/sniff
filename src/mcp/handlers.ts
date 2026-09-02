@@ -85,7 +85,7 @@ export async function handleSniffRun(
           projects: check.status === 'missing' ? check.missingProjects : sourceRun.config.browser?.projects ?? ['chromium'],
           installCommand: check.status === 'missing' ? check.installCommand : `npx playwright install ${(sourceRun.config.browser?.projects ?? ['chromium']).join(' ')}`,
           installSizeMb: check.status === 'missing' ? check.installSizeMb : 165,
-          hint: 'Run the sniff_install MCP tool with the same projects, or run the install command manually, then retry.',
+          hint: 'Run the sniff_install MCP tool with the same projects if it is registered, otherwise run installCommand in a terminal, then retry.',
         }),
       }],
     };
@@ -150,7 +150,7 @@ export async function handleSniffWalk(options: SniffWalkOptions): Promise<McpToo
     url = detection.url;
   }
   if (!url) {
-    // No running app — degrade gracefully to a source scan so the agent still
+    // No running app: degrade gracefully to a source scan so the agent still
     // gets something useful, and say so.
     const scan = await handleSniffScan(options.rootDir);
     return {
@@ -180,7 +180,7 @@ export async function handleSniffWalk(options: SniffWalkOptions): Promise<McpToo
           projects: check.status === 'missing' ? check.missingProjects : config.browser?.projects ?? ['chromium'],
           installCommand: check.status === 'missing' ? check.installCommand : `npx playwright install ${(config.browser?.projects ?? ['chromium']).join(' ')}`,
           installSizeMb: check.status === 'missing' ? check.installSizeMb : 165,
-          hint: 'Run the sniff_install MCP tool with the same projects, or run the install command manually, then retry.',
+          hint: 'Run the sniff_install MCP tool with the same projects if it is registered, otherwise run installCommand in a terminal, then retry.',
         }),
       }],
     };
@@ -246,7 +246,7 @@ export async function handleSniffDiscover(options: SniffDiscoverOptions): Promis
     }
   }
 
-  // Gate on Playwright install — skip when dryRun since no browser runs.
+  // Gate on Playwright install; skip when dryRun since no browser runs.
   if (!options.dryRun) {
     const { loadConfig } = await import('../config/loader.js');
     const config = await loadConfig(options.rootDir);
@@ -261,7 +261,7 @@ export async function handleSniffDiscover(options: SniffDiscoverOptions): Promis
             projects: check.status === 'missing' ? check.missingProjects : config.browser?.projects ?? ['chromium'],
             installCommand: check.status === 'missing' ? check.installCommand : `npx playwright install ${(config.browser?.projects ?? ['chromium']).join(' ')}`,
             installSizeMb: check.status === 'missing' ? check.installSizeMb : 165,
-            hint: 'Run the sniff_install MCP tool with the same projects, or run the install command manually, then retry.',
+            hint: 'Run the sniff_install MCP tool with the same projects if it is registered, otherwise run installCommand in a terminal, then retry.',
           }),
         }],
       };
@@ -341,7 +341,7 @@ export interface SniffUnifiedOptions {
 
 /**
  * Dispatch for the unified `sniff` MCP tool. Normalizes the discriminated
- * union input and calls through to the narrow handlers. No new capabilities —
+ * union input and calls through to the narrow handlers. No new capabilities:
  * this is a UX wrapper only, preserving the security pattern of scoped tools.
  */
 export async function handleSniffUnified(options: SniffUnifiedOptions): Promise<McpToolResult> {
