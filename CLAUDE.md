@@ -41,7 +41,14 @@ Sniff has no `agents/` directory, so there is no `model:` frontmatter to strip. 
 
 ### Multi-CLI installer target directories
 
-`install.sh` and `install.ps1` symlink the three skills (`sniff`, `sniff-fix`, `sniff-report`) into a CLI's skills directory. Current map:
+`install.sh` delegates to the Vercel skills CLI by default
+(`npx --yes skills@1.5.23 add Aboudjem/sniff -a <agent> -y`), so the directory conventions below no
+longer have to be right for the common path. The platform-to-agent map lives in `platform_agent`;
+the agent codes are verified against https://github.com/vercel-labs/skills#supported-agents.
+
+`install.sh --legacy` and `install.ps1` still symlink the three skills (`sniff`, `sniff-fix`,
+`sniff-report`) into a CLI's skills directory by hand. That path is for an offline machine or one
+without `npx`. Its map:
 
 | Platform | Directory | Style |
 |:--|:--|:--|
@@ -53,7 +60,24 @@ Sniff has no `agents/` directory, so there is no `model:` frontmatter to strip. 
 | antigravity | `~/.gemini/antigravity/skills` | folder |
 | hermes, cline, kimi | `~/.<cli>/skills` | folder |
 
-These conventions change between CLI releases. When one drifts, update `install.sh` (`platform_target`), `install.ps1` (`Get-PlatformTarget`), and the install matrix in the README together. The MCP server (`npx -y sniff-qa --mcp`) is the universal fallback and is unaffected by this table.
+These conventions change between CLI releases. When one drifts, update `install.sh`
+(`platform_target`, the legacy path only), `install.ps1` (`Get-PlatformTarget`), and the install
+matrix in the README together. The MCP server (`npx -y sniff-qa --mcp`) is the universal fallback
+and is unaffected by this table. Editor and agent notes live in `docs/editors.md`.
+
+### MCP capability gating
+
+`--caps` narrows the registered tool set (`src/mcp/caps.ts`). Granting `walk` also grants `scan`,
+because `handleSniffWalk` degrades to a source scan when no dev server is reachable. When you add or
+rename an MCP tool, update `CAPABILITY_TOOL` and `TOOL_ORDER` in that file, or the default tool list
+silently changes shape.
+
+### Report redaction
+
+`--storage-state` arms a process-level redactor (`src/core/redaction.ts`). Any new writer that
+serializes findings must pass them through `redactValue` first, or an authenticated run can leak a
+session token into a committed report. The existing chokepoints are `saveResults`, `saveReport` and
+`src/crawl/write-report.ts`.
 
 ### Manifests to keep in sync
 
@@ -61,7 +85,10 @@ Three plugin manifests must stay aligned on `name`, `version`, and `description`
 
 ### Version-bump checklist
 
-When cutting a release, bump the version in `package.json`, `.claude-plugin/plugin.json`, `.cursor-plugin/plugin.json`, and `.copilot-plugin/plugin.json`, and add a `CHANGELOG.md` entry. The npm `files` list does not include the installer, the discovery manifests, `READMEs/`, or `site/`, so those are repo-only and are not shipped to npm.
+When cutting a release, bump the version in `package.json` (and `package-lock.json`), `server.json`,
+`.claude-plugin/plugin.json`, `.cursor-plugin/plugin.json`, and `.copilot-plugin/plugin.json`, and
+add a `CHANGELOG.md` entry. `release.yml` checks the tag against `package.json` only, so the other
+four drift silently; 10x pins from `.claude-plugin/plugin.json`. The npm `files` list does not include the installer, the discovery manifests, `READMEs/`, or `site/`, so those are repo-only and are not shipped to npm.
 
 ### GitHub Pages
 
