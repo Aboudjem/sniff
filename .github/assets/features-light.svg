@@ -163,6 +163,6 @@
   <g class="cf">
     <rect x="18" y="338" width="804" height="26" rx="13" fill="#FFFFFF" stroke="#0E8571" stroke-opacity="0.7" stroke-width="1"/>
     <path d="M34 351 l4 4 l7 -8" stroke="#0E8571" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-    <text class="mono foot" x="54" y="355" fill="#0E8571">Every finding ships with reproduction proof: exact route, ordered steps, screenshot, console/network excerpt. No proof, no finding.</text>
+    <text class="mono foot" x="54" y="355" fill="#0E8571">Every finding ships with reproduction proof: the exact route and the ordered steps, plus screenshot and console/network excerpt. No proof, no finding.</text>
   </g>
 </svg>

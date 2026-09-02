@@ -26,16 +26,17 @@ claude plugin install sniff@10x
 
 ## Ce que ça fait
 
-Les linters lisent votre code source et n'exécutent jamais votre application. Les frameworks de bout
-en bout vous obligent à écrire et à maintenir les tests. sniff ouvre votre application qui tourne
-dans un vrai navigateur, clique et remplit les champs comme le ferait une personne, puis juge ce qui
-s'est réellement passé.
+La plupart des linters lisent votre code source sans jamais exécuter votre application, et les
+frameworks de bout en bout vous demandent d'écrire et de maintenir les tests vous-même. sniff ouvre
+votre application qui tourne dans un vrai navigateur, clique et remplit les champs comme le ferait
+une personne, puis juge ce qui s'est réellement passé.
 
 - **Il trouve 12 catégories de bugs**, des routes en HTTP 500 et des liens morts jusqu'aux données
   bouche-trou, aux boutons d'envoi qui ne font rien, aux formulaires vidés par le bouton retour, aux
   indicateurs de chargement bloqués et aux débordements sur mobile.
-- **Il prouve chacun d'eux.** Un constat porte la route, les étapes ordonnées pour le reproduire, une
-  capture d'écran et l'extrait de console ou de réseau qui l'a attrapé. Pas de preuve, pas de constat.
+- **Il prouve chacun d'eux.** Chaque constat porte la route et les étapes ordonnées qui l'ont
+  produit, plus la capture d'écran et l'extrait de console ou de réseau relevés par le contrôle.
+  Pas d'étapes, pas de constat.
 - **Il a été mesuré.** Sur une application de test truffée de 21 bugs couvrant les 12 catégories,
   plus une page témoin propre, sniff en trouve 21 sur 21 et ne signale rien sur la page témoin.
 
@@ -60,20 +61,20 @@ Le paquet npm s'appelle `sniff-qa` et le binaire qu'il installe s'appelle `sniff
 <details>
 <summary>Version de Node, installation dans le projet et CI</summary>
 
-Node.js 22 ou plus récent. `npm install -D sniff-qa` le fige dans un projet, et `npx sniff-qa ci`
-écrit un workflow GitHub Actions avec cache du navigateur et artefacts de rapport.
+Node.js 22 ou plus récent. `npm install -D sniff-qa` l'ajoute aux devDependencies d'un projet, et
+`npx sniff-qa ci` écrit un workflow GitHub Actions avec cache du navigateur et artefacts de rapport.
 </details>
 
 ## Utilisation
 
-**1. Démarrez votre application.** N'importe quel serveur de développement, n'importe quel framework.
+**1. Démarrez votre application,** avec le serveur de développement que votre projet utilise déjà.
 
 ```bash
 npm run dev
 ```
 
 **2. Faites-la parcourir,** depuis un second terminal. sniff détecte tout seul un serveur de
-développement sur les ports courants, donc `--url` est facultatif, mais le passer marche toujours.
+développement sur les ports courants, donc `--url` est facultatif, mais le passer lève le doute.
 
 ```bash
 npx sniff-qa --url http://localhost:3000
@@ -112,22 +113,24 @@ Ajoutez `--report` pour obtenir une page HTML autonome que vous pouvez envoyer �
   <img alt="The 12 classes of bugs sniff finds" src="https://raw.githubusercontent.com/Aboudjem/sniff/main/.github/assets/features-light.svg" width="100%">
 </picture>
 
-- **Un rapport dans le terminal** groupé par gravité, chaque constat avec ses étapes, le chemin d'une
-  capture d'écran et une correction.
+- **Un rapport dans le terminal** groupé par gravité, chaque constat avec ses étapes, une correction
+  et un chemin de capture d'écran.
 - **Un fichier partageable**, un rapport HTML autonome avec `--report` ou du JSON avec `--json`.
 - **Un code de sortie** non nul dès que les constats atteignent la gravité de `--fail-on`, pour que
   l'intégration continue échoue sur de vrais bugs.
-- **Une étiquette de confiance** sur chaque constat. Ceux marqués `uncertain` restent masqués tant
-  que vous ne passez pas `--all`.
+- **Une étiquette de confiance** sur chacun. `uncertain` est masqué dans le terminal tant que vous ne
+  passez pas `--all`.
 
 Nouveautés de la version 0.8.0 :
 
 - `--caps scan,report` restreint le serveur MCP à l'analyse du code source et à la lecture des
   résultats enregistrés, sans lancer ni télécharger de navigateur.
-- `--storage-state auth.json` parcourt une application où vous êtes connecté, et les valeurs de
-  cookies et de jetons de ce fichier sont masquées dans tous les rapports écrits.
+- `--storage-state auth.json` parcourt une application où vous êtes connecté. Les valeurs de cookies
+  et de jetons de ce fichier sont masquées dans le texte de tous les rapports écrits, mais pas dans
+  les pixels des captures d'écran.
 - Un bloc `assert` dans `sniff.config` plafonne les constats par gravité (`maxCritical`, `maxHigh`,
-  `maxTotal`), appliqué par le parcours, l'analyse du code source et la découverte.
+  `maxTotal`), appliqué en ligne de commande par le parcours, l'analyse du code source et la
+  découverte.
 
 ## Fonctionne dans votre éditeur
 
@@ -139,8 +142,8 @@ Fonctionne dans Claude Code, Cursor, Codex, Copilot, Gemini CLI et plus de 70 au
 |:--|:--|
 | Claude Code | `claude plugin install sniff@10x` |
 | L'un des 70 agents et plus | `npx skills add Aboudjem/sniff` |
-| Codex, Gemini CLI, OpenCode, Pi | `install.sh codex` |
-| VS Code (Copilot) | `install.sh copilot` |
+| Codex, Gemini CLI, OpenCode, Pi | `./install.sh codex` |
+| VS Code (Copilot) | `./install.sh copilot` |
 | Tout le reste | voir [docs/editors.md](../docs/editors.md) |
 
 <details>
@@ -159,14 +162,15 @@ forme d'entrée JSON ou TOML. Tous les extraits par éditeur sont dans
 ## Bon à savoir
 
 > [!IMPORTANT]
-> Pas de clé d'API, pas de compte, pas d'inscription. sniff s'exécute sur votre machine et votre code
-> source n'en sort jamais. Le parcours et l'analyse ne modifient jamais votre code. `sniff fix` est la
-> seule commande qui édite des fichiers source, et seulement quand vous la lancez.
+> Pas de clé d'API, pas de compte, pas d'inscription, et aucun fournisseur d'IA tant que vous n'en
+> configurez pas un vous-même. Le parcours et l'analyse ne modifient jamais votre code source.
+> `sniff fix` est la seule commande qui réécrit du code, et seulement quand vous la lancez.
 
 > [!NOTE]
-> Le premier parcours avec navigateur télécharge une version de Chromium une seule fois, puis la met
-> en cache. Via MCP, sniff renvoie une charge `needsSetup` au lieu de bloquer votre éditeur pendant le
-> téléchargement.
+> Un parcours clique sur des boutons et soumet de vrais formulaires, donc il peut créer de vraies
+> données. Pointez-le vers une application de développement ou de préproduction, pas vers la
+> production. Le premier parcours télécharge aussi une version de Chromium et la met en cache, donc
+> cette exécution-là a besoin d'un accès internet.
 
 - **Il lui faut une application qui tourne.** Sans serveur de développement lancé, il se rabat sur
   une analyse du code source seule et vous explique comment démarrer le vrai parcours.
@@ -174,7 +178,8 @@ forme d'entrée JSON ou TOML. Tous les extraits par éditeur sont dans
 - **La vérification des liens morts suit les liens externes,** donc un parcours envoie des requêtes
   vers les URL tierces que vos propres pages référencent déjà.
 - **Un parcours qui trouve des bugs sort en 1** volontairement, pour que l'intégration continue fasse
-  échouer la build. Ce n'est pas un plantage. Passez `--fail-on none` pour toujours sortir en 0.
+  échouer la build. Ce n'est pas un plantage. `--fail-on none` désactive le seuil de gravité, mais un
+  budget `assert` peut encore faire échouer l'exécution.
 
 ## En savoir plus
 

@@ -14,9 +14,10 @@ internet access for that first run. Nothing else is installed and no account is 
 
 ## Do I need an API key?
 
-No. sniff runs entirely on your machine with no API key and no signup. Your code and your app never
-leave your computer. Dead-link checking is the one thing that reaches outward, and only to the
-third-party URLs your own pages already link to.
+No. The default walk and the source scan run entirely on your machine, with no API key and no
+signup. Two things reach outward. Dead-link checking requests the third-party URLs your own pages
+already link to. And the optional AI exploration provider, which is off unless you set
+`ANTHROPIC_API_KEY` or `OPENAI_API_KEY` yourself, sends prompts to that provider when you enable it.
 
 ## How is it different from a linter?
 
@@ -30,6 +31,13 @@ Codegen records a script that you then author and maintain, and it tests only th
 sniff writes nothing for you to maintain. It explores your flows on its own and judges the outcome,
 which catches things a recorded happy path never checks: placeholder data, state loss, missing
 success feedback.
+
+## Will a walk change data in my app?
+
+Possibly. A walk clicks buttons and fills and submits real forms, because that is the only way to
+catch a dead submit button, validation that never fires, or a submit with no success feedback. If
+your app writes on submit, the walk writes. Point it at a dev or staging environment rather than at
+production data.
 
 ## Will it change my code?
 
@@ -46,8 +54,9 @@ plain HTML. It walks the rendered app, so the framework does not matter for the 
 ## Why did it exit 1 when nothing crashed?
 
 A walk that finds bugs exits non-zero on purpose, so a CI job fails the build. You still see a
-`✓ Scan complete` line. Pass `--fail-on none` to always exit 0, or `--fail-on critical` to fail only
-on the worst findings.
+`✓ Scan complete` line. `--fail-on critical` fails only on the worst findings, and `--fail-on none`
+turns the severity gate off entirely. One thing survives `--fail-on none`: an `assert` budget in
+`sniff.config` is evaluated separately and can still exit 1.
 
 ## Can it walk a page behind a login?
 

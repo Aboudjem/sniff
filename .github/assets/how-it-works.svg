@@ -176,7 +176,7 @@
   </g>
 
   <!-- footer -->
-  <text class="mono foot" x="40" y="322">No finding ships without reproduction proof: exact route · ordered steps · screenshot · console/network excerpt.</text>
+  <text class="mono foot" x="40" y="322">No finding ships without reproduction proof: the exact route · the ordered steps · screenshot · console/network excerpt.</text>
   <g class="sb">
     <rect x="874" y="306" width="286" height="26" rx="13" fill="none" stroke="#3DFFAB" stroke-opacity="0.45" stroke-width="1"/>
     <path d="M890 319 l4 4 l7 -8" stroke="#3DFFAB" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/>

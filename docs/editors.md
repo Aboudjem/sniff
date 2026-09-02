@@ -210,7 +210,8 @@ fails loudly.
 ## install.sh
 
 `install.sh <platform>` maps a short platform id to a skills-CLI agent code and runs
-`npx --yes skills@1.5.23 add Aboudjem/sniff -a <agent> -y` for you.
+`npx --yes skills@1.5.23 add Aboudjem/sniff -a <agent> -y` for you. Run it from a checkout as
+`./install.sh <platform>`; the repository root is not on your `PATH`.
 
 | `install.sh` platform | skills-CLI agent |
 | --- | --- |

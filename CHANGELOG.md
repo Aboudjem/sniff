@@ -24,12 +24,13 @@ delegates to the Vercel skills CLI. The scanner's findings and their wording are
   the CLI flag, both crawl contexts, `BrowserRunner`, and the MCP walk. Cookie values, localStorage
   values, JSON string leaves inside them, indexedDB strings, percent-encoded forms, and
   `Authorization` header values are redacted from progress output, screenshot filenames, the returned
-  report, `saveResults`, and `saveReport`. 21 tests, including one that plants four tokens across a
-  report and asserts each appears zero times in the written HTML and JSON.
+  report, `saveResults`, and `saveReport`. Screenshot pixels are out of scope and stay unredacted.
+  21 tests, including one that plants four tokens across a report and asserts each appears zero times
+  in the written HTML and JSON.
 - **An `assert` block in `sniff.config`.** `maxCritical`, `maxHigh`, `maxMedium`, `maxLow`,
   `maxInfo`, and `maxTotal` cap findings by severity. Additive only: it can turn a pass into a
-  failure, never the reverse, and an absent block behaves exactly as before. Enforced by the walk,
-  the public `sniff scan`, the browser mode, and discovery. 31 tests.
+  failure, never the reverse, and an absent block behaves exactly as before. Enforced on the command
+  line by the walk, the public `sniff scan`, the browser mode, and discovery. 31 tests.
 - **Neon Noir visual identity.** New `hero-dark.svg` and `hero-light.svg` for the README first
   screen, `logo-mark.png` and `logo-mark-512.png` as a square mark, and a rebuilt 1280x640
   `social-preview.png`. `demo.svg`, `features-dark.svg`, `features-light.svg`, `how-it-works.svg`,

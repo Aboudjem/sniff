@@ -26,14 +26,14 @@ claude plugin install sniff@10x
 
 ## What it does
 
-Linters read your source and never run your app. End-to-end frameworks make you write and maintain
-the tests. sniff opens your running app in a real browser, clicks and fills things like a user
-would, and judges what actually happened.
+Most linters read your source without ever running your app, and end-to-end frameworks ask you to
+write and maintain the tests yourself. sniff opens your running app in a real browser, clicks and
+fills things like a user would, and judges what actually happened.
 
 - **It finds 12 classes of bugs**, from HTTP 500 routes and dead links to placeholder data, dead
   submit buttons, forms wiped by the back button, stuck spinners, and mobile overflow.
-- **It proves every one.** A finding carries the route, the ordered steps to reproduce it, a
-  screenshot, and the console or network excerpt that caught it. No proof, no finding.
+- **It proves every one.** Every finding carries the route and the ordered steps that produced it,
+  plus the screenshot and the console or network excerpt the check captured. No steps, no finding.
 - **It has been measured.** On a fixture app planted with 21 bugs across all 12 classes, plus a
   clean control page, sniff finds 21 of 21 and reports nothing on the control page.
 
@@ -58,20 +58,20 @@ is an unrelated package.
 <details>
 <summary>Node version, project install, and CI</summary>
 
-Node.js 22 or newer. `npm install -D sniff-qa` pins it in a project, and `npx sniff-qa ci` writes a
-GitHub Actions workflow with browser caching and report artifacts.
+Node.js 22 or newer. `npm install -D sniff-qa` adds it to a project's devDependencies, and
+`npx sniff-qa ci` writes a GitHub Actions workflow with browser caching and report artifacts.
 </details>
 
 ## Use it
 
-**1. Start your app.** Any dev server, any framework.
+**1. Start your app,** with whatever dev server your project already uses.
 
 ```bash
 npm run dev
 ```
 
 **2. Walk it,** from a second terminal. sniff auto-detects a dev server on the common ports, so
-`--url` is optional, but passing it always works.
+`--url` is optional, but passing it takes the guesswork out.
 
 ```bash
 npx sniff-qa --url http://localhost:3000
@@ -109,19 +109,19 @@ the environment looks wrong.
   <img alt="The 12 classes of bugs sniff finds" src="https://raw.githubusercontent.com/Aboudjem/sniff/main/.github/assets/features-light.svg" width="100%">
 </picture>
 
-- **A terminal report** grouped by severity, each finding with steps, a screenshot path, and a fix.
+- **A terminal report** grouped by severity, each finding with steps, a fix, and a screenshot path.
 - **A shareable file**, a self-contained HTML report with `--report` or JSON with `--json`.
 - **An exit code**, non-zero when findings reach the `--fail-on` severity, so CI fails on real bugs.
-- **A confidence label** on each finding. `uncertain` ones stay hidden unless you pass `--all`.
+- **A confidence label** on each. `uncertain` is hidden from the terminal unless you pass `--all`.
 
 New in 0.8.0:
 
 - `--caps scan,report` narrows the MCP server to the source scan and the saved-results reader, with
   no browser launch and no browser download.
-- `--storage-state auth.json` walks a logged-in app, and cookie and token values from that file are
-  redacted from every written report.
+- `--storage-state auth.json` walks a logged-in app. Cookie and token values from that file are
+  redacted from the text of every written report, though not from screenshot pixels.
 - An `assert` block in `sniff.config` caps findings by severity (`maxCritical`, `maxHigh`,
-  `maxTotal`), enforced by the walk, the source scan, and discovery.
+  `maxTotal`), enforced on the command line by the walk, the source scan, and discovery.
 
 ## Works in your editor
 
@@ -132,8 +132,8 @@ Works in Claude Code, Cursor, Codex, Copilot, Gemini CLI, and 70+ other agents t
 |:--|:--|
 | Claude Code | `claude plugin install sniff@10x` |
 | Any of 70+ agents | `npx skills add Aboudjem/sniff` |
-| Codex, Gemini CLI, OpenCode, Pi | `install.sh codex` |
-| VS Code (Copilot) | `install.sh copilot` |
+| Codex, Gemini CLI, OpenCode, Pi | `./install.sh codex` |
+| VS Code (Copilot) | `./install.sh copilot` |
 | Everything else | see [docs/editors.md](docs/editors.md) |
 
 <details>
@@ -151,20 +151,21 @@ or TOML entry. Every per-editor snippet is in [docs/editors.md](docs/editors.md)
 ## Good to know
 
 > [!IMPORTANT]
-> No API key, no account, no signup. sniff runs on your machine and your source never leaves it.
-> Walking and scanning never change your code. `sniff fix` is the only command that edits source
-> files, and only when you run it.
+> No API key, no account, no signup, and no AI provider unless you set one up yourself. Walking and
+> scanning never edit your source. `sniff fix` is the only command that rewrites code, and only when
+> you run it.
 
 > [!NOTE]
-> The first browser walk downloads a Chromium build once and then caches it. Over MCP, sniff returns
-> a `needsSetup` payload instead of blocking your editor on the download.
+> A walk clicks buttons and submits real forms, so it can create real data. Point it at a dev or
+> staging app, not at production. The first walk also downloads a Chromium build and caches it, so
+> that one run needs internet access.
 
 - **It wants a running app.** With no dev server up it falls back to a source-only scan and tells
   you how to start the real walk. `npx sniff-qa scan` runs that scan on purpose.
 - **Dead-link checking follows external links,** so a walk makes requests to the third-party URLs
   your own pages already link to.
-- **A walk that finds bugs exits 1** on purpose, so CI fails the build. That is not a crash. Pass
-  `--fail-on none` to always exit 0.
+- **A walk that finds bugs exits 1** on purpose, so CI fails the build. That is not a crash.
+  `--fail-on none` turns off the severity gate, though an `assert` budget can still fail the run.
 
 ## Learn more
 

@@ -26,13 +26,13 @@ claude plugin install sniff@10x
 
 ## 它做什么
 
-静态检查工具只读你的源码，从不运行你的应用。端到端测试框架则要求你自己编写并维护测试。sniff 会用真实
-浏览器打开你正在运行的应用，像用户那样点击和填写，然后判断实际发生了什么。
+大多数静态检查工具只读你的源码，从不真正运行你的应用；端到端测试框架则要求你自己编写并维护测试。
+sniff 会用真实浏览器打开你正在运行的应用，像用户那样点击和填写，然后判断实际发生了什么。
 
 - **它能发现 12 类缺陷**，从 HTTP 500 路由和失效链接，到占位数据、点了没反应的提交按钮、被浏览器后退
   按钮清空的表单、卡住的加载动画，以及移动端横向溢出。
-- **每一条都有证据。** 一条结果会带上路由、可复现的操作步骤、一张截图，以及捕捉到它的控制台或网络片段。
-  没有证据，就不算结果。
+- **每一条都有证据。** 每条结果都会带上路由和产生它的有序操作步骤，以及该项检查所采集到的截图和
+  控制台或网络片段。没有步骤，就不算结果。
 - **它经过实测。** 在一个植入了 21 个缺陷、覆盖全部 12 类，并额外带一个干净对照页面的样例应用上，
   sniff 找出了 21 个中的 21 个，并且在对照页面上没有报出任何结果。
 
@@ -56,20 +56,20 @@ npm 包名是 `sniff-qa`，它安装出来的可执行文件名是 `sniff`。不
 <details>
 <summary>Node 版本、项目内安装与 CI</summary>
 
-需要 Node.js 22 或更高版本。`npm install -D sniff-qa` 可以把它固定在项目里，而 `npx sniff-qa ci` 会
-生成一个带浏览器缓存和报告产物的 GitHub Actions 工作流。
+需要 Node.js 22 或更高版本。`npm install -D sniff-qa` 会把它加入项目的 devDependencies，而
+`npx sniff-qa ci` 会生成一个带浏览器缓存和报告产物的 GitHub Actions 工作流。
 </details>
 
 ## 使用方法
 
-**1. 启动你的应用。** 任何开发服务器，任何框架都可以。
+**1. 启动你的应用，** 用你的项目本来就在用的那个开发服务器。
 
 ```bash
 npm run dev
 ```
 
 **2. 走一遍，** 在第二个终端里执行。sniff 会自动探测常用端口上的开发服务器，所以 `--url` 是可选的，
-但显式传入总是有效。
+但显式传入可以免去猜测。
 
 ```bash
 npx sniff-qa --url http://localhost:3000
@@ -107,18 +107,18 @@ sniff v0.8.0  walking http://localhost:4321
   <img alt="The 12 classes of bugs sniff finds" src="https://raw.githubusercontent.com/Aboudjem/sniff/main/.github/assets/features-light.svg" width="100%">
 </picture>
 
-- **一份终端报告**，按严重程度分组，每条结果都带步骤、截图路径和修复建议。
+- **一份终端报告**，按严重程度分组，每条结果都带步骤、修复建议和一个截图路径。
 - **一个可分享的文件**，用 `--report` 得到自包含的 HTML 报告，或用 `--json` 得到 JSON。
 - **一个退出码**，当结果达到 `--fail-on` 指定的严重程度时返回非零值，于是 CI 会因真实缺陷而失败。
-- **每条结果上的置信度标签**。标为 `uncertain` 的结果默认隐藏，除非你传入 `--all`。
+- **每条结果上的置信度标签**。除非你传入 `--all`，否则 `uncertain` 不会显示在终端里。
 
 0.8.0 的新增内容：
 
 - `--caps scan,report` 把 MCP 服务器收窄到源码扫描和已保存结果的读取，不启动浏览器，也不下载浏览器。
-- `--storage-state auth.json` 可以走一遍已登录的应用，并且该文件里的 cookie 和令牌值会从每一份写出的
-  报告中被脱敏。
+- `--storage-state auth.json` 可以走一遍已登录的应用。该文件里的 cookie 和令牌值会从每一份写出报告的
+  文本中被脱敏，但截图像素不在此列。
 - `sniff.config` 里的 `assert` 块可以按严重程度给结果数量设上限（`maxCritical`、`maxHigh`、
-  `maxTotal`），由遍历、源码扫描和场景发现共同执行。
+  `maxTotal`），在命令行上由遍历、源码扫描和场景发现共同执行。
 
 ## 在你的编辑器中使用
 
@@ -129,8 +129,8 @@ sniff v0.8.0  walking http://localhost:4321
 |:--|:--|
 | Claude Code | `claude plugin install sniff@10x` |
 | 70 多个智能体中的任意一个 | `npx skills add Aboudjem/sniff` |
-| Codex、Gemini CLI、OpenCode、Pi | `install.sh codex` |
-| VS Code (Copilot) | `install.sh copilot` |
+| Codex、Gemini CLI、OpenCode、Pi | `./install.sh codex` |
+| VS Code (Copilot) | `./install.sh copilot` |
 | 其他所有 | 见 [docs/editors.md](../docs/editors.md) |
 
 <details>
@@ -148,18 +148,18 @@ Cursor、VS Code、Gemini CLI、Windsurf、Continue、OpenCode 和 Zed 接受同
 ## 需要知道的事
 
 > [!IMPORTANT]
-> 不需要 API key，不需要账号，不需要注册。sniff 在你自己的机器上运行，你的源码从不外传。
-> 遍历和扫描都不会改动你的代码。`sniff fix` 是唯一会修改源文件的命令，而且只在你主动运行时才会执行。
+> 不需要 API key，不需要账号，不需要注册；除非你自己配置，否则也不会用到任何 AI 提供方。
+> 遍历和扫描都不会改动你的源码。`sniff fix` 是唯一会改写代码的命令，而且只在你主动运行时才会执行。
 
 > [!NOTE]
-> 第一次进行浏览器遍历时会下载一份 Chromium 构建，仅此一次，之后会被缓存。在 MCP 场景下，sniff 会返回
-> 一个 `needsSetup` 载荷，而不是让你的编辑器卡在这次下载上。
+> 一次遍历会点击按钮并提交真实表单，因此可能产生真实数据。请把它指向开发或预发布环境，而不是生产环境。
+> 第一次遍历还会下载一份 Chromium 构建并缓存下来，所以那一次运行需要网络访问。
 
 - **它需要一个正在运行的应用。** 如果没有开发服务器在跑，它会退回到仅源码扫描，并告诉你如何开始真正的
   遍历。`npx sniff-qa scan` 可以专门运行这个扫描。
 - **失效链接检查会跟进外部链接，** 所以一次遍历会向你自己的页面已经链接到的第三方 URL 发出请求。
-- **发现缺陷的遍历会以 1 退出**，这是有意为之，好让 CI 判定构建失败。这不是崩溃。传入
-  `--fail-on none` 可以始终以 0 退出。
+- **发现缺陷的遍历会以 1 退出**，这是有意为之，好让 CI 判定构建失败。这不是崩溃。`--fail-on none`
+  会关掉严重程度这道闸门，但 `assert` 上限仍然可能让这次运行失败。
 
 ## 了解更多
 
