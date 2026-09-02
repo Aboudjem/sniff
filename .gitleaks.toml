@@ -1,0 +1,30 @@
+# gitleaks configuration for sniff.
+#
+# The default rule set is kept in full. The allowlist below covers four specific
+# false positives, each a deliberately fake credential that a test or a fixture
+# needs in order to work. Nothing here disables a rule, and nothing here is a
+# real secret. Add to this file only for an exact, explained finding.
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Fake credentials in tests and fixtures, plus gitignored build output"
+
+paths = [
+  # Build output. Not tracked by git (.gitignore line 2); it is the compiled
+  # copy of src/discovery/scenarios/personas.ts and inherits its fake passwords.
+  '''^dist/''',
+  # Proves the --storage-state redactor removes session tokens from reports.
+  # The tokens are invented for the test and must appear in it verbatim.
+  '''^src/crawl/redact\.test\.ts$''',
+  # Synthetic sign-up personas the discovery walk types into forms. The values
+  # are the xkcd passphrase joke, not credentials for anything.
+  '''^src/discovery/scenarios/personas\.ts$''',
+]
+
+regexes = [
+  # A fake Stripe key inside a source fixture that the api-endpoints scanner is
+  # supposed to flag. Removing it would remove the thing under test.
+  '''sk_live_1234567890abcdefghij''',
+]
