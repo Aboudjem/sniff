@@ -17,6 +17,8 @@ export interface BrowserRunContext {
   timeout: number;
   rootDir: string;
   projects: BrowserProject[];
+  /** Path to a Playwright storage-state file for an authenticated run. */
+  storageState?: string;
 }
 
 export interface PageVisitResult {

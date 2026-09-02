@@ -1,4 +1,4 @@
-import type { Browser, BrowserContext, Page, APIRequestContext } from 'playwright';
+import type { Browser, BrowserContext, BrowserContextOptions, Page, APIRequestContext } from 'playwright';
 import { join } from 'node:path';
 import { mkdir } from 'node:fs/promises';
 import { PageEvidence } from './evidence.js';
@@ -14,6 +14,7 @@ import { responsiveDetector } from './detectors/responsive.js';
 import { formsDetector } from './detectors/forms.js';
 import { loadingStateDetector } from './detectors/loading.js';
 import { flowDetector } from './detectors/flow.js';
+import { useStorageState, redactText, redactValue } from '../core/redaction.js';
 
 export interface CrawlOptions {
   startUrl: string;
@@ -24,6 +25,12 @@ export interface CrawlOptions {
   settleMs?: number;
   linkTimeoutMs?: number;
   onProgress?: (msg: string) => void;
+  /**
+   * Path to a Playwright storage-state JSON file, so the walk runs as a
+   * logged-in user. Loading it also installs the report redactor, so the
+   * credentials it holds never reach a written artifact or a progress line.
+   */
+  storageState?: string;
 }
 
 const DESKTOP = { width: 1280, height: 800 };
@@ -36,7 +43,9 @@ function routeOf(url: string): string {
 }
 
 function safeName(s: string): string {
-  return s.replace(/[^a-zA-Z0-9]/g, '_').slice(0, 60) || 'root';
+  // Redact before building the name: a token in a path segment would otherwise
+  // be burned into a screenshot filename on disk, where no later pass reaches.
+  return redactText(s).replace(/[^a-zA-Z0-9]/g, '_').slice(0, 60) || 'root';
 }
 
 export async function runCrawl(opts: CrawlOptions): Promise<CrawlReport> {
@@ -45,13 +54,23 @@ export async function runCrawl(opts: CrawlOptions): Promise<CrawlReport> {
   const includeMobile = opts.includeMobile ?? true;
   const settleMs = opts.settleMs ?? 3500;
   const linkTimeoutMs = opts.linkTimeoutMs ?? 10000;
-  const log = opts.onProgress ?? (() => {});
+  const rawLog = opts.onProgress ?? (() => {});
+  // Progress lines quote routes and reach stderr while the crawl is still
+  // running, long before any report is assembled.
+  const log = (msg: string): void => rawLog(redactText(msg));
   const startUrl = normalizeUrl(opts.startUrl);
   const baseOrigin = new URL(startUrl).origin;
   const startedAt = performance.now();
 
   const outputDir = opts.outputDir ?? join(process.cwd(), 'sniff-reports', 'crawl');
   await mkdir(outputDir, { recursive: true }).catch(() => {});
+
+  // Parse the storage state once, then derive both the browser context state
+  // and the redaction secret list from that same object.
+  const storageState: BrowserContextOptions['storageState'] | undefined = opts.storageState
+    ? ((await useStorageState(opts.storageState)) as BrowserContextOptions['storageState'])
+    : undefined;
+  const authOption: BrowserContextOptions = storageState ? { storageState } : {};
 
   const playwright = await import('playwright');
   const browser: Browser = await playwright.chromium.launch({ headless });
@@ -64,7 +83,7 @@ export async function runCrawl(opts: CrawlOptions): Promise<CrawlReport> {
   let linksChecked = 0;
 
   try {
-    const context: BrowserContext = await browser.newContext({ viewport: DESKTOP, ignoreHTTPSErrors: true });
+    const context: BrowserContext = await browser.newContext({ viewport: DESKTOP, ignoreHTTPSErrors: true, ...authOption });
     const page: Page = await context.newPage();
     page.setDefaultTimeout(8000);
     const evidence = new PageEvidence(baseOrigin);
@@ -166,7 +185,7 @@ export async function runCrawl(opts: CrawlOptions): Promise<CrawlReport> {
 
     // ── Mobile pass: a11y (target-size) + responsive overflow ────────────
     if (includeMobile && visited.length > 0) {
-      const mctx: BrowserContext = await browser.newContext({ viewport: MOBILE, ignoreHTTPSErrors: true });
+      const mctx: BrowserContext = await browser.newContext({ viewport: MOBILE, ignoreHTTPSErrors: true, ...authOption });
       const mpage: Page = await mctx.newPage();
       mpage.setDefaultTimeout(8000);
       const mevidence = new PageEvidence(baseOrigin);
@@ -235,7 +254,10 @@ export async function runCrawl(opts: CrawlOptions): Promise<CrawlReport> {
     byIssueClass[String(f.issueClass)] = (byIssueClass[String(f.issueClass)] ?? 0) + 1;
   }
 
-  return {
+  // Redact once, here, so every consumer of the report (the JSON and HTML
+  // writers, stdout, the terminal summary, the MCP payload) receives the same
+  // clean object. A no-op when no storage state was loaded.
+  return redactValue({
     findings,
     stats: {
       pagesVisited: visited.length,
@@ -246,7 +268,7 @@ export async function runCrawl(opts: CrawlOptions): Promise<CrawlReport> {
     routes: visited.map(routeOf),
     runAt: new Date().toISOString(),
     summary: { total: findings.length, bySeverity, byConfidence, byIssueClass },
-  };
+  });
 }
 
 function sevRank(s: Severity): number {

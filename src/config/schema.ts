@@ -42,6 +42,13 @@ export const browserConfigSchema = z.object({
   slowMo: z.number().default(0),
   timeout: z.number().default(30000),
   baseUrl: z.string().optional(),
+  /**
+   * Path to a Playwright storage-state JSON file, so sniff walks the app as a
+   * logged-in user. This is a path, not a credential, but the file it points at
+   * holds live session cookies: keep that file out of version control. Values
+   * loaded from it are redacted from every written report.
+   */
+  storageState: z.string().optional(),
 });
 
 export const viewportConfigSchema = z.object({

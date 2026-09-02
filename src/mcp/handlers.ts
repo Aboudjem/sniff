@@ -193,6 +193,9 @@ export async function handleSniffWalk(options: SniffWalkOptions): Promise<McpToo
     headless: options.headless ?? true,
     includeMobile: options.mobile ?? true,
     ...(options.maxPages ? { maxPages: options.maxPages } : {}),
+    // Config parity with the CLI: an authenticated walk configured in
+    // sniff.config works over MCP too, redaction included.
+    ...(config.browser?.storageState ? { storageState: config.browser.storageState } : {}),
     outputDir: join(options.rootDir, 'sniff-reports', 'crawl'),
   });
 

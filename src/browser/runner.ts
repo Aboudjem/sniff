@@ -4,6 +4,7 @@ import type { BrowserFinding } from '../core/types.js';
 import type { BrowserProject, SniffConfig } from '../config/schema.js';
 import { SniffError } from '../core/errors.js';
 import { PageHookPipeline, ConsoleErrorHook, NetworkFailureHook, ScreenshotHook } from './page-hooks.js';
+import { useStorageState } from '../core/redaction.js';
 import { join } from 'node:path';
 
 function isScannerEnabled(config: SniffConfig, scannerName: string): boolean {
@@ -67,6 +68,12 @@ export class BrowserRunner {
 
     const reportDir = join(ctx.rootDir, this.config.report?.outputDir ?? 'sniff-reports');
 
+    // Parse once and install the report redactor from the same object, so the
+    // credentials this run carries never reach a written report.
+    const storageState = ctx.storageState
+      ? ((await useStorageState(ctx.storageState)) as import('playwright').BrowserContextOptions['storageState'])
+      : undefined;
+
     const playwright = await import('playwright');
     const urls = ctx.testFiles.length > 0
       ? ctx.testFiles.map((route) => {
@@ -98,6 +105,7 @@ export class BrowserRunner {
         for (const vp of ctx.viewports) {
           const context = await browser.newContext({
             viewport: { width: vp.width, height: vp.height },
+            ...(storageState ? { storageState } : {}),
           });
 
           const page = await context.newPage();

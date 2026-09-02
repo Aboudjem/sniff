@@ -48,6 +48,7 @@ if (process.argv.includes('--mcp')) {
     .option('--all', 'Show low-confidence findings too (hidden by default)')
     .option('--max-pages <n>', 'Max pages to crawl during the flow-walk (default: 25)')
     .option('--no-mobile', 'Skip the mobile (375px) responsive pass')
+    .option('--storage-state <path>', 'Playwright storage-state JSON, so the walk runs as a logged-in user. Cookie and token values from it are redacted from every written report.')
     .option('--track-flakes', 'Track test flakiness across runs')
     .option('--discover', 'Run autonomous E2E discovery (scenarios + edge cases)')
     .option('--max-scenarios <n>', 'Cap total scenarios for discovery (default: 50)')
@@ -132,9 +133,15 @@ if (process.argv.includes('--mcp')) {
       if (wantsBrowser) {
         await ensurePlaywrightBrowsers(config.browser?.projects);
         const { crawlCommand } = await import('./commands/crawl-command.js');
+        // crawlCommand does not load config itself, so resolve the flag
+        // against the config key here. The flag wins.
+        const storageState = options.storageState
+          ? (await import('node:path')).resolve(options.storageState)
+          : config.browser?.storageState;
         const code = await crawlCommand({
           rootDir,
           url: url!,
+          ...(storageState ? { storageState } : {}),
           headless: options.headed ? false : options.headless,
           json: options.json,
           report: options.report,

@@ -3,6 +3,7 @@ import { join } from 'node:path';
 import type { ScanResult } from '../scanners/types.js';
 import type { TestRunRecord, FlakinessHistory } from './types.js';
 import { computeFlakeStatus } from './flakiness.js';
+import { redactValue } from './redaction.js';
 
 const SNIFF_DIR = '.sniff';
 const RESULTS_FILE = 'last-results.json';
@@ -15,10 +16,12 @@ export async function saveResults(
 ): Promise<void> {
   const dir = join(rootDir, SNIFF_DIR);
   await mkdir(dir, { recursive: true });
+  // Every non-crawl path funnels its findings through here, so this is where a
+  // credential loaded via --storage-state would otherwise land on disk.
   await writeFile(
     join(dir, RESULTS_FILE),
     JSON.stringify(
-      { timestamp: new Date().toISOString(), results },
+      redactValue({ timestamp: new Date().toISOString(), results }),
       null,
       2,
     ),

@@ -73,11 +73,17 @@ export function buildReport(
 
 export async function saveReport(
   rootDir: string,
-  report: SniffReport,
+  rawReport: SniffReport,
   formats: string[],
 ): Promise<string[]> {
   const dir = join(rootDir, '.sniff', 'reports');
   await mkdir(dir, { recursive: true });
+
+  // Redact once, before any formatter runs, so the JSON, JUnit and HTML
+  // writers below cannot disagree and HTML escaping cannot hide a credential
+  // from a string match. A no-op unless --storage-state loaded one.
+  const { redactValue } = await import('../core/redaction.js');
+  const report = redactValue(rawReport);
 
   const slug = report.metadata.timestamp.replace(/[:.]/g, '-').slice(0, 19);
   const savedPaths: string[] = [];
@@ -99,7 +105,7 @@ export async function saveReport(
         break;
       }
       case 'html': {
-        // HTML formatter implemented in Plan 04 — use computed path to avoid TS static resolution
+        // HTML formatter implemented in Plan 04; use a computed path to avoid TS static resolution
         try {
           const htmlModulePath = ['html'].map(n => `./${n}.js`)[0];
           const htmlModule = await import(htmlModulePath) as { generateHtmlReport: (r: SniffReport) => string };

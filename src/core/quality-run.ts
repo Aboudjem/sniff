@@ -93,6 +93,9 @@ export async function runBrowserAudit(options: {
     headless: options.headless,
     slowMo: options.config.browser?.slowMo ?? 0,
     timeout: options.config.browser?.timeout ?? 30000,
+    ...(options.config.browser?.storageState
+      ? { storageState: options.config.browser.storageState }
+      : {}),
   });
 
   const results = [...browserRun.scanResults];
