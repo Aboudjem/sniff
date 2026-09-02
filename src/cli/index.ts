@@ -142,6 +142,7 @@ if (process.argv.includes('--mcp')) {
           rootDir,
           url: url!,
           ...(storageState ? { storageState } : {}),
+          ...(config.assert ? { assert: config.assert } : {}),
           headless: options.headed ? false : options.headless,
           json: options.json,
           report: options.report,

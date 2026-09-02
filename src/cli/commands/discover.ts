@@ -1,4 +1,5 @@
 import type { DiscoveryReport, DiscoveryRunContext } from '../../discovery/run-types.js';
+import type { BrowserFinding } from '../../core/types.js';
 import type { RealismProfile } from '../../discovery/scenarios/types.js';
 
 export interface DiscoverOptions {
@@ -15,7 +16,7 @@ export interface DiscoverOptions {
   only?: string;
   /**
    * Filter classifier-provided guesses to these app types. Does NOT bypass
-   * classification — if none of these types scored above threshold, no
+   * classification; if none of these types scored above threshold, no
    * scenarios are generated. Old `--app-type` CLI flag maps here.
    */
   appType?: string[];
@@ -114,6 +115,19 @@ export async function productionUrlWarning(
   await new Promise<void>((resolve) => setTimeout(resolve, delay));
 }
 
+/**
+ * The findings an assert budget is evaluated against for a discovery run.
+ *
+ * Quarantined scenarios are excluded, the same way `shouldFailCi` excludes
+ * them: counting their findings would re-block a failure the quarantine had
+ * deliberately excused, so the two CI gates would disagree.
+ */
+export function budgetFindingsFor(report: DiscoveryReport): BrowserFinding[] {
+  return report.scenarios
+    .filter((s) => s.quarantined !== true)
+    .flatMap((s) => s.findings);
+}
+
 export async function discoverCommand(options: DiscoverOptions): Promise<DiscoverResult> {
   const pc = (await import('picocolors')).default;
   const isCi = !!options.ci || !!process.env.CI;
@@ -145,7 +159,7 @@ export async function discoverCommand(options: DiscoverOptions): Promise<Discove
     }
     const describeBucket = (label: string, entries: Array<{ value: string; weight: number; appType: string }>): void => {
       if (entries.length === 0) {
-        console.log(pc.dim(`    ${label}: —`));
+        console.log(pc.dim(`    ${label}: -`));
         return;
       }
       const top = [...entries].sort((a, b) => b.weight - a.weight).slice(0, 8);
@@ -313,7 +327,7 @@ export async function discoverCommand(options: DiscoverOptions): Promise<Discove
     const estimatedDurationMs = Math.round(perScenarioMs * allScenarios.length);
     if (!options.json) {
       console.log('');
-      console.log(pc.bold('  dry run — no browser launched, no reports written'));
+      console.log(pc.bold('  dry run: no browser launched, no reports written'));
       for (const s of scenarios) {
         console.log(`  ${pc.green(s.appType)}  ${s.id}  ${pc.dim(`(${s.stepCount} steps)`)}`);
       }
@@ -436,7 +450,18 @@ export async function discoverCommand(options: DiscoverOptions): Promise<Discove
   }
 
   const { shouldFailCi } = await import('../../discovery/report/flakiness.js');
-  const exitCode = shouldFailCi(report) ? 1 : 0;
+
+  // Assertion budgets, additive to shouldFailCi. Evaluated over the findings
+  // inside the scenarios (ScenarioResult.findings is BrowserFinding[]), not
+  // over pass/fail counts: shouldFailCi already fails on a single
+  // non-quarantined failure, so a scenario-count budget could never grant an
+  // allowance, only re-block a failure quarantine had excused.
+  const { evaluateSeverityBudget, printBudgetViolations } = await import('../../core/assert-budget.js');
+  const failsOnBudget = printBudgetViolations(
+    evaluateSeverityBudget(budgetFindingsFor(report), config.assert),
+  );
+
+  const exitCode = shouldFailCi(report) || failsOnBudget ? 1 : 0;
   return {
     report,
     savedPaths,

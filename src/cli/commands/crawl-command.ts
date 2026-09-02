@@ -1,5 +1,8 @@
 import { join } from 'node:path';
 import type { Severity } from '../../core/types.js';
+import type { AssertConfig } from '../../config/schema.js';
+import type { QaFinding as CrawlFinding } from '../../crawl/types.js';
+import { evaluateSeverityBudget, printBudgetViolations } from '../../core/assert-budget.js';
 
 export interface CrawlCommandOptions {
   rootDir: string;
@@ -17,9 +20,35 @@ export interface CrawlCommandOptions {
   ci?: boolean;
   /** Playwright storage-state file, so the walk runs as a logged-in user. */
   storageState?: string;
+  /** Assertion budgets from config, enforced on top of `failOn`. */
+  assert?: AssertConfig;
 }
 
 const VALID_SEVERITIES = new Set(['critical', 'high', 'medium', 'low', 'info']);
+
+/**
+ * The exit decision for a walk, pulled out so it can be tested without a
+ * browser. `failOn` and the assert budget are both evaluated over the SHOWN
+ * findings, the same set the report displays, so a hidden low-confidence
+ * finding can never fail CI on its own.
+ */
+export function decideCrawlExit(input: {
+  findings: readonly CrawlFinding[];
+  all?: boolean;
+  failOn?: string;
+  assert?: AssertConfig;
+}): { exitCode: number; shown: CrawlFinding[]; violations: string[] } {
+  const failOn = (input.failOn ?? 'critical,high')
+    .split(',').map((s) => s.trim()).filter((s): s is Severity => VALID_SEVERITIES.has(s));
+  const shown = input.findings.filter((f) => input.all || f.confidence !== 'uncertain');
+  const failsOnSeverity = shown.some((f) => failOn.includes(f.severity));
+  const budget = evaluateSeverityBudget(shown, input.assert);
+  return {
+    exitCode: failsOnSeverity || !budget.passed ? 1 : 0,
+    shown,
+    violations: budget.violations,
+  };
+}
 
 /**
  * The default browser experience: drive a real browser, walk the app's flows,
@@ -61,11 +90,17 @@ export async function crawlCommand(opts: CrawlCommandOptions): Promise<number> {
     console.log(pc.dim(`  HTML report: ${artifacts.htmlPath}`));
   }
 
-  // Exit code: fail on shown findings at/above the configured severities.
-  const failOn = (opts.failOn ?? 'critical,high')
-    .split(',').map((s) => s.trim()).filter((s): s is Severity => VALID_SEVERITIES.has(s));
-  const shown = report.findings.filter((f) => opts.all || f.confidence !== 'uncertain');
-  const hasFailure = shown.some((f) => failOn.includes(f.severity));
+  // Exit code: fail on shown findings at the configured severities, or on a
+  // breached assert budget.
+  const decision = decideCrawlExit({
+    findings: report.findings,
+    ...(opts.all !== undefined ? { all: opts.all } : {}),
+    ...(opts.failOn !== undefined ? { failOn: opts.failOn } : {}),
+    ...(opts.assert !== undefined ? { assert: opts.assert } : {}),
+  });
+  const shown = decision.shown;
+  printBudgetViolations({ passed: decision.violations.length === 0, violations: decision.violations });
+  const hasFailure = decision.exitCode === 1;
 
   if (opts.json) {
     console.log(JSON.stringify(report, null, 2));

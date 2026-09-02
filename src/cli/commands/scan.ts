@@ -56,9 +56,13 @@ export async function scanCommand(options: {
       return true;
     });
 
-  const hasFailure = findings.some((f) =>
+  const failsOnSeverity = findings.some((f) =>
     failOnSeverities.includes(f.severity),
   );
 
-  process.exit(hasFailure ? 1 : 0);
+  // Assertion budgets from config, additive to --fail-on.
+  const { evaluateSeverityBudget, printBudgetViolations } = await import('../../core/assert-budget.js');
+  const failsOnBudget = printBudgetViolations(evaluateSeverityBudget(findings, config.assert));
+
+  process.exit(failsOnSeverity || failsOnBudget ? 1 : 0);
 }

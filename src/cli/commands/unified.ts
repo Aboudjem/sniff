@@ -282,12 +282,18 @@ export async function unifiedCommand(options: UnifiedOptions): Promise<void> {
       return true;
     });
 
-  const hasFailure = allFindings.some((f) => {
+  const failsOnSeverity = allFindings.some((f) => {
     if (!failOnSeverities.includes(f.severity)) return false;
     const parentResult = allResults.find((r) => r.findings.includes(f));
     const scanner = parentResult?.scanner ?? 'unknown';
     return !flakyTestIds.has(buildTestId(scanner, f));
   });
 
-  process.exit(hasFailure ? 1 : 0);
+  // Assertion budgets from config, additive to --fail-on. This is the exit gate
+  // the public `sniff scan` subcommand reaches, since scanCommand has no
+  // callers today.
+  const { evaluateSeverityBudget, printBudgetViolations } = await import('../../core/assert-budget.js');
+  const failsOnBudget = printBudgetViolations(evaluateSeverityBudget(allFindings, config.assert));
+
+  process.exit(failsOnSeverity || failsOnBudget ? 1 : 0);
 }

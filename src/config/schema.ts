@@ -119,8 +119,26 @@ export const flakinessConfigSchema = z.object({
   historyPath: z.string().default('.sniff/history.json'),
 });
 
+/**
+ * Assertion budgets, in the spirit of Lighthouse CI's `ci.assert.assertions`:
+ * express "no criticals, at most three highs, at most twenty findings" in
+ * config rather than trying to squeeze it into `--fail-on`.
+ *
+ * Purely additive. Every key is optional, an absent block changes nothing, and
+ * a breach can only turn a passing run into a failing one.
+ */
+export const assertConfigSchema = z.object({
+  maxCritical: z.number().int().min(0).optional(),
+  maxHigh: z.number().int().min(0).optional(),
+  maxMedium: z.number().int().min(0).optional(),
+  maxLow: z.number().int().min(0).optional(),
+  maxInfo: z.number().int().min(0).optional(),
+  maxTotal: z.number().int().min(0).optional(),
+});
+
 export const sniffConfigSchema = z.object({
   failOn: z.array(severitySchema).default(['critical', 'high']),
+  assert: assertConfigSchema.optional(),
   exclude: z.array(z.string()).default(DEFAULT_EXCLUDE),
   include: z.array(z.string()).default(['**/*.{ts,tsx,js,jsx,html,css}']),
   rules: z.record(z.string(), ruleConfigSchema).default({}),
@@ -156,6 +174,7 @@ export type ReportConfig = z.output<typeof reportConfigSchema>;
 export type ApiEndpointsConfig = z.output<typeof apiEndpointsConfigSchema>;
 export type DeadLinksConfig = z.output<typeof deadLinksConfigSchema>;
 export type FlakinessConfig = z.output<typeof flakinessConfigSchema>;
+export type AssertConfig = z.output<typeof assertConfigSchema>;
 export type ExplorationConfig = z.output<typeof explorationConfigSchema>;
 export type AIProviderName = z.output<typeof aiProviderSchema>;
 export type BrowserProject = z.output<typeof browserProjectSchema>;
