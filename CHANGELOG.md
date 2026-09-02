@@ -7,9 +7,72 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.8.0] - 2026-09-02
+
+Three capability additions (MCP tool gating, authenticated walks, assertion budgets), a Neon Noir
+visual identity, a rewritten README with four refreshed translations, and an installer that
+delegates to the Vercel skills CLI. The scanner's findings and their wording are unchanged.
+
+### Added
+
+- **`--caps` for the MCP server.** Five capabilities (`scan`, `walk`, `discover`, `report`,
+  `install`) narrow the registered tool set and the unified `sniff` tool's `mode` enum. The default
+  grants all five, so an existing config keeps its exact tool list and registration order. Unknown or
+  empty lists exit 1 on stderr. Logic lives in `src/mcp/caps.ts`; 14 tests, three of which drive a
+  real MCP client over `InMemoryTransport` and assert the actual `tools/list` result.
+- **`--storage-state <path>` for walking a logged-in app.** Threaded through `browserConfigSchema`,
+  the CLI flag, both crawl contexts, `BrowserRunner`, and the MCP walk. Cookie values, localStorage
+  values, JSON string leaves inside them, indexedDB strings, percent-encoded forms, and
+  `Authorization` header values are redacted from progress output, screenshot filenames, the returned
+  report, `saveResults`, and `saveReport`. 21 tests, including one that plants four tokens across a
+  report and asserts each appears zero times in the written HTML and JSON.
+- **An `assert` block in `sniff.config`.** `maxCritical`, `maxHigh`, `maxMedium`, `maxLow`,
+  `maxInfo`, and `maxTotal` cap findings by severity. Additive only: it can turn a pass into a
+  failure, never the reverse, and an absent block behaves exactly as before. Enforced by the walk,
+  the public `sniff scan`, the browser mode, and discovery. 31 tests.
+- **Neon Noir visual identity.** New `hero-dark.svg` and `hero-light.svg` for the README first
+  screen, `logo-mark.png` and `logo-mark-512.png` as a square mark, and a rebuilt 1280x640
+  `social-preview.png`. `demo.svg`, `features-dark.svg`, `features-light.svg`, `how-it-works.svg`,
+  `logo-dark.svg`, `logo-light.svg`, and `social-preview.svg` were rebuilt in the new palette.
+- **New docs**: `docs/editors.md`, `docs/authenticated-walks.md`, `docs/assert-budgets.md`,
+  `docs/comparison.md`, and `docs/faq.md`.
+
+### Changed
+
+- **`install.sh` delegates to the Vercel skills CLI** by default
+  (`npx --yes skills@1.5.23 add Aboudjem/sniff -a <agent> -y`). All 13 platform ids map to agent
+  codes that exist in the live supported-agents table, which also corrects four skills directories
+  the hand-maintained table had wrong. The clone-and-symlink path stays reachable as `--legacy` and
+  is selected automatically when `npx` is missing. `--update`, `--uninstall`, and `--no-mcp` work on
+  both paths.
+- **README rewritten** from 452 lines to 180, to the plugin skeleton: one install block above the
+  first heading, one editor table in place of an eight-row matrix and seven per-editor `<details>`
+  blocks, and every image path absolute so it renders on npmjs.com. The comparison table, the metrics
+  history, and the long FAQ moved to `docs/comparison.md` and `docs/faq.md`.
+- **All four translations** (`READMEs/zh-CN.md`, `ja.md`, `es.md`, `fr.md`) rewritten from the new
+  English source.
+- **Plugin manifests** (`.claude-plugin`, `.cursor-plugin`, `.copilot-plugin`), `server.json`,
+  `package.json`, and `package-lock.json` all moved to 0.8.0 together. Previously `package.json` and
+  `server.json` sat at 0.7.1 while the three manifests read 0.7.0.
+- **`skills/sniff-fix/SKILL.md` and `skills/sniff-report/SKILL.md`** now say in their bodies that
+  they are invoked by the `sniff` skill's own flow, that `user-invocable: false` is honored only by
+  Claude Code, and that other agents may surface them as standalone commands.
+
+### Removed
+
+- `.github/assets/sniff-diagram.svg`. `how-it-works.svg` draws the same five-step flow, and its name
+  was dropped from the copy loop in `.github/workflows/deploy-pages.yml`.
+- The Star History block, the three social badges, and the built-on credit list from the README
+  footer.
+
 ### Fixed
 
-- `READMEs/fr.md`: rewrote the French translation to remove injected placeholder text and a corrupted install command that slipped in during machine translation. It is now structurally faithful to the English README (code blocks, asset URLs, tables, and the install command all match; em-dash count 0).
+- `READMEs/fr.md`: the French translation carried injected placeholder text and a corrupted install
+  command from an earlier machine-translation pass. All four translations are now generated from the
+  current English README, with code blocks, asset URLs, and commands verbatim.
+- Em-dashes removed from `package.json`, `src/mcp/server.ts`, `src/mcp/handlers.ts`,
+  `src/cli/index.ts`, `src/cli/commands/crawl-command.ts`, `src/cli/commands/discover.ts`, and
+  `src/report/model.ts`.
 
 ## [0.7.0] - 2026-05-29
 
