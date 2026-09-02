@@ -8,6 +8,8 @@ user-invocable: false
 
 Scan the project, then automatically fix safe issues.
 
+This skill is invoked by the `sniff` skill's own flow, not on its own. The `user-invocable: false` frontmatter key is honored by Claude Code only, so in other agents this file may show up as a standalone command; treat it as a step inside a sniff run rather than an entry point.
+
 ## What to do
 
 1. Use the unified `sniff` MCP tool with `mode: "scan"` and the project's `rootDir` to get all findings. If the unified tool is not available, use legacy `sniff_scan`.
