@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="none" role="img"
+     aria-label="sniff: a loupe scans a field of code and the line under the lens lights up">
+  <title>sniff</title>
+  <desc>Animated dark-mode logo mark. The whole mark is drawn as a muted track; one bright
+  element travels over it, so no frame is an incomplete logo and the reduced-motion resting frame
+  is the finished mark.</desc>
+  <defs>
+    <linearGradient id="sf-plate" x1="0" y1="0" x2="0.4" y2="1">
+      <stop offset="0%" stop-color="#1A1024"/>
+      <stop offset="58%" stop-color="#0A0F1C"/>
+      <stop offset="100%" stop-color="#080C18"/>
+    </linearGradient>
+    <radialGradient id="sf-bloomA" cx="0.24" cy="0.24" r="0.68">
+      <stop offset="0%" stop-color="#FF4D8D" stop-opacity="0.42"/>
+      <stop offset="100%" stop-color="#FF4D8D" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="sf-bloomB" cx="0.80" cy="0.82" r="0.64">
+      <stop offset="0%" stop-color="#FF2D78" stop-opacity="0.34"/>
+      <stop offset="100%" stop-color="#FF2D78" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="sf-ink" gradientUnits="userSpaceOnUse" x1="40" y1="88" x2="200" y2="200">
+      <stop class="sfk1" offset="0%"   stop-color="#FF8FB4"/>
+      <stop class="sfk2" offset="52%"  stop-color="#FF4D8D"/>
+      <stop class="sfk3" offset="100%" stop-color="#FF7AA8"/>
+    </linearGradient>
+    <filter id="sf-glow" x="-45%" y="-45%" width="190%" height="190%">
+      <feGaussianBlur stdDeviation="6.0" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="sf-glow-sm" x="-150%" y="-150%" width="400%" height="400%">
+      <feGaussianBlur stdDeviation="3.6" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <clipPath id="sf-lens" clipPathUnits="userSpaceOnUse">
+      <circle cx="128" cy="130" r="41"/>
+    </clipPath>
+  </defs>
+
+  <style>
+    @keyframes sf-breathe { 0%,100% { opacity:0.62; } 50% { opacity:1; } }
+    .sfbloom { animation: sf-breathe 9s ease-in-out infinite; }
+    @keyframes sf-scan { 0%,100% { transform: translateX(-48px); } 50% { transform: translateX(48px); } }
+    @keyframes sf-scani { 0%,100% { transform: translateX(48px); } 50% { transform: translateX(-48px); } }
+    /* base transform parks the lens over the flagged row, so the resting frame is the
+       "found it" state rather than an arbitrary point of the sweep */
+    .sfscan  { transform: translateX(20px);  animation: sf-scan 7s ease-in-out infinite; }
+    .sfscani { transform: translateX(-20px); animation: sf-scani 7s ease-in-out infinite; }
+    @keyframes sf-flare { 0%,100% { opacity: 0.45; } 50% { opacity: 1; } }
+    .sfflare { animation: sf-flare 3.5s ease-in-out infinite; }
+    @keyframes sf-k1 { 0%,100% { stop-color:#FF8FB4; } 50% { stop-color:#FF4D8D; } }
+    @keyframes sf-k2 { 0%,100% { stop-color:#FF4D8D; } 50% { stop-color:#FF7AA8; } }
+    @keyframes sf-k3 { 0%,100% { stop-color:#FF7AA8; } 50% { stop-color:#FF8FB4; } }
+    .sfk1 { animation: sf-k1 14s ease-in-out infinite; }
+    .sfk2 { animation: sf-k2 14s ease-in-out infinite; }
+    .sfk3 { animation: sf-k3 14s ease-in-out infinite; }
+    @media (prefers-reduced-motion: reduce) { * { animation: none !important; } }
+  </style>
+
+  <rect width="256" height="256" rx="56" fill="url(#sf-plate)"/>
+  <g class="sfbloom">
+    <rect width="256" height="256" rx="56" fill="url(#sf-bloomA)"/>
+    <rect width="256" height="256" rx="56" fill="url(#sf-bloomB)"/>
+  </g>
+  <rect x="0.9" y="0.9" width="254.2" height="254.2" rx="55.2" fill="none"
+        stroke="#22314D" stroke-width="1.8"/>
+
+  <g opacity="0.20" fill="url(#sf-ink)"><rect x="38" y="98" width="180" height="14" rx="7"/><rect x="38" y="126" width="132" height="14" rx="7"/><rect x="38" y="154" width="162" height="14" rx="7"/><circle cx="150" cy="133" r="7"/></g>
+  <g class="sfscan">
+    <g clip-path="url(#sf-lens)">
+      <g class="sfscani" fill="url(#sf-ink)"><rect x="38" y="98" width="180" height="14" rx="7"/><rect x="38" y="126" width="132" height="14" rx="7"/><rect x="38" y="154" width="162" height="14" rx="7"/></g>
+    </g>
+  </g>
+  <g class="sfflare" filter="url(#sf-glow-sm)" fill="url(#sf-ink)"><circle cx="150" cy="133" r="7"/></g>
+  <g class="sfscan">
+    <g filter="url(#sf-glow)">
+      <line x1="159" y1="161" x2="196" y2="198" stroke="url(#sf-ink)"
+            stroke-width="13" stroke-linecap="round"/>
+      <circle cx="128" cy="130" r="44" fill="none" stroke="url(#sf-ink)" stroke-width="11"/>
+    </g>
+  </g>
+</svg>

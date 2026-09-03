@@ -2,7 +2,7 @@
   <defs>
     <linearGradient id="ground" x1="0" y1="0" x2="0.35" y2="1">
       <stop offset="0%" stop-color="#0E1524"/>
-      <stop offset="100%" stop-color="#080C16"/>
+      <stop offset="100%" stop-color="#0A0F1C"/>
     </linearGradient>
     <linearGradient id="barline" gradientUnits="userSpaceOnUse" x1="0" y1="34" x2="816.8" y2="34">
       <stop offset="0%" stop-color="#00D4FF" stop-opacity="0"/>
@@ -10,18 +10,26 @@
       <stop offset="80%" stop-color="#FF4D8D" stop-opacity="0.5"/>
       <stop offset="100%" stop-color="#FF2D78" stop-opacity="0"/>
     </linearGradient>
+      <radialGradient id="v2-bloomA" cx="0.18" cy="0.22" r="0.72">
+      <stop offset="0%" stop-color="#FF4D8D" stop-opacity="0.14"/>
+      <stop offset="100%" stop-color="#FF4D8D" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="v2-bloomB" cx="0.84" cy="0.86" r="0.68">
+      <stop offset="0%" stop-color="#FF2D78" stop-opacity="0.11"/>
+      <stop offset="100%" stop-color="#FF2D78" stop-opacity="0"/>
+    </radialGradient>
   </defs>
 
   <style>
     .mono { font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace; font-size: 14.5px; white-space: pre; }
     .cmd  { fill: #FF4D8D; }
-    .dim  { fill: #8494B0; }
-    .body { fill: #B6C2DA; }
+    .dim  { fill: #93A2BE; }
+    .body { fill: #C2CDE4; }
     .crit { fill: #FF2D78; font-weight: 700; }
     .high { fill: #FF4D8D; font-weight: 700; }
     .med  { fill: #FFB341; font-weight: 700; }
     .sum  { fill: #3DFFAB; }
-    .ttl  { fill: #8494B0; font-size: 12px; letter-spacing: 1px; }
+    .ttl  { fill: #93A2BE; font-size: 12px; letter-spacing: 1px; }
 
     /* the transcript types itself out with CSS opacity reveals, so the
        reduced-motion guard below can actually stop it and leave every line visible */
@@ -48,9 +56,12 @@
     .caret { animation: caret 1.2s steps(1, end) infinite 3.74s both; }
 
     @media (prefers-reduced-motion: reduce) { * { animation: none !important; } }
+      @keyframes v2-breathe { 0%,100% { opacity:0.66; } 50% { opacity:1; } }
+    .v2bloom { animation: v2-breathe 11s ease-in-out infinite; }
   </style>
 
   <rect x="0" y="0" width="816.8" height="519" rx="12" fill="url(#ground)"/>
+  <g class="v2bloom"><rect width="816.8" height="519" fill="url(#v2-bloomA)"/><rect width="816.8" height="519" fill="url(#v2-bloomB)"/></g>
   <path d="M0 12 a12 12 0 0 1 12 -12 h792.8 a12 12 0 0 1 12 12 v22 h-816.8 z" fill="#141C2E"/>
   <line x1="0" y1="34" x2="816.8" y2="34" stroke="url(#barline)" stroke-width="1.25"/>
   <g fill="#5C6A85"><circle cx="20" cy="17" r="5"/><circle cx="40" cy="17" r="5"/><circle cx="60" cy="17" r="5"/></g>
@@ -70,7 +81,7 @@
   <text class="mono body l12" x="22" y="329">    • [confirmed] GET /api/stats -&gt; 500            /dashboard</text>
   <text class="mono body l13" x="22" y="350">    • [confirmed] Placeholder email (test@test.com) /profile</text>
   <text class="mono body l14" x="22" y="371">    • [likely]    Empty table, no empty-state      /orders</text>
-  <text class="mono dim l15" x="22" y="392">    • [confirmed] Horizontal overflow at 375px     /wide</text>
+  <text class="mono dim l15" x="22" y="392">    • [confirmed] Page overflows sideways at 375px /wide</text>
   <text class="mono body l16" x="22" y="413">    • [confirmed] Image has no alt text            /</text>
   <text class="mono sum l17" x="22" y="455">  21 real issues · 0 false positives · proof + fix on every finding</text>
   <rect class="caret" x="22" y="466" width="9" height="17" fill="#FF4D8D"/>

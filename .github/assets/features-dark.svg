@@ -1,9 +1,9 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 372" fill="none" role="img" aria-label="The 12 classes of real bugs sniff finds while walking your running app">
   <defs>
     <linearGradient id="ground" x1="0" y1="0" x2="0.35" y2="1">
-      <stop offset="0%" stop-color="#0A0F1C"/>
-      <stop offset="60%" stop-color="#080C16"/>
-      <stop offset="100%" stop-color="#07070C"/>
+      <stop offset="0%" stop-color="#1A1024"/>
+      <stop offset="60%" stop-color="#0A0F1C"/>
+      <stop offset="100%" stop-color="#080C18"/>
     </linearGradient>
 
     <radialGradient id="bloomg" cx="0.5" cy="1" r="0.8">
@@ -12,11 +12,9 @@
     </radialGradient>
 
     <linearGradient id="brand" x1="0" y1="0" x2="1" y2="0.25" gradientUnits="objectBoundingBox">
-      <stop offset="0%" stop-color="#FF4D8D"/>
-      <stop offset="100%" stop-color="#FF2D78"/>
-      <animateTransform attributeName="gradientTransform" type="translate"
-        values="-0.1 0; 0.1 0; -0.1 0" dur="18s" repeatCount="indefinite"/>
-    </linearGradient>
+      <stop class="v2d1" offset="0%" stop-color="#FF4D8D"/>
+      <stop class="v2d2" offset="100%" stop-color="#FF2D78"/>
+</linearGradient>
 
     <linearGradient id="topline" gradientUnits="userSpaceOnUse" x1="18" y1="60" x2="822" y2="60">
       <stop offset="0%" stop-color="#00D4FF" stop-opacity="0"/>
@@ -29,17 +27,25 @@
       <feGaussianBlur stdDeviation="3.2" result="b"/>
       <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
     </filter>
+      <radialGradient id="v2-bloomA" cx="0.18" cy="0.22" r="0.72">
+      <stop offset="0%" stop-color="#FF4D8D" stop-opacity="0.14"/>
+      <stop offset="100%" stop-color="#FF4D8D" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="v2-bloomB" cx="0.84" cy="0.86" r="0.68">
+      <stop offset="0%" stop-color="#FF2D78" stop-opacity="0.11"/>
+      <stop offset="100%" stop-color="#FF2D78" stop-opacity="0"/>
+    </radialGradient>
   </defs>
 
   <style>
     .disp { font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; }
     .mono { font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace; }
     .h1   { font-size: 21px; font-weight: 700; letter-spacing: -0.3px; fill: #F2F6FF; }
-    .h2   { font-size: 12px; font-weight: 500; fill: #B6C2DA; }
+    .h2   { font-size: 12px; font-weight: 500; fill: #C2CDE4; }
     .num  { font-size: 10.5px; font-weight: 600; letter-spacing: 1.4px; }
     .ct   { font-size: 13px; font-weight: 700; letter-spacing: -0.1px; fill: #F2F6FF; }
-    .cd   { font-size: 10.5px; font-weight: 500; fill: #B6C2DA; }
-    .foot { font-size: 9.2px; letter-spacing: 0.15px; fill: #8494B0; }
+    .cd   { font-size: 10.5px; font-weight: 500; fill: #C2CDE4; }
+    .foot { font-size: 9.2px; letter-spacing: 0.15px; fill: #93A2BE; }
 
     @keyframes pip { 0%,100% { opacity: 0.45; } 50% { opacity: 1; } }
     .p1  { animation: pip 5s ease-in-out infinite 0.0s; }
@@ -71,9 +77,16 @@
     .cf  { animation: rise 0.6s ease-out 1.75s both; }
 
     @media (prefers-reduced-motion: reduce) { * { animation: none !important; } }
+      @keyframes v2-d1 { 0%,100% { stop-color:#FF4D8D; } 50% { stop-color:#FF7AA8; } }
+    .v2d1 { animation: v2-d1 16s ease-in-out infinite; }
+    @keyframes v2-d2 { 0%,100% { stop-color:#FF2D78; } 50% { stop-color:#FF6A3D; } }
+    .v2d2 { animation: v2-d2 16s ease-in-out infinite; }
+    @keyframes v2-breathe { 0%,100% { opacity:0.66; } 50% { opacity:1; } }
+    .v2bloom { animation: v2-breathe 11s ease-in-out infinite; }
   </style>
 
   <rect width="840" height="372" fill="url(#ground)"/>
+  <g class="v2bloom"><rect width="840" height="372" fill="url(#v2-bloomA)"/><rect width="840" height="372" fill="url(#v2-bloomB)"/></g>
   <ellipse cx="420" cy="378" rx="520" ry="130" fill="url(#bloomg)"/>
 
   <text class="disp h1" x="18" y="34">12 classes of real bugs sniff finds</text>

@@ -1,160 +1,132 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 200" fill="none" role="img" aria-label="sniff: a tiny cat that sniffs out bugs before your users do">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 200" fill="none" role="img"
+     aria-label="sniff: a loupe scans a field of code and the line under the lens lights up">
+  <title>sniff</title>
   <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="0.35" y2="1">
-      <stop offset="0%" stop-color="#0A0F1C"/>
-      <stop offset="60%" stop-color="#080C16"/>
-      <stop offset="100%" stop-color="#07070C"/>
+    <linearGradient id="sf-ground" x1="0" y1="0" x2="0.4" y2="1">
+      <stop offset="0%" stop-color="#1A1024"/>
+      <stop offset="55%" stop-color="#0A0F1C"/>
+      <stop offset="100%" stop-color="#080C18"/>
     </linearGradient>
-
-    <radialGradient id="bloomg" cx="0.5" cy="1" r="0.75">
-      <stop offset="0%" stop-color="#FF2D78" stop-opacity="0.30"/>
-      <stop offset="38%" stop-color="#7C3AED" stop-opacity="0.14"/>
-      <stop offset="100%" stop-color="#7C3AED" stop-opacity="0"/>
+    <radialGradient id="sf-bloomA" cx="0.15" cy="0.13" r="0.44">
+      <stop offset="0%" stop-color="#FF4D8D" stop-opacity="0.26"/>
+      <stop offset="100%" stop-color="#FF4D8D" stop-opacity="0"/>
     </radialGradient>
-
-    <linearGradient id="brand" x1="0" y1="0" x2="1" y2="0.25" gradientUnits="objectBoundingBox">
-      <stop offset="0%" stop-color="#FF4D8D"/>
-      <stop offset="100%" stop-color="#FF2D78"/>
-      <animateTransform attributeName="gradientTransform" type="translate"
-        values="-0.12 0; 0.12 0; -0.12 0" dur="18s" repeatCount="indefinite"/>
-    </linearGradient>
-
-    <linearGradient id="sun" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#FFB341"/>
-      <stop offset="45%" stop-color="#FF4D8D"/>
-      <stop offset="100%" stop-color="#C77DFF"/>
-    </linearGradient>
-
-    <linearGradient id="horizonline" gradientUnits="userSpaceOnUse" x1="40" y1="188" x2="700" y2="188">
-      <stop offset="0%" stop-color="#00D4FF" stop-opacity="0"/>
-      <stop offset="24%" stop-color="#00D4FF" stop-opacity="0.42"/>
-      <stop offset="58%" stop-color="#C77DFF" stop-opacity="0.72"/>
-      <stop offset="84%" stop-color="#FF2D78" stop-opacity="0.6"/>
+    <radialGradient id="sf-bloomB" cx="0.88" cy="0.85" r="0.50">
+      <stop offset="0%" stop-color="#FF2D78" stop-opacity="0.26"/>
       <stop offset="100%" stop-color="#FF2D78" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="sf-bloomC" cx="0.52" cy="0.04" r="0.36">
+      <stop offset="0%" stop-color="#C77DFF" stop-opacity="0.16"/>
+      <stop offset="100%" stop-color="#C77DFF" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="sf-wash" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0%"   stop-color="#FF8FB4" stop-opacity="0.20"/>
+      <stop offset="42%"  stop-color="#FF2D78" stop-opacity="0.124"/>
+      <stop offset="76%"  stop-color="#C77DFF" stop-opacity="0.046"/>
+      <stop offset="100%" stop-color="#C77DFF" stop-opacity="0"/>
+    </radialGradient>
+    <clipPath id="sf-frame"><rect width="720" height="200"/></clipPath>
+    <linearGradient id="sf-ink" gradientUnits="userSpaceOnUse" x1="40" y1="88" x2="200" y2="200">
+      <stop class="sfk1" offset="0%"   stop-color="#FF8FB4"/>
+      <stop class="sfk2" offset="52%"  stop-color="#FF4D8D"/>
+      <stop class="sfk3" offset="100%" stop-color="#FF7AA8"/>
     </linearGradient>
-
-    <linearGradient id="gridfade" gradientUnits="userSpaceOnUse" x1="0" y1="188" x2="0" y2="200">
-      <stop offset="0%" stop-color="#00D4FF" stop-opacity="0.5"/>
-      <stop offset="100%" stop-color="#FF2D78" stop-opacity="0.05"/>
-    </linearGradient>
-
-    <linearGradient id="sheeng" x1="0" y1="0" x2="1" y2="0">
-      <stop offset="0%" stop-color="#F2F6FF" stop-opacity="0"/>
-      <stop offset="50%" stop-color="#F2F6FF" stop-opacity="0.5"/>
-      <stop offset="100%" stop-color="#F2F6FF" stop-opacity="0"/>
-    </linearGradient>
-
-    <filter id="glow" x="-40%" y="-40%" width="180%" height="180%">
-      <feGaussianBlur stdDeviation="10" result="b"/>
+    <filter id="sf-glow" x="-45%" y="-45%" width="190%" height="190%">
+      <feGaussianBlur stdDeviation="6.0" result="b"/>
       <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
     </filter>
-
-    <filter id="glow-atmo" x="-70%" y="-70%" width="240%" height="240%">
-      <feGaussianBlur stdDeviation="22" result="b"/>
+    <filter id="sf-glow-sm" x="-150%" y="-150%" width="400%" height="400%">
+      <feGaussianBlur stdDeviation="3.6" result="b"/>
       <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
     </filter>
-
-    <clipPath id="sunclip"><circle cx="656" cy="156" r="32"/></clipPath>
-    <clipPath id="gridclip"><rect x="0" y="188" width="720" height="12"/></clipPath>
-    <clipPath id="wordclip">
-      <text x="168" y="96" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif"
-            font-size="62" font-weight="800" letter-spacing="-1">sniff</text>
+    <clipPath id="sf-lens" clipPathUnits="userSpaceOnUse">
+      <circle cx="128" cy="130" r="41"/>
+    </clipPath>
+    <linearGradient id="sf-word" x1="0" y1="0" x2="1" y2="0.25">
+      <stop class="sfk1" offset="0%"   stop-color="#FF8FB4"/>
+      <stop class="sfk2" offset="46%"  stop-color="#FF4D8D"/>
+      <stop class="sfk3" offset="100%" stop-color="#FF7AA8"/>
+    </linearGradient>
+    <linearGradient id="sf-sheen" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0"/>
+      <stop offset="50%" stop-color="#FFFFFF" stop-opacity="0.62"/>
+      <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0"/>
+    </linearGradient>
+    <clipPath id="sf-wordclip">
+      <text x="140" y="92" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif"
+            font-size="62" font-weight="800" letter-spacing="-1.9">sniff</text>
     </clipPath>
   </defs>
 
   <style>
     .disp { font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; }
     .mono { font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace; }
-    .sub  { font-size: 15px; font-weight: 500; fill: #B6C2DA; }
-    .cmd  { font-size: 12.5px; letter-spacing: 0.6px; fill: #FF4D8D; }
-    .tag  { font-size: 10.6px; letter-spacing: 0.7px; fill: #8494B0; }
-
-    @keyframes breathe { 0%,100% { opacity: 0.55; } 50% { opacity: 0.95; } }
-    .bloom { animation: breathe 9s ease-in-out infinite; }
-
-    @keyframes sunpulse { 0%,100% { opacity: 0.42; } 50% { opacity: 0.62; } }
-    .sun { animation: sunpulse 10s ease-in-out infinite; }
-
-    @keyframes flow { to { stroke-dashoffset: -240; } }
-    .flowline { animation: flow 14s linear infinite; }
-
-    @keyframes pip { 0%,100% { opacity: 0.4; } 50% { opacity: 1; } }
-    .t1 { animation: pip 5s ease-in-out infinite 0s; }
-    .t2 { animation: pip 5s ease-in-out infinite 0.35s; }
-    .t3 { animation: pip 5s ease-in-out infinite 0.7s; }
-    .t4 { animation: pip 5s ease-in-out infinite 1.05s; }
-    .t5 { animation: pip 5s ease-in-out infinite 1.4s; }
-
-    @keyframes sheen {
-      0%   { transform: translateX(0); }
-      34%  { transform: translateX(480px); }
-      100% { transform: translateX(480px); }
-    }
-    .sheen { animation: sheen 7.5s linear infinite; }
-
+    .eyebrow { font-size: 13px; font-weight: 600; letter-spacing: 4.5px; fill: #FF8FB4; }
+    .head    { font-size: 22px; font-weight: 700; fill: #F2F6FF; letter-spacing: -0.5px; }
+    .sub     { font-size: 16.5px; font-weight: 500; fill: #C2CDE4; }
+    .tag     { font-size: 11.5px; letter-spacing: 1.6px; fill: #93A2BE; }
+    .chip    { font-size: 11.5px; letter-spacing: 1.2px; fill: #C2CDE4; }
+    @keyframes sf-breathe { 0%,100% { opacity:0.62; } 50% { opacity:1; } }
+    .sfbloom { animation: sf-breathe 11s ease-in-out infinite; }
+    @keyframes sf-sweep { 0% { transform: translateX(-360px); } 100% { transform: translateX(1080px); } }
+    .sfwash { animation: sf-sweep 15s cubic-bezier(.5,0,.5,1) infinite; }
+    @keyframes sf-sheen { 0% { transform: translateX(0); } 15%,100% { transform: translateX(285px); } }
+    .sfsheen { animation: sf-sheen 8.5s cubic-bezier(.4,0,.3,1) infinite; }
+    @keyframes sf-scan { 0%,100% { transform: translateX(-48px); } 50% { transform: translateX(48px); } }
+    @keyframes sf-scani { 0%,100% { transform: translateX(48px); } 50% { transform: translateX(-48px); } }
+    /* base transform parks the lens over the flagged row, so the resting frame is the
+       "found it" state rather than an arbitrary point of the sweep */
+    .sfscan  { transform: translateX(20px);  animation: sf-scan 7s ease-in-out infinite; }
+    .sfscani { transform: translateX(-20px); animation: sf-scani 7s ease-in-out infinite; }
+    @keyframes sf-flare { 0%,100% { opacity: 0.45; } 50% { opacity: 1; } }
+    .sfflare { animation: sf-flare 3.5s ease-in-out infinite; }
+    @keyframes sf-k1 { 0%,100% { stop-color:#FF8FB4; } 50% { stop-color:#FF4D8D; } }
+    @keyframes sf-k2 { 0%,100% { stop-color:#FF4D8D; } 50% { stop-color:#FF7AA8; } }
+    @keyframes sf-k3 { 0%,100% { stop-color:#FF7AA8; } 50% { stop-color:#FF8FB4; } }
+    .sfk1 { animation: sf-k1 14s ease-in-out infinite; }
+    .sfk2 { animation: sf-k2 14s ease-in-out infinite; }
+    .sfk3 { animation: sf-k3 14s ease-in-out infinite; }
     @media (prefers-reduced-motion: reduce) { * { animation: none !important; } }
   </style>
 
-  <rect width="720" height="200" fill="url(#bg)"/>
-  <ellipse class="bloom" cx="360" cy="206" rx="440" ry="118" fill="url(#bloomg)"/>
-
-  <!-- sun disc on the horizon, right edge, fully inside the canvas -->
-  <g class="sun">
-    <g filter="url(#glow-atmo)"><circle cx="656" cy="156" r="32" fill="url(#sun)"/></g>
-    <g clip-path="url(#sunclip)" fill="#080C16">
-      <rect x="618" y="162" width="76" height="1.6"/>
-      <rect x="618" y="168" width="76" height="2.2"/>
-      <rect x="618" y="175" width="76" height="3"/>
-      <rect x="618" y="183" width="76" height="4.2"/>
+  <rect width="720" height="200" fill="url(#sf-ground)"/>
+  <g class="sfbloom">
+    <rect width="720" height="200" fill="url(#sf-bloomA)"/>
+    <rect width="720" height="200" fill="url(#sf-bloomB)"/>
+    <rect width="720" height="200" fill="url(#sf-bloomC)"/>
+  </g>
+  <g clip-path="url(#sf-frame)">
+    <g transform="translate(0,100)">
+      <ellipse class="sfwash" cx="0" cy="0" rx="300" ry="180" fill="url(#sf-wash)"/>
     </g>
   </g>
-
-  <!-- perspective grid below the horizon, shipped off -->
-  <g id="grid" clip-path="url(#gridclip)" opacity="0">
-    <g stroke="url(#gridfade)" stroke-width="1" fill="none">
-      <path d="M360 188 L-360 200"/><path d="M360 188 L40 200"/><path d="M360 188 L200 200"/>
-      <path d="M360 188 L300 200"/><path d="M360 188 L360 200"/><path d="M360 188 L420 200"/>
-      <path d="M360 188 L520 200"/><path d="M360 188 L680 200"/><path d="M360 188 L1080 200"/>
-      <line x1="0" y1="191" x2="720" y2="191"/>
-      <line x1="0" y1="194" x2="720" y2="194"/>
-      <line x1="0" y1="197" x2="720" y2="197"/>
+  <g transform="translate(30,50) scale(0.3906)">
+  <g opacity="0.20" fill="url(#sf-ink)"><rect x="38" y="98" width="180" height="14" rx="7"/><rect x="38" y="126" width="132" height="14" rx="7"/><rect x="38" y="154" width="162" height="14" rx="7"/><circle cx="150" cy="133" r="7"/></g>
+  <g class="sfscan">
+    <g clip-path="url(#sf-lens)">
+      <g class="sfscani" fill="url(#sf-ink)"><rect x="38" y="98" width="180" height="14" rx="7"/><rect x="38" y="126" width="132" height="14" rx="7"/><rect x="38" y="154" width="162" height="14" rx="7"/></g>
     </g>
   </g>
-
-  <g opacity="0.95">
-    <line x1="40" y1="188" x2="700" y2="188" stroke="url(#horizonline)" stroke-width="1.25"/>
-    <line class="flowline" x1="40" y1="188" x2="700" y2="188" stroke="url(#horizonline)"
-          stroke-width="1.25" stroke-dasharray="3 9" opacity="0.85"/>
-  </g>
-
-  <!-- mark: loupe circle with a dotted trail curving into it -->
-  <g transform="translate(88,84)">
-    <g filter="url(#glow)">
-      <circle cx="8" cy="-10" r="21" stroke="url(#brand)" stroke-width="5.5" fill="none"/>
-      <path d="M-2 -24 A 15 15 0 0 0 -6 -14" stroke="#F2F6FF" stroke-width="2.4"
-            stroke-linecap="round" fill="none" opacity="0.55"/>
-      <g fill="#FF4D8D">
-        <circle class="t1" cx="-13" cy="13" r="4.6"/>
-        <circle class="t2" cx="-23" cy="22" r="3.8"/>
-        <circle class="t3" cx="-34" cy="30" r="3.1"/>
-        <circle class="t4" cx="-46" cy="36" r="2.4"/>
-        <circle class="t5" cx="-59" cy="40" r="1.8"/>
-      </g>
+  <g class="sfflare" filter="url(#sf-glow-sm)" fill="url(#sf-ink)"><circle cx="150" cy="133" r="7"/></g>
+  <g class="sfscan">
+    <g filter="url(#sf-glow)">
+      <line x1="159" y1="161" x2="196" y2="198" stroke="url(#sf-ink)"
+            stroke-width="13" stroke-linecap="round"/>
+      <circle cx="128" cy="130" r="44" fill="none" stroke="url(#sf-ink)" stroke-width="11"/>
     </g>
   </g>
-
-  <text class="disp" x="168" y="96" font-size="62" font-weight="800" letter-spacing="-1" fill="url(#brand)">sniff</text>
-
-  <g clip-path="url(#wordclip)">
+  </g>
+  <g filter="url(#sf-glow)">
+    <text class="disp" x="140" y="92" font-size="62" font-weight="800"
+          letter-spacing="-1.9" fill="url(#sf-word)">sniff</text>
+  </g>
+  <g clip-path="url(#sf-wordclip)">
     <g transform="skewX(-18)">
-      <rect class="sheen" x="-120" y="26" width="56" height="90" fill="url(#sheeng)" opacity="0.7"/>
+      <rect class="sfsheen" x="72" y="30" width="29"
+            height="84" fill="url(#sf-sheen)" opacity="0.45"/>
     </g>
   </g>
-
-  <text class="disp sub" x="170" y="124">a tiny cat that sniffs out bugs before your users do</text>
-
-  <rect x="168" y="134" width="146" height="24" rx="12" fill="#0E1524" stroke="#1E2A42" stroke-width="1"/>
-  <text class="mono cmd" x="181" y="150">$ npx sniff-qa</text>
-
-  <text class="mono tag" x="170" y="176">walks your app · finds real bugs · zero config · no api key</text>
+  <text class="disp sub" x="140" y="124">a tiny cat that sniffs out bugs before your users do</text>
+  <g transform="translate(140,133)"><rect x="0" y="0" width="141" height="24" rx="12" fill="#0E1524" stroke="#1E2A42" stroke-width="1"/><text class="mono chip" x="14" y="16">$ npx sniff-qa</text></g>
+  <text class="mono tag" x="140" y="178">walks your app  &#183;  finds real bugs  &#183;  zero config  &#183;  no api key</text>
 </svg>
