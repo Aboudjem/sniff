@@ -40,4 +40,4 @@ Sniff scored Tier 1 correctly: type=claude-plugin, packaging=plugin. The one rea
 
 ## Read
 
-sniff is the most demoable target in the Supernova dogfood corpus: 100% precision on 21 planted bugs, 441 tests, CLI + MCP server, multi-CLI install script, GitHub Pages site, and a demo GIF. The only structural gap was a missing `examples/` directory, now fixed with five working usage patterns. The `description_quality` flag was a false positive.
+sniff is the most demoable target in the Supernova dogfood corpus: 100% precision on 21 planted bugs, 507 tests, CLI + MCP server, multi-CLI install script, GitHub Pages site, and a demo GIF. The only structural gap was a missing `examples/` directory, now fixed with five working usage patterns. The `description_quality` flag was a false positive.

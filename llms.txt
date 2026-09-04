@@ -12,7 +12,7 @@ A finding without reproduction proof is not a finding. sniff walks the app like 
 filling forms, navigating, going back) and only reports an issue it can demonstrate. On a planted-bug
 fixture (21 bugs across all 12 issue classes plus a clean control page) it finds 21/21 (100%) at 100%
 precision with 0 false positives and 0 findings on the clean page. That before/after is locked as a
-regression test, backed by a 441-test suite.
+regression test, backed by a 507-test suite.
 
 Last updated: 2026-05-29.
 

@@ -8,7 +8,7 @@
 
 Stars come from velocity on a channel whose audience you don't own. The job is not "post the repo" — it's: engineer a post-worthy artifact → get borrowed reach to point at it → stack 2+ referrers in one window → let Trending compound.
 
-sniff is the strongest launch candidate in the dogfood corpus: 100% precision, 441 tests, CLI + MCP server, demo GIF, multi-CLI installer, GitHub Pages site, and a zero-API-key install story that fits in one sentence.
+sniff is the strongest launch candidate in the dogfood corpus: 100% precision, 507 tests, CLI + MCP server, demo GIF, multi-CLI installer, GitHub Pages site, and a zero-API-key install story that fits in one sentence.
 
 ---
 
@@ -80,7 +80,7 @@ Do NOT cold-post to Hacker News as the author. Get a respected HN user who's use
 
 One-liner: "Point it at your running app. It walks the real user flows in a browser and tells you what's actually broken — with proof."
 
-Stat hook: "21 planted bugs. 21 found. 0 false positives. 441 tests. One command, no API key."
+Stat hook: "21 planted bugs. 21 found. 0 false positives. 507 tests. One command, no API key."
 
 MCP angle: "It's also an MCP server — `npx -y sniff-qa --mcp` and any MCP client (Claude Code, Cursor, VS Code) can run a QA walk as a tool call."
 
