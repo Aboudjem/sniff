@@ -23,7 +23,7 @@ npx sniff-qa --url http://localhost:3000
 ## What you get
 
 A report that opens with the verdict, then the three things to fix first, then every finding.
-This is the report from a real run on this repo's planted-bug fixture (2026-11-17, sniff 0.9.0).
+This is the report from a real run on this repo's planted-bug fixture (2026-11-17, sniff 0.9.2).
 
 ```text
   VERDICT  FAIL: 26 findings (1 critical, 13 high, 11 medium, 1 low)
@@ -219,7 +219,7 @@ The bugs are listed in [sniff-tests/planted-bugs/MANIFEST.json](sniff-tests/plan
 npm test
 ```
 
-Prints `Test Files  52 passed (52)` and `Tests  555 passed (555)` on 2026-11-17.
+Prints `Test Files  53 passed (53)` and `Tests  576 passed (576)` on 2026-11-17.
 The suite includes the fixture gate. It fails the build if recall drops below 85%.
 It also fails on any finding on the clean page.
 

@@ -14,77 +14,27 @@
 
 <p align="center"><b>在用户发现之前，找出你的 Web 应用里坏掉的地方。</b></p>
 
-<p align="center"><a href="#它做什么">它做什么</a> · <a href="#安装">安装</a> · <a href="#使用方法">使用方法</a> · <a href="#你会得到什么">你会得到什么</a> · <a href="#在你的编辑器中使用">在你的编辑器中使用</a> · <a href="#需要知道的事">需要知道的事</a></p>
-
-<img alt="sniff walking a buggy app and streaming findings with severity, confidence, steps to reproduce, and a fix" src="https://raw.githubusercontent.com/Aboudjem/sniff/main/.github/assets/demo.gif" width="100%">
-
-```bash
-claude plugin marketplace add Aboudjem/10x
-claude plugin install sniff@10x
-```
-
-## 它做什么
-
-你只改了一个表单，结果一个你从没打开过的页面开始返回 500。sniff 会用真实浏览器打开你正在运行的
-应用，像用户那样逐页点过去。它报告的每个页面缺陷都附带能复现它的步骤。
-
-### 为什么用它
-
-- **直接修，不用找。** 每条页面结果都给出路由、步骤和修复建议，大多数还附带截图。
-- **有证据表明它能抓到真缺陷。** 在故意植入的缺陷上测试：21 个中找到 21 个，干净页面上 0 条误报
-  （`npm run build && npm run proof`）。
-- **拦住有问题的合并。** 出现 critical 或 high 结果时 `--fail-on` 以 1 退出，`npx sniff-qa ci`
-  会写好 GitHub Actions 文件。不需要 API 密钥。
-
-它需要你的应用正在运行，而且会提交真实表单，所以请用开发或预发布环境的应用。第一次遍历会下载一次浏览器，
-在 Mac 上约占 720 MB 磁盘空间。
-
-## 安装
-
-上面那段命令是 Claude Code 的安装方式，通过 [10x 插件市场](https://github.com/Aboudjem/10x)。对于其他
-任何智能体，用 Vercel 的 skills CLI 安装同样的三个技能：
-
-```bash
-npx skills add Aboudjem/sniff
-```
-
-如果只想把它当作一个普通的命令行工具使用，不涉及任何编辑器：
+<p align="center"><a href="#你会得到什么">你会得到什么</a> · <a href="#安装">安装</a> · <a href="#工作原理">工作原理</a> · <a href="#兼容的智能体">兼容的智能体</a> · <a href="#证据">证据</a> · <a href="#常见问题">常见问题</a> · <a href="#局限">局限</a></p>
 
 ```bash
 npx sniff-qa --url http://localhost:3000
 ```
 
-npm 包名是 `sniff-qa`，它安装出来的可执行文件名是 `sniff`。不要运行 `npx sniff`，那是一个无关的包。
+## 你会得到什么
 
-<details>
-<summary>Node 版本、项目内安装与 CI</summary>
-
-需要 Node.js 22 或更高版本。`npm install -D sniff-qa` 会把它加入项目的 devDependencies，而
-`npx sniff-qa ci` 会生成一个带浏览器缓存和报告产物的 GitHub Actions 工作流。
-</details>
-
-## 使用方法
-
-**1. 启动你的应用，** 用你的项目本来就在用的那个开发服务器。
-
-```bash
-npm run dev
-```
-
-**2. 走一遍，** 在第二个终端里执行。sniff 会自动探测常用端口上的开发服务器，所以 `--url` 是可选的，
-但显式传入可以免去猜测。
-
-```bash
-npx sniff-qa --url http://localhost:3000
-```
-
-**3. 阅读结果。** 结果按严重程度分组打印。下面是针对本仓库自带的植入缺陷样例应用的一次真实运行的节选，
-命令为 `npx sniff-qa --url http://localhost:4321 --ci --max-pages 12`：
+一份报告：先给结论，再列出最该先修的三项，然后是每一条发现。
+下面是在本仓库的埋点 bug 测试应用上真实运行得到的报告（2026-11-17，sniff 0.9.2）。
 
 ```text
-sniff v0.8.0  walking http://localhost:4321
+  VERDICT  FAIL: 26 findings (1 critical, 13 high, 11 medium, 1 low)
+  Walked 12 pages, checked 13 links, in 53.8s. 1 low-confidence finding hidden, show with --all.
 
-  26 findings (+1 low-confidence hidden; use --all)
+  Fix these first:
+    1. Page returns HTTP 500 on /crash  [critical]
+    2. Page returns HTTP 404 on /dead  [high]
+    3. Page returns HTTP 404 on /missing  [high]
+
+  Every finding, with the steps that reproduce it:
 
   CRITICAL (1)
     • [confirmed] Page returns HTTP 500
@@ -93,16 +43,117 @@ sniff v0.8.0  walking http://localhost:4321
         - Server responded with HTTP 500
       fix: The route throws server-side. Check the server logs/handler for this path and return a valid page or a proper error page.
       shot: sniff-reports/crawl/_crash-desktop.png
-
-✓ Scan complete: 26 issue(s) found. Exit code 1 so CI fails on bugs; pass --fail-on none to always exit 0.
 ```
 
-加上 `--report` 可以得到一个可以直接发给别人的、自包含的 HTML 页面。如果环境看起来不对，运行
-`npx sniff-qa doctor`。
+你改了一个表单，结果一个你从没打开过的页面开始返回 500。
+sniff 在真实浏览器中打开你正在运行的应用，像用户一样逐页点击。
+它报告的每个页面 bug 都附带复现步骤。
+
+### 为什么用它
+
+- **直接修，不用找。** 每条页面发现都给出路由、步骤和修复建议，大多数还附截图。
+- **能找到真 bug 的证据。** 在故意埋入的 bug 上测试：21 个全部找到，干净页面上 0 条误报（`npm run build && npm run proof`）。
+- **拦住有问题的合并。** 出现 critical 或 high 发现时，`--fail-on` 以 1 退出；`npx sniff-qa ci` 会写好 GitHub Actions 文件。不需要 API 密钥。
+
+它需要你的应用在运行，并且会提交真实表单，所以请用开发或预发布环境的应用。
+第一次巡查会下载一次浏览器，在 Mac 上约占 720 MB 磁盘。
+
+要在克隆的仓库里复现这个示例，先启动测试应用，再在另一个终端里巡查它：
+
+```bash
+node sniff-tests/planted-bugs/server.mjs 4517
+npx sniff-qa --url http://localhost:4517
+```
+
+<img alt="sniff walking a buggy app and streaming findings with severity, confidence, steps to reproduce, and a fix" src="https://raw.githubusercontent.com/Aboudjem/sniff/main/.github/assets/demo.gif" width="100%">
+
+## 安装
+
+需要 Node.js 22 或更新版本。任选一种方式。
+
+**命令行，不需要编辑器。** 启动你的应用，然后在另一个终端里巡查它：
+
+```bash
+npx sniff-qa --url http://localhost:3000
+```
+
+npm 包名是 `sniff-qa`。不要运行 `npx sniff`：那是一个无关的包。
+
+**Claude Code 插件**，通过 [10x 插件市场](https://github.com/Aboudjem/10x)：
+
+```bash
+claude plugin marketplace add Aboudjem/10x
+claude plugin install sniff@10x
+```
+
+**适用于任意智能体的技能**，通过 Vercel 的 skills CLI：
+
+```bash
+npx skills add Aboudjem/sniff
+```
+
+**MCP 服务器**，适用于任意 MCP 客户端：
+
+```bash
+claude mcp add sniff-qa -- npx -y sniff-qa --mcp
+```
+
+第一次巡查会下载两样东西，只下载一次：浏览器引擎（Playwright、axe-core 和
+Lighthouse）以及 Chromium。要提前完成下载，运行：
+
+```bash
+npx sniff-qa install
+```
+
+它最后会打印耗时。在 npm 缓存为空的 Mac 上，它打印了 34 秒（2026-11-17，sniff 0.9.1）。
+磁盘上留下 193 MB 引擎和 528 MB Chromium。在 macOS 上重新测量：
+
+```bash
+du -sm ~/.cache/sniff-qa/engine/* ~/Library/Caches/ms-playwright
+```
+
+`npx sniff-qa doctor` 会检查 Node、浏览器和你的开发服务器。
+
+MCP 服务器在这些下载之前就会启动。npm 缓存为空时，`npx -y sniff-qa@0.9.1 --mcp`
+在 3.1 到 4.9 秒内响应了第一次握手（5 次运行，2026-11-17）。0.9.0 版本需要 37 到 93 秒，
+超过了 Claude Code 30 秒的连接上限。要重新测量，在本仓库的克隆中运行：
+
+```bash
+npm run cold-start -- 0.9.1 5
+```
+
+巡查时会打印进度行，最后输出报告。结果有四种取用方式：
+
+| 输出      | 参数        | 用途                     |
+| :-------- | :---------- | :----------------------- |
+| 终端报告  | （默认）    | 马上阅读结果             |
+| HTML 页面 | `--report`  | 发给别人，一个独立的文件 |
+| JSON      | `--json`    | 脚本和其他工具           |
+| 退出码    | `--fail-on` | 遇到真 bug 时让 CI 失败  |
+
+| 退出码 | 含义                                                          |
+| :----- | :------------------------------------------------------------ |
+| `0`    | 没有发现达到 `--fail-on` 的严重级别（默认：critical 和 high） |
+| `1`    | 有发现达到了该级别、超出了 `assert` 预算，或 sniff 无法运行   |
+
+<details>
+<summary>在项目中安装与 CI</summary>
+
+`npm install -D sniff-qa` 会把它加入项目。`npx sniff-qa ci` 会写一个 GitHub Actions 工作流，
+带浏览器缓存和报告产物。
+</details>
+
+## 工作原理
 
 <img alt="How sniff works: crawl, act, assert, prove, report" src="https://raw.githubusercontent.com/Aboudjem/sniff/main/.github/assets/how-it-works.svg" width="100%">
 
-## 你会得到什么
+1. **找到应用。** 使用 `--url`，或常见端口上的开发服务器。
+2. **巡查应用。** 无头 Chromium 像用户一样点链接、按按钮、填表单。
+3. **判断发生了什么。** 每个页面都检查 12 类 bug。
+4. **给出证据。** 一条发现必须有路由和步骤。有截图和控制台或网络日志时也会附上。
+5. **报告。** 先给结论，再给最该先修的清单，最后是细节。
+
+这 12 类：
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/Aboudjem/sniff/main/.github/assets/features-dark.svg">
@@ -110,71 +161,112 @@ sniff v0.8.0  walking http://localhost:4321
   <img alt="The 12 classes of bugs sniff finds" src="https://raw.githubusercontent.com/Aboudjem/sniff/main/.github/assets/features-light.svg" width="100%">
 </picture>
 
-- **一份终端报告**，按严重程度分组，每条结果都带步骤、修复建议，大多数还带一个截图路径。
-- **一个可分享的文件**，用 `--report` 得到自包含的 HTML 报告，或用 `--json` 得到 JSON。
-- **一个退出码**，当结果达到 `--fail-on` 指定的严重程度时返回非零值，于是 CI 会因真实缺陷而失败。
-- **每条结果上的置信度标签**。除非你传入 `--all`，否则 `uncertain` 不会显示在终端里。
+没有应用在运行时，`sniff` 会改为读取你的源码（`sniff scan`）。它会标出调试语句、
+占位文本和失效的 import，并告诉你如何开始真正的巡查。
 
-0.8.0 的新增内容：
+MCP 服务器提供以下工具：
 
-- `--caps scan,report` 把 MCP 服务器收窄到源码扫描和已保存结果的读取，不启动浏览器，也不下载浏览器。
-- `--storage-state auth.json` 可以走一遍已登录的应用。该文件里的 cookie 和令牌值会从每一份写出报告的
-  文本中被脱敏，但截图像素不在此列。
-- `sniff.config` 里的 `assert` 块可以按严重程度给结果数量设上限（`maxCritical`、`maxHigh`、
-  `maxTotal`），在命令行上由遍历、源码扫描和场景发现共同执行。
+| 工具             | 作用                                             |
+| :--------------- | :----------------------------------------------- |
+| `sniff`          | 统一入口：`mode: "walk"`、`"scan"` 或 `"report"` |
+| `sniff_scan`     | 只扫描源码，不用浏览器                           |
+| `sniff_run`      | 源码扫描加浏览器检查                             |
+| `sniff_discover` | 根据源码生成场景并执行                           |
+| `sniff_install`  | 下载 Playwright 浏览器                           |
+| `sniff_report`   | 读取上次保存的结果                               |
 
-## 在你的编辑器中使用
+`--caps scan,report` 会把服务器限制为 `sniff_scan`、`sniff_report` 和统一的 `sniff` 工具，完全不用浏览器。
 
-可以在 Claude Code、Cursor、Codex、Copilot、Gemini CLI，以及另外 70 多个智能体中使用，通过
-`npx skills add`。这些技能就是 Markdown 文件，所以它们运行在你的编辑器所指向的任何模型上。
+## 兼容的智能体
 
-| 智能体 | 一行安装命令 |
-|:--|:--|
-| Claude Code | `claude plugin install sniff@10x` |
-| 70 多个智能体中的任意一个 | `npx skills add Aboudjem/sniff` |
-| Codex、Gemini CLI、OpenCode、Pi | `./install.sh codex` |
-| VS Code (Copilot) | `./install.sh copilot` |
-| 其他所有 | 见 [docs/editors.md](../docs/editors.md) |
+每一行都在 2026-11-17 用 sniff 0.9.0 构建测试过。
 
-<details>
-<summary>改为以 MCP 服务器方式添加</summary>
+| 智能体          | 运行了什么                                                                    | 测试日期   |
+| :-------------- | :---------------------------------------------------------------------------- | :--------- |
+| Claude Code     | 把 sniff 作为 MCP 服务器的 `claude -p` 调用了 `sniff_scan` 并读取了 2 条发现  | 2026-11-17 |
+| Codex CLI       | 把 sniff 作为 MCP 服务器的 `codex exec` 调用了 `sniff_scan` 并读取了 2 条发现 | 2026-11-17 |
+| Gemini CLI      | `gemini extensions validate .` 接受了 `gemini-extension.json`                 | 2026-11-17 |
+| 任意 MCP 客户端 | `node sniff-tests/mcp-smoke.mjs` 列出了 6 个工具，一次巡查返回了 20 条发现    | 2026-11-17 |
+| skills CLI      | `npx skills@1.9.0 add Aboudjem/sniff` 把 3 个技能装进了临时文件夹             | 2026-11-17 |
+
+有文档、今天未测试：Cursor、带 Copilot 的 VS Code、Windsurf、OpenCode 和 Zed。
+它们的配置片段在 [docs/editors.md](../docs/editors.md)。
+
+## 证据
+
+三条命令可以重新打印本页的数字。第一条打印测试应用上的得分。
 
 ```bash
-claude mcp add sniff-qa npx -- -y sniff-qa --mcp
-codex mcp add sniff-qa -- npx -y sniff-qa --mcp
+npm run build && npm run proof
 ```
 
-Cursor、VS Code、Gemini CLI、Windsurf、Continue、OpenCode 和 Zed 接受同一条命令，形式为 JSON 或 TOML
-条目。每个编辑器的具体片段都在 [docs/editors.md](../docs/editors.md) 里。
-</details>
+它启动埋点 bug 测试应用，巡查一遍，并给报告打分。2026-11-17 的输出：
 
-## 需要知道的事
+```text
+  Recall:    21/21  (100%)
+  Findings:  27 deduped (27 raw)
+  Matched:   27   Candidate FP: 0   Precision proxy: 100%
+  Hard FP on clean page (/clean): 0
+```
 
-> [!IMPORTANT]
-> 不需要 API key，不需要账号，不需要注册；除非你自己配置，否则也不会用到任何 AI 提供方。
-> 遍历和扫描都不会改动你的源码。`sniff fix` 是唯一会改写代码的命令，而且只在你主动运行时才会执行。
+上面的示例显示 26 条发现，这次运行算出 27 条。证据运行使用了 `--all`，它会加上那 1 条低置信度发现。
 
-> [!NOTE]
-> 一次遍历会点击按钮并提交真实表单，因此可能产生真实数据。请把它指向开发或预发布环境，而不是生产环境。
-> 第一次遍历还会下载一份 Chromium 构建并缓存下来，所以那一次运行需要网络访问。
+测试应用包含覆盖全部 12 类的 21 个埋点 bug，外加一个干净的对照页面。
+打分脚本是 [sniff-tests/score-fixture.mjs](../sniff-tests/score-fixture.mjs)。
+bug 列在 [sniff-tests/planted-bugs/MANIFEST.json](../sniff-tests/planted-bugs/MANIFEST.json) 中。
 
-- **它需要一个正在运行的应用。** 如果没有开发服务器在跑，它会退回到仅源码扫描，并告诉你如何开始真正的
-  遍历。`npx sniff-qa scan` 可以专门运行这个扫描。
-- **失效链接检查会跟进外部链接，** 所以一次遍历会向你自己的页面已经链接到的第三方 URL 发出请求。
-- **发现缺陷的遍历会以 1 退出**，这是有意为之，好让 CI 判定构建失败。这不是崩溃。`--fail-on none`
-  会关掉严重程度这道闸门，但 `assert` 上限仍然可能让这次运行失败。
+```bash
+npm test
+```
+
+2026-11-17 打印了 `Test Files  53 passed (53)` 和 `Tests  576 passed (576)`。
+测试套件包含测试应用的门槛。召回率低于 85% 时会让构建失败。
+干净页面上出现任何发现也会失败。
+
+```bash
+node sniff-tests/mcp-smoke.mjs
+```
+
+打印 6 个 MCP 工具，以及上表中提到的 20 条发现。
+
+## 常见问题
+
+**需要 API 密钥或账号吗？**
+不需要。巡查和源码扫描都在你的机器上运行。除非你自己配置可选的 AI 探索，否则不会向任何地方发送数据。
+
+**巡查会改动我应用里的数据吗？**
+可能会。巡查会点按钮、提交真实表单，所以请把它指向开发或预发布环境的应用。
+
+**明明没有崩溃，为什么以 1 退出？**
+退出码 1 表示它发现了达到失败级别的 bug，所以 CI 会让构建失败。传入 `--fail-on none` 可以始终以 0 退出。
+
+**它会改我的代码吗？**
+不会。巡查和扫描从不触碰你的源码。只有 `sniff fix` 会修改文件，而且只在你运行它时。
+
+**能巡查需要登录的应用吗？**
+能。传入 `--storage-state auth.json`。该文件中的 Cookie 和令牌值会在写出的报告中被遮盖。
+
+更多回答见 [docs/faq.md](../docs/faq.md)。
+
+## 局限
+
+- 巡查需要正在运行的应用。没有应用时，你只能得到源码扫描。
+- 第一次巡查需要联网，以便一次性下载浏览器引擎和 Chromium，在 Mac 上占 721 MB 磁盘。
+- 在此之前，MCP 浏览器工具会返回 `needsSetup`，智能体会先调用 `sniff_install`。
+- 死链检查会跟随外部链接，所以巡查会请求你的页面所链接的第三方 URL。
+- 遮盖只作用于报告文字，不作用于截图像素。已登录页面的截图可能显示私人数据。
+- 它找的是用户能看到的问题。它不读服务器日志，也不测量负载。
 
 ## 了解更多
 
-- [docs/editors.md](../docs/editors.md)，每个受支持智能体的安装方式和 MCP 片段
-- [docs/authenticated-walks.md](../docs/authenticated-walks.md)，用 `--storage-state` 遍历已登录的应用
-- [docs/assert-budgets.md](../docs/assert-budgets.md)，在 `sniff.config` 里按严重程度给结果设上限
-- [docs/comparison.md](../docs/comparison.md)，sniff 与静态检查工具、链接检查器和 E2E 框架的区别
-- [docs/faq.md](../docs/faq.md)，本页没有回答的问题
+- [docs/editors.md](../docs/editors.md)：每个智能体的安装和 MCP 配置片段
+- [docs/authenticated-walks.md](../docs/authenticated-walks.md)：巡查需要登录的应用
+- [docs/assert-budgets.md](../docs/assert-budgets.md)：在 `sniff.config` 中按严重级别限制发现数量
+- [docs/comparison.md](../docs/comparison.md)：sniff 与 linter 和 E2E 框架的区别
 - [CHANGELOG.md](../CHANGELOG.md) · [CONTRIBUTING.md](../CONTRIBUTING.md) · [LICENSE](../LICENSE)
 
 ---
 
-<p align="center"><sub>Built by <a href="https://github.com/Aboudjem">Adam Boudjemaa</a> · <a href="../LICENSE">Apache 2.0</a> · standing on <a href="https://playwright.dev">Playwright</a> and <a href="https://github.com/dequelabs/axe-core">axe-core</a></sub></p>
+<p align="center"><sub>Built by <a href="https://github.com/Aboudjem">Adam Boudjemaa</a> · <a href="../LICENSE">Apache 2.0</a> · built on <a href="https://playwright.dev">Playwright</a> and <a href="https://github.com/dequelabs/axe-core">axe-core</a></sub></p>
 
 <p align="center"><sub>本文档由机器辅助翻译，英文版 <a href="../README.md">README.md</a> 为准。</sub></p>

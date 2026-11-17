@@ -14,81 +14,27 @@
 
 <p align="center"><b>ユーザーより先に、Web アプリの壊れた箇所を見つけます。</b></p>
 
-<p align="center"><a href="#何をするツールか">何をするツールか</a> · <a href="#インストール">インストール</a> · <a href="#使い方">使い方</a> · <a href="#得られるもの">得られるもの</a> · <a href="#エディタで使う">エディタで使う</a> · <a href="#知っておくこと">知っておくこと</a></p>
-
-<img alt="sniff walking a buggy app and streaming findings with severity, confidence, steps to reproduce, and a fix" src="https://raw.githubusercontent.com/Aboudjem/sniff/main/.github/assets/demo.gif" width="100%">
-
-```bash
-claude plugin marketplace add Aboudjem/10x
-claude plugin install sniff@10x
-```
-
-## 何をするツールか
-
-フォームを 1 つ変えただけなのに、開いたこともないページが 500 を返すようになった。sniff は起動中の
-アプリを実際のブラウザで開き、ユーザーと同じようにページをたどります。報告するページの不具合には、
-それを再現する手順が付きます。
-
-### 使う理由
-
-- **探さずに直せます。** ページの検出結果にはルート、手順、修正案が付き、ほとんどにスクリーンショットが
-  付きます。
-- **本物の不具合を見つける証拠があります。** わざと仕込んだ不具合で検証し、21 個中 21 個を検出、
-  クリーンなページでの誤検出は 0 件です（`npm run build && npm run proof`）。
-- **悪いマージを止められます。** `--fail-on` は critical か high の検出で終了コード 1 を返し、
-  `npx sniff-qa ci` が GitHub Actions のファイルを書きます。API キーは不要です。
-
-アプリが起動している必要があり、本物のフォームを送信するので、開発用かステージングのアプリに向けてください。
-最初のウォークではブラウザを一度だけダウンロードします。Mac ではディスク上で約 720 MB です。
-
-## インストール
-
-上のコマンドは [10x マーケットプレイス](https://github.com/Aboudjem/10x) を通じた Claude Code 向けの
-経路です。それ以外のエージェントには、Vercel の skills CLI が同じ 3 つのスキルをインストールします。
-
-```bash
-npx skills add Aboudjem/sniff
-```
-
-エディタを介さず、素のコマンドラインツールとして使う場合は次のとおりです。
+<p align="center"><a href="#得られるもの">得られるもの</a> · <a href="#インストール">インストール</a> · <a href="#仕組み">仕組み</a> · <a href="#対応エージェント">対応エージェント</a> · <a href="#根拠">根拠</a> · <a href="#faq">FAQ</a> · <a href="#制限">制限</a></p>
 
 ```bash
 npx sniff-qa --url http://localhost:3000
 ```
 
-npm パッケージ名は `sniff-qa` で、インストールされる実行ファイル名は `sniff` です。`npx sniff` は
-無関係な別のパッケージなので実行しないでください。
+## 得られるもの
 
-<details>
-<summary>Node のバージョン、プロジェクトへの導入、CI</summary>
-
-Node.js 22 以上が必要です。`npm install -D sniff-qa` でプロジェクトの devDependencies に追加でき、
-`npx sniff-qa ci` はブラウザキャッシュとレポート成果物を含む GitHub Actions ワークフローを生成します。
-</details>
-
-## 使い方
-
-**1. アプリを起動します。** プロジェクトがすでに使っている開発サーバーで構いません。
-
-```bash
-npm run dev
-```
-
-**2. 歩かせます。** 2 つ目のターミナルから実行します。sniff は一般的なポートの開発サーバーを自動検出
-するため `--url` は任意ですが、明示的に渡せば迷いがなくなります。
-
-```bash
-npx sniff-qa --url http://localhost:3000
-```
-
-**3. 検出結果を読みます。** 深刻度ごとにまとめて出力されます。以下は、このリポジトリに同梱された
-不具合入りフィクスチャに対する実際の実行の抜粋で、コマンドは
-`npx sniff-qa --url http://localhost:4321 --ci --max-pages 12` です。
+判定から始まり、次に最初に直すべき 3 件、その後にすべての検出結果が続くレポートです。
+以下は、このリポジトリのバグ埋め込みフィクスチャで実際に実行したときのレポートです (2026-11-17、sniff 0.9.2)。
 
 ```text
-sniff v0.8.0  walking http://localhost:4321
+  VERDICT  FAIL: 26 findings (1 critical, 13 high, 11 medium, 1 low)
+  Walked 12 pages, checked 13 links, in 53.8s. 1 low-confidence finding hidden, show with --all.
 
-  26 findings (+1 low-confidence hidden; use --all)
+  Fix these first:
+    1. Page returns HTTP 500 on /crash  [critical]
+    2. Page returns HTTP 404 on /dead  [high]
+    3. Page returns HTTP 404 on /missing  [high]
+
+  Every finding, with the steps that reproduce it:
 
   CRITICAL (1)
     • [confirmed] Page returns HTTP 500
@@ -97,16 +43,117 @@ sniff v0.8.0  walking http://localhost:4321
         - Server responded with HTTP 500
       fix: The route throws server-side. Check the server logs/handler for this path and return a valid page or a proper error page.
       shot: sniff-reports/crawl/_crash-desktop.png
-
-✓ Scan complete: 26 issue(s) found. Exit code 1 so CI fails on bugs; pass --fail-on none to always exit 0.
 ```
 
-`--report` を付けると、そのまま人に渡せる自己完結型の HTML ページが得られます。環境がおかしいと感じたら
-`npx sniff-qa doctor` を実行してください。
+フォームを 1 つ変えたら、一度も開いていないページが 500 を返すようになった。
+sniff は動いているアプリを本物のブラウザで開き、ユーザーと同じようにたどります。
+報告するページのバグには、それぞれ再現手順が付きます。
+
+### 使う理由
+
+- **探さずに直せる。** ページの検出結果ごとにルート、手順、修正案が付き、多くはスクリーンショット付きです。
+- **本物のバグを見つける根拠。** わざと埋め込んだバグで検証済み。21 件中 21 件を検出し、クリーンなページでの誤検出は 0 件です (`npm run build && npm run proof`)。
+- **悪いマージを止める。** `--fail-on` は critical か high の検出で終了コード 1 を返し、`npx sniff-qa ci` が GitHub Actions のファイルを書き出します。API キーは不要です。
+
+アプリが動いている必要があり、本物のフォームを送信するので、開発用かステージングのアプリを使ってください。
+初回の巡回ではブラウザを 1 回だけダウンロードします。Mac のディスク上で約 720 MB です。
+
+クローンからサンプルを再現するには、フィクスチャを起動し、別のターミナルから巡回します。
+
+```bash
+node sniff-tests/planted-bugs/server.mjs 4517
+npx sniff-qa --url http://localhost:4517
+```
+
+<img alt="sniff walking a buggy app and streaming findings with severity, confidence, steps to reproduce, and a fix" src="https://raw.githubusercontent.com/Aboudjem/sniff/main/.github/assets/demo.gif" width="100%">
+
+## インストール
+
+Node.js 22 以降が必要です。どれか 1 つの方法を選んでください。
+
+**コマンドラインのみ、エディタなし。** アプリを起動し、別のターミナルから巡回します。
+
+```bash
+npx sniff-qa --url http://localhost:3000
+```
+
+npm パッケージ名は `sniff-qa` です。`npx sniff` は実行しないでください。無関係のパッケージです。
+
+**Claude Code プラグイン**。[10x マーケットプレイス](https://github.com/Aboudjem/10x) から入れます。
+
+```bash
+claude plugin marketplace add Aboudjem/10x
+claude plugin install sniff@10x
+```
+
+**任意のエージェント向けのスキル**。Vercel の skills CLI で入れます。
+
+```bash
+npx skills add Aboudjem/sniff
+```
+
+**MCP サーバー**。任意の MCP クライアントで使えます。
+
+```bash
+claude mcp add sniff-qa -- npx -y sniff-qa --mcp
+```
+
+初回の巡回では 2 つのものを 1 回だけダウンロードします。ブラウザエンジン (Playwright、axe-core、
+Lighthouse) と Chromium です。前もって済ませるには、次を実行します。
+
+```bash
+npx sniff-qa install
+```
+
+最後にかかった時間を表示します。npm キャッシュが空の Mac では 34 秒でした (2026-11-17、sniff 0.9.1)。
+ディスクにはエンジン 193 MB と Chromium 528 MB が残りました。macOS で測り直すには次を実行します。
+
+```bash
+du -sm ~/.cache/sniff-qa/engine/* ~/Library/Caches/ms-playwright
+```
+
+`npx sniff-qa doctor` は Node、ブラウザ、開発サーバーを確認します。
+
+MCP サーバーはこれらのダウンロードより前に起動します。npm キャッシュが空の状態で、`npx -y sniff-qa@0.9.1 --mcp`
+は最初のハンドシェイクに 3.1 から 4.9 秒で応答しました (5 回、2026-11-17)。バージョン 0.9.0 は 37 から 93 秒かかり、
+Claude Code の 30 秒の接続制限を超えていました。測り直すには、このリポジトリのクローンで次を実行します。
+
+```bash
+npm run cold-start -- 0.9.1 5
+```
+
+巡回中は進捗行を表示し、最後にレポートを出します。結果は 4 通りの形で受け取れます。
+
+| 出力                 | フラグ      | 用途                                  |
+| :------------------- | :---------- | :------------------------------------ |
+| ターミナルのレポート | (既定)      | 今すぐ結果を読む                      |
+| HTML ページ          | `--report`  | 誰かに送る。単体で完結した 1 ファイル |
+| JSON                 | `--json`    | スクリプトや他のツール                |
+| 終了コード           | `--fail-on` | 本物のバグで CI を失敗させる          |
+
+| 終了コード | 意味                                                                             |
+| :--------- | :------------------------------------------------------------------------------- |
+| `0`        | `--fail-on` の重大度 (既定: critical と high) に達した検出結果がない             |
+| `1`        | 検出結果がそれに達した、`assert` の予算を超えた、または sniff が実行できなかった |
+
+<details>
+<summary>プロジェクトへのインストールと CI</summary>
+
+`npm install -D sniff-qa` でプロジェクトに追加できます。`npx sniff-qa ci` は、ブラウザのキャッシュと
+レポートの成果物を備えた GitHub Actions のワークフローを書き出します。
+</details>
+
+## 仕組み
 
 <img alt="How sniff works: crawl, act, assert, prove, report" src="https://raw.githubusercontent.com/Aboudjem/sniff/main/.github/assets/how-it-works.svg" width="100%">
 
-## 得られるもの
+1. **アプリを見つける。** `--url` を使うか、よく使われるポートの開発サーバーを使います。
+2. **たどる。** ヘッドレスの Chromium がユーザーのようにリンクをたどり、ボタンを押し、フォームに入力します。
+3. **起きたことを判定する。** 各ページを 12 種類のバグについて確認します。
+4. **証明する。** 検出結果にはルートと手順が必須です。あればスクリーンショットとコンソールやネットワークの行も付けます。
+5. **報告する。** まず判定、次に最初に直すべき一覧、そして詳細です。
+
+12 種類:
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/Aboudjem/sniff/main/.github/assets/features-dark.svg">
@@ -114,78 +161,112 @@ sniff v0.8.0  walking http://localhost:4321
   <img alt="The 12 classes of bugs sniff finds" src="https://raw.githubusercontent.com/Aboudjem/sniff/main/.github/assets/features-light.svg" width="100%">
 </picture>
 
-- **ターミナルのレポート。** 深刻度ごとにまとまり、各検出結果に手順、修正案、多くの場合スクリーンショットのパスが
-  付きます。
-- **共有できるファイル。** `--report` で自己完結型の HTML レポート、`--json` で JSON が得られます。
-- **終了コード。** 検出結果が `--fail-on` の深刻度に達すると 0 以外を返すので、CI は本物の不具合で
-  失敗します。
-- **各検出結果の確度ラベル。** `--all` を渡さない限り、`uncertain` はターミナルには表示されません。
+アプリが動いていないときは、`sniff` は代わりにソースコードを読みます (`sniff scan`)。デバッグ用の文、
+仮のテキスト、壊れた import を指摘し、本来の巡回を始める方法を案内します。
 
-0.8.0 での追加:
+MCP サーバーは次のツールを公開します。
 
-- `--caps scan,report` は MCP サーバーをソーススキャンと保存済み結果の読み取りだけに絞り込みます。
-  ブラウザの起動もダウンロードも行いません。
-- `--storage-state auth.json` はログイン済みのアプリを歩きます。そのファイル内の cookie とトークンの値
-  は書き出されるすべてのレポートの本文から伏せられますが、スクリーンショットの画素は対象外です。
-- `sniff.config` の `assert` ブロックは検出結果の数を深刻度ごとに制限します（`maxCritical`、
-  `maxHigh`、`maxTotal`）。コマンドラインのウォーク、ソーススキャン、ディスカバリで適用されます。
+| ツール           | 内容                                             |
+| :--------------- | :----------------------------------------------- |
+| `sniff`          | 単一の入口: `mode: "walk"`、`"scan"`、`"report"` |
+| `sniff_scan`     | ソースのみのスキャン。ブラウザなし               |
+| `sniff_run`      | ソーススキャンとブラウザでの確認                 |
+| `sniff_discover` | ソースからシナリオを生成して実行                 |
+| `sniff_install`  | Playwright のブラウザをダウンロード              |
+| `sniff_report`   | 最後に保存した結果を読む                         |
 
-## エディタで使う
+`--caps scan,report` はサーバーを `sniff_scan`、`sniff_report`、統合ツール `sniff` に絞り、ブラウザを一切使いません。
 
-Claude Code、Cursor、Codex、Copilot、Gemini CLI、そして `npx skills add` を通じて 70 以上の
-エージェントで動作します。スキルは Markdown なので、エディタが指すどのモデルの上でも動きます。
+## 対応エージェント
 
-| エージェント | 1 行のインストールコマンド |
-|:--|:--|
-| Claude Code | `claude plugin install sniff@10x` |
-| 70 以上のエージェントのいずれか | `npx skills add Aboudjem/sniff` |
-| Codex、Gemini CLI、OpenCode、Pi | `./install.sh codex` |
-| VS Code (Copilot) | `./install.sh copilot` |
-| それ以外すべて | [docs/editors.md](../docs/editors.md) を参照 |
+各行は 2026-11-17 に sniff 0.9.0 のビルドで試験しました。
 
-<details>
-<summary>代わりに MCP サーバーとして追加する</summary>
+| エージェント            | 実行した内容                                                                             | 試験日     |
+| :---------------------- | :--------------------------------------------------------------------------------------- | :--------- |
+| Claude Code             | sniff を MCP サーバーにした `claude -p` が `sniff_scan` を呼び、2 件の検出結果を読んだ   | 2026-11-17 |
+| Codex CLI               | sniff を MCP サーバーにした `codex exec` が `sniff_scan` を呼び、2 件の検出結果を読んだ  | 2026-11-17 |
+| Gemini CLI              | `gemini extensions validate .` が `gemini-extension.json` を受け入れた                   | 2026-11-17 |
+| 任意の MCP クライアント | `node sniff-tests/mcp-smoke.mjs` が 6 個のツールを列挙し、巡回が 20 件の検出結果を返した | 2026-11-17 |
+| skills CLI              | `npx skills@1.9.0 add Aboudjem/sniff` が 3 つのスキルを一時フォルダに入れた              | 2026-11-17 |
+
+ドキュメントのみで今日は未試験: Cursor、Copilot 付きの VS Code、Windsurf、OpenCode、Zed。
+設定例は [docs/editors.md](../docs/editors.md) にあります。
+
+## 根拠
+
+3 つのコマンドで、このページの数値を再表示できます。1 つ目はフィクスチャのスコアを表示します。
 
 ```bash
-claude mcp add sniff-qa npx -- -y sniff-qa --mcp
-codex mcp add sniff-qa -- npx -y sniff-qa --mcp
+npm run build && npm run proof
 ```
 
-Cursor、VS Code、Gemini CLI、Windsurf、Continue、OpenCode、Zed は同じコマンドを JSON または TOML の
-エントリとして受け取ります。エディタごとの記述はすべて [docs/editors.md](../docs/editors.md) にあります。
-</details>
+バグ埋め込みフィクスチャを起動して巡回し、レポートを採点します。2026-11-17 の出力:
 
-## 知っておくこと
+```text
+  Recall:    21/21  (100%)
+  Findings:  27 deduped (27 raw)
+  Matched:   27   Candidate FP: 0   Precision proxy: 100%
+  Hard FP on clean page (/clean): 0
+```
 
-> [!IMPORTANT]
-> API キーもアカウントもサインアップも不要で、自分で設定しない限り AI プロバイダも使いません。ウォーク
-> とスキャンがソースを書き換えることはありません。コードを書き換えるコマンドは `sniff fix` だけで、
-> それもあなたが実行したときだけです。
+上のサンプルは 26 件で、この実行は 27 件です。根拠の実行は `--all` を使うので、低確信度の 1 件が加わります。
 
-> [!NOTE]
-> ウォークはボタンをクリックし、実際のフォームを送信するため、本物のデータを作ることがあります。本番
-> ではなく開発またはステージングのアプリに向けてください。最初のウォークでは Chromium のビルドも
-> ダウンロードしてキャッシュするため、その 1 回はインターネット接続が必要です。
+フィクスチャには 12 種類すべてにわたる 21 個の埋め込みバグと、クリーンな対照ページがあります。
+採点スクリプトは [sniff-tests/score-fixture.mjs](../sniff-tests/score-fixture.mjs) です。
+バグの一覧は [sniff-tests/planted-bugs/MANIFEST.json](../sniff-tests/planted-bugs/MANIFEST.json) にあります。
 
-- **起動中のアプリが必要です。** 開発サーバーが動いていない場合はソースのみのスキャンにフォールバック
-  し、本来のウォークの始め方を案内します。`npx sniff-qa scan` はそのスキャンを意図的に実行します。
-- **切れたリンクの検査は外部リンクもたどります。** そのためウォークは、あなたのページが既にリンクして
-  いる第三者の URL にリクエストを送ります。
-- **不具合を見つけたウォークは 1 で終了します。** これは CI にビルドを失敗させるための意図的な挙動で、
-  クラッシュではありません。`--fail-on none` は深刻度による判定を止めますが、`assert` の上限は依然として
-  実行を失敗させることがあります。
+```bash
+npm test
+```
+
+2026-11-17 には `Test Files  53 passed (53)` と `Tests  576 passed (576)` を表示しました。
+このスイートにはフィクスチャのゲートが含まれます。再現率が 85% を下回るとビルドを失敗させます。
+クリーンなページで検出結果が 1 件でも出ても失敗します。
+
+```bash
+node sniff-tests/mcp-smoke.mjs
+```
+
+6 個の MCP ツールと、上の表で触れた 20 件の検出結果を表示します。
+
+## FAQ
+
+**API キーやアカウントは必要ですか？**
+いいえ。巡回とソーススキャンは手元のマシンで動きます。任意の AI 探索を自分で設定しない限り、どこにも何も送りません。
+
+**巡回でアプリのデータが変わりますか？**
+変わる可能性があります。巡回はボタンを押して本物のフォームを送信するので、開発用かステージングのアプリに向けてください。
+
+**何もクラッシュしていないのに、なぜ終了コード 1 なのですか？**
+終了コード 1 は、失敗扱いの重大度のバグが見つかったという意味です。そのため CI はビルドを失敗させます。常に 0 で終えるには `--fail-on none` を渡します。
+
+**コードを書き換えますか？**
+いいえ。巡回とスキャンはソースに一切触れません。ファイルを書き換えるのは `sniff fix` だけで、それも実行したときだけです。
+
+**ログインが必要なアプリも巡回できますか？**
+はい。`--storage-state auth.json` を渡してください。そのファイルの Cookie とトークンの値は、書き出すレポートでは伏せられます。
+
+ほかの回答は [docs/faq.md](../docs/faq.md) にあります。
+
+## 制限
+
+- 巡回には動いているアプリが必要です。ない場合はソーススキャンのみになります。
+- 初回の巡回では、ブラウザエンジンと Chromium を 1 回ダウンロードするためにインターネットが必要です。Mac のディスク上で 721 MB です。
+- それまでは MCP のブラウザツールが `needsSetup` を返し、エージェントが先に `sniff_install` を呼びます。
+- リンク切れの確認は外部リンクもたどるため、巡回はページがリンクしている第三者の URL にリクエストを送ります。
+- 伏せ字はレポートの文字にかかり、スクリーンショットの画素にはかかりません。ログイン中のページのスクリーンショットには個人データが写ることがあります。
+- 見つけるのはユーザーに見えるものです。サーバーのログは読まず、負荷も測りません。
 
 ## さらに詳しく
 
-- [docs/editors.md](../docs/editors.md)、対応する各エージェントのインストール方法と MCP 記述
-- [docs/authenticated-walks.md](../docs/authenticated-walks.md)、`--storage-state` でログイン済みアプリを歩く
-- [docs/assert-budgets.md](../docs/assert-budgets.md)、`sniff.config` で検出結果を深刻度ごとに制限する
-- [docs/comparison.md](../docs/comparison.md)、リンター、リンクチェッカー、E2E フレームワークとの違い
-- [docs/faq.md](../docs/faq.md)、このページが答えていない質問
+- [docs/editors.md](../docs/editors.md): 各エージェント向けのインストールと MCP の設定例
+- [docs/authenticated-walks.md](../docs/authenticated-walks.md): ログインが必要なアプリの巡回
+- [docs/assert-budgets.md](../docs/assert-budgets.md): `sniff.config` で重大度ごとに検出数の上限を決める
+- [docs/comparison.md](../docs/comparison.md): sniff とリンターや E2E フレームワークとの違い
 - [CHANGELOG.md](../CHANGELOG.md) · [CONTRIBUTING.md](../CONTRIBUTING.md) · [LICENSE](../LICENSE)
 
 ---
 
-<p align="center"><sub>Built by <a href="https://github.com/Aboudjem">Adam Boudjemaa</a> · <a href="../LICENSE">Apache 2.0</a> · standing on <a href="https://playwright.dev">Playwright</a> and <a href="https://github.com/dequelabs/axe-core">axe-core</a></sub></p>
+<p align="center"><sub>Built by <a href="https://github.com/Aboudjem">Adam Boudjemaa</a> · <a href="../LICENSE">Apache 2.0</a> · built on <a href="https://playwright.dev">Playwright</a> and <a href="https://github.com/dequelabs/axe-core">axe-core</a></sub></p>
 
 <p align="center"><sub>この文書は機械翻訳を利用して作成されています。正典は英語版の <a href="../README.md">README.md</a> です。</sub></p>
