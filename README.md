@@ -197,7 +197,7 @@ Turn on its `Start the app` step (remove the `#`) and add `--url` to walk the ap
 ## How it works
 
 Example: you change one form, and a page you never opened now shows a server error (HTTP 500).
-sniff walks the pages your links reach, so it can find that error before users do.
+The walk reaches the pages your links lead to, so it can find that error before users do.
 
 <img alt="sniff walking a buggy app and streaming findings with severity, confidence, steps to reproduce, and a fix" src="https://raw.githubusercontent.com/Aboudjem/sniff/main/.github/assets/demo.gif" width="100%">
 
