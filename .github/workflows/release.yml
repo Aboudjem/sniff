@@ -3,7 +3,7 @@ name: Release
 on:
   push:
     tags:
-      - 'v*'
+      - "v*"
   workflow_dispatch:
 
 permissions:
@@ -21,8 +21,8 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: '22.14'
-          registry-url: 'https://registry.npmjs.org'
+          node-version: "22.14"
+          registry-url: "https://registry.npmjs.org"
 
       - name: Ensure npm supports trusted publishing (>=11.5.1)
         # Pinned to the npm 11 line on purpose. npm@latest is now 12.x, whose engines field
@@ -122,6 +122,22 @@ jobs:
         run: |
           TAG_VERSION="${GITHUB_REF_NAME#v}"
           node -e "const s=require('./server.json'); const v=process.argv[1]; if (s.version!==v || s.packages[0].version!==v) { console.error('server.json is not at ' + v); process.exit(1); }" "$TAG_VERSION"
+
+      # The registry checks that npm serves this version. npm can take a minute or two to
+      # serve a fresh publish, so v0.9.0 failed here with a 404. Wait for it first.
+      - name: Wait until npm serves this version
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          for i in $(seq 1 30); do
+            if [ "$(npm view "sniff-qa@$VERSION" version 2>/dev/null)" = "$VERSION" ]; then
+              echo "npm serves sniff-qa@$VERSION"; exit 0
+            fi
+            sleep 10
+          done
+          echo "npm does not serve sniff-qa@$VERSION after 5 minutes"; exit 1
+
+      - name: Validate server.json
+        run: ./mcp-publisher validate
 
       - name: Log in with GitHub OIDC
         run: ./mcp-publisher login github-oidc
