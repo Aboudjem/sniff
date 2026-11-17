@@ -23,11 +23,11 @@ npx sniff-qa --url http://localhost:3000
 ## What you get
 
 A report that opens with the verdict, then the three things to fix first, then every finding.
-This is the report from a real run on this repo's planted-bug fixture (2026-11-17, sniff 0.9.2).
+This is the report from a real run on this repo's planted-bug fixture (2026-11-17, sniff 0.9.3).
 
 ```text
-  VERDICT  FAIL: 26 findings (1 critical, 13 high, 11 medium, 1 low)
-  Walked 12 pages, checked 13 links, in 53.8s. 1 low-confidence finding hidden, show with --all.
+  VERDICT  FAIL: 26 findings (1 critical, 13 high, 11 medium, 1 low), 1 low-confidence finding hidden
+  Walked 12 pages, checked 13 links, in 55.2s. --all shows the hidden one.
 
   Fix these first:
     1. Page returns HTTP 500 on /crash  [critical]
@@ -56,7 +56,8 @@ the steps that reproduce it.
 - **Block bad merges.** `--fail-on` exits 1 on critical or high findings, and `npx sniff-qa ci` writes the GitHub Actions file. No API key.
 
 It needs your app running, and it submits real forms, so use a dev or staging app.
-The first walk downloads a browser once, about 720 MB on disk on a Mac.
+The first walk downloads the browser engine and Chromium once.
+That is about 440 MB to download and about 730 MB on disk, measured on a Mac.
 
 To reproduce the sample from a clone, start the fixture, then walk it from a second terminal:
 
@@ -105,8 +106,9 @@ Lighthouse) and Chromium. To do it ahead of time, run:
 npx sniff-qa install
 ```
 
-It ends with the time it took. On a Mac with an empty npm cache it printed 34 s (2026-11-17, sniff 0.9.1).
-It left 193 MB of engine and 528 MB of Chromium on disk. To re-measure on macOS:
+It ends with the time it took. On a Mac with empty caches it printed 43 s (2026-11-17, sniff 0.9.3).
+It downloaded about 440 MB. It left 193 MB of engine and 530 MB of Chromium on disk.
+Sizes vary by platform. To re-measure on macOS:
 
 ```bash
 du -sm ~/.cache/sniff-qa/engine/* ~/Library/Caches/ms-playwright
@@ -140,7 +142,8 @@ A walk prints progress lines, then the report. You can take the result four ways
 <summary>Project install and CI</summary>
 
 `npm install -D sniff-qa` adds it to a project. `npx sniff-qa ci` writes a GitHub Actions workflow
-with browser caching and report artifacts.
+with browser caching and report artifacts. With no app running, its first run only reads your source.
+Uncomment its `Start the app` step and add `--url` to walk the app.
 </details>
 
 ## How it works
@@ -172,7 +175,7 @@ The MCP server exposes these tools:
 | `sniff_scan`     | Source-only scan, no browser                            |
 | `sniff_run`      | Source scan plus browser checks                         |
 | `sniff_discover` | Generates scenarios from your source and drives them    |
-| `sniff_install`  | Downloads the Playwright browser                        |
+| `sniff_install`  | Downloads the engine and Chromium, with progress        |
 | `sniff_report`   | Reads the last saved results                            |
 
 `--caps scan,report` narrows the server to `sniff_scan`, `sniff_report` and the unified `sniff` tool, with no browser at all.
@@ -209,7 +212,7 @@ It starts the planted-bug fixture, walks it, and scores the report. Output on 20
   Hard FP on clean page (/clean): 0
 ```
 
-The sample above shows 26 findings and this run counts 27. The proof run uses `--all`, which adds the 1 low-confidence finding.
+The sample above shows 26 findings and says 1 low-confidence finding is hidden. The proof run uses `--all`, so it counts all 27.
 
 The fixture holds 21 planted bugs across all 12 classes, plus a clean control page.
 The scorer is [sniff-tests/score-fixture.mjs](sniff-tests/score-fixture.mjs).
@@ -219,7 +222,7 @@ The bugs are listed in [sniff-tests/planted-bugs/MANIFEST.json](sniff-tests/plan
 npm test
 ```
 
-Prints `Test Files  53 passed (53)` and `Tests  576 passed (576)` on 2026-11-17.
+Prints `Test Files  54 passed (54)` and `Tests  603 passed (603)` on 2026-11-17.
 The suite includes the fixture gate. It fails the build if recall drops below 85%.
 It also fails on any finding on the clean page.
 
@@ -251,7 +254,7 @@ More answers are in [docs/faq.md](docs/faq.md).
 ## Limits
 
 - It needs a running app for the walk. Without one you only get the source scan.
-- The first walk needs internet to download the browser engine and Chromium once, 721 MB on disk on a Mac.
+- The first walk needs internet to download the engine and Chromium once: about 440 MB, then about 730 MB on disk on a Mac.
 - Until then, MCP browser tools answer `needsSetup` and the agent calls `sniff_install` first.
 - Dead-link checking follows external links, so a walk requests the third-party URLs your pages link to.
 - Redaction covers report text, not screenshot pixels. A screenshot of a logged-in page can show private data.

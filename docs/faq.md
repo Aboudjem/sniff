@@ -10,9 +10,13 @@ or pass `--url`. `npx sniff-qa scan` runs that source scan on purpose.
 
 The first time sniff opens a browser it downloads two things, once:
 
-- the browser engine (Playwright, axe-core, Lighthouse), about 200 MB, into
-  `~/.cache/sniff-qa/engine/<version>`;
-- a Chromium build, through Playwright, into `~/.cache/ms-playwright` (or the macOS equivalent).
+- the browser engine (Playwright, axe-core, Lighthouse), about 180 MB to download and about
+  195 MB on disk, into `~/.cache/sniff-qa/engine/<version>`;
+- Chromium, through Playwright, about 260 MB to download and about 535 MB on disk, into
+  `~/.cache/ms-playwright` (or `~/Library/Caches/ms-playwright` on macOS).
+
+Those sizes were measured on macOS arm64 and vary by platform. If a download is cut off, the next
+run notices the half-finished folder, says so, and downloads it again with `npx sniff-qa install`.
 
 You see the progress and you need internet access for that first run. `npx sniff-qa install` does
 both ahead of time. No account is created.

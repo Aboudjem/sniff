@@ -1,13 +1,13 @@
 {
   "name": "sniff",
-  "version": "0.9.2",
+  "version": "0.9.3",
   "description": "Catch the 500s, dead links and broken forms in your running web app, with steps to reproduce each. No API key.",
   "mcpServers": {
     "sniff": {
       "command": "npx",
       "args": [
         "-y",
-        "sniff-qa@0.9.2",
+        "sniff-qa@0.9.3",
         "--mcp"
       ]
     }

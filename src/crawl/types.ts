@@ -87,7 +87,12 @@ export interface CrawlReport {
   routes: string[];
   runAt: string;
   summary: {
+    /** Every finding of the run, low-confidence ones included. */
     total: number;
+    /** Findings the report shows: all but the low-confidence ones, unless `--all`. */
+    shown?: number;
+    /** Low-confidence findings hidden from the report (`--all` shows them). */
+    hiddenLowConfidence?: number;
     bySeverity: Record<string, number>;
     byConfidence: Record<string, number>;
     byIssueClass: Record<string, number>;

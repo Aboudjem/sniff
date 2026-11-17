@@ -23,11 +23,11 @@ npx sniff-qa --url http://localhost:3000
 ## Ce que vous obtenez
 
 Un rapport qui commence par le verdict, puis les trois points à corriger en premier, puis chaque constat.
-Voici le rapport d'une vraie exécution sur l'application de test à bugs plantés de ce dépôt (2026-11-17, sniff 0.9.2).
+Voici le rapport d'une vraie exécution sur l'application de test à bugs plantés de ce dépôt (2026-11-17, sniff 0.9.3).
 
 ```text
-  VERDICT  FAIL: 26 findings (1 critical, 13 high, 11 medium, 1 low)
-  Walked 12 pages, checked 13 links, in 53.8s. 1 low-confidence finding hidden, show with --all.
+  VERDICT  FAIL: 26 findings (1 critical, 13 high, 11 medium, 1 low), 1 low-confidence finding hidden
+  Walked 12 pages, checked 13 links, in 55.2s. --all shows the hidden one.
 
   Fix these first:
     1. Page returns HTTP 500 on /crash  [critical]
@@ -56,7 +56,8 @@ Chaque bug de page qu'il signale vient avec les étapes qui le reproduisent.
 - **Bloquez les mauvais merges.** `--fail-on` sort en 1 sur un constat critique ou élevé, et `npx sniff-qa ci` écrit le fichier GitHub Actions. Pas de clé d'API.
 
 Il lui faut votre application lancée, et il soumet de vrais formulaires : utilisez une application de développement ou de préproduction.
-Le premier parcours télécharge un navigateur une fois, environ 720 Mo sur disque sur un Mac.
+Le premier parcours télécharge une fois le moteur de navigation et Chromium.
+Cela fait environ 440 Mo à télécharger et environ 730 Mo sur disque, mesuré sur un Mac.
 
 Pour reproduire l'exemple depuis un clone, démarrez l'application de test, puis parcourez-la depuis un second terminal :
 
@@ -105,8 +106,9 @@ Lighthouse) et Chromium. Pour le faire à l'avance, lancez :
 npx sniff-qa install
 ```
 
-La commande se termine par le temps écoulé. Sur un Mac avec un cache npm vide, elle a affiché 34 s (2026-11-17, sniff 0.9.1).
-Elle a laissé 193 Mo de moteur et 528 Mo de Chromium sur le disque. Pour remesurer sous macOS :
+La commande se termine par le temps écoulé. Sur un Mac avec des caches vides, elle a affiché 43 s (2026-11-17, sniff 0.9.3).
+Elle a téléchargé environ 440 Mo. Elle a laissé 193 Mo de moteur et 530 Mo de Chromium sur le disque.
+Les tailles varient selon la plateforme. Pour remesurer sous macOS :
 
 ```bash
 du -sm ~/.cache/sniff-qa/engine/* ~/Library/Caches/ms-playwright
@@ -140,7 +142,8 @@ Un parcours affiche des lignes de progression, puis le rapport. Vous pouvez réc
 <summary>Installation dans le projet et CI</summary>
 
 `npm install -D sniff-qa` l'ajoute à un projet. `npx sniff-qa ci` écrit un workflow GitHub Actions
-avec cache du navigateur et artefacts de rapport.
+avec cache du navigateur et artefacts de rapport. Sans application lancée, sa première exécution ne lit que votre code.
+Décommentez son étape `Start the app` et ajoutez `--url` pour parcourir l'application.
 </details>
 
 ## Comment ça marche
@@ -172,7 +175,7 @@ Le serveur MCP expose ces outils :
 | `sniff_scan`     | Analyse du code source seule, sans navigateur                   |
 | `sniff_run`      | Analyse du code source plus vérifications dans le navigateur    |
 | `sniff_discover` | Génère des scénarios à partir de votre code source et les joue  |
-| `sniff_install`  | Télécharge le navigateur Playwright                             |
+| `sniff_install`  | Télécharge le moteur et Chromium, avec progression              |
 | `sniff_report`   | Lit les derniers résultats enregistrés                          |
 
 `--caps scan,report` restreint le serveur à `sniff_scan`, `sniff_report` et l'outil unifié `sniff`, sans aucun navigateur.
@@ -209,7 +212,7 @@ Elle démarre l'application de test à bugs plantés, la parcourt et note le rap
   Hard FP on clean page (/clean): 0
 ```
 
-L'exemple plus haut montre 26 constats et cette exécution en compte 27. L'exécution de preuve utilise `--all`, qui ajoute le constat de faible confiance.
+L'exemple plus haut montre 26 constats et signale 1 constat de faible confiance masqué. L'exécution de preuve utilise `--all`, elle compte donc les 27.
 
 L'application de test contient 21 bugs plantés couvrant les 12 classes, plus une page de contrôle propre.
 Le correcteur est [sniff-tests/score-fixture.mjs](../sniff-tests/score-fixture.mjs).
@@ -219,7 +222,7 @@ Les bugs sont listés dans [sniff-tests/planted-bugs/MANIFEST.json](../sniff-tes
 npm test
 ```
 
-Affiche `Test Files  53 passed (53)` et `Tests  576 passed (576)` le 2026-11-17.
+Affiche `Test Files  54 passed (54)` et `Tests  603 passed (603)` le 2026-11-17.
 La suite inclut la barrière sur l'application de test. Elle fait échouer la build si le rappel passe sous 85 %.
 Elle échoue aussi sur tout constat sur la page propre.
 
@@ -251,7 +254,7 @@ D'autres réponses sont dans [docs/faq.md](../docs/faq.md).
 ## Limites
 
 - Le parcours exige une application lancée. Sans elle, vous n'obtenez que l'analyse du code source.
-- Le premier parcours a besoin d'internet pour télécharger une fois le moteur de navigation et Chromium, 721 Mo sur disque sur un Mac.
+- Le premier parcours a besoin d'internet pour télécharger une fois le moteur et Chromium : environ 440 Mo, puis environ 730 Mo sur disque sur un Mac.
 - D'ici là, les outils MCP de navigateur répondent `needsSetup` et l'agent appelle d'abord `sniff_install`.
 - La vérification des liens morts suit les liens externes, donc un parcours interroge les URL tierces vers lesquelles pointent vos pages.
 - Le masquage couvre le texte des rapports, pas les pixels des captures d'écran. La capture d'une page connectée peut montrer des données privées.

@@ -91,7 +91,9 @@ Docs: https://github.com/Aboudjem/sniff#readme`);
         const { loadConfig } = await import('../config/loader.js');
         const config = await loadConfig(rootDir);
         if (!options.regenerateOnly && !options.dryRun) {
-          await ensurePlaywrightBrowsers(config.browser?.projects);
+          await ensurePlaywrightBrowsers(config.browser?.projects, {
+            headless: options.headed ? false : options.headless !== false,
+          });
         }
         const { discoverCommand } = await import('./commands/discover.js');
         const appTypes = typeof options.appType === 'string'
@@ -149,7 +151,9 @@ Docs: https://github.com/Aboudjem/sniff#readme`);
 
       // Default experience: a running app → walk its real user flows.
       if (wantsBrowser) {
-        await ensurePlaywrightBrowsers(config.browser?.projects);
+        await ensurePlaywrightBrowsers(config.browser?.projects, {
+          headless: options.headed ? false : options.headless !== false,
+        });
         const { crawlCommand } = await import('./commands/crawl-command.js');
         // crawlCommand does not load config itself, so resolve the flag
         // against the config key here. The flag wins.
@@ -281,7 +285,9 @@ Docs: https://github.com/Aboudjem/sniff#readme`);
         const { loadConfig } = await import('../config/loader.js');
         const rootDir = target ? (await import('node:path')).resolve(target) : process.cwd();
         const config = await loadConfig(rootDir);
-        await ensurePlaywrightBrowsers(config.browser?.projects);
+        await ensurePlaywrightBrowsers(config.browser?.projects, {
+          headless: options.headed ? false : options.headless !== false,
+        });
       }
       const rootDir = target ? (await import('node:path')).resolve(target) : process.cwd();
       const { discoverCommand } = await import('./commands/discover.js');
@@ -350,7 +356,8 @@ Docs: https://github.com/Aboudjem/sniff#readme`);
       if (options.depsOnly) {
         await installBrowserSystemDeps(projects);
       } else {
-        console.error(pc.dim(`Downloading ${projects.join(', ')} (skipped when already on disk)...`));
+        const { describeSize, setupSize } = await import('../core/sizes.js');
+        console.error(pc.dim(`Downloading ${projects.join(', ')}, ${describeSize(setupSize(projects, false))} (skipped when already on disk)...`));
         const result = await installPlaywrightBrowserProjects(projects, {
           withDeps: !!options.withDeps,
           stdio: 'inherit-stderr',
@@ -381,14 +388,15 @@ Docs: https://github.com/Aboudjem/sniff#readme`);
 
       // Browser engine. Playwright, axe-core and Lighthouse are a one-time
       // download (see src/core/engine.ts), so say where they load from.
-      const { engineStatus, engineDir, engineInstallCommand, ENGINE_SIZE_MB } = await import('../core/engine.js');
+      const { engineStatus, engineDir, engineInstallCommand } = await import('../core/engine.js');
+      const { ENGINE_SIZE, BROWSER_SIZE, SIZE_MEASURED_ON, describeSize } = await import('../core/sizes.js');
       const engine = engineStatus();
       if (engine === 'resolved') {
         console.log(`  ${pc.green('OK')} Browser engine installed next to sniff`);
       } else if (engine === 'engine-dir') {
         console.log(`  ${pc.green('OK')} Browser engine downloaded (${engineDir()})`);
       } else {
-        console.log(`  ${pc.yellow('--')} Browser engine not downloaded yet (the first walk downloads it, about ${ENGINE_SIZE_MB} MB, or run: ${engineInstallCommand()})`);
+        console.log(`  ${pc.yellow('--')} Browser engine not downloaded yet (the first walk downloads it, ${describeSize(ENGINE_SIZE)}, or run: ${engineInstallCommand()})`);
       }
 
       // Browser. The Chromium build is a separate download, so test that it
@@ -398,7 +406,10 @@ Docs: https://github.com/Aboudjem/sniff#readme`);
       if (browser?.status === 'installed') {
         console.log(`  ${pc.green('OK')} Chromium downloaded`);
       } else {
-        console.log(`  ${pc.yellow('--')} Chromium not downloaded yet (the first walk downloads it, about 165 MB, or run: ${engineInstallCommand(['chromium'])})`);
+        console.log(`  ${pc.yellow('--')} Chromium not downloaded yet (the first walk downloads it, ${describeSize(BROWSER_SIZE.chromium)}, or run: ${engineInstallCommand(['chromium'])})`);
+      }
+      if (engine === 'missing' || browser?.status !== 'installed') {
+        console.log(pc.dim(`     Sizes are ${SIZE_MEASURED_ON}.`));
       }
 
       // Config file
@@ -456,5 +467,18 @@ Docs: https://github.com/Aboudjem/sniff#readme`);
       console.log('');
     });
 
-  await program.parseAsync();
+  try {
+    await program.parseAsync();
+  } catch (err) {
+    // A browser launch that fails because the files are not on disk (a
+    // download killed midway) gets the same hint as a browser never
+    // downloaded, never Playwright's own "npx playwright install".
+    const { findBrowserMissing } = await import('../core/browser-missing.js');
+    const missing = findBrowserMissing(err);
+    if (!missing) throw err;
+    const { browserMissingHint } = await import('../core/ensure-browsers.js');
+    const pc = (await import('picocolors')).default;
+    for (const line of browserMissingHint(missing.projects)) console.error(pc.red(line));
+    process.exit(1);
+  }
 }

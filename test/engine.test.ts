@@ -25,8 +25,13 @@ import {
   loadEngine,
   npmChildEnv,
   playwrightCliPath,
+  sweepStaleEngineTemps,
+  isPidAlive,
+  STALE_TEMP_MS,
   type NpmRunner,
 } from "../src/core/engine.js";
+import { utimesSync } from "node:fs";
+import { spawnSync } from "node:child_process";
 import { getVersion } from "../src/version.js";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
@@ -295,6 +300,78 @@ describe("installEngine", () => {
     await installEngine({ dir, run: fakeNpm(calls) });
     expect(calls).toHaveLength(1);
     expect(engineInstalledAt(dir)).toBe(true);
+  });
+});
+
+describe("temp folders left by an interrupted install", () => {
+  /** A pid that is certainly not running: a child that already exited. */
+  const deadPid = (): number => spawnSync(process.execPath, ["-e", ""]).pid!;
+
+  function leftover(dir: string, pid: number, ageMs = 0): string {
+    const path = `${dir}.tmp-${pid}-${Date.now() - ageMs}`;
+    mkdirSync(join(path, "node_modules", "playwright"), { recursive: true });
+    writeFileSync(join(path, "package.json"), "{}");
+    if (ageMs > 0) {
+      const t = (Date.now() - ageMs) / 1000;
+      for (const p of [join(path, "node_modules", "playwright"), join(path, "node_modules"), join(path, "package.json"), path])
+        utimesSync(p, t, t);
+    }
+    return path;
+  }
+
+  it("isPidAlive knows this process and a finished one", () => {
+    expect(isPidAlive(process.pid)).toBe(true);
+    expect(isPidAlive(deadPid())).toBe(false);
+    expect(isPidAlive(0)).toBe(false);
+  });
+
+  it("removes a folder whose install process is gone", () => {
+    const dir = join(tempDir(), "engine", "1.2.3");
+    const gone = leftover(dir, deadPid());
+    expect(sweepStaleEngineTemps(dir)).toEqual([gone]);
+    expect(existsSync(gone)).toBe(false);
+  });
+
+  it("keeps a folder that a live install is still writing to", () => {
+    const dir = join(tempDir(), "engine", "1.2.3");
+    const live = leftover(dir, 424242);
+    expect(sweepStaleEngineTemps(dir, { alive: () => true })).toEqual([]);
+    expect(existsSync(live)).toBe(true);
+  });
+
+  it("removes a folder with no write for an hour, even when its pid was reused", () => {
+    const dir = join(tempDir(), "engine", "1.2.3");
+    const old = leftover(dir, 424242, STALE_TEMP_MS + 60_000);
+    expect(sweepStaleEngineTemps(dir, { alive: () => true })).toEqual([old]);
+  });
+
+  it("never touches a folder of this process, nor other names", () => {
+    const dir = join(tempDir(), "engine", "1.2.3");
+    const mine = leftover(dir, process.pid, STALE_TEMP_MS + 60_000);
+    const other = join(dirname(dir), "1.2.4.tmp-1-2");
+    mkdirSync(other, { recursive: true });
+    expect(sweepStaleEngineTemps(dir, { alive: () => false })).toEqual([]);
+    expect(existsSync(mine) && existsSync(other)).toBe(true);
+  });
+
+  it("installEngine sweeps leftovers before it starts", async () => {
+    const dir = join(tempDir(), "engine", "1.2.3");
+    const gone = leftover(dir, deadPid());
+    const lines: string[] = [];
+    await installEngine({
+      dir,
+      log: (l) => lines.push(l),
+      run: async (_args, cwd) => {
+        for (const name of ENGINE_PACKAGES) {
+          const p = join(cwd, "node_modules", ...name.split("/"));
+          mkdirSync(p, { recursive: true });
+          writeFileSync(join(p, "package.json"), JSON.stringify({ name }));
+        }
+      },
+    });
+    expect(existsSync(gone)).toBe(false);
+    expect(readdirSync(dirname(dir))).toEqual(["1.2.3"]);
+    expect(lines.join("\n")).toContain("Removed an interrupted download");
   });
 });
 

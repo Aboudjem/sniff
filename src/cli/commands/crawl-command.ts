@@ -3,6 +3,7 @@ import type { Severity } from '../../core/types.js';
 import type { AssertConfig } from '../../config/schema.js';
 import type { QaFinding as CrawlFinding } from '../../crawl/types.js';
 import { evaluateSeverityBudget, printBudgetViolations } from '../../core/assert-budget.js';
+import { splitFindings } from '../../crawl/verdict.js';
 
 export interface CrawlCommandOptions {
   rootDir: string;
@@ -40,7 +41,7 @@ export function decideCrawlExit(input: {
 }): { exitCode: number; shown: CrawlFinding[]; violations: string[] } {
   const failOn = (input.failOn ?? 'critical,high')
     .split(',').map((s) => s.trim()).filter((s): s is Severity => VALID_SEVERITIES.has(s));
-  const shown = input.findings.filter((f) => input.all || f.confidence !== 'uncertain');
+  const { shown } = splitFindings(input.findings, input.all);
   const failsOnSeverity = shown.some((f) => failOn.includes(f.severity));
   const budget = evaluateSeverityBudget(shown, input.assert);
   return {
@@ -56,7 +57,7 @@ export function decideCrawlExit(input: {
  */
 export async function crawlCommand(opts: CrawlCommandOptions): Promise<number> {
   const pc = (await import('picocolors')).default;
-  const { runCrawl, formatReportText } = await import('../../crawl/index.js');
+  const { runCrawl, formatReportText, withVisibility } = await import('../../crawl/index.js');
   const { writeCrawlArtifacts } = await import('../../crawl/write-report.js');
 
   const reportDir = join(opts.rootDir, 'sniff-reports');
@@ -77,19 +78,6 @@ export async function crawlCommand(opts: CrawlCommandOptions): Promise<number> {
     onProgress: opts.json ? undefined : (m) => process.stderr.write(`  ${pc.dim('·')} ${pc.dim(m)}\n`),
   });
 
-  // Persist the machine-readable report so `sniff` integrates with CI/agents.
-  // Both artifacts go through one writer, which redacts before rendering.
-  const artifacts = await writeCrawlArtifacts({
-    reportDir,
-    report,
-    html: opts.report === true,
-    title: `sniff: ${new URL(opts.url).host}`,
-  });
-
-  if (opts.report && artifacts.htmlPath && !opts.json) {
-    console.log(pc.dim(`  HTML report: ${artifacts.htmlPath}`));
-  }
-
   // Exit code: fail on shown findings at the configured severities, or on a
   // breached assert budget.
   const decision = decideCrawlExit({
@@ -98,12 +86,27 @@ export async function crawlCommand(opts: CrawlCommandOptions): Promise<number> {
     ...(opts.failOn !== undefined ? { failOn: opts.failOn } : {}),
     ...(opts.assert !== undefined ? { assert: opts.assert } : {}),
   });
-  const shown = decision.shown;
   printBudgetViolations({ passed: decision.violations.length === 0, violations: decision.violations });
   const hasFailure = decision.exitCode === 1;
 
+  // Persist the machine-readable report so `sniff` integrates with CI/agents.
+  // Both artifacts go through one writer, which redacts before rendering, and
+  // states the same shown and hidden counts as the terminal.
+  const artifacts = await writeCrawlArtifacts({
+    reportDir,
+    report,
+    html: opts.report === true,
+    title: `sniff: ${new URL(opts.url).host}`,
+    all: opts.all === true,
+    failed: hasFailure,
+  });
+
+  if (opts.report && artifacts.htmlPath && !opts.json) {
+    console.log(pc.dim(`  HTML report: ${artifacts.htmlPath}`));
+  }
+
   if (opts.json) {
-    console.log(JSON.stringify(report, null, 2));
+    console.log(JSON.stringify(withVisibility(report, opts.all === true), null, 2));
   } else {
     console.log(formatReportText(report, {
       ...(opts.all !== undefined ? { all: opts.all } : {}),

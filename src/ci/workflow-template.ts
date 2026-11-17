@@ -70,6 +70,16 @@ ${pnpmSetupStep}
         if: steps.playwright-cache.outputs.cache-hit == 'true'
         run: npx ${packageName} install --deps-only chromium
 
+      # sniff walks a running app. With no app running it only reads your
+      # source, so start the app first. Uncomment and adapt this step:
+      # - name: Start the app
+      #   run: |
+      #     npm run build
+      #     npm start &
+      #     for i in $(seq 1 60); do curl -sf http://localhost:3000 > /dev/null && break; sleep 2; done
+      #
+      # Then walk it: add --url to the step below, for example
+      #   run: npx ${packageName} --ci --url http://localhost:3000 --report
       - name: Run Sniff QA
         run: npx ${packageName} --ci --format html,json,junit
         env:

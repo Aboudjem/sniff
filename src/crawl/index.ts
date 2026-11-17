@@ -13,9 +13,10 @@ export type {
 
 import { relative, isAbsolute } from 'node:path';
 import type { CrawlReport, QaFinding } from './types.js';
-import { SEV_ORDER, fixFirst, verdictLine } from './verdict.js';
+import { SEV_ORDER, fixFirst, splitFindings, verdictLine } from './verdict.js';
 
-export { fixFirst, severityCounts, verdictLine, isFailing } from './verdict.js';
+export { fixFirst, severityCounts, verdictLine, isFailing, splitFindings, hiddenNote, withVisibility } from './verdict.js';
+
 
 export interface ReportTextOptions {
   /** Show `uncertain` findings too. */
@@ -42,16 +43,15 @@ function displayPath(path: string, cwd: string | undefined): string {
  * `uncertain` findings are hidden (shown with `all: true`).
  */
 export function formatReportText(report: CrawlReport, opts: ReportTextOptions = {}): string {
-  const shown = report.findings.filter((f) => opts.all || f.confidence !== 'uncertain');
-  const hidden = report.findings.length - shown.length;
+  const { shown, hidden } = splitFindings(report.findings, opts.all);
   const { pagesVisited, linksChecked, durationMs } = report.stats;
   const lines: string[] = [];
 
   lines.push('');
-  lines.push(`  VERDICT  ${verdictLine(shown, opts.failed)}`);
+  lines.push(`  VERDICT  ${verdictLine(shown, opts.failed, hidden.length)}`);
   lines.push(
     `  Walked ${pagesVisited} page${pagesVisited === 1 ? '' : 's'}, checked ${linksChecked} link${linksChecked === 1 ? '' : 's'}, in ${(durationMs / 1000).toFixed(1)}s.` +
-      (hidden > 0 ? ` ${hidden} low-confidence finding${hidden === 1 ? '' : 's'} hidden, show with --all.` : ''),
+      (hidden.length > 0 ? ` --all shows the hidden one${hidden.length === 1 ? '' : 's'}.` : ''),
   );
   lines.push('');
 

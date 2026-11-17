@@ -23,11 +23,11 @@ npx sniff-qa --url http://localhost:3000
 ## 得られるもの
 
 判定から始まり、次に最初に直すべき 3 件、その後にすべての検出結果が続くレポートです。
-以下は、このリポジトリのバグ埋め込みフィクスチャで実際に実行したときのレポートです (2026-11-17、sniff 0.9.2)。
+以下は、このリポジトリのバグ埋め込みフィクスチャで実際に実行したときのレポートです (2026-11-17、sniff 0.9.3)。
 
 ```text
-  VERDICT  FAIL: 26 findings (1 critical, 13 high, 11 medium, 1 low)
-  Walked 12 pages, checked 13 links, in 53.8s. 1 low-confidence finding hidden, show with --all.
+  VERDICT  FAIL: 26 findings (1 critical, 13 high, 11 medium, 1 low), 1 low-confidence finding hidden
+  Walked 12 pages, checked 13 links, in 55.2s. --all shows the hidden one.
 
   Fix these first:
     1. Page returns HTTP 500 on /crash  [critical]
@@ -56,7 +56,8 @@ sniff は動いているアプリを本物のブラウザで開き、ユーザ�
 - **悪いマージを止める。** `--fail-on` は critical か high の検出で終了コード 1 を返し、`npx sniff-qa ci` が GitHub Actions のファイルを書き出します。API キーは不要です。
 
 アプリが動いている必要があり、本物のフォームを送信するので、開発用かステージングのアプリを使ってください。
-初回の巡回ではブラウザを 1 回だけダウンロードします。Mac のディスク上で約 720 MB です。
+初回の巡回では、ブラウザエンジンと Chromium を 1 回だけダウンロードします。
+Mac で測ると、ダウンロードは約 440 MB、ディスク上では約 730 MB です。
 
 クローンからサンプルを再現するには、フィクスチャを起動し、別のターミナルから巡回します。
 
@@ -105,8 +106,9 @@ Lighthouse) と Chromium です。前もって済ませるには、次を実行�
 npx sniff-qa install
 ```
 
-最後にかかった時間を表示します。npm キャッシュが空の Mac では 34 秒でした (2026-11-17、sniff 0.9.1)。
-ディスクにはエンジン 193 MB と Chromium 528 MB が残りました。macOS で測り直すには次を実行します。
+最後にかかった時間を表示します。キャッシュが空の Mac では 43 秒でした (2026-11-17、sniff 0.9.3)。
+ダウンロードは約 440 MB で、ディスクにはエンジン 193 MB と Chromium 530 MB が残りました。
+サイズはプラットフォームによって変わります。macOS で測り直すには次を実行します。
 
 ```bash
 du -sm ~/.cache/sniff-qa/engine/* ~/Library/Caches/ms-playwright
@@ -140,7 +142,8 @@ npm run cold-start -- 0.9.1 5
 <summary>プロジェクトへのインストールと CI</summary>
 
 `npm install -D sniff-qa` でプロジェクトに追加できます。`npx sniff-qa ci` は、ブラウザのキャッシュと
-レポートの成果物を備えた GitHub Actions のワークフローを書き出します。
+レポートの成果物を備えた GitHub Actions のワークフローを書き出します。アプリが動いていないと、最初の実行はソースを読むだけです。
+アプリを巡回するには、`Start the app` ステップのコメントを外し、`--url` を追加してください。
 </details>
 
 ## 仕組み
@@ -172,7 +175,7 @@ MCP サーバーは次のツールを公開します。
 | `sniff_scan`     | ソースのみのスキャン。ブラウザなし               |
 | `sniff_run`      | ソーススキャンとブラウザでの確認                 |
 | `sniff_discover` | ソースからシナリオを生成して実行                 |
-| `sniff_install`  | Playwright のブラウザをダウンロード              |
+| `sniff_install`  | エンジンと Chromium をダウンロード (進捗付き)    |
 | `sniff_report`   | 最後に保存した結果を読む                         |
 
 `--caps scan,report` はサーバーを `sniff_scan`、`sniff_report`、統合ツール `sniff` に絞り、ブラウザを一切使いません。
@@ -209,7 +212,7 @@ npm run build && npm run proof
   Hard FP on clean page (/clean): 0
 ```
 
-上のサンプルは 26 件で、この実行は 27 件です。根拠の実行は `--all` を使うので、低確信度の 1 件が加わります。
+上のサンプルは 26 件を示し、低確信度の 1 件が非表示だと伝えます。根拠の実行は `--all` を使うので、27 件すべてを数えます。
 
 フィクスチャには 12 種類すべてにわたる 21 個の埋め込みバグと、クリーンな対照ページがあります。
 採点スクリプトは [sniff-tests/score-fixture.mjs](../sniff-tests/score-fixture.mjs) です。
@@ -219,7 +222,7 @@ npm run build && npm run proof
 npm test
 ```
 
-2026-11-17 には `Test Files  53 passed (53)` と `Tests  576 passed (576)` を表示しました。
+2026-11-17 には `Test Files  54 passed (54)` と `Tests  603 passed (603)` を表示しました。
 このスイートにはフィクスチャのゲートが含まれます。再現率が 85% を下回るとビルドを失敗させます。
 クリーンなページで検出結果が 1 件でも出ても失敗します。
 
@@ -251,7 +254,7 @@ node sniff-tests/mcp-smoke.mjs
 ## 制限
 
 - 巡回には動いているアプリが必要です。ない場合はソーススキャンのみになります。
-- 初回の巡回では、ブラウザエンジンと Chromium を 1 回ダウンロードするためにインターネットが必要です。Mac のディスク上で 721 MB です。
+- 初回の巡回では、エンジンと Chromium を 1 回ダウンロードするためにインターネットが必要です。Mac で約 440 MB、ディスク上では約 730 MB です。
 - それまでは MCP のブラウザツールが `needsSetup` を返し、エージェントが先に `sniff_install` を呼びます。
 - リンク切れの確認は外部リンクもたどるため、巡回はページがリンクしている第三者の URL にリクエストを送ります。
 - 伏せ字はレポートの文字にかかり、スクリーンショットの画素にはかかりません。ログイン中のページのスクリーンショットには個人データが写ることがあります。

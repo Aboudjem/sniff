@@ -1,4 +1,5 @@
 import { performance } from 'node:perf_hooks';
+import { asBrowserMissing } from '../core/browser-missing.js';
 import type { Browser, BrowserContext, Page } from 'playwright';
 import type { BrowserFinding } from '../core/types.js';
 import type { SniffConfig } from '../config/schema.js';
@@ -447,7 +448,9 @@ export async function runScenarios(
 
   const launchBrowser = deps?.launchBrowser ?? (async () => {
     const { chromium } = await loadEngine('playwright', () => import('playwright'));
-    return chromium.launch({ headless: context.headless });
+    return chromium.launch({ headless: context.headless }).catch((err: unknown) => {
+      throw asBrowserMissing(err, 'chromium');
+    });
   });
 
   const defaultSetupHooks: RunnerDeps['setupHooks'] = async (page, viewportName) => {

@@ -1,4 +1,4 @@
-import type { QaFinding } from './types.js';
+import type { CrawlReport, QaFinding } from './types.js';
 
 export const SEV_ORDER = ['critical', 'high', 'medium', 'low', 'info'] as const;
 const CONF_ORDER = ['confirmed', 'likely', 'uncertain'] as const;
@@ -44,11 +44,49 @@ export function isFailing(findings: readonly QaFinding[], failed?: boolean): boo
   return failed ?? findings.some((f) => DEFAULT_FAIL_ON.includes(f.severity));
 }
 
-/** One line a reader can act on: "FAIL: 26 findings (1 critical, 13 high)". */
-export function verdictLine(findings: readonly QaFinding[], failed?: boolean): string {
+/**
+ * The findings a report shows, and the low-confidence ones it hides. Every
+ * output (terminal, HTML, JSON, MCP) splits a run this one way, so they all
+ * tell the same count. `all` shows everything.
+ */
+export function splitFindings<T extends QaFinding>(
+  findings: readonly T[],
+  all = false,
+): { shown: T[]; hidden: T[] } {
+  if (all) return { shown: [...findings], hidden: [] };
+  return {
+    shown: findings.filter((f) => f.confidence !== 'uncertain'),
+    hidden: findings.filter((f) => f.confidence === 'uncertain'),
+  };
+}
+
+/** "1 low-confidence finding hidden", or '' when nothing is hidden. */
+export function hiddenNote(hidden: number): string {
+  return hidden > 0 ? `${hidden} low-confidence finding${hidden === 1 ? '' : 's'} hidden` : '';
+}
+
+/**
+ * One line a reader can act on:
+ * "FAIL: 26 findings (1 critical, 13 high), 1 low-confidence finding hidden".
+ */
+export function verdictLine(findings: readonly QaFinding[], failed?: boolean, hidden = 0): string {
   const n = findings.length;
-  if (n === 0) return 'PASS: no findings';
+  const tail = hidden > 0 ? `, ${hiddenNote(hidden)}` : '';
+  if (n === 0) return `PASS: no findings${tail}`;
   const word = isFailing(findings, failed) ? 'FAIL' : 'PASS';
   const gate = word === 'PASS' ? ', none at a failing severity' : '';
-  return `${word}: ${n} finding${n === 1 ? '' : 's'} (${severityCounts(findings)})${gate}`;
+  return `${word}: ${n} finding${n === 1 ? '' : 's'} (${severityCounts(findings)})${gate}${tail}`;
+}
+
+/**
+ * The report with `summary.shown` and `summary.hiddenLowConfidence` set for
+ * this view (`all` shows everything). `summary.total` keeps its meaning:
+ * every finding of the run.
+ */
+export function withVisibility(report: CrawlReport, all = false): CrawlReport {
+  const { shown, hidden } = splitFindings(report.findings, all);
+  return {
+    ...report,
+    summary: { ...report.summary, total: report.findings.length, shown: shown.length, hiddenLowConfidence: hidden.length },
+  };
 }

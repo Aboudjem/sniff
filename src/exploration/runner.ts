@@ -1,4 +1,5 @@
 import type { SniffConfig } from '../config/schema.js';
+import { asBrowserMissing } from '../core/browser-missing.js';
 import type { ExplorationProvider } from '../ai/types.js';
 import type { BrowserFinding } from '../core/types.js';
 import type {
@@ -39,7 +40,9 @@ export class ExplorationRunner {
       ScreenshotHook,
     } = await import('../browser/page-hooks.js');
 
-    const browser = await chromium.launch({ headless: ctx.headless });
+    const browser = await chromium.launch({ headless: ctx.headless }).catch((err: unknown) => {
+      throw asBrowserMissing(err, 'chromium');
+    });
 
     try {
       const context = await browser.newContext({

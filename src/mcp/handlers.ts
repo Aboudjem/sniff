@@ -8,6 +8,33 @@ export interface McpToolResult {
   content: Array<{ type: 'text'; text: string }>;
 }
 
+/** The hint every `needsSetup` result carries. */
+export const SETUP_HINT =
+  'Run the sniff_install MCP tool with the same projects if it is registered, otherwise run installCommand in a terminal, then retry.';
+
+function jsonResult(value: unknown): McpToolResult {
+  return { content: [{ type: 'text', text: JSON.stringify(value) }] };
+}
+
+/**
+ * Run a browser tool. A launch that fails because the browser files are not
+ * on disk (a download killed midway) returns the same `needsSetup` result as
+ * the check before it, never Playwright's raw "npx playwright install" text.
+ */
+export async function withBrowserSetup(
+  run: () => Promise<McpToolResult>,
+  hint: string = SETUP_HINT,
+): Promise<McpToolResult> {
+  try {
+    return await run();
+  } catch (err) {
+    const { needsSetupFromError } = await import('../core/ensure-browsers.js');
+    const setup = needsSetupFromError(err, hint);
+    if (setup) return jsonResult(setup);
+    throw err;
+  }
+}
+
 /**
  * Validate rootDir is absolute and exists on disk (T-04-15 mitigation).
  */
@@ -60,6 +87,14 @@ export async function handleSniffRun(
   baseUrl: string,
   headless: boolean,
 ): Promise<McpToolResult> {
+  return withBrowserSetup(() => sniffRun(rootDir, baseUrl, headless));
+}
+
+async function sniffRun(
+  rootDir: string,
+  baseUrl: string,
+  headless: boolean,
+): Promise<McpToolResult> {
   const rootErr = validateRootDir(rootDir);
   if (rootErr) {
     return { content: [{ type: 'text', text: JSON.stringify({ error: rootErr }) }] };
@@ -74,22 +109,10 @@ export async function handleSniffRun(
   const { saveResults } = await import('../core/persistence.js');
 
   const sourceRun = await runSourceScan(rootDir);
-  const { checkPlaywrightBrowsers } = await import('../core/ensure-browsers.js');
-  const check = await checkPlaywrightBrowsers(sourceRun.config.browser?.projects);
-  if (check.status !== 'installed') {
-    return {
-      content: [{
-        type: 'text',
-        text: JSON.stringify({
-          needsSetup: 'playwright-browsers',
-          projects: check.status === 'missing' ? check.missingProjects : sourceRun.config.browser?.projects ?? ['chromium'],
-          installCommand: check.status === 'missing' ? check.installCommand : (await import('../core/engine.js')).engineInstallCommand(sourceRun.config.browser?.projects ?? ['chromium']),
-          installSizeMb: check.status === 'missing' ? check.installSizeMb : 165,
-          hint: 'Run the sniff_install MCP tool with the same projects if it is registered, otherwise run installCommand in a terminal, then retry.',
-        }),
-      }],
-    };
-  }
+  const { checkPlaywrightBrowsers, needsSetupFromCheck } = await import('../core/ensure-browsers.js');
+  const check = await checkPlaywrightBrowsers(sourceRun.config.browser?.projects, undefined, { headless });
+  const setup = needsSetupFromCheck(check, sourceRun.config.browser?.projects, SETUP_HINT);
+  if (setup) return jsonResult(setup);
 
   const browserRun = await runBrowserAudit({
     rootDir,
@@ -140,6 +163,10 @@ export interface SniffWalkOptions {
  * if baseUrl is omitted; falls back to a source scan when no app is running.
  */
 export async function handleSniffWalk(options: SniffWalkOptions): Promise<McpToolResult> {
+  return withBrowserSetup(() => sniffWalk(options));
+}
+
+async function sniffWalk(options: SniffWalkOptions): Promise<McpToolResult> {
   const rootErr = validateRootDir(options.rootDir);
   if (rootErr) return { content: [{ type: 'text', text: JSON.stringify({ error: rootErr }) }] };
 
@@ -169,25 +196,13 @@ export async function handleSniffWalk(options: SniffWalkOptions): Promise<McpToo
 
   const { loadConfig } = await import('../config/loader.js');
   const config = await loadConfig(options.rootDir);
-  const { checkPlaywrightBrowsers } = await import('../core/ensure-browsers.js');
-  const check = await checkPlaywrightBrowsers(config.browser?.projects);
-  if (check.status !== 'installed') {
-    return {
-      content: [{
-        type: 'text',
-        text: JSON.stringify({
-          needsSetup: 'playwright-browsers',
-          projects: check.status === 'missing' ? check.missingProjects : config.browser?.projects ?? ['chromium'],
-          installCommand: check.status === 'missing' ? check.installCommand : (await import('../core/engine.js')).engineInstallCommand(config.browser?.projects ?? ['chromium']),
-          installSizeMb: check.status === 'missing' ? check.installSizeMb : 165,
-          hint: 'Run the sniff_install MCP tool with the same projects if it is registered, otherwise run installCommand in a terminal, then retry.',
-        }),
-      }],
-    };
-  }
+  const { checkPlaywrightBrowsers, needsSetupFromCheck } = await import('../core/ensure-browsers.js');
+  const check = await checkPlaywrightBrowsers(config.browser?.projects, undefined, { headless: options.headless ?? true });
+  const setup = needsSetupFromCheck(check, config.browser?.projects, SETUP_HINT);
+  if (setup) return jsonResult(setup);
 
   const { join } = await import('node:path');
-  const { runCrawl, isFailing, verdictLine, fixFirst } = await import('../crawl/index.js');
+  const { runCrawl, isFailing, verdictLine, fixFirst, splitFindings, withVisibility } = await import('../crawl/index.js');
   const report = await runCrawl({
     startUrl: url,
     headless: options.headless ?? true,
@@ -199,22 +214,27 @@ export async function handleSniffWalk(options: SniffWalkOptions): Promise<McpToo
     outputDir: join(options.rootDir, 'sniff-reports', 'crawl'),
   });
 
-  const shown = options.all ? report.findings : report.findings.filter((f) => f.confidence !== 'uncertain');
+  // The same split as the terminal, the HTML and the JSON report.
+  const { shown, hidden } = splitFindings(report.findings, options.all === true);
+  const visible = withVisibility(report, options.all === true);
   return {
     content: [{
       type: 'text',
       // Verdict first, so an agent reads the answer before the detail.
       text: JSON.stringify({
         verdict: isFailing(shown) ? 'fail' : 'pass',
-        verdictLine: verdictLine(shown),
+        verdictLine: verdictLine(shown, undefined, hidden.length),
+        shownCount: shown.length,
+        hiddenLowConfidence: hidden.length,
+        ...(hidden.length > 0 ? { hiddenNote: `${hidden.length} low-confidence finding${hidden.length === 1 ? ' is' : 's are'} left out of findings. Call again with all: true to include them.` } : {}),
         fixFirst: fixFirst(shown).map((f) => ({
           title: f.title,
           route: f.reproduction.route,
           severity: f.severity,
           suggestedFix: f.suggestedFix,
         })),
-        stats: report.stats,
-        summary: report.summary,
+        stats: visible.stats,
+        summary: visible.summary,
         findings: shown,
       }, null, 2),
     }],
@@ -237,6 +257,10 @@ export interface SniffDiscoverOptions {
 }
 
 export async function handleSniffDiscover(options: SniffDiscoverOptions): Promise<McpToolResult> {
+  return withBrowserSetup(() => sniffDiscover(options));
+}
+
+async function sniffDiscover(options: SniffDiscoverOptions): Promise<McpToolResult> {
   const rootErr = validateRootDir(options.rootDir);
   if (rootErr) {
     return { content: [{ type: 'text', text: JSON.stringify({ error: rootErr }) }] };
@@ -266,22 +290,10 @@ export async function handleSniffDiscover(options: SniffDiscoverOptions): Promis
   if (!options.dryRun) {
     const { loadConfig } = await import('../config/loader.js');
     const config = await loadConfig(options.rootDir);
-    const { checkPlaywrightBrowsers } = await import('../core/ensure-browsers.js');
-    const check = await checkPlaywrightBrowsers(config.browser?.projects);
-    if (check.status !== 'installed') {
-      return {
-        content: [{
-          type: 'text',
-          text: JSON.stringify({
-            needsSetup: 'playwright-browsers',
-            projects: check.status === 'missing' ? check.missingProjects : config.browser?.projects ?? ['chromium'],
-            installCommand: check.status === 'missing' ? check.installCommand : (await import('../core/engine.js')).engineInstallCommand(config.browser?.projects ?? ['chromium']),
-            installSizeMb: check.status === 'missing' ? check.installSizeMb : 165,
-            hint: 'Run the sniff_install MCP tool with the same projects if it is registered, otherwise run installCommand in a terminal, then retry.',
-          }),
-        }],
-      };
-    }
+    const { checkPlaywrightBrowsers, needsSetupFromCheck } = await import('../core/ensure-browsers.js');
+    const check = await checkPlaywrightBrowsers(config.browser?.projects, undefined, { headless: options.headless ?? true });
+    const setup = needsSetupFromCheck(check, config.browser?.projects, SETUP_HINT);
+    if (setup) return jsonResult(setup);
   }
 
   const { discoverCommand } = await import('../cli/commands/discover.js');
@@ -410,12 +422,23 @@ export async function handleSniffUnified(options: SniffUnifiedOptions): Promise<
   }
 }
 
-export async function handleSniffInstall(projects?: BrowserProject[]): Promise<McpToolResult> {
+/**
+ * `onProgress` receives each progress line (npm, then Playwright's download
+ * percentages). The MCP server forwards them as progress notifications when
+ * the client asked for them.
+ */
+export async function handleSniffInstall(
+  projects?: BrowserProject[],
+  onProgress?: (message: string) => void,
+): Promise<McpToolResult> {
   const { installPlaywrightBrowserProjects } = await import('../core/ensure-browsers.js');
   const requestedProjects: BrowserProject[] = projects && projects.length > 0 ? projects : ['chromium'];
-  // Progress goes to stderr: stdout is the MCP protocol channel.
   const result = await installPlaywrightBrowserProjects(requestedProjects, {
-    log: (line) => process.stderr.write(`[sniff install] ${line}\n`),
+    log: (line) => {
+      // Progress goes to stderr: stdout is the MCP protocol channel.
+      process.stderr.write(`[sniff install] ${line}\n`);
+      onProgress?.(line);
+    },
   });
   const { engineInstallCommand } = await import('../core/engine.js');
   return {

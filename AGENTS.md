@@ -17,15 +17,17 @@ Prefer the MCP `sniff` tool over the CLI when running inside an agent host (Clau
 
 ### Handling the Playwright setup gate
 
-The first browser run needs two one-time downloads: the browser engine (Playwright, axe-core, Lighthouse, about 200 MB) and a Chromium build (about 165 MB). They are not npm dependencies, so the MCP server itself starts in seconds. The MCP browser modes do **not** silently shell out to download them (the download takes about a minute). Instead they return:
+The first browser run needs two one-time downloads: the browser engine (Playwright, axe-core, Lighthouse: about 180 MB to download, about 195 MB on disk) and Chromium (about 260 MB to download, about 535 MB on disk). Sizes are measured on macOS arm64 and vary by platform. They are not npm dependencies, so the MCP server itself starts in seconds. The MCP browser modes do **not** silently shell out to download them (the download takes about a minute). Instead they return:
 
 ```json
 { "needsSetup": "playwright-browsers", "projects": ["chromium"],
-  "installCommand": "npx -y sniff-qa@<version> install chromium", "installSizeMb": 365,
+  "installCommand": "npx -y sniff-qa@<version> install chromium",
+  "installSizeMb": 440, "downloadSizeMb": 440, "diskSizeMb": 730,
+  "sizeNote": "about 440 MB to download, about 730 MB on disk (measured on macOS arm64, varies by platform)",
   "hint": "Run the sniff_install MCP tool with the same projects, or run the install command manually, then retry." }
 ```
 
-When you see `needsSetup: "playwright-browsers"`: call the **`sniff_install`** MCP tool with the same `projects`, then **retry** the original `sniff` call. Do not report this as a failure; it is expected on first use. Disclose the one-time download (`installSizeMb`) to the user honestly. `mode: "scan"` needs neither download.
+When you see `needsSetup: "playwright-browsers"`: call the **`sniff_install`** MCP tool with the same `projects`, then **retry** the original `sniff` call. Do not report this as a failure; it is expected on first use. Disclose the one-time download (`sizeNote`) to the user honestly. `sniff_install` sends MCP progress notifications when your client passes a progress token. A walk that finds a half-downloaded browser returns the same `needsSetup` result. `mode: "scan"` needs neither download.
 
 The narrow tools (`sniff_scan`, `sniff_run`, `sniff_discover`, `sniff_report`, `sniff_install`) remain registered for back-compat and scoped capabilities, but new work should go through the unified `sniff` tool.
 

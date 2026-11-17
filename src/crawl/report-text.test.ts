@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { formatReportText, renderHtmlReport, fixFirst, verdictLine, severityCounts } from './index.js';
+import { formatReportText, renderHtmlReport, fixFirst, verdictLine, severityCounts, withVisibility } from './index.js';
 import type { CrawlReport, QaFinding } from './types.js';
 
 function finding(over: Partial<QaFinding> & { route?: string; shot?: string } = {}): QaFinding {
@@ -114,8 +114,8 @@ describe('formatReportText', () => {
   it('hides uncertain findings, counts them, and shows them with all', () => {
     const fs = [finding({ severity: 'medium', confidence: 'uncertain', title: 'Maybe' })];
     const hidden = formatReportText(report(fs));
-    expect(hidden).toContain('VERDICT  PASS: no findings');
-    expect(hidden).toContain('1 low-confidence finding hidden, show with --all.');
+    expect(hidden).toContain('VERDICT  PASS: no findings, 1 low-confidence finding hidden');
+    expect(hidden).toContain('--all shows the hidden one.');
     expect(hidden).not.toContain('Maybe');
     expect(formatReportText(report(fs), { all: true })).toContain('• [uncertain] Maybe');
   });
@@ -151,5 +151,40 @@ describe('renderHtmlReport', () => {
     const html = renderHtmlReport(report([]));
     expect(html).toContain('PASS: no findings');
     expect(html).not.toContain('<article class="card"');
+  });
+});
+
+// Defect seen on 0.9.2: one walk said 26 findings in the terminal and 27 in
+// the HTML verdict and the JSON summary, with no word about the hidden one.
+describe('every output tells the same count', () => {
+  const run = report([
+    finding(),
+    finding({ severity: 'high', title: 'Dead link' }),
+    finding({ severity: 'medium', confidence: 'uncertain', title: 'Maybe slow' }),
+  ]);
+
+  it('terminal, HTML and JSON state 2 shown and 1 hidden', () => {
+    const line = 'FAIL: 2 findings (1 critical, 1 high), 1 low-confidence finding hidden';
+    expect(formatReportText(run)).toContain(`VERDICT  ${line}`);
+    const html = renderHtmlReport(run);
+    expect(html).toContain(line);
+    expect(html).toContain('<span class="stat">2 findings</span>');
+    // The hidden one is listed apart, after the main list, not in the verdict.
+    expect(html.indexOf('Maybe slow')).toBeGreaterThan(html.indexOf('<details class="hidden">'));
+    const json = withVisibility(run);
+    expect(json.summary).toMatchObject({ total: 3, shown: 2, hiddenLowConfidence: 1 });
+  });
+
+  it('with --all, all three show everything and hide nothing', () => {
+    const line = 'FAIL: 3 findings (1 critical, 1 high, 1 medium)';
+    expect(formatReportText(run, { all: true })).toContain(`VERDICT  ${line}\n`);
+    const html = renderHtmlReport(run, { all: true });
+    expect(html).toContain(`${line}</p>`);
+    expect(html).not.toContain('<details class="hidden">');
+    expect(withVisibility(run, true).summary).toMatchObject({ total: 3, shown: 3, hiddenLowConfidence: 0 });
+  });
+
+  it('the HTML verdict follows the real exit decision', () => {
+    expect(renderHtmlReport(run, { failed: false })).toContain('PASS: 2 findings (1 critical, 1 high), none at a failing severity');
   });
 });

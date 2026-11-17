@@ -334,4 +334,83 @@ describe('MCP Server', () => {
       });
     });
   });
+
+  describe('sniff_install progress', () => {
+    async function connect(install: Parameters<typeof import('./server.js').startMcpServer>[2]) {
+      const { Client } = await import('@modelcontextprotocol/sdk/client/index.js');
+      const { InMemoryTransport } = await import('@modelcontextprotocol/sdk/inMemory.js');
+      const { startMcpServer } = await import('./server.js');
+      const { CAPABILITIES } = await import('./caps.js');
+      const [clientTransport, serverTransport] = InMemoryTransport.createLinkedPair();
+      const client = new Client({ name: 'test', version: '0' }, { capabilities: {} });
+      await startMcpServer([...CAPABILITIES], serverTransport, install);
+      await client.connect(clientTransport);
+      return client;
+    }
+
+    const fakeInstall = async (_p: unknown, onProgress?: (m: string) => void) => {
+      onProgress?.('Downloading the browser engine...');
+      onProgress?.('|■■■■■■■■| 100% of 92 MiB');
+      return { content: [{ type: 'text' as const, text: JSON.stringify({ status: 'installed' }) }] };
+    };
+
+    it('sends a progress notification per line when the client gives a progress token', async () => {
+      const client = await connect({ install: fakeInstall });
+      const seen: Array<{ progress: number; message?: string }> = [];
+      const res = await client.callTool({ name: 'sniff_install', arguments: {} }, undefined, {
+        onprogress: (p) => seen.push(p),
+      });
+      await client.close();
+      expect(JSON.parse((res.content as Array<{ text: string }>)[0]!.text)).toEqual({ status: 'installed' });
+      expect(seen.map((p) => p.progress)).toEqual([1, 2]);
+      expect(seen[1]!.message).toContain('100% of 92 MiB');
+    });
+
+    it('sends no notification without a progress token', async () => {
+      let received: unknown = 'unset';
+      const client = await connect({
+        install: async (p, onProgress) => {
+          received = onProgress;
+          return fakeInstall(p, onProgress);
+        },
+      });
+      await client.callTool({ name: 'sniff_install', arguments: {} });
+      await client.close();
+      expect(received).toBeUndefined();
+    });
+
+    it('states the expected download size in the tool description', async () => {
+      const { setupSize } = await import('../core/sizes.js');
+      const client = await connect({});
+      const tools = await client.listTools();
+      await client.close();
+      const install = tools.tools.find((t) => t.name === 'sniff_install');
+      const size = setupSize(['chromium'], true);
+      expect(install?.description).toContain(`about ${size.downloadMb} MB to download`);
+      expect(install?.description).toContain(`about ${size.diskMb} MB on disk`);
+    });
+  });
+
+  describe('a launch that finds no browser on disk', () => {
+    it('returns the needsSetup result, not Playwright\'s raw error', async () => {
+      const { withBrowserSetup, SETUP_HINT } = await import('./handlers.js');
+      const res = await withBrowserSetup(async () => {
+        throw new Error(
+          "browserType.launch: Executable doesn't exist at /c/ms-playwright/chromium_headless_shell-1217/chrome-headless-shell-mac-arm64/chrome-headless-shell\n" +
+            'Please run the following command to download new browsers:\n\n    npx playwright install',
+        );
+      });
+      const body = JSON.parse(res.content[0]!.text);
+      expect(body.needsSetup).toBe('playwright-browsers');
+      expect(body.projects).toEqual(['chromium']);
+      expect(body.installCommand).toMatch(/^npx -y sniff-qa@\S+ install chromium$/);
+      expect(body.hint).toBe(SETUP_HINT);
+      expect(res.content[0]!.text).not.toContain('npx playwright install');
+    });
+
+    it('rethrows any other error', async () => {
+      const { withBrowserSetup } = await import('./handlers.js');
+      await expect(withBrowserSetup(async () => { throw new Error('boom'); })).rejects.toThrow('boom');
+    });
+  });
 });

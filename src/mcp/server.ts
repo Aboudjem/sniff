@@ -4,6 +4,7 @@ import type { Transport } from '@modelcontextprotocol/sdk/shared/transport.js';
 import { z } from 'zod';
 import { handleSniffScan, handleSniffRun, handleSniffReport, handleSniffDiscover, handleSniffInstall, handleSniffUnified } from './handlers.js';
 import { getVersion } from '../version.js';
+import { SIZE_MEASURED_ON, describeSize, setupSize } from '../core/sizes.js';
 import { CAPABILITIES, resolveTools } from './caps.js';
 import type { Capability, UnifiedMode } from './caps.js';
 import type { BrowserProject } from '../config/schema.js';
@@ -16,7 +17,9 @@ import type { BrowserProject } from '../config/schema.js';
 export async function startMcpServer(
   caps: readonly Capability[] = CAPABILITIES,
   transport?: Transport,
+  deps: { install?: typeof handleSniffInstall } = {},
 ): Promise<void> {
+  const install = deps.install ?? handleSniffInstall;
   const server = new McpServer({
     name: 'sniff',
     version: getVersion(),
@@ -93,22 +96,10 @@ export async function startMcpServer(
         // commonly time out on the ~45s install).
         const { loadConfig } = await import('../config/loader.js');
         const config = await loadConfig(rootDir);
-        const { checkPlaywrightBrowsers } = await import('../core/ensure-browsers.js');
-        const check = await checkPlaywrightBrowsers(config.browser?.projects);
-        if (check.status !== 'installed') {
-          return {
-            content: [{
-              type: 'text',
-              text: JSON.stringify({
-                needsSetup: 'playwright-browsers',
-                projects: check.status === 'missing' ? check.missingProjects : config.browser?.projects ?? ['chromium'],
-                installCommand: check.status === 'missing' ? check.installCommand : (await import('../core/engine.js')).engineInstallCommand(config.browser?.projects ?? ['chromium']),
-                installSizeMb: check.status === 'missing' ? check.installSizeMb : 165,
-                hint: setupHint,
-              }),
-            }],
-          };
-        }
+        const { checkPlaywrightBrowsers, needsSetupFromCheck } = await import('../core/ensure-browsers.js');
+        const check = await checkPlaywrightBrowsers(config.browser?.projects, undefined, { headless });
+        const setup = needsSetupFromCheck(check, config.browser?.projects, setupHint);
+        if (setup) return { content: [{ type: 'text', text: JSON.stringify(setup) }] };
         return handleSniffRun(rootDir, url, headless);
       }
 
@@ -166,11 +157,25 @@ export async function startMcpServer(
   // then retry the browser tool.
   if (granted('sniff_install')) server.tool(
     'sniff_install',
-    'Download what a browser walk needs, once: the browser engine (Playwright, axe-core, Lighthouse, about 200 MB) and the requested browsers (default: chromium). Run this when a sniff tool returns `needsSetup: playwright-browsers`, then retry. Takes about a minute on first use.',
+    `Download what a browser walk needs, once: the browser engine (Playwright, axe-core, Lighthouse) and the requested browsers (default: chromium). For chromium that is ${describeSize(setupSize(['chromium'], true))} (${SIZE_MEASURED_ON}). Run this when a sniff tool returns \`needsSetup: playwright-browsers\`, then retry. It takes about a minute on a fast link; pass a progress token to get progress notifications.`,
     {
       projects: z.array(z.enum(['chromium', 'firefox', 'webkit'])).optional().describe('Browser projects to install. Defaults to ["chromium"].'),
     },
-    async ({ projects }) => handleSniffInstall(projects as BrowserProject[] | undefined),
+    async ({ projects }, extra) => {
+      const token = extra._meta?.progressToken;
+      let step = 0;
+      const onProgress = token === undefined
+        ? undefined
+        : (message: string): void => {
+            step += 1;
+            // Fire and forget: a lost notification must not fail the install.
+            extra.sendNotification({
+              method: 'notifications/progress',
+              params: { progressToken: token, progress: step, message },
+            }).catch(() => {});
+          };
+      return install(projects as BrowserProject[] | undefined, onProgress);
+    },
   );
 
   // Tool: sniff_report -- load last results

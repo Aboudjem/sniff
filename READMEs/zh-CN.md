@@ -23,11 +23,11 @@ npx sniff-qa --url http://localhost:3000
 ## 你会得到什么
 
 一份报告：先给结论，再列出最该先修的三项，然后是每一条发现。
-下面是在本仓库的埋点 bug 测试应用上真实运行得到的报告（2026-11-17，sniff 0.9.2）。
+下面是在本仓库的埋点 bug 测试应用上真实运行得到的报告（2026-11-17，sniff 0.9.3）。
 
 ```text
-  VERDICT  FAIL: 26 findings (1 critical, 13 high, 11 medium, 1 low)
-  Walked 12 pages, checked 13 links, in 53.8s. 1 low-confidence finding hidden, show with --all.
+  VERDICT  FAIL: 26 findings (1 critical, 13 high, 11 medium, 1 low), 1 low-confidence finding hidden
+  Walked 12 pages, checked 13 links, in 55.2s. --all shows the hidden one.
 
   Fix these first:
     1. Page returns HTTP 500 on /crash  [critical]
@@ -56,7 +56,8 @@ sniff 在真实浏览器中打开你正在运行的应用，像用户一样逐�
 - **拦住有问题的合并。** 出现 critical 或 high 发现时，`--fail-on` 以 1 退出；`npx sniff-qa ci` 会写好 GitHub Actions 文件。不需要 API 密钥。
 
 它需要你的应用在运行，并且会提交真实表单，所以请用开发或预发布环境的应用。
-第一次巡查会下载一次浏览器，在 Mac 上约占 720 MB 磁盘。
+第一次巡查会下载一次浏览器引擎和 Chromium。
+在 Mac 上测得约 440 MB 下载量，约占 730 MB 磁盘。
 
 要在克隆的仓库里复现这个示例，先启动测试应用，再在另一个终端里巡查它：
 
@@ -105,8 +106,9 @@ Lighthouse）以及 Chromium。要提前完成下载，运行：
 npx sniff-qa install
 ```
 
-它最后会打印耗时。在 npm 缓存为空的 Mac 上，它打印了 34 秒（2026-11-17，sniff 0.9.1）。
-磁盘上留下 193 MB 引擎和 528 MB Chromium。在 macOS 上重新测量：
+它最后会打印耗时。在缓存为空的 Mac 上，它打印了 43 秒（2026-11-17，sniff 0.9.3）。
+它下载了约 440 MB，磁盘上留下 193 MB 引擎和 530 MB Chromium。
+大小因平台而异。在 macOS 上重新测量：
 
 ```bash
 du -sm ~/.cache/sniff-qa/engine/* ~/Library/Caches/ms-playwright
@@ -140,7 +142,8 @@ npm run cold-start -- 0.9.1 5
 <summary>在项目中安装与 CI</summary>
 
 `npm install -D sniff-qa` 会把它加入项目。`npx sniff-qa ci` 会写一个 GitHub Actions 工作流，
-带浏览器缓存和报告产物。
+带浏览器缓存和报告产物。没有运行中的应用时，它的第一次运行只读源码。
+取消其中 `Start the app` 步骤的注释并加上 `--url`，即可巡查应用。
 </details>
 
 ## 工作原理
@@ -172,7 +175,7 @@ MCP 服务器提供以下工具：
 | `sniff_scan`     | 只扫描源码，不用浏览器                           |
 | `sniff_run`      | 源码扫描加浏览器检查                             |
 | `sniff_discover` | 根据源码生成场景并执行                           |
-| `sniff_install`  | 下载 Playwright 浏览器                           |
+| `sniff_install`  | 下载引擎和 Chromium，并报告进度                  |
 | `sniff_report`   | 读取上次保存的结果                               |
 
 `--caps scan,report` 会把服务器限制为 `sniff_scan`、`sniff_report` 和统一的 `sniff` 工具，完全不用浏览器。
@@ -209,7 +212,7 @@ npm run build && npm run proof
   Hard FP on clean page (/clean): 0
 ```
 
-上面的示例显示 26 条发现，这次运行算出 27 条。证据运行使用了 `--all`，它会加上那 1 条低置信度发现。
+上面的示例显示 26 条发现，并说明有 1 条低置信度发现被隐藏。证据运行使用了 `--all`，所以算出全部 27 条。
 
 测试应用包含覆盖全部 12 类的 21 个埋点 bug，外加一个干净的对照页面。
 打分脚本是 [sniff-tests/score-fixture.mjs](../sniff-tests/score-fixture.mjs)。
@@ -219,7 +222,7 @@ bug 列在 [sniff-tests/planted-bugs/MANIFEST.json](../sniff-tests/planted-bugs/
 npm test
 ```
 
-2026-11-17 打印了 `Test Files  53 passed (53)` 和 `Tests  576 passed (576)`。
+2026-11-17 打印了 `Test Files  54 passed (54)` 和 `Tests  603 passed (603)`。
 测试套件包含测试应用的门槛。召回率低于 85% 时会让构建失败。
 干净页面上出现任何发现也会失败。
 
@@ -251,7 +254,7 @@ node sniff-tests/mcp-smoke.mjs
 ## 局限
 
 - 巡查需要正在运行的应用。没有应用时，你只能得到源码扫描。
-- 第一次巡查需要联网，以便一次性下载浏览器引擎和 Chromium，在 Mac 上占 721 MB 磁盘。
+- 第一次巡查需要联网，以便一次性下载引擎和 Chromium：在 Mac 上约 440 MB 下载量，约占 730 MB 磁盘。
 - 在此之前，MCP 浏览器工具会返回 `needsSetup`，智能体会先调用 `sniff_install`。
 - 死链检查会跟随外部链接，所以巡查会请求你的页面所链接的第三方 URL。
 - 遮盖只作用于报告文字，不作用于截图像素。已登录页面的截图可能显示私人数据。

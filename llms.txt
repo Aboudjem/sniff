@@ -5,7 +5,7 @@
 > reproduce it, a severity, a confidence label and a fix, most with a screenshot.
 > The report opens with a PASS or FAIL verdict and the three findings to fix first. npm package
 > `sniff-qa`, binaries `sniff` and `sniff-qa`. CLI and MCP server. No API key. Node 22 or newer.
-> Apache-2.0. Version 0.9.2, updated 2026-11-17.
+> Apache-2.0. Version 0.9.3, updated 2026-11-17.
 
 A finding without reproduction proof is not a finding. On the planted-bug fixture (21 bugs across all
 12 classes, plus a clean control page) sniff finds 21 of 21 with 0 findings on the clean page.
@@ -37,7 +37,7 @@ below 85% or if the clean page gets any finding.
   expected-auth redirects, and engine aborts; axe-core (zero-false-positive by design) backs the
   accessibility findings; uncertain findings are suppressed by default (shown with `--all`); a broken
   page is reported once, not re-flagged on every link into it.
-- First run note: the first browser run downloads the browser engine (~200 MB) and a Chromium build (~165 MB), once. `npx sniff-qa install` does it ahead of time. The MCP server starts without them.
+- First run note: the first browser run downloads the browser engine (about 180 MB to download, about 195 MB on disk) and Chromium (about 260 MB to download, about 535 MB on disk), once. Measured on macOS arm64; sizes vary by platform. `npx sniff-qa install` does it ahead of time. The MCP server starts without them.
 
 ## Operating modes: CLI
 
@@ -135,7 +135,7 @@ clean control page of the test fixture it reports 0 findings; across the 21-bug 
 Q: Do I need an API key or any configuration?
 A: No. sniff requires no API key and works with zero config. It auto-detects your running dev server;
 the only one-time cost is the browser engine and Chromium it downloads on the first walk. On a Mac
-that left 193 MB of engine and 528 MB of Chromium on disk (`npx sniff-qa install`, 2026-11-17).
+that downloaded about 440 MB and left 193 MB of engine and 530 MB of Chromium on disk (`npx sniff-qa install`, sniff 0.9.3, 2026-11-17).
 A walk clicks buttons and submits real forms, so point it at a dev or staging app.
 
 Q: What does "needs out-of-band verification" mean?

@@ -1,4 +1,5 @@
 import type { Browser, BrowserContext, BrowserContextOptions, Page, APIRequestContext } from 'playwright';
+import { asBrowserMissing } from '../core/browser-missing.js';
 import { join } from 'node:path';
 import { mkdir } from 'node:fs/promises';
 import { PageEvidence } from './evidence.js';
@@ -74,7 +75,9 @@ export async function runCrawl(opts: CrawlOptions): Promise<CrawlReport> {
   const authOption: BrowserContextOptions = storageState ? { storageState } : {};
 
   const playwright = await loadEngine('playwright', () => import('playwright'));
-  const browser: Browser = await playwright.chromium.launch({ headless });
+  const browser: Browser = await playwright.chromium.launch({ headless }).catch((err: unknown) => {
+    throw asBrowserMissing(err, 'chromium');
+  });
 
   const raw: Array<RawFinding & { url: string; route: string; viewport: 'desktop' | 'mobile'; screenshotPath?: string }> = [];
   const visited: string[] = [];
@@ -268,7 +271,16 @@ export async function runCrawl(opts: CrawlOptions): Promise<CrawlReport> {
     },
     routes: visited.map(routeOf),
     runAt: new Date().toISOString(),
-    summary: { total: findings.length, bySeverity, byConfidence, byIssueClass },
+    summary: {
+      total: findings.length,
+      // The default view hides low-confidence findings. withVisibility()
+      // restates these two for a run with --all.
+      shown: findings.length - (byConfidence.uncertain ?? 0),
+      hiddenLowConfidence: byConfidence.uncertain ?? 0,
+      bySeverity,
+      byConfidence,
+      byIssueClass,
+    },
   });
 }
 

@@ -2,6 +2,7 @@ import { join } from 'node:path';
 import type { CrawlReport } from './types.js';
 import { renderHtmlReport } from './report-html.js';
 import { redactValue } from '../core/redaction.js';
+import { withVisibility } from './verdict.js';
 
 export interface CrawlArtifacts {
   jsonPath: string;
@@ -21,9 +22,13 @@ export async function writeCrawlArtifacts(opts: {
   report: CrawlReport;
   html?: boolean;
   title?: string;
+  /** Show low-confidence findings too (`--all`). */
+  all?: boolean;
+  /** The real exit decision, so the HTML verdict matches the terminal. */
+  failed?: boolean;
 }): Promise<CrawlArtifacts> {
   const { writeFile, mkdir } = await import('node:fs/promises');
-  const safe = redactValue(opts.report);
+  const safe = withVisibility(redactValue(opts.report), opts.all);
 
   await mkdir(opts.reportDir, { recursive: true }).catch(() => {});
 
@@ -35,7 +40,11 @@ export async function writeCrawlArtifacts(opts: {
   const htmlPath = join(opts.reportDir, 'sniff-report.html');
   await writeFile(
     htmlPath,
-    renderHtmlReport(safe, opts.title ? { title: opts.title } : {}),
+    renderHtmlReport(safe, {
+      ...(opts.title ? { title: opts.title } : {}),
+      ...(opts.all !== undefined ? { all: opts.all } : {}),
+      ...(opts.failed !== undefined ? { failed: opts.failed } : {}),
+    }),
   ).catch(() => {});
   return { jsonPath, htmlPath };
 }

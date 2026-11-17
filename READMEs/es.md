@@ -23,11 +23,11 @@ npx sniff-qa --url http://localhost:3000
 ## Qué obtienes
 
 Un informe que empieza con el veredicto, luego las tres cosas que corregir primero y luego cada hallazgo.
-Este es el informe de una ejecución real sobre la aplicación de prueba con bugs sembrados de este repositorio (2026-11-17, sniff 0.9.2).
+Este es el informe de una ejecución real sobre la aplicación de prueba con bugs sembrados de este repositorio (2026-11-17, sniff 0.9.3).
 
 ```text
-  VERDICT  FAIL: 26 findings (1 critical, 13 high, 11 medium, 1 low)
-  Walked 12 pages, checked 13 links, in 53.8s. 1 low-confidence finding hidden, show with --all.
+  VERDICT  FAIL: 26 findings (1 critical, 13 high, 11 medium, 1 low), 1 low-confidence finding hidden
+  Walked 12 pages, checked 13 links, in 55.2s. --all shows the hidden one.
 
   Fix these first:
     1. Page returns HTTP 500 on /crash  [critical]
@@ -56,7 +56,8 @@ Cada bug de página que reporta viene con los pasos que lo reproducen.
 - **Bloquea los merges malos.** `--fail-on` sale con 1 ante hallazgos críticos o altos, y `npx sniff-qa ci` escribe el archivo de GitHub Actions. Sin clave de API.
 
 Necesita tu aplicación en marcha y envía formularios reales, así que usa una aplicación de desarrollo o de staging.
-El primer recorrido descarga un navegador una vez, unos 720 MB en disco en un Mac.
+El primer recorrido descarga una vez el motor de navegación y Chromium.
+Son unos 440 MB de descarga y unos 730 MB en disco, medidos en un Mac.
 
 Para reproducir el ejemplo desde un clon, inicia la aplicación de prueba y recórrela desde una segunda terminal:
 
@@ -105,8 +106,9 @@ Lighthouse) y Chromium. Para hacerlo por adelantado, ejecuta:
 npx sniff-qa install
 ```
 
-Termina mostrando el tiempo que tardó. En un Mac con la caché de npm vacía mostró 34 s (2026-11-17, sniff 0.9.1).
-Dejó 193 MB de motor y 528 MB de Chromium en disco. Para volver a medirlo en macOS:
+Termina mostrando el tiempo que tardó. En un Mac con las cachés vacías mostró 43 s (2026-11-17, sniff 0.9.3).
+Descargó unos 440 MB. Dejó 193 MB de motor y 530 MB de Chromium en disco.
+Los tamaños varían según la plataforma. Para volver a medirlo en macOS:
 
 ```bash
 du -sm ~/.cache/sniff-qa/engine/* ~/Library/Caches/ms-playwright
@@ -140,7 +142,8 @@ Un recorrido muestra líneas de progreso y luego el informe. Puedes obtener el r
 <summary>Instalación en el proyecto y CI</summary>
 
 `npm install -D sniff-qa` lo añade a un proyecto. `npx sniff-qa ci` escribe un workflow de GitHub Actions
-con caché del navegador y artefactos de informe.
+con caché del navegador y artefactos de informe. Sin una aplicación en marcha, su primera ejecución solo lee tu código.
+Quita el comentario de su paso `Start the app` y añade `--url` para recorrer la aplicación.
 </details>
 
 ## Cómo funciona
@@ -172,7 +175,7 @@ El servidor MCP expone estas herramientas:
 | `sniff_scan`     | Análisis solo del código fuente, sin navegador                   |
 | `sniff_run`      | Análisis del código fuente más comprobaciones en el navegador    |
 | `sniff_discover` | Genera escenarios a partir de tu código fuente y los ejecuta     |
-| `sniff_install`  | Descarga el navegador de Playwright                              |
+| `sniff_install`  | Descarga el motor y Chromium, con progreso                       |
 | `sniff_report`   | Lee los últimos resultados guardados                             |
 
 `--caps scan,report` limita el servidor a `sniff_scan`, `sniff_report` y la herramienta unificada `sniff`, sin ningún navegador.
@@ -209,7 +212,7 @@ Inicia la aplicación de prueba con bugs sembrados, la recorre y puntúa el info
   Hard FP on clean page (/clean): 0
 ```
 
-El ejemplo de arriba muestra 26 hallazgos y esta ejecución cuenta 27. La ejecución de prueba usa `--all`, que añade el hallazgo de baja confianza.
+El ejemplo de arriba muestra 26 hallazgos y dice que hay 1 hallazgo de baja confianza oculto. La ejecución de prueba usa `--all`, así que cuenta los 27.
 
 La aplicación de prueba contiene 21 bugs sembrados en las 12 clases, más una página de control limpia.
 El evaluador es [sniff-tests/score-fixture.mjs](../sniff-tests/score-fixture.mjs).
@@ -219,7 +222,7 @@ Los bugs están listados en [sniff-tests/planted-bugs/MANIFEST.json](../sniff-te
 npm test
 ```
 
-Muestra `Test Files  53 passed (53)` y `Tests  576 passed (576)` el 2026-11-17.
+Muestra `Test Files  54 passed (54)` y `Tests  603 passed (603)` el 2026-11-17.
 La suite incluye el control sobre la aplicación de prueba. Hace fallar la build si el recall baja del 85 %.
 También falla ante cualquier hallazgo en la página limpia.
 
@@ -251,7 +254,7 @@ Hay más respuestas en [docs/faq.md](../docs/faq.md).
 ## Límites
 
 - El recorrido necesita una aplicación en marcha. Sin ella solo obtienes el análisis del código fuente.
-- El primer recorrido necesita internet para descargar una vez el motor de navegación y Chromium, 721 MB en disco en un Mac.
+- El primer recorrido necesita internet para descargar una vez el motor y Chromium: unos 440 MB, luego unos 730 MB en disco en un Mac.
 - Hasta entonces, las herramientas MCP de navegador responden `needsSetup` y el agente llama primero a `sniff_install`.
 - La comprobación de enlaces rotos sigue los enlaces externos, así que un recorrido consulta las URL de terceros a las que enlazan tus páginas.
 - La ocultación cubre el texto de los informes, no los píxeles de las capturas. Una captura de una página con sesión iniciada puede mostrar datos privados.

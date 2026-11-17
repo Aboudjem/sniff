@@ -7,6 +7,38 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.9.3] - 2026-11-17
+
+Sturdier first run, one set of size figures, and one finding count in every output.
+
+### Fixed
+
+- **Half-downloaded browser.** The setup check now tests every executable a launch runs, and
+  Playwright's `INSTALLATION_COMPLETE` marker. A headless walk needs the Chromium headless shell,
+  a headed one needs full Chromium. A download killed midway now gives the usual install hint (CLI)
+  or `needsSetup` result (MCP). Any "Executable doesn't exist" launch error is turned into the same
+  hint, naming `sniff-qa install`, never `npx playwright install`.
+- **Interrupted engine install.** `<engine>.tmp-<pid>-<time>` folders were never removed. An
+  install now sweeps them first when their process is gone or nothing was written for an hour.
+  A folder that a running install still writes to is kept.
+- **Finding counts.** The terminal said 26 and the HTML verdict and JSON said 27 for one run. Every
+  output now shows the same count and says how many low-confidence findings are hidden. The JSON
+  `summary` gains `shown` and `hiddenLowConfidence`; `total` still counts every finding. The HTML
+  report lists hidden findings apart, after the main list, and its verdict follows `--fail-on`.
+  The MCP walk result gains `shownCount`, `hiddenLowConfidence` and a `hiddenNote`.
+
+### Changed
+
+- **One set of sizes.** Measured on macOS arm64 with empty caches: the engine is about 180 MB to
+  download and 195 MB on disk, Chromium about 260 MB and 535 MB. The CLI, `doctor`, the MCP
+  `needsSetup` payload (new `downloadSizeMb`, `diskSizeMb`, `sizeNote`; `installSizeMb` is the
+  download size), the README and the agent docs all read them from `src/core/sizes.ts`.
+- **`sniff_install` progress.** It sends MCP progress notifications, one per progress line, when the
+  client passes a progress token, and its description states the download size. The browser
+  download no longer blocks the server while it runs.
+- **`sniff ci` workflow.** The generated file now has a commented `Start the app` step and a
+  `--url` example, and says that without them a run only reads the source.
+
 ## [0.9.2] - 2026-11-17
 
 A clearer first screen and truer wording. No behaviour change: the code is the same as 0.9.1.

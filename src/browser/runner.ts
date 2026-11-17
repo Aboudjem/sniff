@@ -1,4 +1,5 @@
 import type { BrowserRunContext, BrowserRunResult, PageVisitResult } from './types.js';
+import { findBrowserMissing } from '../core/browser-missing.js';
 import type { BrowserScanContext, BrowserScanner, ScanResult } from '../scanners/types.js';
 import type { BrowserFinding } from '../core/types.js';
 import type { BrowserProject, SniffConfig } from '../config/schema.js';
@@ -96,6 +97,9 @@ export class BrowserRunner {
           slowMo: ctx.slowMo,
         });
       } catch (err) {
+        // A browser that is not on disk gets the install hint, not a raw error.
+        const missing = findBrowserMissing(err, project);
+        if (missing) throw missing;
         throw new SniffError(
           'BROWSER_LAUNCH_FAILED',
           `Failed to launch ${project}: ${err instanceof Error ? err.message : String(err)}`,

@@ -18,6 +18,17 @@ function defaultOptions(overrides?: Partial<CIWorkflowOptions>): CIWorkflowOptio
 }
 
 describe('generateGitHubActionsWorkflow', () => {
+  it('says a first run without an app is source-only, with a start step and a --url example to uncomment', () => {
+    const yaml = generateGitHubActionsWorkflow(defaultOptions());
+    expect(yaml).toContain('With no app running it only reads your');
+    expect(yaml).toContain('# - name: Start the app');
+    expect(yaml).toContain('#   run: npx sniff-qa --ci --url http://localhost:3000 --report');
+    // The start step comes before the walk, and stays a comment until edited.
+    expect(yaml.indexOf('# - name: Start the app')).toBeLessThan(yaml.indexOf('- name: Run Sniff QA'));
+    expect(yaml).not.toMatch(/^\s+- name: Start the app/m);
+    expect(yaml).toContain('$(seq 1 60)');
+  });
+
   it('contains workflow name', () => {
     const yaml = generateGitHubActionsWorkflow(defaultOptions());
     expect(yaml).toContain('name: Sniff QA');

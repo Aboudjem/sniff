@@ -1,11 +1,11 @@
 // The browser engine: Playwright, axe-core for Playwright, Lighthouse and
-// chrome-launcher. Together they weigh about 200 MB on disk and take most of
+// chrome-launcher. They are most of the first-run download (see ./sizes.ts) and take most of
 // the install time, so they are not npm dependencies. package.json lists them
 // under `engineDependencies` (and devDependencies, for this repo's tests).
 // That keeps `npx -y sniff-qa --mcp` small enough to answer the MCP handshake
 // within a client's connect timeout on a cold machine. They are not optional
 // peerDependencies either: npm would still download their registry metadata,
-// about 26 MB, on every cold install.
+// some 26 megabytes, on every cold install.
 //
 // Where the engine comes from, in order:
 //   1. Normal module resolution (a project that installs playwright itself,
@@ -16,16 +16,19 @@
 import {
   existsSync,
   mkdirSync,
+  readdirSync,
   readFileSync,
   renameSync,
   rmSync,
+  statSync,
   writeFileSync,
 } from "node:fs";
 import { homedir } from "node:os";
-import { dirname, join } from "node:path";
+import { basename, dirname, join } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { spawn } from "node:child_process";
 import { getPackageJson, getVersion } from "../version.js";
+import { ENGINE_SIZE, describeSize } from "./sizes.js";
 
 /** The packages that make up the engine. Kept in sync with package.json by a test. */
 export const ENGINE_PACKAGES = [
@@ -38,8 +41,8 @@ export const ENGINE_PACKAGES = [
 
 export type EnginePackage = (typeof ENGINE_PACKAGES)[number];
 
-/** Measured: `npm install` of the five packages above fills about 200 MB. */
-export const ENGINE_SIZE_MB = 200;
+/** Download size of the engine in MB. The figures live in ./sizes.ts. */
+export const ENGINE_SIZE_MB = ENGINE_SIZE.downloadMb;
 
 /** Written last, so a half-finished install never counts as installed. */
 const COMPLETE_MARKER = ".sniff-engine-complete";
@@ -55,7 +58,7 @@ export class EngineMissingError extends Error {
   constructor(readonly packageName: string) {
     super(
       `The browser engine (${packageName}) is not installed yet. ` +
-        `sniff downloads it once, about ${ENGINE_SIZE_MB} MB. Run: ${engineInstallCommand()}`,
+        `sniff downloads it once (${describeSize(ENGINE_SIZE)}). Run: ${engineInstallCommand()}`,
     );
     this.name = "EngineMissingError";
   }
@@ -247,6 +250,85 @@ export const runNpm: NpmRunner = (args, cwd, log) =>
     });
   });
 
+/** A temp folder with no write for this long is left over, whatever its pid says. */
+export const STALE_TEMP_MS = 60 * 60 * 1000;
+
+/** True when a process with this pid is running (or exists but is not ours). */
+export function isPidAlive(pid: number): boolean {
+  if (!Number.isInteger(pid) || pid <= 0) return false;
+  try {
+    process.kill(pid, 0);
+    return true;
+  } catch (err) {
+    // EPERM: the process exists but belongs to another user.
+    return (err as { code?: string }).code === "EPERM";
+  }
+}
+
+/** Last time anything was written in a temp install folder (its top two levels). */
+function lastActivity(path: string): number {
+  let latest = statSync(path).mtimeMs;
+  for (const sub of [path, join(path, "node_modules")]) {
+    let names: string[];
+    try {
+      names = readdirSync(sub);
+    } catch {
+      continue;
+    }
+    for (const name of names) {
+      try {
+        latest = Math.max(latest, statSync(join(sub, name)).mtimeMs);
+      } catch {
+        // Removed while we looked: ignore.
+      }
+    }
+  }
+  return latest;
+}
+
+/**
+ * Remove the temp folders an interrupted install left next to `dir`
+ * (`<dir>.tmp-<pid>-<timestamp>`). A folder goes when its process is no
+ * longer running, or when nothing was written in it for an hour (its pid was
+ * reused by another program). A folder that an install still writes to is
+ * never touched, nor one of this process. Returns the folders removed.
+ */
+export function sweepStaleEngineTemps(
+  dir: string,
+  options: { now?: number; alive?: (pid: number) => boolean; staleMs?: number } = {},
+): string[] {
+  const now = options.now ?? Date.now();
+  const alive = options.alive ?? isPidAlive;
+  const staleMs = options.staleMs ?? STALE_TEMP_MS;
+  const parent = dirname(dir);
+  const prefix = `${basename(dir)}.tmp-`;
+  let entries: string[];
+  try {
+    entries = readdirSync(parent);
+  } catch {
+    return [];
+  }
+  const removed: string[] = [];
+  for (const name of entries) {
+    if (!name.startsWith(prefix)) continue;
+    const m = name.slice(prefix.length).match(/^(\d+)-(\d+)$/);
+    if (!m) continue;
+    const pid = Number(m[1]);
+    if (pid === process.pid) continue;
+    const path = join(parent, name);
+    let idle: boolean;
+    try {
+      idle = now - lastActivity(path) > staleMs;
+    } catch {
+      continue;
+    }
+    if (alive(pid) && !idle) continue;
+    rmSync(path, { recursive: true, force: true });
+    removed.push(path);
+  }
+  return removed;
+}
+
 const LOADER_SOURCE =
   "// Written by sniff-qa. Imports resolve against the node_modules next to this file.\n" +
   "export function load(name) {\n  return import(name);\n}\n";
@@ -265,6 +347,9 @@ export async function installEngine(
   const log = options.log ?? (() => {});
   const run = options.run ?? runNpm;
 
+  // Folders left by an earlier, interrupted install would stay on disk forever.
+  for (const path of sweepStaleEngineTemps(dir))
+    log(`Removed an interrupted download: ${path}`);
   const tmp = `${dir}.tmp-${process.pid}-${Date.now()}`;
   mkdirSync(tmp, { recursive: true });
   try {
@@ -347,23 +432,30 @@ export async function ensureEngine(
 }
 
 /**
+ * Folder of an engine package as sniff loads it: next to sniff when it
+ * resolves there, else in sniff's complete engine folder. Null when absent.
+ */
+export function enginePackageDir(
+  name: EnginePackage,
+  options: { fromDir?: string; dir?: string } = {},
+): string | null {
+  const local = findPackageDir(name, options.fromDir ?? HERE);
+  if (local) return local;
+  const dir = options.dir ?? engineDir();
+  const candidate = join(dir, "node_modules", ...name.split("/"));
+  return engineInstalledAt(dir) && existsSync(join(candidate, "package.json"))
+    ? candidate
+    : null;
+}
+
+/**
  * Path to the Playwright CLI that matches the Playwright sniff loads, so the
  * browser it downloads is the build that Playwright expects.
  */
 export function playwrightCliPath(
   options: { fromDir?: string; dir?: string } = {},
 ): string | null {
-  const local = findPackageDir("playwright", options.fromDir ?? HERE);
-  const pkgDir =
-    local ??
-    (() => {
-      const dir = options.dir ?? engineDir();
-      const candidate = join(dir, "node_modules", "playwright");
-      return engineInstalledAt(dir) &&
-        existsSync(join(candidate, "package.json"))
-        ? candidate
-        : null;
-    })();
+  const pkgDir = enginePackageDir("playwright", options);
   if (!pkgDir) return null;
   try {
     const pkg = JSON.parse(
