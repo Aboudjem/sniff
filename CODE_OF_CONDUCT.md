@@ -17,8 +17,10 @@ https://www.contributor-covenant.org/version/2/1/code_of_conduct/
 ## Enforcement
 
 Instances of abusive, harassing, or otherwise unacceptable behavior may be reported to the
-project maintainer at **boudjemaa.adam@gmail.com**. All complaints will be reviewed and
-investigated promptly and fairly.
+project maintainer. For anything sensitive, use the private form at
+https://github.com/Aboudjem/sniff/security/advisories/new ("Report a vulnerability" on the
+Security tab). Otherwise, contact the maintainer through https://github.com/Aboudjem.
+All complaints will be reviewed and investigated promptly and fairly.
 
 ## Attribution
 
