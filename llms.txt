@@ -1,11 +1,11 @@
 # sniff
 
-> sniff catches the 500s, dead links and broken forms in your running web app before your users do.
-> It walks the app in a real headless browser. Each page finding has a route, the steps that
+> sniff catches broken pages in your web app before users do: server errors, dead links, broken forms.
+> It walks the app in a real browser with no window. It works with any MCP client, any agent that reads skills, or the CLI alone. Each page finding has a route, the steps that
 > reproduce it, a severity, a confidence label and a fix, most with a screenshot.
 > The report opens with a PASS or FAIL verdict and the three findings to fix first. npm package
 > `sniff-qa`, binaries `sniff` and `sniff-qa`. CLI and MCP server. No API key. Node 22 or newer.
-> Apache-2.0. Version 0.9.3, updated 2026-11-17.
+> Apache-2.0. Version 0.9.4, updated 2026-11-17.
 
 A finding without reproduction proof is not a finding. On the planted-bug fixture (21 bugs across all
 12 classes, plus a clean control page) sniff finds 21 of 21 with 0 findings on the clean page.

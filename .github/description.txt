@@ -1,1 +1,1 @@
-Catch the 500s, dead links and broken forms in your running web app, each with the steps that reproduce it.
+Catch server errors, dead links and broken forms in your running web app. Each page bug comes with steps and a fix.

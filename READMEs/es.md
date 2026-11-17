@@ -1,7 +1,7 @@
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/Aboudjem/sniff/main/.github/assets/hero-dark.svg">
   <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/Aboudjem/sniff/main/.github/assets/hero-light.svg">
-  <img alt="sniff" src="https://raw.githubusercontent.com/Aboudjem/sniff/main/.github/assets/hero-light.svg" width="100%">
+  <img alt="sniff: find broken pages before users do. A map of app pages where the browser walk reaches /crash, which returns HTTP 500, with its two repro steps. Three chips: bugs caught before users, steps to repeat it, broken merges blocked. The command npx sniff-qa --url http://localhost:3000, and the works-with line." src="https://raw.githubusercontent.com/Aboudjem/sniff/main/.github/assets/hero-light.svg" width="100%">
 </picture>
 
 <p align="center">
@@ -12,9 +12,16 @@
 
 <p align="center"><a href="../README.md">English</a> · <a href="zh-CN.md">简体中文</a> · <a href="ja.md">日本語</a> · <b>Español</b> · <a href="fr.md">Français</a></p>
 
-<p align="center"><b>Detecta lo que está roto en tu aplicación web antes que tus usuarios.</b></p>
+<p align="center"><b>Encuentra las páginas rotas de tu aplicación web antes que tus usuarios.</b></p>
 
-<p align="center"><a href="#qué-obtienes">Qué obtienes</a> · <a href="#instalación">Instalación</a> · <a href="#cómo-funciona">Cómo funciona</a> · <a href="#compatibilidad">Compatibilidad</a> · <a href="#pruebas">Pruebas</a> · <a href="#preguntas-frecuentes">Preguntas frecuentes</a> · <a href="#límites">Límites</a></p>
+sniff abre tu aplicación en marcha en un navegador real y hace clic como un usuario.
+
+| Bugs encontrados antes que los usuarios | Pasos para repetirlo | Merges rotos bloqueados |
+|:--|:--|:--|
+| Encontró 21 de 21 bugs plantados, 0 hallazgos falsos: `npm run build && npm run proof`. | Cada bug de página trae su ruta, los pasos para repetirlo y una solución. | `--fail-on` sale con 1 ante bugs críticos o altos, así la CI detiene el merge. |
+
+**Funciona con:** cualquier cliente MCP, cualquier agente que lea skills, o solo la línea de comandos.
+MCP es la forma en que un agente llama a una herramienta. Probado: Claude Code, Codex CLI. El recorrido usa un navegador, no un modelo.
 
 ```bash
 npx sniff-qa --url http://localhost:3000
@@ -22,8 +29,7 @@ npx sniff-qa --url http://localhost:3000
 
 ## Qué obtienes
 
-Un informe que empieza con el veredicto, luego las tres cosas que corregir primero y luego cada hallazgo.
-Este es el informe de una ejecución real sobre la aplicación de prueba con bugs sembrados de este repositorio (2026-11-17, sniff 0.9.3).
+Un informe real de la aplicación de prueba con bugs plantados de este repositorio (2026-11-17, sniff 0.9.3):
 
 ```text
   VERDICT  FAIL: 26 findings (1 critical, 13 high, 11 medium, 1 low), 1 low-confidence finding hidden
@@ -45,40 +51,28 @@ Este es el informe de una ejecución real sobre la aplicación de prueba con bug
       shot: sniff-reports/crawl/_crash-desktop.png
 ```
 
-Cambiaste un formulario y ahora una página que nunca abriste devuelve un error 500.
-sniff abre tu aplicación en un navegador real y la recorre como lo haría un usuario.
-Cada bug de página que reporta viene con los pasos que lo reproducen.
+Usa una aplicación de desarrollo o de staging: un recorrido pulsa botones y envía formularios reales.
 
-### Por qué usarlo
-
-- **Corrígelo, no lo busques.** Cada hallazgo de página indica la ruta, los pasos y una corrección, la mayoría con una captura de pantalla.
-- **Prueba de que encuentra bugs reales.** Probado con bugs sembrados a propósito: 21 de 21 encontrados, 0 hallazgos falsos en la página limpia (`npm run build && npm run proof`).
-- **Bloquea los merges malos.** `--fail-on` sale con 1 ante hallazgos críticos o altos, y `npx sniff-qa ci` escribe el archivo de GitHub Actions. Sin clave de API.
-
-Necesita tu aplicación en marcha y envía formularios reales, así que usa una aplicación de desarrollo o de staging.
-El primer recorrido descarga una vez el motor de navegación y Chromium.
-Son unos 440 MB de descarga y unos 730 MB en disco, medidos en un Mac.
-
-Para reproducir el ejemplo desde un clon, inicia la aplicación de prueba y recórrela desde una segunda terminal:
-
-```bash
-node sniff-tests/planted-bugs/server.mjs 4517
-npx sniff-qa --url http://localhost:4517
-```
-
-<img alt="sniff walking a buggy app and streaming findings with severity, confidence, steps to reproduce, and a fix" src="https://raw.githubusercontent.com/Aboudjem/sniff/main/.github/assets/demo.gif" width="100%">
+<p align="center"><a href="#qué-obtienes">Qué obtienes</a> · <a href="#instalación">Instalación</a> · <a href="#cómo-funciona">Cómo funciona</a> · <a href="#compatibilidad">Compatibilidad</a> · <a href="#pruebas">Pruebas</a> · <a href="#preguntas-frecuentes">Preguntas frecuentes</a> · <a href="#límites">Límites</a></p>
 
 ## Instalación
 
-Node.js 22 o posterior. Elige una vía.
+Cambiaste un formulario. Ahora una página que nunca abriste muestra un error del servidor (HTTP 500).
+sniff la encuentra por ti, con los pasos para repetirlo y una solución. La mayoría de los hallazgos también tienen captura de pantalla.
+No necesita clave de API ni cuenta.
 
-**Línea de comandos, sin editor.** Inicia tu aplicación y recórrela desde una segunda terminal:
+El primer recorrido descarga unos 440 MB una sola vez. En un Mac ocupa unos 730 MB de disco.
+Los detalles y el comando para medirlo están más abajo.
+
+Node.js 22 o más reciente. Elige un camino.
+
+**Línea de comandos, sin editor.** Arranca tu aplicación y recórrela desde una segunda terminal:
 
 ```bash
 npx sniff-qa --url http://localhost:3000
 ```
 
-El paquete npm es `sniff-qa`. No ejecutes `npx sniff`: es un paquete sin relación.
+El paquete de npm es `sniff-qa`. No ejecutes `npx sniff`: es otro paquete sin relación.
 
 **Plugin de Claude Code**, a través del [marketplace 10x](https://github.com/Aboudjem/10x):
 
@@ -87,7 +81,7 @@ claude plugin marketplace add Aboudjem/10x
 claude plugin install sniff@10x
 ```
 
-**Skills para cualquier agente**, a través de la CLI de skills de Vercel:
+**Skills para cualquier agente**, con la CLI de skills de Vercel:
 
 ```bash
 npx skills add Aboudjem/sniff
@@ -100,25 +94,25 @@ claude mcp add sniff-qa -- npx -y sniff-qa --mcp
 ```
 
 El primer recorrido descarga dos cosas, una sola vez: el motor de navegación (Playwright, axe-core y
-Lighthouse) y Chromium. Para hacerlo por adelantado, ejecuta:
+Lighthouse) y Chromium, el navegador en sí. Para hacerlo antes, ejecuta:
 
 ```bash
 npx sniff-qa install
 ```
 
-Termina mostrando el tiempo que tardó. En un Mac con las cachés vacías mostró 43 s (2026-11-17, sniff 0.9.3).
+Termina mostrando el tiempo que tardó. En un Mac con cachés vacías mostró 43 s (2026-11-17, sniff 0.9.3).
 Descargó unos 440 MB. Dejó 193 MB de motor y 530 MB de Chromium en disco.
-Los tamaños varían según la plataforma. Para volver a medirlo en macOS:
+Los tamaños varían según la plataforma. Para medirlo de nuevo en macOS:
 
 ```bash
 du -sm ~/.cache/sniff-qa/engine/* ~/Library/Caches/ms-playwright
 ```
 
-`npx sniff-qa doctor` comprueba Node, el navegador y tu servidor de desarrollo.
+`npx sniff-qa doctor` revisa Node, el navegador y tu servidor de desarrollo.
 
 El servidor MCP arranca antes de esas descargas. Con la caché de npm vacía, `npx -y sniff-qa@0.9.1 --mcp`
-respondió a su primer handshake en 3,1 a 4,9 s (5 ejecuciones, 2026-11-17). La versión 0.9.0 tardaba de 37 a 93 s,
-más allá del límite de conexión de 30 s de Claude Code. Para volver a medirlo, en un clon de este repositorio:
+respondió a su primera petición en 3,1 a 4,9 s (5 ejecuciones, 2026-11-17). La versión 0.9.0 tardaba de 37 a 93 s,
+más que el límite de conexión de 30 s de Claude Code. Para medirlo de nuevo, en un clon de este repositorio:
 
 ```bash
 npm run cold-start -- 0.9.1 5
@@ -126,35 +120,38 @@ npm run cold-start -- 0.9.1 5
 
 Un recorrido muestra líneas de progreso y luego el informe. Puedes obtener el resultado de cuatro formas:
 
-| Salida                 | Opción        | Para qué sirve                               |
-| :--------------------- | :------------ | :------------------------------------------- |
-| Informe en la terminal | (por defecto) | Leer el resultado ahora                      |
-| Página HTML            | `--report`    | Enviarlo a alguien, un solo archivo autónomo |
-| JSON                   | `--json`      | Scripts y otras herramientas                 |
-| Código de salida       | `--fail-on`   | Hacer fallar la CI con bugs reales           |
+| Salida             | Opción      | Para qué sirve                                |
+| :----------------- | :---------- | :-------------------------------------------- |
+| Informe en terminal | (por defecto) | Leer el resultado ahora                      |
+| Página HTML        | `--report`  | Compartir: un solo archivo con todo dentro    |
+| JSON               | `--json`    | Scripts y otras herramientas                  |
+| Código de salida   | `--fail-on` | Hacer fallar la CI con bugs reales            |
 
-| Código de salida | Significado                                                                            |
-| :--------------- | :------------------------------------------------------------------------------------- |
-| `0`              | Ningún hallazgo alcanzó las severidades de `--fail-on` (por defecto: crítica y alta)   |
-| `1`              | Un hallazgo las alcanzó, se superó un presupuesto `assert`, o sniff no pudo ejecutarse |
+| Código de salida | Significado                                                                              |
+| :--------------- | :--------------------------------------------------------------------------------------- |
+| `0`              | Ningún hallazgo alcanzó las severidades de `--fail-on` (por defecto: crítica y alta)      |
+| `1`              | Un hallazgo las alcanzó, se superó un límite de `assert`, o sniff no pudo ejecutarse     |
 
 <details>
-<summary>Instalación en el proyecto y CI</summary>
+<summary>Instalación en un proyecto y CI</summary>
 
+Para bloquear merges malos, usa `--fail-on` en la CI. Por defecto actúa con crítica y alta.
 `npm install -D sniff-qa` lo añade a un proyecto. `npx sniff-qa ci` escribe un workflow de GitHub Actions
-con caché del navegador y artefactos de informe. Sin una aplicación en marcha, su primera ejecución solo lee tu código.
-Quita el comentario de su paso `Start the app` y añade `--url` para recorrer la aplicación.
+que guarda el navegador en caché y conserva el informe. Sin aplicación en marcha, su primera ejecución solo lee tu código fuente.
+Activa su paso `Start the app` (quita el `#`) y añade `--url` para recorrer la aplicación.
 </details>
 
 ## Cómo funciona
 
+<img alt="sniff walking a buggy app and streaming findings with severity, confidence, steps to reproduce, and a fix" src="https://raw.githubusercontent.com/Aboudjem/sniff/main/.github/assets/demo.gif" width="100%">
+
 <img alt="How sniff works: crawl, act, assert, prove, report" src="https://raw.githubusercontent.com/Aboudjem/sniff/main/.github/assets/how-it-works.svg" width="100%">
 
 1. **Encontrar la aplicación.** Usa `--url`, o un servidor de desarrollo en un puerto habitual.
-2. **Recorrerla.** Un Chromium sin interfaz sigue tus enlaces, pulsa botones y rellena formularios, como un usuario.
-3. **Juzgar lo que pasó.** Cada página se revisa en busca de 12 clases de bugs.
-4. **Demostrarlo.** Un hallazgo necesita una ruta y los pasos. Añade una captura y las líneas de consola o de red cuando las tiene.
-5. **Informar.** Primero el veredicto, luego la lista de lo que corregir primero, luego el detalle.
+2. **Recorrerla.** Chromium, sin ventana, sigue tus enlaces, pulsa botones y rellena formularios, como un usuario.
+3. **Juzgar lo que pasó.** Cada página se revisa para 12 clases de bugs.
+4. **Probarlo.** Un hallazgo necesita una ruta y los pasos. Añade una captura y las líneas de consola o de red cuando las tiene.
+5. **Informar.** Primero el veredicto, luego la lista de lo que hay que arreglar primero, luego el detalle.
 
 Las 12 clases:
 
@@ -164,46 +161,46 @@ Las 12 clases:
   <img alt="The 12 classes of bugs sniff finds" src="https://raw.githubusercontent.com/Aboudjem/sniff/main/.github/assets/features-light.svg" width="100%">
 </picture>
 
-Sin una aplicación en marcha, `sniff` lee tu código fuente en su lugar (`sniff scan`). Señala sentencias de depuración,
-texto provisional e imports rotos, y te dice cómo iniciar el recorrido real.
+Sin aplicación en marcha, `sniff` lee tu código fuente (`sniff scan`). Señala sentencias de depuración,
+texto provisional e imports rotos, y te dice cómo lanzar el recorrido real.
 
-El servidor MCP expone estas herramientas:
+El servidor MCP da a tu agente estas herramientas:
 
-| Herramienta      | Qué hace                                                         |
-| :--------------- | :--------------------------------------------------------------- |
-| `sniff`          | Un único punto de entrada: `mode: "walk"`, `"scan"` o `"report"` |
-| `sniff_scan`     | Análisis solo del código fuente, sin navegador                   |
-| `sniff_run`      | Análisis del código fuente más comprobaciones en el navegador    |
-| `sniff_discover` | Genera escenarios a partir de tu código fuente y los ejecuta     |
-| `sniff_install`  | Descarga el motor y Chromium, con progreso                       |
-| `sniff_report`   | Lee los últimos resultados guardados                             |
+| Herramienta      | Qué hace                                                        |
+| :--------------- | :-------------------------------------------------------------- |
+| `sniff`          | Un solo punto de entrada: `mode: "walk"`, `"scan"` o `"report"` |
+| `sniff_scan`     | Análisis solo del código fuente, sin navegador                  |
+| `sniff_run`      | Análisis del código más comprobaciones en el navegador          |
+| `sniff_discover` | Escribe recorridos de prueba desde tu código y los ejecuta      |
+| `sniff_install`  | Descarga el motor y Chromium, con progreso                      |
+| `sniff_report`   | Lee los últimos resultados guardados                            |
 
-`--caps scan,report` limita el servidor a `sniff_scan`, `sniff_report` y la herramienta unificada `sniff`, sin ningún navegador.
+`--caps scan,report` limita el servidor a `sniff_scan`, `sniff_report` y la herramienta principal `sniff`. Entonces no usa ningún navegador.
 
 ## Compatibilidad
 
-Cada fila se probó el 2026-11-17 con la build de sniff 0.9.0.
+Cada fila se probó el 2026-11-17 con la versión 0.9.0 de sniff.
 
-| Agente                | Qué se ejecutó                                                                             | Probado    |
-| :-------------------- | :----------------------------------------------------------------------------------------- | :--------- |
-| Claude Code           | `claude -p` con sniff como servidor MCP llamó a `sniff_scan` y leyó 2 hallazgos            | 2026-11-17 |
-| Codex CLI             | `codex exec` con sniff como servidor MCP llamó a `sniff_scan` y leyó 2 hallazgos           | 2026-11-17 |
-| Gemini CLI            | `gemini extensions validate .` aceptó `gemini-extension.json`                              | 2026-11-17 |
-| Cualquier cliente MCP | `node sniff-tests/mcp-smoke.mjs` listó 6 herramientas y un recorrido devolvió 20 hallazgos | 2026-11-17 |
-| CLI de skills         | `npx skills@1.9.0 add Aboudjem/sniff` instaló las 3 skills en una carpeta temporal         | 2026-11-17 |
+| Agente         | Qué se ejecutó                                                                            | Probado    |
+| :------------- | :---------------------------------------------------------------------------------------- | :--------- |
+| Claude Code    | `claude -p` con sniff como servidor MCP llamó a `sniff_scan` y leyó 2 hallazgos          | 2026-11-17 |
+| Codex CLI      | `codex exec` con sniff como servidor MCP llamó a `sniff_scan` y leyó 2 hallazgos         | 2026-11-17 |
+| Gemini CLI     | `gemini extensions validate .` aceptó `gemini-extension.json`                             | 2026-11-17 |
+| Cualquier cliente MCP | `node sniff-tests/mcp-smoke.mjs` listó 6 herramientas y un recorrido dio 20 hallazgos | 2026-11-17 |
+| CLI de skills  | `npx skills@1.9.0 add Aboudjem/sniff` instaló las 3 skills en una carpeta temporal       | 2026-11-17 |
 
 Documentados, no probados hoy: Cursor, VS Code con Copilot, Windsurf, OpenCode y Zed.
 Sus fragmentos están en [docs/editors.md](../docs/editors.md).
 
 ## Pruebas
 
-Tres comandos vuelven a mostrar las cifras de esta página. El primero muestra la puntuación sobre la aplicación de prueba.
+Estos comandos vuelven a imprimir las cifras de esta página. El primero imprime la puntuación en la aplicación de prueba.
 
 ```bash
 npm run build && npm run proof
 ```
 
-Inicia la aplicación de prueba con bugs sembrados, la recorre y puntúa el informe. Salida del 2026-11-17:
+Arranca la aplicación de prueba con bugs plantados, la recorre y puntúa el informe. Salida del 2026-11-17:
 
 ```text
   Recall:    21/21  (100%)
@@ -212,60 +209,66 @@ Inicia la aplicación de prueba con bugs sembrados, la recorre y puntúa el info
   Hard FP on clean page (/clean): 0
 ```
 
-El ejemplo de arriba muestra 26 hallazgos y dice que hay 1 hallazgo de baja confianza oculto. La ejecución de prueba usa `--all`, así que cuenta los 27.
+El ejemplo de arriba muestra 26 hallazgos y dice que 1 hallazgo de baja confianza está oculto. La prueba usa `--all`, así que cuenta los 27.
 
-La aplicación de prueba contiene 21 bugs sembrados en las 12 clases, más una página de control limpia.
+La aplicación de prueba tiene 21 bugs añadidos a propósito (bugs plantados) en las 12 clases. También tiene una página limpia, sin bugs.
 El evaluador es [sniff-tests/score-fixture.mjs](../sniff-tests/score-fixture.mjs).
 Los bugs están listados en [sniff-tests/planted-bugs/MANIFEST.json](../sniff-tests/planted-bugs/MANIFEST.json).
 
+Para obtener el mismo informe que el ejemplo, arranca la aplicación de prueba. Luego ejecuta sniff en una segunda terminal:
+
+```bash
+node sniff-tests/planted-bugs/server.mjs 4517
+npx sniff-qa --url http://localhost:4517
+```
 ```bash
 npm test
 ```
 
-Muestra `Test Files  54 passed (54)` y `Tests  603 passed (603)` el 2026-11-17.
-La suite incluye el control sobre la aplicación de prueba. Hace fallar la build si el recall baja del 85 %.
-También falla ante cualquier hallazgo en la página limpia.
+Imprime `Test Files  54 passed (54)` y `Tests  603 passed (603)` el 2026-11-17.
+La suite incluye un control sobre la aplicación de prueba. Hace fallar el build si sniff encuentra menos del 85 % de los bugs plantados.
+También falla si sniff informa algo en la página limpia.
 
 ```bash
 node sniff-tests/mcp-smoke.mjs
 ```
 
-Muestra las 6 herramientas MCP y los 20 hallazgos citados en la tabla de arriba.
+Imprime las 6 herramientas MCP y los 20 hallazgos citados en la tabla de arriba.
 
 ## Preguntas frecuentes
 
 **¿Necesito una clave de API o una cuenta?**
-No. El recorrido y el análisis del código fuente se ejecutan en tu máquina. No se envía nada a ningún sitio salvo que configures tú mismo la exploración opcional con IA.
+No. El recorrido y el análisis del código se ejecutan en tu máquina. No se envía nada, salvo que tú mismo configures la exploración con IA opcional.
 
-**¿Un recorrido cambiará datos de mi aplicación?**
-Puede. Un recorrido pulsa botones y envía formularios reales, así que apúntalo a una aplicación de desarrollo o de staging.
+**¿Puede un recorrido cambiar datos de mi aplicación?**
+Sí. Un recorrido pulsa botones y envía formularios reales, así que apúntalo a una aplicación de desarrollo o de staging.
 
-**¿Por qué salió con 1 si nada falló?**
-Salir con 1 significa que encontró bugs con una severidad que hace fallar, así que la CI rompe la build. Pasa `--fail-on none` para salir siempre con 0.
+**¿Por qué salió con 1 si nada se rompió?**
+Salir con 1 significa que encontró bugs de una severidad que hace fallar, así que la CI falla el build. Pasa `--fail-on none` para salir siempre con 0.
 
-**¿Editará mi código?**
-No. Recorrer y analizar nunca tocan tu código fuente. Solo `sniff fix` edita archivos, y solo cuando lo ejecutas.
+**¿Va a editar mi código?**
+No. Recorrer y analizar nunca tocan tu código. Solo `sniff fix` edita archivos, y solo cuando tú lo ejecutas.
 
-**¿Puede recorrer una aplicación con sesión iniciada?**
+**¿Puede recorrer una aplicación con inicio de sesión?**
 Sí. Pasa `--storage-state auth.json`. Los valores de cookies y tokens de ese archivo se ocultan en los informes escritos.
 
 Hay más respuestas en [docs/faq.md](../docs/faq.md).
 
 ## Límites
 
-- El recorrido necesita una aplicación en marcha. Sin ella solo obtienes el análisis del código fuente.
-- El primer recorrido necesita internet para descargar una vez el motor y Chromium: unos 440 MB, luego unos 730 MB en disco en un Mac.
+- Necesita una aplicación en marcha para el recorrido. Sin ella solo obtienes el análisis del código fuente.
+- El primer recorrido necesita internet para descargar el motor y Chromium una vez: unos 440 MB, luego unos 730 MB en disco en un Mac.
 - Hasta entonces, las herramientas MCP de navegador responden `needsSetup` y el agente llama primero a `sniff_install`.
-- La comprobación de enlaces rotos sigue los enlaces externos, así que un recorrido consulta las URL de terceros a las que enlazan tus páginas.
-- La ocultación cubre el texto de los informes, no los píxeles de las capturas. Una captura de una página con sesión iniciada puede mostrar datos privados.
-- Encuentra lo que vería un usuario. No lee los logs de tu servidor ni mide la carga.
+- La revisión de enlaces muertos sigue los enlaces externos, así que un recorrido pide las URL de terceros a las que enlazan tus páginas.
+- Ocultar secretos cubre el texto de los informes, no las capturas. Una captura de una página con sesión iniciada puede mostrar datos privados.
+- Encuentra lo que vería un usuario. No lee los registros de tu servidor ni mide la carga.
 
 ## Más información
 
 - [docs/editors.md](../docs/editors.md): instalación y fragmentos MCP para cada agente
-- [docs/authenticated-walks.md](../docs/authenticated-walks.md): recorrer una aplicación con sesión iniciada
-- [docs/assert-budgets.md](../docs/assert-budgets.md): limitar los hallazgos por severidad en `sniff.config`
-- [docs/comparison.md](../docs/comparison.md): en qué se diferencia sniff de los linters y los frameworks E2E
+- [docs/authenticated-walks.md](../docs/authenticated-walks.md): recorrer una aplicación con inicio de sesión
+- [docs/assert-budgets.md](../docs/assert-budgets.md): límites de hallazgos por severidad en `sniff.config`
+- [docs/comparison.md](../docs/comparison.md): en qué se diferencia sniff de los linters y de las herramientas de pruebas de extremo a extremo
 - [CHANGELOG.md](../CHANGELOG.md) · [CONTRIBUTING.md](../CONTRIBUTING.md) · [LICENSE](../LICENSE)
 
 ---

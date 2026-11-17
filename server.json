@@ -2,18 +2,18 @@
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "io.github.Aboudjem/sniff",
   "title": "sniff",
-  "description": "Catch the 500s, dead links and broken forms in your running web app, with steps to reproduce each.",
+  "description": "Find broken pages in your running web app before users do. Each page bug comes with steps and a fix.",
   "repository": {
     "url": "https://github.com/Aboudjem/sniff",
     "source": "github"
   },
-  "version": "0.9.3",
+  "version": "0.9.4",
   "packages": [
     {
       "registryType": "npm",
       "registryBaseUrl": "https://registry.npmjs.org",
       "identifier": "sniff-qa",
-      "version": "0.9.3",
+      "version": "0.9.4",
       "transport": {
         "type": "stdio"
       },

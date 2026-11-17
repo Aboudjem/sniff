@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.9.4] - 2026-11-17
+
+A clearer first screen. No change to how sniff walks, scans or reports.
+
+### Changed
+
+- **README first screen.** It now opens with the one line, one sentence, and three benefits with their proof.
+  Then come the tools it works with, the one command, the real sample report and the one limit.
+- **Plain English.** The whole README now uses common words and short sentences. Terms like MCP are explained on first use.
+- **Translations.** The French, Spanish, Japanese and Chinese READMEs mirror the new English one.
+- **Hero and social image.** Both now show the headline, the three benefits, the command and a map of pages
+  where the walk reaches `/crash` (HTTP 500) with its two repro steps.
+- **Descriptions.** The package, plugin, Gemini and MCP registry descriptions say what you get in one line.
+
 ## [0.9.3] - 2026-11-17
 
 Sturdier first run, one set of size figures, and one finding count in every output.

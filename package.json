@@ -1,7 +1,7 @@
 {
   "name": "sniff-qa",
-  "version": "0.9.3",
-  "description": "Walks your running app in a real browser and lists what is broken: dead pages, console errors, broken forms. Each page bug comes with repro steps and a fix.",
+  "version": "0.9.4",
+  "description": "Find what is broken in your running web app before users do. Each page bug comes with the steps to repeat it and a fix.",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",

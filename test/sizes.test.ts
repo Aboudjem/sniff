@@ -47,7 +47,7 @@ describe("download sizes", () => {
   it("the README states the same labelled first-run figures", () => {
     const readme = read("README.md");
     expect(readme).toContain(
-      `about ${first.downloadMb} MB to download and about ${first.diskMb} MB on disk`,
+      `downloads about ${first.downloadMb} MB once. On a Mac it uses about ${first.diskMb} MB of disk`,
     );
     expect(readme).toContain(
       `about ${first.downloadMb} MB, then about ${first.diskMb} MB on disk`,
