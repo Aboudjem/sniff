@@ -83,7 +83,7 @@ export async function handleSniffRun(
         text: JSON.stringify({
           needsSetup: 'playwright-browsers',
           projects: check.status === 'missing' ? check.missingProjects : sourceRun.config.browser?.projects ?? ['chromium'],
-          installCommand: check.status === 'missing' ? check.installCommand : `npx playwright install ${(sourceRun.config.browser?.projects ?? ['chromium']).join(' ')}`,
+          installCommand: check.status === 'missing' ? check.installCommand : (await import('../core/engine.js')).engineInstallCommand(sourceRun.config.browser?.projects ?? ['chromium']),
           installSizeMb: check.status === 'missing' ? check.installSizeMb : 165,
           hint: 'Run the sniff_install MCP tool with the same projects if it is registered, otherwise run installCommand in a terminal, then retry.',
         }),
@@ -178,7 +178,7 @@ export async function handleSniffWalk(options: SniffWalkOptions): Promise<McpToo
         text: JSON.stringify({
           needsSetup: 'playwright-browsers',
           projects: check.status === 'missing' ? check.missingProjects : config.browser?.projects ?? ['chromium'],
-          installCommand: check.status === 'missing' ? check.installCommand : `npx playwright install ${(config.browser?.projects ?? ['chromium']).join(' ')}`,
+          installCommand: check.status === 'missing' ? check.installCommand : (await import('../core/engine.js')).engineInstallCommand(config.browser?.projects ?? ['chromium']),
           installSizeMb: check.status === 'missing' ? check.installSizeMb : 165,
           hint: 'Run the sniff_install MCP tool with the same projects if it is registered, otherwise run installCommand in a terminal, then retry.',
         }),
@@ -275,7 +275,7 @@ export async function handleSniffDiscover(options: SniffDiscoverOptions): Promis
           text: JSON.stringify({
             needsSetup: 'playwright-browsers',
             projects: check.status === 'missing' ? check.missingProjects : config.browser?.projects ?? ['chromium'],
-            installCommand: check.status === 'missing' ? check.installCommand : `npx playwright install ${(config.browser?.projects ?? ['chromium']).join(' ')}`,
+            installCommand: check.status === 'missing' ? check.installCommand : (await import('../core/engine.js')).engineInstallCommand(config.browser?.projects ?? ['chromium']),
             installSizeMb: check.status === 'missing' ? check.installSizeMb : 165,
             hint: 'Run the sniff_install MCP tool with the same projects if it is registered, otherwise run installCommand in a terminal, then retry.',
           }),
@@ -413,14 +413,18 @@ export async function handleSniffUnified(options: SniffUnifiedOptions): Promise<
 export async function handleSniffInstall(projects?: BrowserProject[]): Promise<McpToolResult> {
   const { installPlaywrightBrowserProjects } = await import('../core/ensure-browsers.js');
   const requestedProjects: BrowserProject[] = projects && projects.length > 0 ? projects : ['chromium'];
-  const result = await installPlaywrightBrowserProjects(requestedProjects);
+  // Progress goes to stderr: stdout is the MCP protocol channel.
+  const result = await installPlaywrightBrowserProjects(requestedProjects, {
+    log: (line) => process.stderr.write(`[sniff install] ${line}\n`),
+  });
+  const { engineInstallCommand } = await import('../core/engine.js');
   return {
     content: [{
       type: 'text',
       text: JSON.stringify(
         result.status === 'ok'
-          ? { status: 'installed', projects: result.projects }
-          : { status: 'failed', projects: result.projects, error: result.error, hint: `Run \`npx playwright install ${requestedProjects.join(' ')}\` manually for full error output.` },
+          ? { status: 'installed', projects: result.projects, engine: result.engine }
+          : { status: 'failed', projects: result.projects, error: result.error, hint: `Run \`${engineInstallCommand(requestedProjects)}\` in a terminal for full error output.` },
       ),
     }],
   };

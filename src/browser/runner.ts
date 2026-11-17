@@ -6,6 +6,7 @@ import { SniffError } from '../core/errors.js';
 import { PageHookPipeline, ConsoleErrorHook, NetworkFailureHook, ScreenshotHook } from './page-hooks.js';
 import { useStorageState } from '../core/redaction.js';
 import { join } from 'node:path';
+import { loadEngine } from '../core/engine.js';
 
 function isScannerEnabled(config: SniffConfig, scannerName: string): boolean {
   return config.scanners.includes(scannerName);
@@ -74,7 +75,7 @@ export class BrowserRunner {
       ? ((await useStorageState(ctx.storageState)) as import('playwright').BrowserContextOptions['storageState'])
       : undefined;
 
-    const playwright = await import('playwright');
+    const playwright = await loadEngine('playwright', () => import('playwright'));
     const urls = ctx.testFiles.length > 0
       ? ctx.testFiles.map((route) => {
           if (route.startsWith('http://') || route.startsWith('https://')) {

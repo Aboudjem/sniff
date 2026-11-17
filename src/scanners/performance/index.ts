@@ -3,6 +3,7 @@ import { performance as perf } from 'node:perf_hooks';
 import type { BrowserScanner, BrowserScanContext, ScanResult } from '../types.js';
 import type { BrowserFinding, Severity } from '../../core/types.js';
 import type { SniffConfig } from '../../config/schema.js';
+import { loadEngine } from '../../core/engine.js';
 
 type MetricName = 'lcp' | 'fcp' | 'tti';
 
@@ -69,8 +70,8 @@ export class PerformanceScanner implements BrowserScanner {
     const budgets = this.config?.performance?.budgets ?? DEFAULT_BUDGETS;
 
     // Lazy-import lighthouse and chrome-launcher
-    const lighthouse = (await import('lighthouse')).default;
-    const chromeLauncher = await import('chrome-launcher');
+    const lighthouse = (await loadEngine('lighthouse', () => import('lighthouse'))).default;
+    const chromeLauncher = await loadEngine('chrome-launcher', () => import('chrome-launcher'));
 
     const chrome = await chromeLauncher.launch({
       chromeFlags: ['--headless', '--no-sandbox'],

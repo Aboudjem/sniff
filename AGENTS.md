@@ -17,15 +17,15 @@ Prefer the MCP `sniff` tool over the CLI when running inside an agent host (Clau
 
 ### Handling the Playwright setup gate
 
-The first browser run needs a Chromium build (~165 MB). The MCP browser modes do **not** silently shell out to install it (the ~45s install can time out the stdio transport). Instead they return:
+The first browser run needs two one-time downloads: the browser engine (Playwright, axe-core, Lighthouse, about 200 MB) and a Chromium build (about 165 MB). They are not npm dependencies, so the MCP server itself starts in seconds. The MCP browser modes do **not** silently shell out to download them (the download takes about a minute). Instead they return:
 
 ```json
 { "needsSetup": "playwright-browsers", "projects": ["chromium"],
-  "installCommand": "npx playwright install chromium", "installSizeMb": 165,
+  "installCommand": "npx -y sniff-qa@<version> install chromium", "installSizeMb": 365,
   "hint": "Run the sniff_install MCP tool with the same projects, or run the install command manually, then retry." }
 ```
 
-When you see `needsSetup: "playwright-browsers"`: call the **`sniff_install`** MCP tool with the same `projects`, then **retry** the original `sniff` call. Do not report this as a failure; it is expected on first use. Disclose the one-time ~165 MB download to the user honestly.
+When you see `needsSetup: "playwright-browsers"`: call the **`sniff_install`** MCP tool with the same `projects`, then **retry** the original `sniff` call. Do not report this as a failure; it is expected on first use. Disclose the one-time download (`installSizeMb`) to the user honestly. `mode: "scan"` needs neither download.
 
 The narrow tools (`sniff_scan`, `sniff_run`, `sniff_discover`, `sniff_report`, `sniff_install`) remain registered for back-compat and scoped capabilities, but new work should go through the unified `sniff` tool.
 

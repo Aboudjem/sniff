@@ -51,20 +51,24 @@ ${pnpmSetupStep}
       - name: Install dependencies
         run: ${installCommand}
 
-      - name: Cache Playwright browsers
+      - name: Cache Playwright browsers and the sniff browser engine
         id: playwright-cache
         uses: actions/cache@v4
         with:
-          path: ~/.cache/ms-playwright
+          path: |
+            ~/.cache/ms-playwright
+            ~/.cache/sniff-qa
           key: \${{ runner.os }}-playwright-\${{ hashFiles('${lockfilePattern}') }}
 
-      - name: Install Playwright browsers (cache miss)
+      # sniff install downloads the Playwright build sniff uses, so the browser
+      # matches it. \`npx playwright install\` could fetch a different version.
+      - name: Install the browser engine and Chromium (cache miss)
         if: steps.playwright-cache.outputs.cache-hit != 'true'
-        run: npx playwright install --with-deps chromium
+        run: npx ${packageName} install --with-deps chromium
 
-      - name: Install Playwright dependencies (cache hit)
+      - name: Install browser system dependencies (cache hit)
         if: steps.playwright-cache.outputs.cache-hit == 'true'
-        run: npx playwright install-deps chromium
+        run: npx ${packageName} install --deps-only chromium
 
       - name: Run Sniff QA
         run: npx ${packageName} --ci --format html,json,junit

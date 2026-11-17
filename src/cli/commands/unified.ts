@@ -100,7 +100,7 @@ export async function unifiedCommand(options: UnifiedOptions): Promise<void> {
       });
     } catch {
       const projects = config.browser?.projects?.join(' ') ?? 'chromium';
-      console.error(pc.red(`Failed to launch browser. Run: npx playwright install ${projects}`));
+      console.error(pc.red(`Failed to launch browser. Run: ${(await import('../../core/engine.js')).engineInstallCommand(projects.split(' '))}`));
       process.exit(1);
     }
 

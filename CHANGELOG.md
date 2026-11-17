@@ -7,6 +7,45 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.9.1] - 2026-11-17
+
+The MCP server now connects on a new machine's first start.
+
+### Fixed
+
+- **First start of the MCP server.** `npx -y sniff-qa --mcp` had to download about 250 MB of
+  dependencies before it could answer the handshake. On a cold machine that took 23 to 92 s, past
+  Claude Code's 30 s connect timeout, and a killed download could leave a broken npx cache. Two
+  changes fix it. The browser engine (Playwright, axe-core for Playwright, Lighthouse,
+  chrome-launcher) is no longer an npm dependency: sniff downloads it on first use. The other
+  runtime dependencies are bundled into `dist/`, so the package depends on `zod` alone. The first
+  start now downloads two small packages. `npm run cold-start` re-measures it.
+- **Licenses of bundled code.** `THIRD-PARTY-NOTICES.md` ships in the package with the license
+  text of every bundled package.
+- **No "packages it lists are not installed" note in `claude plugin list`.** Claude Code installs
+  a plugin's npm dependencies when it caches the plugin. The old dependency tree was too large for
+  that step; the new one installs in seconds.
+- `--help` printed the `--fail-on` default twice.
+
+### Added
+
+- **`sniff install [browsers...]`** downloads the browser engine (about 200 MB, once per sniff
+  version, into `~/.cache/sniff-qa/engine/<version>`) and Chromium, so the first walk starts at
+  once. `--with-deps` also installs the Linux system libraries; `--deps-only` installs only those.
+  `SNIFF_ENGINE_DIR` moves the engine folder.
+- The first CLI walk still downloads everything it needs by itself, with progress on stderr.
+- The `sniff_install` MCP tool now downloads the engine too. Browser tools still answer
+  `needsSetup: playwright-browsers` until it has run, so no tool call blocks on a silent download.
+- `sniff doctor` says where the engine loads from, or that it is not downloaded yet.
+
+### Changed
+
+- Install hints say `npx -y sniff-qa@<version> install <browser>` instead of
+  `npx playwright install <browser>`, which could fetch a Playwright that does not match sniff's.
+- `sniff ci` writes a workflow that runs `sniff-qa install --with-deps chromium` and caches
+  `~/.cache/sniff-qa` next to the Playwright browsers.
+- A project that installs `playwright` or `lighthouse` itself keeps using its own copy.
+
 ## [0.9.0] - 2026-11-17
 
 Every report now opens with the answer. The first walk on a new machine works.

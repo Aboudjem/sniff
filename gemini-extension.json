@@ -1,13 +1,13 @@
 {
   "name": "sniff",
-  "version": "0.9.0",
+  "version": "0.9.1",
   "description": "Walks your running web app in a real browser and reports what is broken, with steps to reproduce. No API key.",
   "mcpServers": {
     "sniff": {
       "command": "npx",
       "args": [
         "-y",
-        "sniff-qa@0.9.0",
+        "sniff-qa@0.9.1",
         "--mcp"
       ]
     }

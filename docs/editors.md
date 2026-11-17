@@ -179,7 +179,7 @@ name:
 | `walk` | `sniff_run` | Launch a browser and audit a running app |
 | `discover` | `sniff_discover` | Generate and drive end-to-end scenarios |
 | `report` | `sniff_report` | Read the results of the last run |
-| `install` | `sniff_install` | Download Playwright browser binaries |
+| `install` | `sniff_install` | Download the browser engine and browser binaries, once |
 
 The unified `sniff` tool registers whenever at least one of `scan`, `walk`, `discover` or `report`
 is granted, and its `mode` argument is narrowed to the modes you granted.

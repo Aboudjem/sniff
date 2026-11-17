@@ -36,6 +36,7 @@ Start here:
                                           also write sniff-reports/sniff-report.html
   $ sniff scan                            read the source only, no browser
   $ sniff doctor                          check Node, the browser and the dev server
+  $ sniff install                         download the browser engine and Chromium now
 
 Exit codes:
   0  no finding reached the --fail-on severities (default: critical,high)
@@ -59,7 +60,7 @@ Docs: https://github.com/Aboudjem/sniff#readme`);
     .option('--headed', 'Show the browser window (alias for --no-headless)')
     .option('--no-headless', 'Show the browser window')
     .option('--format <formats>', 'Report formats: html, json, junit (comma-separated)')
-    .option('--fail-on <severities>', 'Exit non-zero on these severities (default: critical,high)', 'critical,high')
+    .option('--fail-on <severities>', 'Exit non-zero on these severities', 'critical,high')
     .option('--json', 'Output results as JSON')
     .option('--report', 'Write a self-contained HTML report to sniff-reports/sniff-report.html')
     .option('--all', 'Show low-confidence findings too (hidden by default)')
@@ -223,7 +224,7 @@ Docs: https://github.com/Aboudjem/sniff#readme`);
     .description('Source-only scan (no browser): placeholder/TODO/console.log/dead links/etc.')
     .argument('[target]', 'Project directory (default: current directory)')
     .option('--json', 'Output results as JSON')
-    .option('--fail-on <severities>', 'Exit non-zero on these severities (default: critical,high)', 'critical,high')
+    .option('--fail-on <severities>', 'Exit non-zero on these severities', 'critical,high')
     .action(async (target, options) => {
       const rootDir = target ? (await import('node:path')).resolve(target) : process.cwd();
       const { unifiedCommand } = await import('./commands/unified.js');
@@ -329,6 +330,41 @@ Docs: https://github.com/Aboudjem/sniff#readme`);
     });
 
   program
+    .command('install')
+    .description('Download the browser engine (Playwright, axe-core, Lighthouse) and browsers once, so the first walk starts at once')
+    .argument('[browsers...]', 'Browsers to download: chromium, firefox, webkit (default: chromium)')
+    .option('--with-deps', 'Also install the system libraries the browsers need (Linux CI, needs root)')
+    .option('--deps-only', 'Only install the system libraries (skip downloads already cached)')
+    .action(async (browsers: string[], options: { withDeps?: boolean; depsOnly?: boolean }) => {
+      const pc = (await import('picocolors')).default;
+      const allowed = ['chromium', 'firefox', 'webkit'];
+      const bad = browsers.filter((b) => !allowed.includes(b));
+      if (bad.length > 0) {
+        console.error(pc.red(`Unknown browser: ${bad.join(', ')}. Use one of: ${allowed.join(', ')}.`));
+        process.exit(1);
+      }
+      const projects = (browsers.length > 0 ? browsers : ['chromium']) as import('../config/schema.js').BrowserProject[];
+      const { ensureEngineForCli, installPlaywrightBrowserProjects, installBrowserSystemDeps } = await import('../core/ensure-browsers.js');
+      const started = Date.now();
+      await ensureEngineForCli();
+      if (options.depsOnly) {
+        await installBrowserSystemDeps(projects);
+      } else {
+        console.error(pc.dim(`Downloading ${projects.join(', ')} (skipped when already on disk)...`));
+        const result = await installPlaywrightBrowserProjects(projects, {
+          withDeps: !!options.withDeps,
+          stdio: 'inherit-stderr',
+        });
+        if (result.status === 'failed') {
+          console.error(pc.red(`Could not download ${projects.join(', ')}: ${result.error}`));
+          process.exit(1);
+        }
+      }
+      const secs = Math.round((Date.now() - started) / 1000);
+      console.log(`${pc.green('OK')} sniff is ready to walk an app (${secs} s). Next: ${pc.bold('sniff --url http://localhost:3000')}`);
+    });
+
+  program
     .command('doctor')
     .description('Check your environment: Node.js, Playwright, config, dev server')
     .action(async () => {
@@ -343,14 +379,26 @@ Docs: https://github.com/Aboudjem/sniff#readme`);
       const nodeOk = nodeMajor >= 22;
       console.log(`  ${nodeOk ? pc.green('OK') : pc.red('!!  ')} Node.js ${nodeVersion} ${nodeOk ? '' : '(need 22+)'}`);
 
-      // Browser. The Playwright package ships with sniff; the Chromium build
-      // is a separate download, so test that it is really on disk.
+      // Browser engine. Playwright, axe-core and Lighthouse are a one-time
+      // download (see src/core/engine.ts), so say where they load from.
+      const { engineStatus, engineDir, engineInstallCommand, ENGINE_SIZE_MB } = await import('../core/engine.js');
+      const engine = engineStatus();
+      if (engine === 'resolved') {
+        console.log(`  ${pc.green('OK')} Browser engine installed next to sniff`);
+      } else if (engine === 'engine-dir') {
+        console.log(`  ${pc.green('OK')} Browser engine downloaded (${engineDir()})`);
+      } else {
+        console.log(`  ${pc.yellow('--')} Browser engine not downloaded yet (the first walk downloads it, about ${ENGINE_SIZE_MB} MB, or run: ${engineInstallCommand()})`);
+      }
+
+      // Browser. The Chromium build is a separate download, so test that it
+      // is really on disk.
       const { checkPlaywrightBrowsers } = await import('../core/ensure-browsers.js');
-      const browser = await checkPlaywrightBrowsers(['chromium']);
-      if (browser.status === 'installed') {
+      const browser = engine === 'missing' ? null : await checkPlaywrightBrowsers(['chromium']);
+      if (browser?.status === 'installed') {
         console.log(`  ${pc.green('OK')} Chromium downloaded`);
       } else {
-        console.log(`  ${pc.yellow('--')} Chromium not downloaded yet (the first walk downloads it, about 165 MB, or run: npx playwright install chromium)`);
+        console.log(`  ${pc.yellow('--')} Chromium not downloaded yet (the first walk downloads it, about 165 MB, or run: ${engineInstallCommand(['chromium'])})`);
       }
 
       // Config file

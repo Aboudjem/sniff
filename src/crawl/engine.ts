@@ -15,6 +15,7 @@ import { formsDetector } from './detectors/forms.js';
 import { loadingStateDetector } from './detectors/loading.js';
 import { flowDetector } from './detectors/flow.js';
 import { useStorageState, redactText, redactValue } from '../core/redaction.js';
+import { loadEngine } from '../core/engine.js';
 
 export interface CrawlOptions {
   startUrl: string;
@@ -72,7 +73,7 @@ export async function runCrawl(opts: CrawlOptions): Promise<CrawlReport> {
     : undefined;
   const authOption: BrowserContextOptions = storageState ? { storageState } : {};
 
-  const playwright = await import('playwright');
+  const playwright = await loadEngine('playwright', () => import('playwright'));
   const browser: Browser = await playwright.chromium.launch({ headless });
 
   const raw: Array<RawFinding & { url: string; route: string; viewport: 'desktop' | 'mobile'; screenshotPath?: string }> = [];

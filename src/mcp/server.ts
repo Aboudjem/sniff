@@ -102,7 +102,7 @@ export async function startMcpServer(
               text: JSON.stringify({
                 needsSetup: 'playwright-browsers',
                 projects: check.status === 'missing' ? check.missingProjects : config.browser?.projects ?? ['chromium'],
-                installCommand: check.status === 'missing' ? check.installCommand : `npx playwright install ${(config.browser?.projects ?? ['chromium']).join(' ')}`,
+                installCommand: check.status === 'missing' ? check.installCommand : (await import('../core/engine.js')).engineInstallCommand(config.browser?.projects ?? ['chromium']),
                 installSizeMb: check.status === 'missing' ? check.installSizeMb : 165,
                 hint: setupHint,
               }),
@@ -159,13 +159,14 @@ export async function startMcpServer(
     },
   );
 
-  // Tool: sniff_install -- explicitly install requested Playwright browsers.
-  // MCP browser tools return `needsSetup: playwright-browsers` instead of
-  // silently shelling out (install takes ~45s, transports time out). Call
-  // this tool when that happens, then retry the browser tool.
+  // Tool: sniff_install -- explicitly install the browser engine (once per
+  // sniff version) and the requested Playwright browsers. MCP browser tools
+  // return `needsSetup: playwright-browsers` instead of silently shelling out
+  // (the download takes about a minute). Call this tool when that happens,
+  // then retry the browser tool.
   if (granted('sniff_install')) server.tool(
     'sniff_install',
-    'Install requested Playwright browser binaries (default: chromium). Run this when sniff_run or sniff_discover returns `needsSetup: playwright-browsers`.',
+    'Download what a browser walk needs, once: the browser engine (Playwright, axe-core, Lighthouse, about 200 MB) and the requested browsers (default: chromium). Run this when a sniff tool returns `needsSetup: playwright-browsers`, then retry. Takes about a minute on first use.',
     {
       projects: z.array(z.enum(['chromium', 'firefox', 'webkit'])).optional().describe('Browser projects to install. Defaults to ["chromium"].'),
     },

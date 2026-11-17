@@ -3,6 +3,7 @@ import { performance } from 'node:perf_hooks';
 import type { BrowserScanner, BrowserScanContext, ScanResult } from '../types.js';
 import type { BrowserFinding } from '../../core/types.js';
 import type { Severity } from '../../core/types.js';
+import { loadEngine } from '../../core/engine.js';
 
 function mapAxeImpact(impact: string | null | undefined): Severity {
   switch (impact) {
@@ -51,7 +52,7 @@ export class AccessibilityScanner implements BrowserScanner {
       };
     }
 
-    const { AxeBuilder } = await import('@axe-core/playwright');
+    const { AxeBuilder } = await loadEngine('@axe-core/playwright', () => import('@axe-core/playwright'));
 
     const a11yConfig = ctx.config.accessibility;
 

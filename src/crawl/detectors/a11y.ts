@@ -1,5 +1,6 @@
 import type { Detector, DetectorContext } from './context.js';
 import type { RawFinding, Severity } from '../types.js';
+import { loadEngine } from '../../core/engine.js';
 
 function mapAxeImpact(impact: string | null | undefined): Severity {
   switch (impact) {
@@ -25,7 +26,7 @@ function issueClassFor(axeId: string): number {
 export const a11yDetector: Detector = async (ctx: DetectorContext): Promise<RawFinding[]> => {
   let AxeBuilder: typeof import('@axe-core/playwright').AxeBuilder;
   try {
-    ({ AxeBuilder } = await import('@axe-core/playwright'));
+    ({ AxeBuilder } = await loadEngine('@axe-core/playwright', () => import('@axe-core/playwright')));
   } catch {
     return [];
   }

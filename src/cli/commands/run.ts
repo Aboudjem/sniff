@@ -96,7 +96,7 @@ export async function runCommand(options: {
     const projects = config.browser?.projects?.join(' ') ?? 'chromium';
     console.error(
       pc.red(
-        `Failed to launch browser. Ensure Playwright browsers are installed: npx playwright install ${projects}`,
+        `Failed to launch browser. Ensure the browsers are installed: ${(await import('../../core/engine.js')).engineInstallCommand(projects.split(' '))}`,
       ),
     );
     process.exit(1);

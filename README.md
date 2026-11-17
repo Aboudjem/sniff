@@ -100,8 +100,19 @@ npx skills add Aboudjem/sniff
 claude mcp add sniff-qa -- npx -y sniff-qa --mcp
 ```
 
-The first walk downloads a Chromium build once (about 165 MB). Run `npx sniff-qa doctor` to check
-Node, the browser and your dev server.
+The first walk downloads two things, once: the browser engine (Playwright, axe-core and
+Lighthouse, about 200 MB) and Chromium (about 165 MB). Both took 159 s here on 2026-11-17.
+To do it ahead of time, run:
+
+```bash
+npx sniff-qa install
+```
+
+It ends with the time it took. `npx sniff-qa doctor` checks Node, the browser and your dev server.
+
+The MCP server starts before those downloads. On a cold machine (empty npm cache),
+`npx -y sniff-qa@0.9.1 --mcp` answered its first handshake in 1.4 to 1.9 s (5 runs of the release build). Version 0.9.0 took 23 to 92 s,
+past Claude Code's 30 s connect limit. `npm run cold-start` re-measures it in a clone of this repo.
 
 <details>
 <summary>Project install and CI</summary>
@@ -186,7 +197,7 @@ The bugs are listed in [sniff-tests/planted-bugs/MANIFEST.json](sniff-tests/plan
 npm test
 ```
 
-Prints `Test Files  50 passed (50)` and `Tests  534 passed (534)` on 2026-11-17.
+Prints `Test Files  52 passed (52)` and `Tests  555 passed (555)` on 2026-11-17.
 The suite includes the fixture gate. It fails the build if recall drops below 85%.
 It also fails on any finding on the clean page.
 
@@ -218,7 +229,8 @@ More answers are in [docs/faq.md](docs/faq.md).
 ## Limits
 
 - It needs a running app for the walk. Without one you only get the source scan.
-- The first walk needs internet to download Chromium once.
+- The first walk needs internet to download the browser engine and Chromium once, about 365 MB.
+- Until then, MCP browser tools answer `needsSetup` and the agent calls `sniff_install` first.
 - Dead-link checking follows external links, so a walk requests the third-party URLs your pages link to.
 - Redaction covers report text, not screenshot pixels. A screenshot of a logged-in page can show private data.
 - It finds what a user would see. It does not read your server logs or measure load.

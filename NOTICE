@@ -8,7 +8,10 @@ If you use Sniff in your project, a mention or attribution is appreciated:
   - "QA powered by Sniff (https://github.com/Aboudjem/sniff)"
 
 Third-party licenses:
-  - Playwright (Apache-2.0) - https://playwright.dev
-  - axe-core (MPL-2.0) - https://www.deque.com/axe/
-  - Lighthouse (Apache-2.0) - https://developer.chrome.com/docs/lighthouse
-  - pixelmatch (ISC) - https://github.com/mapbox/pixelmatch
+  - The packages bundled into dist/ are listed, with their license texts, in
+    THIRD-PARTY-NOTICES.md.
+  - pixelmatch (ISC) - https://github.com/mapbox/pixelmatch (bundled)
+  - The browser engine is downloaded on first use, with its own licenses, not bundled:
+    - Playwright (Apache-2.0) - https://playwright.dev
+    - axe-core (MPL-2.0) - https://www.deque.com/axe/
+    - Lighthouse (Apache-2.0) - https://developer.chrome.com/docs/lighthouse

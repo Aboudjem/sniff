@@ -8,6 +8,7 @@ import type {
   PageState,
 } from './types.js';
 import { selectPayload } from './edge-cases.js';
+import { loadEngine } from '../core/engine.js';
 
 /**
  * ExplorationRunner drives an AI-powered chaos monkey exploration loop.
@@ -30,7 +31,7 @@ export class ExplorationRunner {
     const pagesVisited = new Set<string>();
 
     // Lazy playwright import (mirrors BrowserRunner pattern)
-    const { chromium } = await import('playwright');
+    const { chromium } = await loadEngine('playwright', () => import('playwright'));
     const {
       PageHookPipeline,
       ConsoleErrorHook,

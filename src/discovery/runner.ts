@@ -40,6 +40,7 @@ import {
   type LayoutSnapshot,
 } from './validators/layout-stability.js';
 import { fillFormWithPersona } from './fill-form.js';
+import { loadEngine } from '../core/engine.js';
 
 interface RunnerDeps {
   launchBrowser: () => Promise<Browser>;
@@ -445,7 +446,7 @@ export async function runScenarios(
   const runAt = new Date().toISOString();
 
   const launchBrowser = deps?.launchBrowser ?? (async () => {
-    const { chromium } = await import('playwright');
+    const { chromium } = await loadEngine('playwright', () => import('playwright'));
     return chromium.launch({ headless: context.headless });
   });
 

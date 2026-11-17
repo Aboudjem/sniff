@@ -1,5 +1,8 @@
 import { describe, it, expect } from 'vitest';
 import { checkPlaywrightBrowsers, type BrowserProbe } from './ensure-browsers.js';
+import { getVersion } from '../version.js';
+
+const SNIFF_INSTALL = `npx -y sniff-qa@${getVersion()} install`;
 
 describe('checkPlaywrightBrowsers', () => {
   it('returns a structured status object', async () => {
@@ -13,7 +16,7 @@ describe('checkPlaywrightBrowsers', () => {
       expect(result.projects).toContain('chromium');
     }
     if (result.status === 'missing') {
-      expect(result.installCommand).toBe('npx playwright install chromium');
+      expect(result.installCommand).toBe(`${SNIFF_INSTALL} chromium`);
       expect(result.installSizeMb).toBeGreaterThan(0);
     }
   });
@@ -27,7 +30,7 @@ describe('checkPlaywrightBrowsers', () => {
     if (result.status === 'missing') {
       expect(result.missingProjects.length).toBeGreaterThan(0);
       expect(['chromium', 'firefox']).toEqual(expect.arrayContaining(result.missingProjects));
-      expect(result.installCommand).toBe(`npx playwright install ${result.missingProjects.join(' ')}`);
+      expect(result.installCommand).toBe(`${SNIFF_INSTALL} ${result.missingProjects.join(' ')}`);
     }
   });
 
@@ -50,7 +53,7 @@ describe('checkPlaywrightBrowsers', () => {
       status: 'missing',
       projects: ['chromium'],
       missingProjects: ['chromium'],
-      installCommand: 'npx playwright install chromium',
+      installCommand: `${SNIFF_INSTALL} chromium`,
       installSizeMb: 165,
     });
   });
@@ -81,7 +84,7 @@ describe('checkPlaywrightBrowsers', () => {
     expect(result.status).toBe('missing');
     if (result.status === 'missing') {
       expect(result.missingProjects).toEqual(['firefox']);
-      expect(result.installCommand).toBe('npx playwright install firefox');
+      expect(result.installCommand).toBe(`${SNIFF_INSTALL} firefox`);
       expect(result.installSizeMb).toBe(95);
     }
   });

@@ -1,6 +1,7 @@
 import type { Page } from 'playwright';
 import type { BrowserFinding, Severity } from '../../core/types.js';
 import type { ValidationOutcome } from '../run-types.js';
+import { loadEngine } from '../../core/engine.js';
 
 export interface AxeViolationNode {
   html: string;
@@ -54,7 +55,7 @@ function mapImpact(impact: AxeViolation['impact']): Severity {
 }
 
 export const defaultAxeRunner: AxeRunner = async (page, opts) => {
-  const { AxeBuilder } = await import('@axe-core/playwright');
+  const { AxeBuilder } = await loadEngine('@axe-core/playwright', () => import('@axe-core/playwright'));
   let builder = new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa']);
   if (opts.selector) {
     builder = builder.include(opts.selector);

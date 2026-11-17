@@ -58,11 +58,12 @@ jobs:
       - name: Typecheck
         run: npm run typecheck
 
-      - name: Test
-        run: npm test
-
+      # Build first: the cold-start test runs the built `sniff-qa --mcp`.
       - name: Build
         run: npm run build
+
+      - name: Test
+        run: npm test
 
       - name: Publish to npm with provenance (OIDC)
         run: npm publish --provenance --access public

@@ -8,9 +8,17 @@ or pass `--url`. `npx sniff-qa scan` runs that source scan on purpose.
 
 ## What gets downloaded on the first run?
 
-The first time sniff opens a browser it downloads a Chromium build through Playwright, once, and
-caches it under `~/.cache/ms-playwright` (or the macOS equivalent). You see the progress and you need
-internet access for that first run. Nothing else is installed and no account is created.
+The first time sniff opens a browser it downloads two things, once:
+
+- the browser engine (Playwright, axe-core, Lighthouse), about 200 MB, into
+  `~/.cache/sniff-qa/engine/<version>`;
+- a Chromium build, through Playwright, into `~/.cache/ms-playwright` (or the macOS equivalent).
+
+You see the progress and you need internet access for that first run. `npx sniff-qa install` does
+both ahead of time. No account is created.
+
+The engine is not an npm dependency on purpose: it keeps `npx -y sniff-qa --mcp` small, so the MCP
+server answers its first handshake within the client's connect timeout.
 
 ## Do I need an API key?
 
