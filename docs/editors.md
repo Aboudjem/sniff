@@ -16,6 +16,8 @@ npx skills add Aboudjem/sniff -g
 ```
 
 `-g` installs for all your projects. Only this project: drop `-g`.
+It works in more than 70 agents ([supported agents](https://github.com/vercel-labs/skills#supported-agents)). It installs the skills only: the MCP server below is one more line.
+In a terminal it shows the agent menu. In a script it installs into every agent folder, so add `-a <agent>` there.
 That prompts for the agent. To skip the prompts, name the agent with `-a` and add `-y`:
 
 | Agent | Command |

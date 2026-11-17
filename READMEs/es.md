@@ -62,6 +62,14 @@ Usa una aplicación de desarrollo o de staging: un recorrido pulsa botones y env
 
 ## Instalación
 
+**Pruébalo sin instalar nada.** Arranca tu aplicación y recórrela desde una segunda terminal:
+
+```bash
+npx sniff-qa --url http://localhost:3000
+```
+
+El paquete de npm es `sniff-qa`. No ejecutes `npx sniff`: es otro paquete sin relación.
+
 **Recomendado: la CLI de skills de Vercel.** `npx skills` es el instalador abierto de Vercel para skills de agentes.
 
 ```bash
@@ -157,16 +165,6 @@ claude plugin install sniff@10x
 ```
 
 Cualquier otro cliente MCP ejecuta `npx -y sniff-qa --mcp`. Los fragmentos para cada editor están en [docs/editors.md](../docs/editors.md).
-
-#### Sin agente
-
-No hay nada que instalar. Arranca tu aplicación y recórrela desde una segunda terminal:
-
-```bash
-npx sniff-qa --url http://localhost:3000
-```
-
-El paquete de npm es `sniff-qa`. No ejecutes `npx sniff`: es otro paquete sin relación.
 
 #### Primera ejecución
 

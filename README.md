@@ -62,6 +62,14 @@ Use a dev or staging app: a walk clicks buttons and submits real forms.
 
 ## Install
 
+**Try it with no install.** Start your app, then walk it from a second terminal:
+
+```bash
+npx sniff-qa --url http://localhost:3000
+```
+
+The npm package is `sniff-qa`. Do not run `npx sniff`: that is an unrelated package.
+
 **Recommended: the Vercel skills CLI.** `npx skills` is Vercel's open installer for agent skills.
 
 ```bash
@@ -157,16 +165,6 @@ claude plugin install sniff@10x
 ```
 
 Any other MCP client runs `npx -y sniff-qa --mcp`. Snippets for each editor are in [docs/editors.md](docs/editors.md).
-
-#### No agent
-
-Nothing to install. Start your app, then walk it from a second terminal:
-
-```bash
-npx sniff-qa --url http://localhost:3000
-```
-
-The npm package is `sniff-qa`. Do not run `npx sniff`: that is an unrelated package.
 
 #### First run
 

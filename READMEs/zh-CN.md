@@ -62,6 +62,14 @@ npx sniff-qa --url http://localhost:3000
 
 ## 安装
 
+**无需安装即可试用。** 先启动你的应用，再在另一个终端里巡查它：
+
+```bash
+npx sniff-qa --url http://localhost:3000
+```
+
+npm 包名是 `sniff-qa`。不要运行 `npx sniff`：那是一个无关的包。
+
 **推荐：Vercel 的 skills CLI。** `npx skills` 是 Vercel 开源的智能体 skills 安装工具。
 
 ```bash
@@ -157,16 +165,6 @@ claude plugin install sniff@10x
 ```
 
 其他 MCP 客户端运行 `npx -y sniff-qa --mcp`。各编辑器的配置片段在 [docs/editors.md](../docs/editors.md)。
-
-#### 不用智能体
-
-无需安装。先启动你的应用，再在另一个终端里巡查它：
-
-```bash
-npx sniff-qa --url http://localhost:3000
-```
-
-npm 包名是 `sniff-qa`。不要运行 `npx sniff`：那是一个无关的包。
 
 #### 首次运行
 

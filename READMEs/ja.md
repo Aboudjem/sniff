@@ -62,6 +62,14 @@ npx sniff-qa --url http://localhost:3000
 
 ## インストール
 
+**インストールなしで試す。** アプリを起動し、別のターミナルから巡回します：
+
+```bash
+npx sniff-qa --url http://localhost:3000
+```
+
+npm パッケージ名は `sniff-qa` です。`npx sniff` は実行しないでください。無関係の別パッケージです。
+
 **おすすめ：Vercel の skills CLI。** `npx skills` は、エージェント向け skills を入れる Vercel のオープンなインストーラーです。
 
 ```bash
@@ -157,16 +165,6 @@ claude plugin install sniff@10x
 ```
 
 ほかの MCP クライアントは `npx -y sniff-qa --mcp` を実行します。エディターごとの設定例は [docs/editors.md](../docs/editors.md) にあります。
-
-#### エージェントなし
-
-インストールは不要です。アプリを起動し、別のターミナルから巡回します：
-
-```bash
-npx sniff-qa --url http://localhost:3000
-```
-
-npm パッケージ名は `sniff-qa` です。`npx sniff` は実行しないでください。無関係の別パッケージです。
 
 #### 初回の実行
 
