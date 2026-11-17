@@ -110,9 +110,13 @@ npx sniff-qa install
 
 It ends with the time it took. `npx sniff-qa doctor` checks Node, the browser and your dev server.
 
-The MCP server starts before those downloads. On a cold machine (empty npm cache),
-`npx -y sniff-qa@0.9.1 --mcp` answered its first handshake in 1.4 to 1.9 s (5 runs of the release build). Version 0.9.0 took 23 to 92 s,
-past Claude Code's 30 s connect limit. `npm run cold-start` re-measures it in a clone of this repo.
+The MCP server starts before those downloads. With an empty npm cache, `npx -y sniff-qa@0.9.1 --mcp`
+answered its first handshake in 3.1 to 4.9 s (5 runs, 2026-11-17). Version 0.9.0 took 37 to 93 s,
+past Claude Code's 30 s connect limit. To re-measure, in a clone of this repo:
+
+```bash
+npm run cold-start -- 0.9.1 5
+```
 
 <details>
 <summary>Project install and CI</summary>
