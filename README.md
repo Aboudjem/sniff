@@ -23,7 +23,8 @@ npx sniff-qa --url http://localhost:3000
 ## What you get
 
 A report that opens with the verdict, then the three things to fix first, then every finding.
-This is the top of a real run on this repo's planted-bug fixture (2026-11-17, sniff 0.9.0):
+This is the report from a real run on this repo's planted-bug fixture (2026-11-17, sniff 0.9.0).
+The progress lines that print before it are left out.
 
 ```text
   VERDICT  FAIL: 26 findings (1 critical, 13 high, 11 medium, 1 low)
@@ -46,6 +47,13 @@ This is the top of a real run on this repo's planted-bug fixture (2026-11-17, sn
 ```
 
 Each finding carries a severity, a confidence label, the route, the steps, a fix and a screenshot.
+
+To reproduce it from a clone, start the fixture, then walk it from a second terminal:
+
+```bash
+node sniff-tests/planted-bugs/server.mjs 4517
+npx sniff-qa --url http://localhost:4517
+```
 
 | Output          | Flag        | Use it for                                  |
 | :-------------- | :---------- | :------------------------------------------ |
@@ -134,7 +142,7 @@ The MCP server exposes these tools:
 | `sniff_install`  | Downloads the Playwright browser                        |
 | `sniff_report`   | Reads the last saved results                            |
 
-`--caps scan,report` narrows the server to those two tools, with no browser at all.
+`--caps scan,report` narrows the server to `sniff_scan`, `sniff_report` and the unified `sniff` tool, with no browser at all.
 
 ## Works with
 
@@ -153,7 +161,7 @@ Their snippets are in [docs/editors.md](docs/editors.md).
 
 ## Proof
 
-Two commands re-print every number on this page.
+Three commands re-print the numbers on this page. The first prints the fixture score.
 
 ```bash
 npm run build && npm run proof
@@ -168,6 +176,8 @@ It starts the planted-bug fixture, walks it, and scores the report. Output on 20
   Hard FP on clean page (/clean): 0
 ```
 
+The sample above shows 26 findings and this run counts 27. The proof run uses `--all`, which adds the 1 low-confidence finding.
+
 The fixture holds 21 planted bugs across all 12 classes, plus a clean control page.
 The scorer is [sniff-tests/score-fixture.mjs](sniff-tests/score-fixture.mjs).
 The bugs are listed in [sniff-tests/planted-bugs/MANIFEST.json](sniff-tests/planted-bugs/MANIFEST.json).
@@ -179,6 +189,12 @@ npm test
 Prints `Test Files  50 passed (50)` and `Tests  534 passed (534)` on 2026-11-17.
 The suite includes the fixture gate. It fails the build if recall drops below 85%.
 It also fails on any finding on the clean page.
+
+```bash
+node sniff-tests/mcp-smoke.mjs
+```
+
+Prints the 6 MCP tools and the 20 findings quoted in the table above.
 
 ## FAQ
 
