@@ -7,6 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.9.2] - 2026-11-17
+
+A clearer first screen and truer wording. No behaviour change: the code is the same as 0.9.1.
+
+### Changed
+
+- **README first screen.** It now opens with the outcome, the command and the real report. Under
+  the report, a short `Why use it` block gives three benefits, each with its proof. The limit sits
+  next to the promise: a walk submits real forms, so use a dev or staging app.
+- **Listing descriptions.** The plugin, npm, Gemini and MCP registry descriptions are now one plain
+  sentence instead of a feature list.
+- **Truer wording.** The README no longer says every finding has a screenshot. On the fixture, 23 of
+  27 findings have one, and source-scan findings have no route. The first-run size is now measured:
+  on a Mac, `npx sniff-qa install` left 193 MB of engine and 528 MB of Chromium on disk.
+- **Translations, hero banners, social preview, `llms.txt`, `AGENTS.md` and the Pages site** carry
+  the same one-liner.
+
 ## [0.9.1] - 2026-11-17
 
 The MCP server now connects on a new machine's first start.

@@ -12,7 +12,7 @@
 
 <p align="center"><a href="../README.md">English</a> · <a href="zh-CN.md">简体中文</a> · <a href="ja.md">日本語</a> · <b>Español</b> · <a href="fr.md">Français</a></p>
 
-<p align="center"><b>Apúntalo a tu aplicación en ejecución. Recorre tus flujos de usuario reales en un navegador real y te dice qué está roto de verdad, con pruebas.</b></p>
+<p align="center"><b>Detecta lo que está roto en tu aplicación web antes que tus usuarios.</b></p>
 
 <p align="center"><a href="#qué-hace">Qué hace</a> · <a href="#instalación">Instalación</a> · <a href="#cómo-usarlo">Cómo usarlo</a> · <a href="#qué-obtienes">Qué obtienes</a> · <a href="#funciona-en-tu-editor">Funciona en tu editor</a> · <a href="#conviene-saber">Conviene saber</a></p>
 
@@ -25,20 +25,21 @@ claude plugin install sniff@10x
 
 ## Qué hace
 
-La mayoría de los linters leen tu código fuente sin llegar a ejecutar tu aplicación, y los frameworks
-de extremo a extremo te piden escribir y mantener las pruebas por tu cuenta. sniff abre tu aplicación
-en ejecución en un navegador real, hace clic y rellena campos como lo haría una persona, y juzga lo
-que ocurrió de verdad.
+Cambiaste un formulario, y ahora una página que nunca abriste devuelve un error 500. sniff abre tu
+aplicación en ejecución en un navegador real y la recorre como lo haría un usuario. Cada error de
+página que informa trae los pasos que lo reproducen.
 
-- **Encuentra 12 clases de errores**, desde rutas que devuelven HTTP 500 y enlaces rotos hasta datos
-  de relleno, botones de envío que no hacen nada, formularios que el botón de retroceso vacía,
-  indicadores de carga atascados y desbordamiento en móvil.
-- **Prueba cada uno.** Cada hallazgo lleva la ruta y los pasos ordenados que lo produjeron, más la
-  captura de pantalla y el fragmento de consola o de red que recogió la comprobación. Sin pasos, no
-  hay hallazgo.
-- **Está medido.** Sobre una aplicación de prueba con 21 errores plantados que cubren las 12 clases,
-  más una página de control limpia, sniff encuentra 21 de 21 y no informa nada en la página de
-  control.
+### Por qué usarlo
+
+- **Arregla en lugar de buscar.** Cada hallazgo de página indica la ruta, los pasos y un arreglo, la
+  mayoría con una captura de pantalla.
+- **Prueba de que encuentra errores reales.** Probado con errores plantados a propósito: 21 de 21
+  encontrados, 0 hallazgos falsos en la página limpia (`npm run build && npm run proof`).
+- **Bloquea los merges malos.** `--fail-on` sale con 1 ante un hallazgo crítico o alto, y
+  `npx sniff-qa ci` escribe el archivo de GitHub Actions. Sin clave de API.
+
+Necesita tu aplicación en marcha, y envía formularios reales: usa una aplicación de desarrollo o de
+staging. El primer recorrido descarga un navegador una vez, unos 720 MB en disco en un Mac.
 
 ## Instalación
 

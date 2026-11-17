@@ -12,7 +12,7 @@
 
 <p align="center"><b>English</b> · <a href="READMEs/zh-CN.md">简体中文</a> · <a href="READMEs/ja.md">日本語</a> · <a href="READMEs/es.md">Español</a> · <a href="READMEs/fr.md">Français</a></p>
 
-<p align="center"><b>Point it at your running app. It clicks through your pages in a real browser and tells you what is broken, with the steps to reproduce it.</b></p>
+<p align="center"><b>Catch what is broken in your web app before your users do.</b></p>
 
 <p align="center"><a href="#what-you-get">What you get</a> · <a href="#install">Install</a> · <a href="#how-it-works">How it works</a> · <a href="#works-with">Works with</a> · <a href="#proof">Proof</a> · <a href="#faq">FAQ</a> · <a href="#limits">Limits</a></p>
 
@@ -24,7 +24,6 @@ npx sniff-qa --url http://localhost:3000
 
 A report that opens with the verdict, then the three things to fix first, then every finding.
 This is the report from a real run on this repo's planted-bug fixture (2026-11-17, sniff 0.9.0).
-The progress lines that print before it are left out.
 
 ```text
   VERDICT  FAIL: 26 findings (1 critical, 13 high, 11 medium, 1 low)
@@ -46,26 +45,25 @@ The progress lines that print before it are left out.
       shot: sniff-reports/crawl/_crash-desktop.png
 ```
 
-Each finding carries a severity, a confidence label, the route, the steps, a fix and a screenshot.
+You changed one form, and now a page you never opened throws a 500. sniff opens your running app
+in a real browser and clicks through it like a user would. Each page bug it reports comes with
+the steps that reproduce it.
 
-To reproduce it from a clone, start the fixture, then walk it from a second terminal:
+### Why use it
+
+- **Fix it, do not hunt for it.** Each page finding names the route, the steps and a fix, most with a screenshot.
+- **Proof it catches real bugs.** Tested on bugs planted on purpose: 21 of 21 found, 0 false findings on the clean page (`npm run build && npm run proof`).
+- **Block bad merges.** `--fail-on` exits 1 on critical or high findings, and `npx sniff-qa ci` writes the GitHub Actions file. No API key.
+
+It needs your app running, and it submits real forms, so use a dev or staging app.
+The first walk downloads a browser once, about 720 MB on disk on a Mac.
+
+To reproduce the sample from a clone, start the fixture, then walk it from a second terminal:
 
 ```bash
 node sniff-tests/planted-bugs/server.mjs 4517
 npx sniff-qa --url http://localhost:4517
 ```
-
-| Output          | Flag        | Use it for                                  |
-| :-------------- | :---------- | :------------------------------------------ |
-| Terminal report | (default)   | Reading the result now                      |
-| HTML page       | `--report`  | Sending to someone, one self-contained file |
-| JSON            | `--json`    | Scripts and other tools                     |
-| Exit code       | `--fail-on` | Failing CI on real bugs                     |
-
-| Exit code | Meaning                                                                         |
-| :-------- | :------------------------------------------------------------------------------ |
-| `0`       | No finding reached the `--fail-on` severities (default: critical and high)      |
-| `1`       | A finding reached them, an `assert` budget was breached, or sniff could not run |
 
 <img alt="sniff walking a buggy app and streaming findings with severity, confidence, steps to reproduce, and a fix" src="https://raw.githubusercontent.com/Aboudjem/sniff/main/.github/assets/demo.gif" width="100%">
 
@@ -101,14 +99,20 @@ claude mcp add sniff-qa -- npx -y sniff-qa --mcp
 ```
 
 The first walk downloads two things, once: the browser engine (Playwright, axe-core and
-Lighthouse, about 200 MB) and Chromium (about 165 MB). Both took 159 s here on 2026-11-17.
-To do it ahead of time, run:
+Lighthouse) and Chromium. To do it ahead of time, run:
 
 ```bash
 npx sniff-qa install
 ```
 
-It ends with the time it took. `npx sniff-qa doctor` checks Node, the browser and your dev server.
+It ends with the time it took. On a Mac with an empty npm cache it printed 34 s (2026-11-17, sniff 0.9.1).
+It left 193 MB of engine and 528 MB of Chromium on disk. To re-measure on macOS:
+
+```bash
+du -sm ~/.cache/sniff-qa/engine/* ~/Library/Caches/ms-playwright
+```
+
+`npx sniff-qa doctor` checks Node, the browser and your dev server.
 
 The MCP server starts before those downloads. With an empty npm cache, `npx -y sniff-qa@0.9.1 --mcp`
 answered its first handshake in 3.1 to 4.9 s (5 runs, 2026-11-17). Version 0.9.0 took 37 to 93 s,
@@ -117,6 +121,20 @@ past Claude Code's 30 s connect limit. To re-measure, in a clone of this repo:
 ```bash
 npm run cold-start -- 0.9.1 5
 ```
+
+A walk prints progress lines, then the report. You can take the result four ways:
+
+| Output          | Flag        | Use it for                                  |
+| :-------------- | :---------- | :------------------------------------------ |
+| Terminal report | (default)   | Reading the result now                      |
+| HTML page       | `--report`  | Sending to someone, one self-contained file |
+| JSON            | `--json`    | Scripts and other tools                     |
+| Exit code       | `--fail-on` | Failing CI on real bugs                     |
+
+| Exit code | Meaning                                                                         |
+| :-------- | :------------------------------------------------------------------------------ |
+| `0`       | No finding reached the `--fail-on` severities (default: critical and high)      |
+| `1`       | A finding reached them, an `assert` budget was breached, or sniff could not run |
 
 <details>
 <summary>Project install and CI</summary>
@@ -132,7 +150,7 @@ with browser caching and report artifacts.
 1. **Find the app.** It uses `--url`, or a dev server on a common port.
 2. **Walk it.** A headless Chromium follows your links, clicks buttons and fills forms, like a user.
 3. **Judge what happened.** Each page is checked for 12 classes of bugs.
-4. **Prove it.** A finding needs a route, the steps, a screenshot and the console or network excerpt.
+4. **Prove it.** A finding needs a route and the steps. It adds a screenshot and the console or network lines when it has them.
 5. **Report.** Verdict first, then the fix-first list, then the detail.
 
 The 12 classes:
@@ -233,7 +251,7 @@ More answers are in [docs/faq.md](docs/faq.md).
 ## Limits
 
 - It needs a running app for the walk. Without one you only get the source scan.
-- The first walk needs internet to download the browser engine and Chromium once, about 365 MB.
+- The first walk needs internet to download the browser engine and Chromium once, 721 MB on disk on a Mac.
 - Until then, MCP browser tools answer `needsSetup` and the agent calls `sniff_install` first.
 - Dead-link checking follows external links, so a walk requests the third-party URLs your pages link to.
 - Redaction covers report text, not screenshot pixels. A screenshot of a logged-in page can show private data.

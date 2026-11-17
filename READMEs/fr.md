@@ -12,7 +12,7 @@
 
 <p align="center"><a href="../README.md">English</a> · <a href="zh-CN.md">简体中文</a> · <a href="ja.md">日本語</a> · <a href="es.md">Español</a> · <b>Français</b></p>
 
-<p align="center"><b>Pointez-le vers votre application qui tourne. Il parcourt vos vrais parcours utilisateur dans un vrai navigateur et vous dit ce qui est réellement cassé, preuves à l'appui.</b></p>
+<p align="center"><b>Repérez ce qui est cassé dans votre application web avant vos utilisateurs.</b></p>
 
 <p align="center"><a href="#ce-que-ça-fait">Ce que ça fait</a> · <a href="#installation">Installation</a> · <a href="#utilisation">Utilisation</a> · <a href="#ce-que-vous-obtenez">Ce que vous obtenez</a> · <a href="#fonctionne-dans-votre-éditeur">Fonctionne dans votre éditeur</a> · <a href="#bon-à-savoir">Bon à savoir</a></p>
 
@@ -25,19 +25,22 @@ claude plugin install sniff@10x
 
 ## Ce que ça fait
 
-La plupart des linters lisent votre code source sans jamais exécuter votre application, et les
-frameworks de bout en bout vous demandent d'écrire et de maintenir les tests vous-même. sniff ouvre
-votre application qui tourne dans un vrai navigateur, clique et remplit les champs comme le ferait
-une personne, puis juge ce qui s'est réellement passé.
+Vous avez changé un formulaire, et une page que vous n'avez jamais ouverte renvoie maintenant une
+erreur 500. sniff ouvre votre application qui tourne dans un vrai navigateur et la parcourt comme le
+ferait un utilisateur. Chaque bug de page qu'il signale vient avec les étapes qui le reproduisent.
 
-- **Il trouve 12 catégories de bugs**, des routes en HTTP 500 et des liens morts jusqu'aux données
-  bouche-trou, aux boutons d'envoi qui ne font rien, aux formulaires vidés par le bouton retour, aux
-  indicateurs de chargement bloqués et aux débordements sur mobile.
-- **Il prouve chacun d'eux.** Chaque constat porte la route et les étapes ordonnées qui l'ont
-  produit, plus la capture d'écran et l'extrait de console ou de réseau relevés par le contrôle.
-  Pas d'étapes, pas de constat.
-- **Il a été mesuré.** Sur une application de test truffée de 21 bugs couvrant les 12 catégories,
-  plus une page témoin propre, sniff en trouve 21 sur 21 et ne signale rien sur la page témoin.
+### Pourquoi l'utiliser
+
+- **Corrigez au lieu de chercher.** Chaque constat de page donne la route, les étapes et une
+  correction, la plupart avec une capture d'écran.
+- **La preuve qu'il trouve de vrais bugs.** Testé sur des bugs plantés exprès : 21 sur 21 trouvés,
+  0 faux constat sur la page propre (`npm run build && npm run proof`).
+- **Bloquez les mauvais merges.** `--fail-on` sort en 1 sur un constat critique ou élevé, et
+  `npx sniff-qa ci` écrit le fichier GitHub Actions. Pas de clé d'API.
+
+Il lui faut votre application lancée, et il soumet de vrais formulaires : utilisez une application de
+développement ou de préproduction. Le premier parcours télécharge un navigateur une fois, environ
+720 Mo sur disque sur un Mac.
 
 ## Installation
 
@@ -113,7 +116,7 @@ Ajoutez `--report` pour obtenir une page HTML autonome que vous pouvez envoyer �
 </picture>
 
 - **Un rapport dans le terminal** groupé par gravité, chaque constat avec ses étapes, une correction
-  et un chemin de capture d'écran.
+  et, la plupart du temps, un chemin de capture d'écran.
 - **Un fichier partageable**, un rapport HTML autonome avec `--report` ou du JSON avec `--json`.
 - **Un code de sortie** non nul dès que les constats atteignent la gravité de `--fail-on`, pour que
   l'intégration continue échoue sur de vrais bugs.

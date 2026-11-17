@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 640" fill="none" role="img"
-     aria-label="sniff: Walks your app. Finds real bugs. Zero config.">
+     aria-label="sniff: Your app is broken somewhere. Find where. A real browser clicks through your pages and reports each bug.">
   <title>sniff</title>
   <defs>
     <linearGradient id="sf-ground" x1="0" y1="0" x2="0.4" y2="1">
@@ -130,9 +130,9 @@
     </g>
   </g>
   <text class="mono eyebrow" x="96" y="258">BROWSER QA FOR YOUR RUNNING APP</text>
-  <text class="disp head" x="96" y="416">Walks your app. Finds real bugs. Zero config.</text>
-  <text class="disp sub" x="96" y="458">Autonomous flow-walk engine: broken pages, forms, a11y, console errors,</text>
-  <text class="disp sub" x="96" y="490">each with screenshot proof. No API key.</text>
-  <g transform="translate(0,506)"><rect x="96" y="0" width="200" height="38" rx="19" fill="#0E1524" stroke="#1E2A42" stroke-width="1"/><text class="mono chipbig" x="118" y="25">507 tests pass</text><rect x="316" y="0" width="178" height="38" rx="19" fill="#0E1524" stroke="#1E2A42" stroke-width="1"/><text class="mono chipbig" x="338" y="25">npx sniff-qa</text></g>
+  <text class="disp head" x="96" y="416">Your app is broken somewhere. Find where.</text>
+  <text class="disp sub" x="96" y="458">A real browser clicks through your pages and reports each bug.</text>
+  <text class="disp sub" x="96" y="490">Use a dev or staging app: it submits real forms. No API key.</text>
+  <g transform="translate(0,506)"><rect x="96" y="0" width="318" height="38" rx="19" fill="#0E1524" stroke="#1E2A42" stroke-width="1"/><text class="mono chipbig" x="118" y="25">21/21 planted bugs found</text><rect x="434" y="0" width="496" height="38" rx="19" fill="#0E1524" stroke="#1E2A42" stroke-width="1"/><text class="mono chipbig" x="456" y="25">npx sniff-qa --url http://localhost:3000</text></g>
   <text class="mono tag" x="96" y="604">github.com/Aboudjem/sniff</text>
 </svg>

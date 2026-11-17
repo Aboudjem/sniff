@@ -1,10 +1,11 @@
 # sniff
 
-> sniff walks your running web app in a real headless browser and reports what is broken, with the
-> steps to reproduce it. Each finding has a severity, a confidence label, a screenshot and a fix.
+> sniff catches the 500s, dead links and broken forms in your running web app before your users do.
+> It walks the app in a real headless browser. Each page finding has a route, the steps that
+> reproduce it, a severity, a confidence label and a fix, most with a screenshot.
 > The report opens with a PASS or FAIL verdict and the three findings to fix first. npm package
 > `sniff-qa`, binaries `sniff` and `sniff-qa`. CLI and MCP server. No API key. Node 22 or newer.
-> Apache-2.0. Version 0.9.1, updated 2026-11-17.
+> Apache-2.0. Version 0.9.2, updated 2026-11-17.
 
 A finding without reproduction proof is not a finding. On the planted-bug fixture (21 bugs across all
 12 classes, plus a clean control page) sniff finds 21 of 21 with 0 findings on the clean page.
@@ -133,8 +134,9 @@ clean control page of the test fixture it reports 0 findings; across the 21-bug 
 
 Q: Do I need an API key or any configuration?
 A: No. sniff requires no API key and works with zero config. It auto-detects your running dev server;
-the only one-time cost is the browser engine (~200 MB) and Chromium build (~165 MB) it downloads
-automatically on the first walk.
+the only one-time cost is the browser engine and Chromium it downloads on the first walk. On a Mac
+that left 193 MB of engine and 528 MB of Chromium on disk (`npx sniff-qa install`, 2026-11-17).
+A walk clicks buttons and submits real forms, so point it at a dev or staging app.
 
 Q: What does "needs out-of-band verification" mean?
 A: For broken async outcomes (issue class 9), e.g. a form that submits but shows no success feedback,

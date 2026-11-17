@@ -4,7 +4,7 @@ Instructions for AI agents and coding assistants working in, or invoking, this r
 
 ## What this repo is
 
-sniff is an autonomous QA scanner: point it at a running web app and it walks the app's real user flows in a real (headless) browser and reports what's actually broken, with proof. It is not a static linter. npm package `sniff-qa` (binaries `sniff` and `sniff-qa`); ships as both a CLI and an MCP server (Claude Code plugin); Apache-2.0; Node >= 22; no API key required.
+sniff catches what is broken in a running web app before its users do. It walks the app in a real (headless) browser and reports each page bug with the route, the steps that reproduce it and a fix. A walk clicks buttons and submits real forms, so point it at a dev or staging app. It is not a static linter. npm package `sniff-qa` (binaries `sniff` and `sniff-qa`); ships as both a CLI and an MCP server (Claude Code plugin); Apache-2.0; Node >= 22; no API key required.
 
 ## How an agent should USE sniff
 

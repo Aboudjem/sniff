@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 400" fill="none" role="img"
-     aria-label="sniff, browser QA for your running app: finds what is actually broken, with proof">
+     aria-label="sniff, browser QA for your running app: catch what is broken before your users do">
   <title>sniff</title>
   <defs>
     <linearGradient id="sf-ground" x1="0" y1="0" x2="0.4" y2="1">
@@ -147,7 +147,7 @@
   <line x1="500" y1="100" x2="500" y2="300" stroke="url(#sf-rule)" stroke-width="1.5"/>
   <g transform="translate(544,0)">
     <text class="mono eyebrow" x="0" y="134">BROWSER QA FOR YOUR RUNNING APP</text>
-    <text class="disp head" x="0" y="186">Finds what is actually broken, with proof</text>
+    <text class="disp head" x="0" y="186">Catch what is broken before your users do</text>
     <text class="disp sub" x="0" y="222">Walks your real user flows in a real browser. No API key.</text>
     <g transform="translate(0,265)"><g class="sfp1"><circle cx="0" cy="0" r="4.5" fill="#FF4D8D" filter="url(#sf-glow-sm)"/></g><g class="sfp2"><circle cx="22" cy="0" r="4.5" fill="#FF4D8D" filter="url(#sf-glow-sm)"/></g><g class="sfp3"><circle cx="44" cy="0" r="4.5" fill="#FF4D8D" filter="url(#sf-glow-sm)"/></g><g class="sfp4"><circle cx="66" cy="0" r="4.5" fill="#FF4D8D" filter="url(#sf-glow-sm)"/></g><g class="sfp5"><circle cx="88" cy="0" r="4.5" fill="#FF4D8D" filter="url(#sf-glow-sm)"/></g><g class="sfp6"><circle cx="110" cy="0" r="4.5" fill="#FF4D8D" filter="url(#sf-glow-sm)"/></g><g class="sfp7"><circle cx="132" cy="0" r="4.5" fill="#FF4D8D" filter="url(#sf-glow-sm)"/></g><g class="sfp8"><circle cx="154" cy="0" r="4.5" fill="#FF4D8D" filter="url(#sf-glow-sm)"/></g><g class="sfp9"><circle cx="176" cy="0" r="4.5" fill="#FF4D8D" filter="url(#sf-glow-sm)"/></g><g class="sfp10"><circle cx="198" cy="0" r="4.5" fill="#FF4D8D" filter="url(#sf-glow-sm)"/></g><g class="sfp11"><circle cx="220" cy="0" r="4.5" fill="#FF4D8D" filter="url(#sf-glow-sm)"/></g><g class="sfp12"><circle cx="242" cy="0" r="4.5" fill="#FF4D8D" filter="url(#sf-glow-sm)"/></g><text class="mono tag" x="278" y="4">12 CLASSES OF BUGS</text></g>
   </g>

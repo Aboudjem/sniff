@@ -1,1 +1,1 @@
-Finds what is broken in your running web app: walks it in a real browser, reports each bug with steps to reproduce.
+Catch the 500s, dead links and broken forms in your running web app, each with the steps that reproduce it.
