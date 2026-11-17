@@ -1,6 +1,6 @@
 {
   "name": "sniff",
-  "version": "0.9.4",
+  "version": "0.9.5",
   "description": "Find what is broken in your running web app before users do. Each page bug comes with the steps to repeat it and a fix.",
   "author": {
     "name": "Adam Boudjemaa",

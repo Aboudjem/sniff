@@ -7,13 +7,13 @@
     "url": "https://github.com/Aboudjem/sniff",
     "source": "github"
   },
-  "version": "0.9.4",
+  "version": "0.9.5",
   "packages": [
     {
       "registryType": "npm",
       "registryBaseUrl": "https://registry.npmjs.org",
       "identifier": "sniff-qa",
-      "version": "0.9.4",
+      "version": "0.9.5",
       "transport": {
         "type": "stdio"
       },

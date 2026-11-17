@@ -20,8 +20,13 @@ sniff 在真实浏览器里打开你正在运行的应用，像用户一样点�
 |:--|:--|:--|
 | 预埋的 21 个 bug 全部找到，误报 0 个：`npm run build && npm run proof`。 | 每个页面 bug 都附带路由、复现步骤和修复建议。 | `--fail-on` 遇到 critical 或 high 的 bug 时以 1 退出，CI 就会拦住合并。 |
 
-**适用于：** 任何 MCP 客户端、任何能读 skills 的智能体，或只用命令行。
-MCP 是智能体调用工具的方式。已测试：Claude Code、Codex CLI。巡查靠的是浏览器，不是模型。
+**适用于：** 任何 MCP 客户端、任何能读 skills 的智能体，或只用命令行。MCP 是智能体调用工具的方式。
+
+已测试：Claude Code、Codex CLI。巡查靠的是浏览器，不是模型。
+
+- **它是什么：** 一个为你正在运行的 Web 应用找 bug 的工具。你不用写测试。
+- **何时使用：** 改完代码之后，合并或发布之前。
+- **你会得到：** 先是结论，然后是每个 bug 的路由、步骤和修复建议。
 
 ```bash
 npx sniff-qa --url http://localhost:3000
@@ -57,16 +62,69 @@ npx sniff-qa --url http://localhost:3000
 
 ## 安装
 
-你改了一个表单。结果一个你从没打开过的页面出现了服务器错误 (HTTP 500)。
-sniff 会替你找到它，并给出复现步骤和修复建议。大多数发现还附带截图。
-不需要 API key，也不需要账号。
+**选择你的智能体。** 每条命令都会为你的所有项目安装 sniff。需要 Node.js 22 或更高版本。
 
-第一次巡查会下载约 440 MB，只下载一次。在 Mac 上约占 730 MB 磁盘。
-细节和测量命令见下文。
+<p><a href="#claude-code"><img alt="Claude Code" src="https://img.shields.io/badge/Claude_Code-D97757?style=for-the-badge&logo=claude&logoColor=white"></a> <a href="#codex"><img alt="Codex" src="https://img.shields.io/badge/Codex-000000?style=for-the-badge&logo=data%3Aimage%2Fsvg%2Bxml%3Bbase64%2CPHN2ZyBmaWxsPSJ3aGl0ZSIgcm9sZT0iaW1nIiB2aWV3Qm94PSIwIDAgMjQgMjQiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI%2BPHRpdGxlPk9wZW5BSTwvdGl0bGU%2BPHBhdGggZD0iTTIyLjI4MTkgOS44MjExYTUuOTg0NyA1Ljk4NDcgMCAwIDAtLjUxNTctNC45MTA4IDYuMDQ2MiA2LjA0NjIgMCAwIDAtNi41MDk4LTIuOUE2LjA2NTEgNi4wNjUxIDAgMCAwIDQuOTgwNyA0LjE4MThhNS45ODQ3IDUuOTg0NyAwIDAgMC0zLjk5NzcgMi45IDYuMDQ2MiA2LjA0NjIgMCAwIDAgLjc0MjcgNy4wOTY2IDUuOTggNS45OCAwIDAgMCAuNTExIDQuOTEwNyA2LjA1MSA2LjA1MSAwIDAgMCA2LjUxNDYgMi45MDAxQTUuOTg0NyA1Ljk4NDcgMCAwIDAgMTMuMjU5OSAyNGE2LjA1NTcgNi4wNTU3IDAgMCAwIDUuNzcxOC00LjIwNTggNS45ODk0IDUuOTg5NCAwIDAgMCAzLjk5NzctMi45MDAxIDYuMDU1NyA2LjA1NTcgMCAwIDAtLjc0NzUtNy4wNzI5em0tOS4wMjIgMTIuNjA4MWE0LjQ3NTUgNC40NzU1IDAgMCAxLTIuODc2NC0xLjA0MDhsLjE0MTktLjA4MDQgNC43NzgzLTIuNzU4MmEuNzk0OC43OTQ4IDAgMCAwIC4zOTI3LS42ODEzdi02LjczNjlsMi4wMiAxLjE2ODZhLjA3MS4wNzEgMCAwIDEgLjAzOC4wNTJ2NS41ODI2YTQuNTA0IDQuNTA0IDAgMCAxLTQuNDk0NSA0LjQ5NDR6bS05LjY2MDctNC4xMjU0YTQuNDcwOCA0LjQ3MDggMCAwIDEtLjUzNDYtMy4wMTM3bC4xNDIuMDg1MiA0Ljc4MyAyLjc1ODJhLjc3MTIuNzcxMiAwIDAgMCAuNzgwNiAwbDUuODQyOC0zLjM2ODV2Mi4zMzI0YS4wODA0LjA4MDQgMCAwIDEtLjAzMzIuMDYxNUw5Ljc0IDE5Ljk1MDJhNC40OTkyIDQuNDk5MiAwIDAgMS02LjE0MDgtMS42NDY0ek0yLjM0MDggNy44OTU2YTQuNDg1IDQuNDg1IDAgMCAxIDIuMzY1NS0xLjk3MjhWMTEuNmEuNzY2NC43NjY0IDAgMCAwIC4zODc5LjY3NjVsNS44MTQ0IDMuMzU0My0yLjAyMDEgMS4xNjg1YS4wNzU3LjA3NTcgMCAwIDEtLjA3MSAwbC00LjgzMDMtMi43ODY1QTQuNTA0IDQuNTA0IDAgMCAxIDIuMzQwOCA3Ljg3MnptMTYuNTk2MyAzLjg1NThMMTMuMTAzOCA4LjM2NCAxNS4xMTkyIDcuMmEuMDc1Ny4wNzU3IDAgMCAxIC4wNzEgMGw0LjgzMDMgMi43OTEzYTQuNDk0NCA0LjQ5NDQgMCAwIDEtLjY3NjUgOC4xMDQydi01LjY3NzJhLjc5Ljc5IDAgMCAwLS40MDctLjY2N3ptMi4wMTA3LTMuMDIzMWwtLjE0Mi0uMDg1Mi00Ljc3MzUtMi43ODE4YS43NzU5Ljc3NTkgMCAwIDAtLjc4NTQgMEw5LjQwOSA5LjIyOTdWNi44OTc0YS4wNjYyLjA2NjIgMCAwIDEgLjAyODQtLjA2MTVsNC44MzAzLTIuNzg2NmE0LjQ5OTIgNC40OTkyIDAgMCAxIDYuNjgwMiA0LjY2ek04LjMwNjUgMTIuODYzbC0yLjAyLTEuMTYzOGEuMDgwNC4wODA0IDAgMCAxLS4wMzgtLjA1NjdWNi4wNzQyYTQuNDk5MiA0LjQ5OTIgMCAwIDEgNy4zNzU3LTMuNDUzN2wtLjE0Mi4wODA1TDguNzA0IDUuNDU5YS43OTQ4Ljc5NDggMCAwIDAtLjM5MjcuNjgxM3ptMS4wOTc2LTIuMzY1NGwyLjYwMi0xLjQ5OTggMi42MDY5IDEuNDk5OHYyLjk5OTRsLTIuNTk3NCAxLjQ5OTctMi42MDY3LTEuNDk5N1oiLz48L3N2Zz4%3D"></a> <a href="#cursor"><img alt="Cursor" src="https://img.shields.io/badge/Cursor-000000?style=for-the-badge&logo=cursor&logoColor=white"></a> <a href="#gemini-cli"><img alt="Gemini CLI" src="https://img.shields.io/badge/Gemini_CLI-8E75B2?style=for-the-badge&logo=googlegemini&logoColor=white"></a> <a href="#github-copilot"><img alt="GitHub Copilot" src="https://img.shields.io/badge/GitHub_Copilot-000000?style=for-the-badge&logo=githubcopilot&logoColor=white"></a> <a href="#opencode"><img alt="OpenCode" src="https://img.shields.io/badge/OpenCode-211E1E?style=for-the-badge&logo=opencode&logoColor=white"></a></p>
 
-需要 Node.js 22 或更高版本。选一种方式。
+#### Claude Code
 
-**命令行，不需要编辑器。** 先启动你的应用，再在另一个终端里巡查它：
+已测试。为你的用户添加 MCP 服务器：
+
+```bash
+claude mcp add -s user sniff-qa -- npx -y sniff-qa --mcp
+```
+
+只用于当前项目：去掉 `-s user`。
+
+#### Codex
+
+已测试。Codex 为你的用户添加 MCP 服务器：
+
+```bash
+codex mcp add sniff-qa -- npx -y sniff-qa --mcp
+```
+
+#### Cursor
+
+已测试安装。把 3 个 skills 添加到 `~/.agents/skills`：
+
+```bash
+npx skills add Aboudjem/sniff -g -a cursor
+```
+
+只用于当前项目：去掉 `-g`。
+
+#### Gemini CLI
+
+已测试安装。为你的用户添加扩展：
+
+```bash
+gemini extensions install https://github.com/Aboudjem/sniff
+```
+
+#### GitHub Copilot
+
+已测试安装。把 3 个 skills 添加到 `~/.agents/skills`：
+
+```bash
+npx skills add Aboudjem/sniff -g -a github-copilot
+```
+
+只用于当前项目：去掉 `-g`。
+
+#### OpenCode
+
+已测试安装。把 3 个 skills 添加到 `~/.agents/skills`：
+
+```bash
+npx skills add Aboudjem/sniff -g -a opencode
+```
+
+只用于当前项目：去掉 `-g`。
+
+#### 不用智能体
+
+无需安装。先启动你的应用，再在另一个终端里巡查它：
 
 ```bash
 npx sniff-qa --url http://localhost:3000
@@ -74,34 +132,29 @@ npx sniff-qa --url http://localhost:3000
 
 npm 包名是 `sniff-qa`。不要运行 `npx sniff`：那是一个无关的包。
 
-**Claude Code 插件**，通过 [10x marketplace](https://github.com/Aboudjem/10x) 安装：
+#### Claude Code 插件
+
+插件会为你的用户添加 skills 和 MCP 服务器，通过 [10x marketplace](https://github.com/Aboudjem/10x) 安装：
 
 ```bash
 claude plugin marketplace add Aboudjem/10x
 claude plugin install sniff@10x
 ```
 
-**适用于任何智能体的 skills**，通过 Vercel 的 skills CLI 安装：
+其他 MCP 客户端运行 `npx -y sniff-qa --mcp`。各编辑器的配置片段在 [docs/editors.md](../docs/editors.md)。
 
-```bash
-npx skills add Aboudjem/sniff
-```
+#### 首次运行
 
-**MCP 服务器**，适用于任何 MCP 客户端：
-
-```bash
-claude mcp add sniff-qa -- npx -y sniff-qa --mcp
-```
-
-第一次巡查会下载两样东西，只下载一次：浏览器引擎 (Playwright、axe-core 和
-Lighthouse) 以及浏览器本身 Chromium。想提前下载，运行：
+第一次巡查会下载约 440 MB，只下载一次。在 Mac 上约占 730 MB 磁盘。
+它会获取浏览器引擎 (Playwright、axe-core 和 Lighthouse) 以及浏览器本身 Chromium。
+想提前下载，运行：
 
 ```bash
 npx sniff-qa install
 ```
 
 它最后会显示耗时。在缓存为空的 Mac 上显示 43 秒 (2026-11-17，sniff 0.9.3)。
-下载量约 440 MB。磁盘上留下 193 MB 引擎和 530 MB Chromium。
+磁盘上留下 193 MB 引擎和 530 MB Chromium。
 大小因平台而异。在 macOS 上重新测量：
 
 ```bash
@@ -143,6 +196,9 @@ npm run cold-start -- 0.9.1 5
 
 ## 工作原理
 
+例子：你改了一个表单，结果一个你从没打开过的页面出现了服务器错误 (HTTP 500)。
+sniff 会巡查你的链接能到达的页面，所以能在用户之前发现这个错误。
+
 <img alt="sniff walking a buggy app and streaming findings with severity, confidence, steps to reproduce, and a fix" src="https://raw.githubusercontent.com/Aboudjem/sniff/main/.github/assets/demo.gif" width="100%">
 
 <img alt="How sniff works: crawl, act, assert, prove, report" src="https://raw.githubusercontent.com/Aboudjem/sniff/main/.github/assets/how-it-works.svg" width="100%">
@@ -179,7 +235,7 @@ MCP 服务器给你的智能体提供以下工具：
 
 ## 兼容的智能体
 
-每一行都在 2026-11-17 用 sniff 0.9.0 构建测试过。
+每一行都在 2026-11-17 测试过。前五行用 sniff 0.9.0 构建，安装相关的行用 0.9.4。
 
 | 智能体         | 运行了什么                                                                          | 测试日期   |
 | :------------- | :---------------------------------------------------------------------------------- | :--------- |
@@ -188,8 +244,14 @@ MCP 服务器给你的智能体提供以下工具：
 | Gemini CLI     | `gemini extensions validate .` 接受了 `gemini-extension.json`                       | 2026-11-17 |
 | 任何 MCP 客户端 | `node sniff-tests/mcp-smoke.mjs` 列出 6 个工具，一次巡查返回 20 个发现             | 2026-11-17 |
 | Skills CLI     | `npx skills@1.9.0 add Aboudjem/sniff` 把 3 个 skills 装进了临时文件夹               | 2026-11-17 |
+| Claude Code    | `claude mcp add -s user` 把 sniff-qa 写入一次性主目录的 `.claude.json` | 2026-11-17 |
+| Codex CLI      | `codex mcp add` 把 sniff-qa 写入一次性主目录的 `config.toml` | 2026-11-17 |
+| Gemini CLI     | `gemini extensions install` 在一次性主目录中安装并启用了 sniff | 2026-11-17 |
+| Cursor         | `skills add -g -a cursor` 把 3 个 skills 放进一次性的 `~/.agents/skills` | 2026-11-17 |
+| GitHub Copilot | `skills add -g -a github-copilot` 把 3 个 skills 放进 `~/.agents/skills` | 2026-11-17 |
+| OpenCode       | `skills add -g -a opencode` 把 3 个 skills 放进 `~/.agents/skills` | 2026-11-17 |
 
-有文档但今天未测试：Cursor、带 Copilot 的 VS Code、Windsurf、OpenCode 和 Zed。
+有文档但今天未测试：Windsurf 和 Zed。Cursor、Copilot 和 OpenCode 只测试了安装。
 它们的配置片段在 [docs/editors.md](../docs/editors.md)。
 
 ## 证据

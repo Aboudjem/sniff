@@ -92,5 +92,5 @@ no browser download. It is not a read-only profile: the source scan still writes
 
 ## Which editors does it work in?
 
-Claude Code as a plugin, 70+ agents through `npx skills add Aboudjem/sniff`, and any MCP-capable
+Claude Code as a plugin, 70+ agents through `npx skills add Aboudjem/sniff -g`, and any MCP-capable
 client through `npx -y sniff-qa --mcp`. The per-editor snippets are in [editors.md](editors.md).

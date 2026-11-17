@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.9.5] - 2026-11-17
+
+Pick your agent, and install once for all your projects. No change to how sniff walks, scans or reports.
+
+### Changed
+
+- **Pick your agent.** Install now opens with a row of agent badges: Claude Code, Codex, Cursor, Gemini CLI,
+  GitHub Copilot and OpenCode. Each one links to its one command, marked "Tested" or "Install tested".
+- **Global by default.** The skills commands use `-g` and the Claude Code MCP command uses `-s user`, so sniff
+  is there in every project. Drop the flag to install for one project only.
+- **Shorter explanations.** The first screen says what sniff is, when to use it and what you get in four short
+  sentences. Repeated sentences lower down are gone.
+- **Docs.** `docs/editors.md`, `llms.txt` and the site page show the global commands. The site page had a wrong
+  `claude mcp add` line; it now matches the README.
+
 ## [0.9.4] - 2026-11-17
 
 A clearer first screen. No change to how sniff walks, scans or reports.

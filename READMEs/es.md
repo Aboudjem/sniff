@@ -20,8 +20,13 @@ sniff abre tu aplicación en marcha en un navegador real y hace clic como un usu
 |:--|:--|:--|
 | Encontró 21 de 21 bugs plantados, 0 hallazgos falsos: `npm run build && npm run proof`. | Cada bug de página trae su ruta, los pasos para repetirlo y una solución. | `--fail-on` sale con 1 ante bugs críticos o altos, así la CI detiene el merge. |
 
-**Funciona con:** cualquier cliente MCP, cualquier agente que lea skills, o solo la línea de comandos.
-MCP es la forma en que un agente llama a una herramienta. Probado: Claude Code, Codex CLI. El recorrido usa un navegador, no un modelo.
+**Funciona con:** cualquier cliente MCP, cualquier agente que lea skills, o solo la línea de comandos. MCP es la forma en que un agente llama a una herramienta.
+
+Probado: Claude Code, Codex CLI. El recorrido usa un navegador, no un modelo.
+
+- **Qué es:** un buscador de bugs para tu aplicación web en marcha. No escribes ninguna prueba.
+- **Cuándo usarlo:** después de cambiar código, antes de hacer merge o publicar.
+- **Qué obtienes:** primero un veredicto, luego cada bug con su ruta, sus pasos y una solución.
 
 ```bash
 npx sniff-qa --url http://localhost:3000
@@ -57,16 +62,69 @@ Usa una aplicación de desarrollo o de staging: un recorrido pulsa botones y env
 
 ## Instalación
 
-Cambiaste un formulario. Ahora una página que nunca abriste muestra un error del servidor (HTTP 500).
-sniff la encuentra por ti, con los pasos para repetirlo y una solución. La mayoría de los hallazgos también tienen captura de pantalla.
-No necesita clave de API ni cuenta.
+**Elige tu agente.** Cada comando instala sniff para todos tus proyectos. Node.js 22 o más reciente.
 
-El primer recorrido descarga unos 440 MB una sola vez. En un Mac ocupa unos 730 MB de disco.
-Los detalles y el comando para medirlo están más abajo.
+<p><a href="#claude-code"><img alt="Claude Code" src="https://img.shields.io/badge/Claude_Code-D97757?style=for-the-badge&logo=claude&logoColor=white"></a> <a href="#codex"><img alt="Codex" src="https://img.shields.io/badge/Codex-000000?style=for-the-badge&logo=data%3Aimage%2Fsvg%2Bxml%3Bbase64%2CPHN2ZyBmaWxsPSJ3aGl0ZSIgcm9sZT0iaW1nIiB2aWV3Qm94PSIwIDAgMjQgMjQiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI%2BPHRpdGxlPk9wZW5BSTwvdGl0bGU%2BPHBhdGggZD0iTTIyLjI4MTkgOS44MjExYTUuOTg0NyA1Ljk4NDcgMCAwIDAtLjUxNTctNC45MTA4IDYuMDQ2MiA2LjA0NjIgMCAwIDAtNi41MDk4LTIuOUE2LjA2NTEgNi4wNjUxIDAgMCAwIDQuOTgwNyA0LjE4MThhNS45ODQ3IDUuOTg0NyAwIDAgMC0zLjk5NzcgMi45IDYuMDQ2MiA2LjA0NjIgMCAwIDAgLjc0MjcgNy4wOTY2IDUuOTggNS45OCAwIDAgMCAuNTExIDQuOTEwNyA2LjA1MSA2LjA1MSAwIDAgMCA2LjUxNDYgMi45MDAxQTUuOTg0NyA1Ljk4NDcgMCAwIDAgMTMuMjU5OSAyNGE2LjA1NTcgNi4wNTU3IDAgMCAwIDUuNzcxOC00LjIwNTggNS45ODk0IDUuOTg5NCAwIDAgMCAzLjk5NzctMi45MDAxIDYuMDU1NyA2LjA1NTcgMCAwIDAtLjc0NzUtNy4wNzI5em0tOS4wMjIgMTIuNjA4MWE0LjQ3NTUgNC40NzU1IDAgMCAxLTIuODc2NC0xLjA0MDhsLjE0MTktLjA4MDQgNC43NzgzLTIuNzU4MmEuNzk0OC43OTQ4IDAgMCAwIC4zOTI3LS42ODEzdi02LjczNjlsMi4wMiAxLjE2ODZhLjA3MS4wNzEgMCAwIDEgLjAzOC4wNTJ2NS41ODI2YTQuNTA0IDQuNTA0IDAgMCAxLTQuNDk0NSA0LjQ5NDR6bS05LjY2MDctNC4xMjU0YTQuNDcwOCA0LjQ3MDggMCAwIDEtLjUzNDYtMy4wMTM3bC4xNDIuMDg1MiA0Ljc4MyAyLjc1ODJhLjc3MTIuNzcxMiAwIDAgMCAuNzgwNiAwbDUuODQyOC0zLjM2ODV2Mi4zMzI0YS4wODA0LjA4MDQgMCAwIDEtLjAzMzIuMDYxNUw5Ljc0IDE5Ljk1MDJhNC40OTkyIDQuNDk5MiAwIDAgMS02LjE0MDgtMS42NDY0ek0yLjM0MDggNy44OTU2YTQuNDg1IDQuNDg1IDAgMCAxIDIuMzY1NS0xLjk3MjhWMTEuNmEuNzY2NC43NjY0IDAgMCAwIC4zODc5LjY3NjVsNS44MTQ0IDMuMzU0My0yLjAyMDEgMS4xNjg1YS4wNzU3LjA3NTcgMCAwIDEtLjA3MSAwbC00LjgzMDMtMi43ODY1QTQuNTA0IDQuNTA0IDAgMCAxIDIuMzQwOCA3Ljg3MnptMTYuNTk2MyAzLjg1NThMMTMuMTAzOCA4LjM2NCAxNS4xMTkyIDcuMmEuMDc1Ny4wNzU3IDAgMCAxIC4wNzEgMGw0LjgzMDMgMi43OTEzYTQuNDk0NCA0LjQ5NDQgMCAwIDEtLjY3NjUgOC4xMDQydi01LjY3NzJhLjc5Ljc5IDAgMCAwLS40MDctLjY2N3ptMi4wMTA3LTMuMDIzMWwtLjE0Mi0uMDg1Mi00Ljc3MzUtMi43ODE4YS43NzU5Ljc3NTkgMCAwIDAtLjc4NTQgMEw5LjQwOSA5LjIyOTdWNi44OTc0YS4wNjYyLjA2NjIgMCAwIDEgLjAyODQtLjA2MTVsNC44MzAzLTIuNzg2NmE0LjQ5OTIgNC40OTkyIDAgMCAxIDYuNjgwMiA0LjY2ek04LjMwNjUgMTIuODYzbC0yLjAyLTEuMTYzOGEuMDgwNC4wODA0IDAgMCAxLS4wMzgtLjA1NjdWNi4wNzQyYTQuNDk5MiA0LjQ5OTIgMCAwIDEgNy4zNzU3LTMuNDUzN2wtLjE0Mi4wODA1TDguNzA0IDUuNDU5YS43OTQ4Ljc5NDggMCAwIDAtLjM5MjcuNjgxM3ptMS4wOTc2LTIuMzY1NGwyLjYwMi0xLjQ5OTggMi42MDY5IDEuNDk5OHYyLjk5OTRsLTIuNTk3NCAxLjQ5OTctMi42MDY3LTEuNDk5N1oiLz48L3N2Zz4%3D"></a> <a href="#cursor"><img alt="Cursor" src="https://img.shields.io/badge/Cursor-000000?style=for-the-badge&logo=cursor&logoColor=white"></a> <a href="#gemini-cli"><img alt="Gemini CLI" src="https://img.shields.io/badge/Gemini_CLI-8E75B2?style=for-the-badge&logo=googlegemini&logoColor=white"></a> <a href="#github-copilot"><img alt="GitHub Copilot" src="https://img.shields.io/badge/GitHub_Copilot-000000?style=for-the-badge&logo=githubcopilot&logoColor=white"></a> <a href="#opencode"><img alt="OpenCode" src="https://img.shields.io/badge/OpenCode-211E1E?style=for-the-badge&logo=opencode&logoColor=white"></a></p>
 
-Node.js 22 o más reciente. Elige un camino.
+#### Claude Code
 
-**Línea de comandos, sin editor.** Arranca tu aplicación y recórrela desde una segunda terminal:
+Probado. Añade el servidor MCP para tu usuario:
+
+```bash
+claude mcp add -s user sniff-qa -- npx -y sniff-qa --mcp
+```
+
+Solo este proyecto: quita `-s user`.
+
+#### Codex
+
+Probado. Codex añade los servidores MCP para tu usuario:
+
+```bash
+codex mcp add sniff-qa -- npx -y sniff-qa --mcp
+```
+
+#### Cursor
+
+Instalación probada. Añade las 3 skills en `~/.agents/skills`:
+
+```bash
+npx skills add Aboudjem/sniff -g -a cursor
+```
+
+Solo este proyecto: quita `-g`.
+
+#### Gemini CLI
+
+Instalación probada. Añade la extensión para tu usuario:
+
+```bash
+gemini extensions install https://github.com/Aboudjem/sniff
+```
+
+#### GitHub Copilot
+
+Instalación probada. Añade las 3 skills en `~/.agents/skills`:
+
+```bash
+npx skills add Aboudjem/sniff -g -a github-copilot
+```
+
+Solo este proyecto: quita `-g`.
+
+#### OpenCode
+
+Instalación probada. Añade las 3 skills en `~/.agents/skills`:
+
+```bash
+npx skills add Aboudjem/sniff -g -a opencode
+```
+
+Solo este proyecto: quita `-g`.
+
+#### Sin agente
+
+No hay nada que instalar. Arranca tu aplicación y recórrela desde una segunda terminal:
 
 ```bash
 npx sniff-qa --url http://localhost:3000
@@ -74,34 +132,29 @@ npx sniff-qa --url http://localhost:3000
 
 El paquete de npm es `sniff-qa`. No ejecutes `npx sniff`: es otro paquete sin relación.
 
-**Plugin de Claude Code**, a través del [marketplace 10x](https://github.com/Aboudjem/10x):
+#### Plugin de Claude Code
+
+El plugin añade las skills y el servidor MCP para tu usuario, a través del [marketplace 10x](https://github.com/Aboudjem/10x):
 
 ```bash
 claude plugin marketplace add Aboudjem/10x
 claude plugin install sniff@10x
 ```
 
-**Skills para cualquier agente**, con la CLI de skills de Vercel:
+Cualquier otro cliente MCP ejecuta `npx -y sniff-qa --mcp`. Los fragmentos para cada editor están en [docs/editors.md](../docs/editors.md).
 
-```bash
-npx skills add Aboudjem/sniff
-```
+#### Primera ejecución
 
-**Servidor MCP**, para cualquier cliente MCP:
-
-```bash
-claude mcp add sniff-qa -- npx -y sniff-qa --mcp
-```
-
-El primer recorrido descarga dos cosas, una sola vez: el motor de navegación (Playwright, axe-core y
-Lighthouse) y Chromium, el navegador en sí. Para hacerlo antes, ejecuta:
+El primer recorrido descarga unos 440 MB una sola vez. En un Mac ocupa unos 730 MB de disco.
+Descarga el motor de navegación (Playwright, axe-core y Lighthouse) y Chromium, el navegador en sí.
+Para hacerlo antes, ejecuta:
 
 ```bash
 npx sniff-qa install
 ```
 
 Termina mostrando el tiempo que tardó. En un Mac con cachés vacías mostró 43 s (2026-11-17, sniff 0.9.3).
-Descargó unos 440 MB. Dejó 193 MB de motor y 530 MB de Chromium en disco.
+Dejó 193 MB de motor y 530 MB de Chromium en disco.
 Los tamaños varían según la plataforma. Para medirlo de nuevo en macOS:
 
 ```bash
@@ -143,6 +196,9 @@ Activa su paso `Start the app` (quita el `#`) y añade `--url` para recorrer la 
 
 ## Cómo funciona
 
+Ejemplo: cambias un formulario, y una página que nunca abriste ahora muestra un error del servidor (HTTP 500).
+sniff recorre las páginas a las que llegan tus enlaces, así que puede encontrar ese error antes que tus usuarios.
+
 <img alt="sniff walking a buggy app and streaming findings with severity, confidence, steps to reproduce, and a fix" src="https://raw.githubusercontent.com/Aboudjem/sniff/main/.github/assets/demo.gif" width="100%">
 
 <img alt="How sniff works: crawl, act, assert, prove, report" src="https://raw.githubusercontent.com/Aboudjem/sniff/main/.github/assets/how-it-works.svg" width="100%">
@@ -179,7 +235,7 @@ El servidor MCP da a tu agente estas herramientas:
 
 ## Compatibilidad
 
-Cada fila se probó el 2026-11-17 con la versión 0.9.0 de sniff.
+Cada fila se probó el 2026-11-17. Las cinco primeras con la versión 0.9.0 de sniff, las filas de instalación con la 0.9.4.
 
 | Agente         | Qué se ejecutó                                                                            | Probado    |
 | :------------- | :---------------------------------------------------------------------------------------- | :--------- |
@@ -188,8 +244,14 @@ Cada fila se probó el 2026-11-17 con la versión 0.9.0 de sniff.
 | Gemini CLI     | `gemini extensions validate .` aceptó `gemini-extension.json`                             | 2026-11-17 |
 | Cualquier cliente MCP | `node sniff-tests/mcp-smoke.mjs` listó 6 herramientas y un recorrido dio 20 hallazgos | 2026-11-17 |
 | CLI de skills  | `npx skills@1.9.0 add Aboudjem/sniff` instaló las 3 skills en una carpeta temporal       | 2026-11-17 |
+| Claude Code    | `claude mcp add -s user` escribió sniff-qa en el `.claude.json` de una carpeta personal desechable | 2026-11-17 |
+| Codex CLI      | `codex mcp add` escribió sniff-qa en el `config.toml` de una carpeta personal desechable | 2026-11-17 |
+| Gemini CLI     | `gemini extensions install` instaló y activó sniff en una carpeta personal desechable | 2026-11-17 |
+| Cursor         | `skills add -g -a cursor` puso las 3 skills en un `~/.agents/skills` desechable | 2026-11-17 |
+| GitHub Copilot | `skills add -g -a github-copilot` puso las 3 skills en `~/.agents/skills` | 2026-11-17 |
+| OpenCode       | `skills add -g -a opencode` puso las 3 skills en `~/.agents/skills` | 2026-11-17 |
 
-Documentados, no probados hoy: Cursor, VS Code con Copilot, Windsurf, OpenCode y Zed.
+Documentados, no probados hoy: Windsurf y Zed. En Cursor, Copilot y OpenCode solo se probó la instalación.
 Sus fragmentos están en [docs/editors.md](../docs/editors.md).
 
 ## Pruebas

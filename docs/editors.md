@@ -12,29 +12,30 @@ You can use either or both. Neither needs an API key.
 ## Install the skills
 
 ```bash
-npx skills add Aboudjem/sniff
+npx skills add Aboudjem/sniff -g
 ```
 
-That prompts for the agent and scope. To skip the prompts, name the agent with `-a` and add `-y`:
+`-g` installs for all your projects. Only this project: drop `-g`.
+That prompts for the agent. To skip the prompts, name the agent with `-a` and add `-y`:
 
 | Agent | Command |
 | --- | --- |
-| Claude Code | `npx skills add Aboudjem/sniff -a claude-code -y` |
-| Cursor | `npx skills add Aboudjem/sniff -a cursor -y` |
-| Codex | `npx skills add Aboudjem/sniff -a codex -y` |
-| GitHub Copilot (and VS Code) | `npx skills add Aboudjem/sniff -a github-copilot -y` |
-| Gemini CLI | `npx skills add Aboudjem/sniff -a gemini-cli -y` |
-| OpenCode | `npx skills add Aboudjem/sniff -a opencode -y` |
-| Windsurf | `npx skills add Aboudjem/sniff -a windsurf -y` |
-| Zed | `npx skills add Aboudjem/sniff -a zed -y` |
-| Kimi Code CLI | `npx skills add Aboudjem/sniff -a kimi-code-cli -y` |
-| Mistral Vibe | `npx skills add Aboudjem/sniff -a mistral-vibe -y` |
-| Antigravity | `npx skills add Aboudjem/sniff -a antigravity -y` |
-| Hermes Agent | `npx skills add Aboudjem/sniff -a hermes-agent -y` |
-| Cline | `npx skills add Aboudjem/sniff -a cline -y` |
-| Trae | `npx skills add Aboudjem/sniff -a trae -y` |
-| OpenClaw | `npx skills add Aboudjem/sniff -a openclaw -y` |
-| Pi | `npx skills add Aboudjem/sniff -a pi -y` |
+| Claude Code | `npx skills add Aboudjem/sniff -g -a claude-code -y` |
+| Cursor | `npx skills add Aboudjem/sniff -g -a cursor -y` |
+| Codex | `npx skills add Aboudjem/sniff -g -a codex -y` |
+| GitHub Copilot (and VS Code) | `npx skills add Aboudjem/sniff -g -a github-copilot -y` |
+| Gemini CLI | `npx skills add Aboudjem/sniff -g -a gemini-cli -y` |
+| OpenCode | `npx skills add Aboudjem/sniff -g -a opencode -y` |
+| Windsurf | `npx skills add Aboudjem/sniff -g -a windsurf -y` |
+| Zed | `npx skills add Aboudjem/sniff -g -a zed -y` |
+| Kimi Code CLI | `npx skills add Aboudjem/sniff -g -a kimi-code-cli -y` |
+| Mistral Vibe | `npx skills add Aboudjem/sniff -g -a mistral-vibe -y` |
+| Antigravity | `npx skills add Aboudjem/sniff -g -a antigravity -y` |
+| Hermes Agent | `npx skills add Aboudjem/sniff -g -a hermes-agent -y` |
+| Cline | `npx skills add Aboudjem/sniff -g -a cline -y` |
+| Trae | `npx skills add Aboudjem/sniff -g -a trae -y` |
+| OpenClaw | `npx skills add Aboudjem/sniff -g -a openclaw -y` |
+| Pi | `npx skills add Aboudjem/sniff -g -a pi -y` |
 
 With `-y`, the skills CLI installs into the current project when it detects one, and for your user
 otherwise. Add `-g` to force user scope. The full agent list, and the
@@ -62,7 +63,8 @@ first-run confirmation, which matters because MCP clients give the server no ter
 ### Claude Code
 
 ```bash
-claude mcp add sniff-qa -- npx -y sniff-qa --mcp
+# for all your projects:
+claude mcp add -s user sniff-qa -- npx -y sniff-qa --mcp
 # project-scoped, writes ./.mcp.json:
 claude mcp add --scope project sniff-qa -- npx -y sniff-qa --mcp
 ```
