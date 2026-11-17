@@ -62,7 +62,7 @@ export const pageHealthDetector: Detector = async (ctx: DetectorContext): Promis
         severity: 'high',
         confidence: 'likely',
         steps: [`Navigate to ${ctx.route}`, 'The page loaded (HTTP 2xx) but rendered no visible content'],
-        suggestedFix: 'A 200 response rendered an empty document — likely a client-side render crash or missing data. Check the console for errors and verify the page mounts.',
+        suggestedFix: 'A 200 response rendered an empty document, likely a client-side render crash or missing data. Check the console for errors and verify the page mounts.',
         dedupeKey: 'blank',
       });
     }

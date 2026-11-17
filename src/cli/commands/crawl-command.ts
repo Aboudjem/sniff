@@ -105,13 +105,16 @@ export async function crawlCommand(opts: CrawlCommandOptions): Promise<number> {
   if (opts.json) {
     console.log(JSON.stringify(report, null, 2));
   } else {
-    console.log(formatReportText(report, { all: opts.all }));
-    // Make "ran fine, found bugs" unmistakable: a non-zero exit must not read
-    // like a crash (first-time-user feedback).
+    console.log(formatReportText(report, {
+      ...(opts.all !== undefined ? { all: opts.all } : {}),
+      failed: hasFailure,
+      cwd: process.cwd(),
+    }));
+    // A non-zero exit must not read like a crash, so say why it is non-zero.
     if (hasFailure) {
-      console.log(pc.green('✓ Scan complete') + pc.dim(`: ${shown.length} issue(s) found. Exit code 1 so CI fails on bugs; pass `) + pc.bold('--fail-on none') + pc.dim(' to always exit 0.'));
+      console.log(pc.dim('Exit code 1, so CI fails on these. Pass ') + pc.bold('--fail-on none') + pc.dim(' to always exit 0.'));
     } else {
-      console.log(pc.green('✓ Scan complete') + pc.dim(`: ${shown.length} issue(s) found.`));
+      console.log(pc.dim('Exit code 0.'));
     }
   }
   return hasFailure ? 1 : 0;

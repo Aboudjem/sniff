@@ -4,9 +4,10 @@ import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import { tmpdir } from 'node:os';
-// @ts-expect-error — plain JS scoring lib shared with the CLI scorer
+// @ts-expect-error plain JS scoring lib shared with the CLI scorer
 import { scoreReport } from '../../sniff-tests/score-lib.mjs';
 import { runCrawl } from '../../src/crawl/index.js';
+import { checkPlaywrightBrowsers } from '../../src/core/ensure-browsers.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 const SERVER = join(ROOT, 'sniff-tests', 'planted-bugs', 'server.mjs');
@@ -27,7 +28,21 @@ function startServer(): Promise<string> {
   });
 }
 
-describe('planted-bug fixture regression gate', () => {
+// This gate drives a real browser. On a machine where Chromium was never
+// downloaded it cannot run, so it is skipped with the reason and the command
+// that enables it. CI must never skip it: there a missing browser is a broken
+// pipeline, and the gate runs and fails loudly instead.
+const browser = await checkPlaywrightBrowsers(['chromium']);
+const canWalk = browser.status === 'installed' || !!process.env.CI;
+if (!canWalk) {
+  // eslint-disable-next-line no-console
+  console.warn(
+    '\nSKIPPED the planted-bug fixture gate: Chromium is not downloaded on this machine.\n' +
+    'Run `npx playwright install chromium`, then `npm test` again to run it.\n',
+  );
+}
+
+describe.skipIf(!canWalk)('planted-bug fixture regression gate', () => {
   beforeAll(async () => { baseUrl = await startServer(); }, 15000);
   afterAll(() => { server?.kill('SIGTERM'); });
 

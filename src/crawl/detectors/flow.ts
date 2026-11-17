@@ -66,7 +66,7 @@ export const flowDetector: Detector = async (ctx: DetectorContext): Promise<RawF
         title: 'Multi-step flow dead-ends (no enabled way forward)',
         severity: 'high',
         confidence: 'likely',
-        steps: [`Navigate to ${ctx.route}`, 'Advance past the first step', 'Fill the step inputs', 'The only forward/finish control stays disabled — the flow cannot be completed'],
+        steps: [`Navigate to ${ctx.route}`, 'Advance past the first step', 'Fill the step inputs', 'The only forward/finish control stays disabled, so the flow cannot be completed'],
         suggestedFix: 'Enable the forward/finish control when the step is valid, or provide another way to complete the flow.',
         dedupeKey: 'dead-end',
       });

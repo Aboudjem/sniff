@@ -35,12 +35,46 @@ function groupBySeverity(findings: Finding[]): Record<Severity, Finding[]> {
   return groups;
 }
 
+const FAILING: readonly Severity[] = ['critical', 'high'];
+
+/**
+ * The top of every report: the verdict, then the findings to fix first. The
+ * detail follows. A report that opens with 200 lines of findings makes the
+ * reader hunt for the answer.
+ */
+export function verdictHeader(findings: Finding[]): string[] {
+  if (findings.length === 0) {
+    return [`${pc.bold('VERDICT')}  ${pc.green('PASS')}: no issues found`];
+  }
+  const groups = groupBySeverity(findings);
+  const counts = SEVERITY_ORDER
+    .filter((sev) => groups[sev].length > 0)
+    .map((sev) => `${groups[sev].length} ${sev}`)
+    .join(', ');
+  const failing = findings.some((f) => FAILING.includes(f.severity));
+  const word = failing ? pc.red('FAIL') : pc.green('PASS');
+  const gate = failing ? '' : ', none at a failing severity';
+  const lines = [
+    `${pc.bold('VERDICT')}  ${word}: ${findings.length} issue${findings.length === 1 ? '' : 's'} (${counts})${gate}`,
+    '',
+  ];
+  const first = [...findings]
+    .sort((a, b) => SEVERITY_ORDER.indexOf(a.severity) - SEVERITY_ORDER.indexOf(b.severity))
+    .slice(0, 3);
+  lines.push(first.length === findings.length ? 'Fix these:' : 'Fix these first:');
+  first.forEach((f, i) => {
+    const where = isBrowserFinding(f) ? f.url : `${f.filePath}:${f.line}`;
+    lines.push(`  ${i + 1}. ${f.message} in ${where}  [${f.severity}]`);
+  });
+  return lines;
+}
+
 export function formatFindings(findings: Finding[]): string {
   if (findings.length === 0) {
-    return pc.green('No issues found.');
+    return verdictHeader(findings).join('\n');
   }
 
-  const lines: string[] = [];
+  const lines: string[] = verdictHeader(findings);
   const groups = groupBySeverity(findings);
 
   for (const severity of SEVERITY_ORDER) {
@@ -100,10 +134,10 @@ function isBrowserFinding(finding: Finding): finding is BrowserFinding {
 
 export function formatBrowserFindings(findings: Finding[]): string {
   if (findings.length === 0) {
-    return pc.green('No issues found.');
+    return verdictHeader(findings).join('\n');
   }
 
-  const lines: string[] = [];
+  const lines: string[] = verdictHeader(findings);
 
   // Group findings by scanner prefix
   const scannerGroups = new Map<string, Finding[]>();

@@ -24,8 +24,25 @@ if (process.argv.includes('--mcp')) {
 
   program
     .name('sniff')
-    .description('AI-powered QA testing framework')
-    .version(getVersion());
+    .description(
+      'Walks your running app in a real browser and reports what is broken, with the steps that reproduce it.\n' +
+      'With no app running it reads your source instead. No API key, no account.',
+    )
+    .version(getVersion())
+    .addHelpText('after', `
+Start here:
+  $ sniff --url http://localhost:3000     walk a running app and print the report
+  $ sniff --url http://localhost:3000 --report
+                                          also write sniff-reports/sniff-report.html
+  $ sniff scan                            read the source only, no browser
+  $ sniff doctor                          check Node, the browser and the dev server
+
+Exit codes:
+  0  no finding reached the --fail-on severities (default: critical,high)
+  1  a finding reached them, an assert budget was breached, or sniff could not run
+
+A walk clicks buttons and submits forms. Point it at a dev or staging app.
+Docs: https://github.com/Aboudjem/sniff#readme`);
 
   // ── Default command: unified scan ──────────────────────────────
   // `sniff`               → source scan + auto-detect dev server
@@ -33,8 +50,8 @@ if (process.argv.includes('--mcp')) {
   // `sniff --url X --ci`  → everything except exploration (deterministic for CI)
   program
     .argument('[target]', 'Project directory to scan (default: current directory)')
-    .option('--url <url>', 'Target URL, enables full browser audit (a11y, visual, perf, runtime hooks)')
-    .option('--ci', 'CI mode: headless, JUnit XML, flakiness tracking, no AI exploration')
+    .option('--url <url>', 'URL of the running app to walk (default: the dev server found on a common port)')
+    .option('--ci', 'CI mode: headless and non-interactive')
     .option('--no-browser', 'Force source-only scan even if URL is configured')
     .option('--explore', 'Run optional AI exploration after browser checks', false)
     .option('--no-explore', 'Skip AI exploration (kept for compatibility; exploration is off by default)')
@@ -326,14 +343,15 @@ if (process.argv.includes('--mcp')) {
       const nodeOk = nodeMajor >= 22;
       console.log(`  ${nodeOk ? pc.green('OK') : pc.red('!!  ')} Node.js ${nodeVersion} ${nodeOk ? '' : '(need 22+)'}`);
 
-      // Playwright
-      let playwrightOk = false;
-      try {
-        const { chromium } = await import('playwright');
-        chromium.executablePath();
-        playwrightOk = true;
-      } catch { /* not installed */ }
-      console.log(`  ${playwrightOk ? pc.green('OK') : pc.yellow('--')} Playwright ${playwrightOk ? 'installed' : 'not installed (auto-installs on first browser scan)'}`);
+      // Browser. The Playwright package ships with sniff; the Chromium build
+      // is a separate download, so test that it is really on disk.
+      const { checkPlaywrightBrowsers } = await import('../core/ensure-browsers.js');
+      const browser = await checkPlaywrightBrowsers(['chromium']);
+      if (browser.status === 'installed') {
+        console.log(`  ${pc.green('OK')} Chromium downloaded`);
+      } else {
+        console.log(`  ${pc.yellow('--')} Chromium not downloaded yet (the first walk downloads it, about 165 MB, or run: npx playwright install chromium)`);
+      }
 
       // Config file
       const { loadConfig } = await import('../config/loader.js');

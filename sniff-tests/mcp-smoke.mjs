@@ -65,7 +65,7 @@ try {
   const payload = JSON.parse(text);
   const findings = payload.findings ?? [];
   console.log(`MCP walk returned ${findings.length} findings across ${payload.stats?.pagesVisited} pages`);
-  if (payload.needsSetup) throw new Error('needsSetup returned — install chromium first');
+  if (payload.needsSetup) throw new Error('needsSetup returned: install chromium first');
   if (findings.length < 4) throw new Error(`expected >=4 findings, got ${findings.length}`);
   console.log('MCP_SMOKE_OK tools=[' + names.join(', ') + ']');
   srv.kill('SIGTERM');

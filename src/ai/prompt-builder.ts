@@ -6,7 +6,7 @@ export function buildSystemPrompt(): string {
   return `You are a Playwright test generator. Generate a single .spec.ts file for the route provided.
 
 Rules:
-- Use ONLY the selectors provided in the analysis data — never invent selectors
+- Use ONLY the selectors provided in the analysis data. Never invent selectors
 - If no good selector exists for an element, skip that test scenario
 - Add JSDoc comments explaining your reasoning above each test() block
 - Use Playwright best practices: auto-waiting, web-first assertions, locator-based API

@@ -187,7 +187,7 @@ export async function handleSniffWalk(options: SniffWalkOptions): Promise<McpToo
   }
 
   const { join } = await import('node:path');
-  const { runCrawl } = await import('../crawl/index.js');
+  const { runCrawl, isFailing, verdictLine, fixFirst } = await import('../crawl/index.js');
   const report = await runCrawl({
     startUrl: url,
     headless: options.headless ?? true,
@@ -203,7 +203,20 @@ export async function handleSniffWalk(options: SniffWalkOptions): Promise<McpToo
   return {
     content: [{
       type: 'text',
-      text: JSON.stringify({ stats: report.stats, summary: report.summary, findings: shown }, null, 2),
+      // Verdict first, so an agent reads the answer before the detail.
+      text: JSON.stringify({
+        verdict: isFailing(shown) ? 'fail' : 'pass',
+        verdictLine: verdictLine(shown),
+        fixFirst: fixFirst(shown).map((f) => ({
+          title: f.title,
+          route: f.reproduction.route,
+          severity: f.severity,
+          suggestedFix: f.suggestedFix,
+        })),
+        stats: report.stats,
+        summary: report.summary,
+        findings: shown,
+      }, null, 2),
     }],
   };
 }

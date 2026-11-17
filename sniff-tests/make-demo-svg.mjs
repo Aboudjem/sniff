@@ -41,7 +41,7 @@ const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" wid
   <rect x="0" y="0" width="${W}" height="34" rx="12" fill="#11151f"/>
   <rect x="0" y="22" width="${W}" height="12" fill="#11151f"/>
   <circle cx="20" cy="17" r="6" fill="#ff5f57"/><circle cx="40" cy="17" r="6" fill="#febc2e"/><circle cx="60" cy="17" r="6" fill="#28c840"/>
-  <text x="${W / 2}" y="21" fill="#5b6275" text-anchor="middle" font-size="12">sniff — autonomous QA walk</text>
+  <text x="${W / 2}" y="21" fill="#5b6275" text-anchor="middle" font-size="12">sniff: autonomous QA walk</text>
 ${body}
 </svg>`;
 

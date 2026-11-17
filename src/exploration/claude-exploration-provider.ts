@@ -43,7 +43,7 @@ Respond with ONLY a JSON object matching this shape:
 {
   "action": "click" | "fill" | "navigate" | "scroll" | "done",
   "selector": "CSS selector for click/fill targets",
-  "value": "value to fill for fill actions — use edge-case data like XSS payloads, SQL injection, Unicode, boundary values",
+  "value": "value to fill for fill actions; use edge-case data like XSS payloads, SQL injection, Unicode, boundary values",
   "url": "URL for navigate actions",
   "reasoning": "why you chose this action"
 }

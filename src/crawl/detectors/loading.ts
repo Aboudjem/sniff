@@ -64,7 +64,7 @@ export const loadingStateDetector: Detector = async (ctx: DetectorContext): Prom
         title: 'Failed request shows no error state to the user',
         severity: 'medium',
         confidence: 'likely',
-        steps: [`Navigate to ${ctx.route}`, `A request failed (${f.method} ${f.url} → ${f.status})`, 'The page shows no error message, retry, or fallback — the failure is silent'],
+        steps: [`Navigate to ${ctx.route}`, `A request failed (${f.method} ${f.url} → ${f.status})`, 'The page shows no error message, retry, or fallback, so the failure is silent'],
         suggestedFix: 'Render a visible error state when a request fails (message + retry), instead of swallowing the error.',
         networkExcerpt: ctx.evidence.networkExcerpt(),
         dedupeKey: 'missing-error-state',
