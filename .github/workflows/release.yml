@@ -13,7 +13,8 @@ permissions:
 jobs:
   publish:
     name: Publish to npm
-    runs-on: ubuntu-latest
+    # Pinned: Playwright 1.59 has no Chromium build for ubuntu-latest (26.04).
+    runs-on: ubuntu-24.04
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
