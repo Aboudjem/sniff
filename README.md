@@ -140,7 +140,7 @@ The MCP server exposes these tools:
 
 Each row was tested on 2026-11-17 against the sniff 0.9.0 build.
 
-| Agent          | How it was tested                                                                | Tested     |
+| Agent          | What ran                                                                         | Tested     |
 | :------------- | :------------------------------------------------------------------------------- | :--------- |
 | Claude Code    | `claude -p` with sniff as an MCP server called `sniff_scan` and read 2 findings  | 2026-11-17 |
 | Codex CLI      | `codex exec` with sniff as an MCP server called `sniff_scan` and read 2 findings | 2026-11-17 |
