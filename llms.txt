@@ -109,13 +109,18 @@ Every finding is an object of the form:
 
 ## Install
 
+- Recommended, the Vercel skills CLI (Vercel's open installer for agent skills): `npx skills add Aboudjem/sniff -g`.
+  Works in more than 70 agents; pick yours in the menu (https://github.com/vercel-labs/skills#supported-agents).
+  In a script it installs into every agent folder, so add `-a <agent>`. It installs the 3 skills only; the MCP
+  server is a separate one-line step. Page: https://skills.sh/aboudjem/sniff
 - CLI: `npx sniff-qa` (in your project, with the dev server running), or `npx sniff-qa --url <url>`.
 - Claude Code plugin (also exposes the MCP server): install the `sniff` plugin. As an MCP server, the
   command is `npx` with args `["-y", "sniff-qa", "--mcp"]`, or `claude mcp add -s user sniff-qa -- npx -y sniff-qa --mcp` (for all your projects).
 - Via the 10x marketplace (recommended for Claude Code users): `claude plugin marketplace add Aboudjem/10x`,
   then `claude plugin install sniff@10x`. Part of the 10x plugin marketplace (github.com/Aboudjem/10x).
 - Tested on 2026-11-17: Claude Code and Codex CLI (as an MCP server), Gemini CLI (extension manifest),
-  the skills CLI. Documented, not tested: Cursor, VS Code (Copilot), Windsurf, OpenCode, Zed.
+  the skills CLI. Install tested with `npx skills add Aboudjem/sniff -g -a <agent>`: claude-code, codex,
+  cursor, gemini-cli, github-copilot, opencode. Documented, not tested: Windsurf, Zed.
 
 ## Q&A
 

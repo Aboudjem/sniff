@@ -78,8 +78,9 @@
 
     <section>
       <h2>Install into your AI CLI</h2>
-      <p>Each line installs sniff for all your projects. Only this project: drop <code>-g</code> or <code>-s user</code>.</p>
-      <pre><code>npx skills add Aboudjem/sniff -g -a cursor</code></pre>
+      <p>Recommended: the Vercel skills CLI, Vercel's open installer for agent skills. Works in more than 70 agents: pick yours in the menu (<a href="https://github.com/vercel-labs/skills#supported-agents">supported agents</a>, <a href="https://skills.sh/aboudjem/sniff">skills.sh/aboudjem/sniff</a>).</p>
+      <pre><code>npx skills add Aboudjem/sniff -g</code></pre>
+      <p>It installs the skills only. The MCP server is one more line. Each line installs sniff for all your projects. Only this project: drop <code>-g</code> or <code>-s user</code>.</p>
       <pre><code>claude mcp add -s user sniff-qa -- npx -y sniff-qa --mcp</code></pre>
       <pre><code>codex mcp add sniff-qa -- npx -y sniff-qa --mcp</code></pre>
     </section>

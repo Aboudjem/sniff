@@ -62,13 +62,32 @@ Utilisez une application de développement ou de préproduction : un parcours cl
 
 ## Installation
 
-**Choisissez votre agent.** Chaque commande installe sniff pour tous vos projets. Node.js 22 ou plus récent.
+**Recommandé : la CLI skills de Vercel.** `npx skills` est l'installeur ouvert de Vercel pour les skills d'agents.
 
-<p><a href="#claude-code"><img alt="Claude Code" src="https://img.shields.io/badge/Claude_Code-D97757?style=for-the-badge&logo=claude&logoColor=white"></a> <a href="#codex"><img alt="Codex" src="https://img.shields.io/badge/Codex-000000?style=for-the-badge&logo=data%3Aimage%2Fsvg%2Bxml%3Bbase64%2CPHN2ZyBmaWxsPSJ3aGl0ZSIgcm9sZT0iaW1nIiB2aWV3Qm94PSIwIDAgMjQgMjQiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI%2BPHRpdGxlPk9wZW5BSTwvdGl0bGU%2BPHBhdGggZD0iTTIyLjI4MTkgOS44MjExYTUuOTg0NyA1Ljk4NDcgMCAwIDAtLjUxNTctNC45MTA4IDYuMDQ2MiA2LjA0NjIgMCAwIDAtNi41MDk4LTIuOUE2LjA2NTEgNi4wNjUxIDAgMCAwIDQuOTgwNyA0LjE4MThhNS45ODQ3IDUuOTg0NyAwIDAgMC0zLjk5NzcgMi45IDYuMDQ2MiA2LjA0NjIgMCAwIDAgLjc0MjcgNy4wOTY2IDUuOTggNS45OCAwIDAgMCAuNTExIDQuOTEwNyA2LjA1MSA2LjA1MSAwIDAgMCA2LjUxNDYgMi45MDAxQTUuOTg0NyA1Ljk4NDcgMCAwIDAgMTMuMjU5OSAyNGE2LjA1NTcgNi4wNTU3IDAgMCAwIDUuNzcxOC00LjIwNTggNS45ODk0IDUuOTg5NCAwIDAgMCAzLjk5NzctMi45MDAxIDYuMDU1NyA2LjA1NTcgMCAwIDAtLjc0NzUtNy4wNzI5em0tOS4wMjIgMTIuNjA4MWE0LjQ3NTUgNC40NzU1IDAgMCAxLTIuODc2NC0xLjA0MDhsLjE0MTktLjA4MDQgNC43NzgzLTIuNzU4MmEuNzk0OC43OTQ4IDAgMCAwIC4zOTI3LS42ODEzdi02LjczNjlsMi4wMiAxLjE2ODZhLjA3MS4wNzEgMCAwIDEgLjAzOC4wNTJ2NS41ODI2YTQuNTA0IDQuNTA0IDAgMCAxLTQuNDk0NSA0LjQ5NDR6bS05LjY2MDctNC4xMjU0YTQuNDcwOCA0LjQ3MDggMCAwIDEtLjUzNDYtMy4wMTM3bC4xNDIuMDg1MiA0Ljc4MyAyLjc1ODJhLjc3MTIuNzcxMiAwIDAgMCAuNzgwNiAwbDUuODQyOC0zLjM2ODV2Mi4zMzI0YS4wODA0LjA4MDQgMCAwIDEtLjAzMzIuMDYxNUw5Ljc0IDE5Ljk1MDJhNC40OTkyIDQuNDk5MiAwIDAgMS02LjE0MDgtMS42NDY0ek0yLjM0MDggNy44OTU2YTQuNDg1IDQuNDg1IDAgMCAxIDIuMzY1NS0xLjk3MjhWMTEuNmEuNzY2NC43NjY0IDAgMCAwIC4zODc5LjY3NjVsNS44MTQ0IDMuMzU0My0yLjAyMDEgMS4xNjg1YS4wNzU3LjA3NTcgMCAwIDEtLjA3MSAwbC00LjgzMDMtMi43ODY1QTQuNTA0IDQuNTA0IDAgMCAxIDIuMzQwOCA3Ljg3MnptMTYuNTk2MyAzLjg1NThMMTMuMTAzOCA4LjM2NCAxNS4xMTkyIDcuMmEuMDc1Ny4wNzU3IDAgMCAxIC4wNzEgMGw0LjgzMDMgMi43OTEzYTQuNDk0NCA0LjQ5NDQgMCAwIDEtLjY3NjUgOC4xMDQydi01LjY3NzJhLjc5Ljc5IDAgMCAwLS40MDctLjY2N3ptMi4wMTA3LTMuMDIzMWwtLjE0Mi0uMDg1Mi00Ljc3MzUtMi43ODE4YS43NzU5Ljc3NTkgMCAwIDAtLjc4NTQgMEw5LjQwOSA5LjIyOTdWNi44OTc0YS4wNjYyLjA2NjIgMCAwIDEgLjAyODQtLjA2MTVsNC44MzAzLTIuNzg2NmE0LjQ5OTIgNC40OTkyIDAgMCAxIDYuNjgwMiA0LjY2ek04LjMwNjUgMTIuODYzbC0yLjAyLTEuMTYzOGEuMDgwNC4wODA0IDAgMCAxLS4wMzgtLjA1NjdWNi4wNzQyYTQuNDk5MiA0LjQ5OTIgMCAwIDEgNy4zNzU3LTMuNDUzN2wtLjE0Mi4wODA1TDguNzA0IDUuNDU5YS43OTQ4Ljc5NDggMCAwIDAtLjM5MjcuNjgxM3ptMS4wOTc2LTIuMzY1NGwyLjYwMi0xLjQ5OTggMi42MDY5IDEuNDk5OHYyLjk5OTRsLTIuNTk3NCAxLjQ5OTctMi42MDY3LTEuNDk5N1oiLz48L3N2Zz4%3D"></a> <a href="#cursor"><img alt="Cursor" src="https://img.shields.io/badge/Cursor-000000?style=for-the-badge&logo=cursor&logoColor=white"></a> <a href="#gemini-cli"><img alt="Gemini CLI" src="https://img.shields.io/badge/Gemini_CLI-8E75B2?style=for-the-badge&logo=googlegemini&logoColor=white"></a> <a href="#github-copilot"><img alt="GitHub Copilot" src="https://img.shields.io/badge/GitHub_Copilot-000000?style=for-the-badge&logo=githubcopilot&logoColor=white"></a> <a href="#opencode"><img alt="OpenCode" src="https://img.shields.io/badge/OpenCode-211E1E?style=for-the-badge&logo=opencode&logoColor=white"></a></p>
+```bash
+npx skills add Aboudjem/sniff -g
+```
+
+Fonctionne dans plus de 70 agents : choisissez le vôtre dans le menu ([agents pris en charge](https://github.com/vercel-labs/skills#supported-agents)).
+Dans un terminal, il affiche le menu des agents. Dans un script, il installe dans tous les dossiers d'agents, donc ajoutez `-a <agent>`.
+`-g` installe pour tous vos projets. Seulement ce projet : retirez `-g`.
+Il installe seulement les 3 skills. Le serveur MCP est une étape à part, d'une ligne, montrée plus bas.
+
+<p><a href="https://skills.sh/aboudjem/sniff"><img alt="skills.sh: sniff on the Vercel skills directory" src="https://img.shields.io/badge/skills.sh-000000?style=flat-square&logo=vercel&logoColor=white" height="24"></a> <a href="https://skills.sh/aboudjem/sniff">skills.sh/aboudjem/sniff</a></p>
+
+**Ou installez directement dans un agent.** Node.js 22 ou plus récent.
+
+<p><a href="#claude-code"><img alt="Claude Code" src="https://img.shields.io/badge/Claude_Code-D97757?style=flat-square&logo=claude&logoColor=white" height="24"></a> <a href="#codex"><img alt="Codex" src="https://img.shields.io/badge/Codex-000000?style=flat-square&logo=data%3Aimage%2Fsvg%2Bxml%3Bbase64%2CPHN2ZyBmaWxsPSJ3aGl0ZSIgcm9sZT0iaW1nIiB2aWV3Qm94PSIwIDAgMjQgMjQiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI%2BPHRpdGxlPk9wZW5BSTwvdGl0bGU%2BPHBhdGggZD0iTTIyLjI4MTkgOS44MjExYTUuOTg0NyA1Ljk4NDcgMCAwIDAtLjUxNTctNC45MTA4IDYuMDQ2MiA2LjA0NjIgMCAwIDAtNi41MDk4LTIuOUE2LjA2NTEgNi4wNjUxIDAgMCAwIDQuOTgwNyA0LjE4MThhNS45ODQ3IDUuOTg0NyAwIDAgMC0zLjk5NzcgMi45IDYuMDQ2MiA2LjA0NjIgMCAwIDAgLjc0MjcgNy4wOTY2IDUuOTggNS45OCAwIDAgMCAuNTExIDQuOTEwNyA2LjA1MSA2LjA1MSAwIDAgMCA2LjUxNDYgMi45MDAxQTUuOTg0NyA1Ljk4NDcgMCAwIDAgMTMuMjU5OSAyNGE2LjA1NTcgNi4wNTU3IDAgMCAwIDUuNzcxOC00LjIwNTggNS45ODk0IDUuOTg5NCAwIDAgMCAzLjk5NzctMi45MDAxIDYuMDU1NyA2LjA1NTcgMCAwIDAtLjc0NzUtNy4wNzI5em0tOS4wMjIgMTIuNjA4MWE0LjQ3NTUgNC40NzU1IDAgMCAxLTIuODc2NC0xLjA0MDhsLjE0MTktLjA4MDQgNC43NzgzLTIuNzU4MmEuNzk0OC43OTQ4IDAgMCAwIC4zOTI3LS42ODEzdi02LjczNjlsMi4wMiAxLjE2ODZhLjA3MS4wNzEgMCAwIDEgLjAzOC4wNTJ2NS41ODI2YTQuNTA0IDQuNTA0IDAgMCAxLTQuNDk0NSA0LjQ5NDR6bS05LjY2MDctNC4xMjU0YTQuNDcwOCA0LjQ3MDggMCAwIDEtLjUzNDYtMy4wMTM3bC4xNDIuMDg1MiA0Ljc4MyAyLjc1ODJhLjc3MTIuNzcxMiAwIDAgMCAuNzgwNiAwbDUuODQyOC0zLjM2ODV2Mi4zMzI0YS4wODA0LjA4MDQgMCAwIDEtLjAzMzIuMDYxNUw5Ljc0IDE5Ljk1MDJhNC40OTkyIDQuNDk5MiAwIDAgMS02LjE0MDgtMS42NDY0ek0yLjM0MDggNy44OTU2YTQuNDg1IDQuNDg1IDAgMCAxIDIuMzY1NS0xLjk3MjhWMTEuNmEuNzY2NC43NjY0IDAgMCAwIC4zODc5LjY3NjVsNS44MTQ0IDMuMzU0My0yLjAyMDEgMS4xNjg1YS4wNzU3LjA3NTcgMCAwIDEtLjA3MSAwbC00LjgzMDMtMi43ODY1QTQuNTA0IDQuNTA0IDAgMCAxIDIuMzQwOCA3Ljg3MnptMTYuNTk2MyAzLjg1NThMMTMuMTAzOCA4LjM2NCAxNS4xMTkyIDcuMmEuMDc1Ny4wNzU3IDAgMCAxIC4wNzEgMGw0LjgzMDMgMi43OTEzYTQuNDk0NCA0LjQ5NDQgMCAwIDEtLjY3NjUgOC4xMDQydi01LjY3NzJhLjc5Ljc5IDAgMCAwLS40MDctLjY2N3ptMi4wMTA3LTMuMDIzMWwtLjE0Mi0uMDg1Mi00Ljc3MzUtMi43ODE4YS43NzU5Ljc3NTkgMCAwIDAtLjc4NTQgMEw5LjQwOSA5LjIyOTdWNi44OTc0YS4wNjYyLjA2NjIgMCAwIDEgLjAyODQtLjA2MTVsNC44MzAzLTIuNzg2NmE0LjQ5OTIgNC40OTkyIDAgMCAxIDYuNjgwMiA0LjY2ek04LjMwNjUgMTIuODYzbC0yLjAyLTEuMTYzOGEuMDgwNC4wODA0IDAgMCAxLS4wMzgtLjA1NjdWNi4wNzQyYTQuNDk5MiA0LjQ5OTIgMCAwIDEgNy4zNzU3LTMuNDUzN2wtLjE0Mi4wODA1TDguNzA0IDUuNDU5YS43OTQ4Ljc5NDggMCAwIDAtLjM5MjcuNjgxM3ptMS4wOTc2LTIuMzY1NGwyLjYwMi0xLjQ5OTggMi42MDY5IDEuNDk5OHYyLjk5OTRsLTIuNTk3NCAxLjQ5OTctMi42MDY3LTEuNDk5N1oiLz48L3N2Zz4%3D" height="24"></a> <a href="#cursor"><img alt="Cursor" src="https://img.shields.io/badge/Cursor-000000?style=flat-square&logo=cursor&logoColor=white" height="24"></a> <a href="#gemini-cli"><img alt="Gemini CLI" src="https://img.shields.io/badge/Gemini-8E75B2?style=flat-square&logo=googlegemini&logoColor=white" height="24"></a> <a href="#github-copilot"><img alt="GitHub Copilot" src="https://img.shields.io/badge/Copilot-000000?style=flat-square&logo=githubcopilot&logoColor=white" height="24"></a> <a href="#opencode"><img alt="OpenCode" src="https://img.shields.io/badge/OpenCode-211E1E?style=flat-square&logo=opencode&logoColor=white" height="24"></a></p>
 
 #### Claude Code
 
-Testé. Ajoute le serveur MCP pour votre utilisateur :
+Installation testée.
+
+```bash
+npx skills add Aboudjem/sniff -g -a claude-code
+```
+
+Serveur MCP, testé, pour tous vos projets :
 
 ```bash
 claude mcp add -s user sniff-qa -- npx -y sniff-qa --mcp
@@ -78,7 +97,13 @@ Seulement ce projet : retirez `-s user`.
 
 #### Codex
 
-Testé. Codex ajoute les serveurs MCP pour votre utilisateur :
+Installation testée.
+
+```bash
+npx skills add Aboudjem/sniff -g -a codex
+```
+
+Serveur MCP, testé, pour tous vos projets :
 
 ```bash
 codex mcp add sniff-qa -- npx -y sniff-qa --mcp
@@ -86,17 +111,21 @@ codex mcp add sniff-qa -- npx -y sniff-qa --mcp
 
 #### Cursor
 
-Installation testée. Ajoute les 3 skills dans `~/.agents/skills` :
+Installation testée.
 
 ```bash
 npx skills add Aboudjem/sniff -g -a cursor
 ```
 
-Seulement ce projet : retirez `-g`.
-
 #### Gemini CLI
 
-Installation testée. Ajoute l'extension pour votre utilisateur :
+Installation testée.
+
+```bash
+npx skills add Aboudjem/sniff -g -a gemini-cli
+```
+
+Ou ajoutez l'extension, qui apporte aussi le serveur MCP (installation testée) :
 
 ```bash
 gemini extensions install https://github.com/Aboudjem/sniff
@@ -104,23 +133,30 @@ gemini extensions install https://github.com/Aboudjem/sniff
 
 #### GitHub Copilot
 
-Installation testée. Ajoute les 3 skills dans `~/.agents/skills` :
+Installation testée.
 
 ```bash
 npx skills add Aboudjem/sniff -g -a github-copilot
 ```
 
-Seulement ce projet : retirez `-g`.
-
 #### OpenCode
 
-Installation testée. Ajoute les 3 skills dans `~/.agents/skills` :
+Installation testée.
 
 ```bash
 npx skills add Aboudjem/sniff -g -a opencode
 ```
 
-Seulement ce projet : retirez `-g`.
+#### Plugin Claude Code
+
+Ajoute les skills et le serveur MCP en une étape, via la [marketplace 10x](https://github.com/Aboudjem/10x) :
+
+```bash
+claude plugin marketplace add Aboudjem/10x
+claude plugin install sniff@10x
+```
+
+Tout autre client MCP lance `npx -y sniff-qa --mcp`. Les extraits pour chaque éditeur sont dans [docs/editors.md](../docs/editors.md).
 
 #### Sans agent
 
@@ -131,17 +167,6 @@ npx sniff-qa --url http://localhost:3000
 ```
 
 Le paquet npm s'appelle `sniff-qa`. N'exécutez pas `npx sniff` : c'est un autre paquet, sans lien.
-
-#### Plugin Claude Code
-
-Le plugin ajoute les skills et le serveur MCP pour votre utilisateur, via la [marketplace 10x](https://github.com/Aboudjem/10x) :
-
-```bash
-claude plugin marketplace add Aboudjem/10x
-claude plugin install sniff@10x
-```
-
-Tout autre client MCP lance `npx -y sniff-qa --mcp`. Les extraits pour chaque éditeur sont dans [docs/editors.md](../docs/editors.md).
 
 #### Premier lancement
 
@@ -250,6 +275,10 @@ Chaque ligne a été testée le 2026-11-17. Les cinq premières avec la version 
 | Cursor         | `skills add -g -a cursor` a mis les 3 skills dans un `~/.agents/skills` jetable | 2026-11-17 |
 | GitHub Copilot | `skills add -g -a github-copilot` a mis les 3 skills dans `~/.agents/skills` | 2026-11-17 |
 | OpenCode       | `skills add -g -a opencode` a mis les 3 skills dans `~/.agents/skills` | 2026-11-17 |
+| Claude Code    | `skills add -g -a claude-code` a mis les 3 skills dans `~/.claude/skills` | 2026-11-17 |
+| Codex CLI      | `skills add -g -a codex` a mis les 3 skills dans `~/.agents/skills` | 2026-11-17 |
+| Gemini CLI     | `skills add -g -a gemini-cli` a mis les 3 skills dans `~/.agents/skills` | 2026-11-17 |
+| CLI skills     | `skills add -g` sans terminal a installé dans tous les dossiers d'agents | 2026-11-17 |
 
 Documentés, non testés aujourd'hui : Windsurf et Zed. Cursor, Copilot et OpenCode ont seulement une installation testée.
 Leurs extraits sont dans [docs/editors.md](../docs/editors.md).

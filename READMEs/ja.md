@@ -62,13 +62,32 @@ npx sniff-qa --url http://localhost:3000
 
 ## インストール
 
-**エージェントを選んでください。** どのコマンドも、すべてのプロジェクト向けに sniff を入れます。Node.js 22 以上が必要です。
+**おすすめ：Vercel の skills CLI。** `npx skills` は、エージェント向け skills を入れる Vercel のオープンなインストーラーです。
 
-<p><a href="#claude-code"><img alt="Claude Code" src="https://img.shields.io/badge/Claude_Code-D97757?style=for-the-badge&logo=claude&logoColor=white"></a> <a href="#codex"><img alt="Codex" src="https://img.shields.io/badge/Codex-000000?style=for-the-badge&logo=data%3Aimage%2Fsvg%2Bxml%3Bbase64%2CPHN2ZyBmaWxsPSJ3aGl0ZSIgcm9sZT0iaW1nIiB2aWV3Qm94PSIwIDAgMjQgMjQiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI%2BPHRpdGxlPk9wZW5BSTwvdGl0bGU%2BPHBhdGggZD0iTTIyLjI4MTkgOS44MjExYTUuOTg0NyA1Ljk4NDcgMCAwIDAtLjUxNTctNC45MTA4IDYuMDQ2MiA2LjA0NjIgMCAwIDAtNi41MDk4LTIuOUE2LjA2NTEgNi4wNjUxIDAgMCAwIDQuOTgwNyA0LjE4MThhNS45ODQ3IDUuOTg0NyAwIDAgMC0zLjk5NzcgMi45IDYuMDQ2MiA2LjA0NjIgMCAwIDAgLjc0MjcgNy4wOTY2IDUuOTggNS45OCAwIDAgMCAuNTExIDQuOTEwNyA2LjA1MSA2LjA1MSAwIDAgMCA2LjUxNDYgMi45MDAxQTUuOTg0NyA1Ljk4NDcgMCAwIDAgMTMuMjU5OSAyNGE2LjA1NTcgNi4wNTU3IDAgMCAwIDUuNzcxOC00LjIwNTggNS45ODk0IDUuOTg5NCAwIDAgMCAzLjk5NzctMi45MDAxIDYuMDU1NyA2LjA1NTcgMCAwIDAtLjc0NzUtNy4wNzI5em0tOS4wMjIgMTIuNjA4MWE0LjQ3NTUgNC40NzU1IDAgMCAxLTIuODc2NC0xLjA0MDhsLjE0MTktLjA4MDQgNC43NzgzLTIuNzU4MmEuNzk0OC43OTQ4IDAgMCAwIC4zOTI3LS42ODEzdi02LjczNjlsMi4wMiAxLjE2ODZhLjA3MS4wNzEgMCAwIDEgLjAzOC4wNTJ2NS41ODI2YTQuNTA0IDQuNTA0IDAgMCAxLTQuNDk0NSA0LjQ5NDR6bS05LjY2MDctNC4xMjU0YTQuNDcwOCA0LjQ3MDggMCAwIDEtLjUzNDYtMy4wMTM3bC4xNDIuMDg1MiA0Ljc4MyAyLjc1ODJhLjc3MTIuNzcxMiAwIDAgMCAuNzgwNiAwbDUuODQyOC0zLjM2ODV2Mi4zMzI0YS4wODA0LjA4MDQgMCAwIDEtLjAzMzIuMDYxNUw5Ljc0IDE5Ljk1MDJhNC40OTkyIDQuNDk5MiAwIDAgMS02LjE0MDgtMS42NDY0ek0yLjM0MDggNy44OTU2YTQuNDg1IDQuNDg1IDAgMCAxIDIuMzY1NS0xLjk3MjhWMTEuNmEuNzY2NC43NjY0IDAgMCAwIC4zODc5LjY3NjVsNS44MTQ0IDMuMzU0My0yLjAyMDEgMS4xNjg1YS4wNzU3LjA3NTcgMCAwIDEtLjA3MSAwbC00LjgzMDMtMi43ODY1QTQuNTA0IDQuNTA0IDAgMCAxIDIuMzQwOCA3Ljg3MnptMTYuNTk2MyAzLjg1NThMMTMuMTAzOCA4LjM2NCAxNS4xMTkyIDcuMmEuMDc1Ny4wNzU3IDAgMCAxIC4wNzEgMGw0LjgzMDMgMi43OTEzYTQuNDk0NCA0LjQ5NDQgMCAwIDEtLjY3NjUgOC4xMDQydi01LjY3NzJhLjc5Ljc5IDAgMCAwLS40MDctLjY2N3ptMi4wMTA3LTMuMDIzMWwtLjE0Mi0uMDg1Mi00Ljc3MzUtMi43ODE4YS43NzU5Ljc3NTkgMCAwIDAtLjc4NTQgMEw5LjQwOSA5LjIyOTdWNi44OTc0YS4wNjYyLjA2NjIgMCAwIDEgLjAyODQtLjA2MTVsNC44MzAzLTIuNzg2NmE0LjQ5OTIgNC40OTkyIDAgMCAxIDYuNjgwMiA0LjY2ek04LjMwNjUgMTIuODYzbC0yLjAyLTEuMTYzOGEuMDgwNC4wODA0IDAgMCAxLS4wMzgtLjA1NjdWNi4wNzQyYTQuNDk5MiA0LjQ5OTIgMCAwIDEgNy4zNzU3LTMuNDUzN2wtLjE0Mi4wODA1TDguNzA0IDUuNDU5YS43OTQ4Ljc5NDggMCAwIDAtLjM5MjcuNjgxM3ptMS4wOTc2LTIuMzY1NGwyLjYwMi0xLjQ5OTggMi42MDY5IDEuNDk5OHYyLjk5OTRsLTIuNTk3NCAxLjQ5OTctMi42MDY3LTEuNDk5N1oiLz48L3N2Zz4%3D"></a> <a href="#cursor"><img alt="Cursor" src="https://img.shields.io/badge/Cursor-000000?style=for-the-badge&logo=cursor&logoColor=white"></a> <a href="#gemini-cli"><img alt="Gemini CLI" src="https://img.shields.io/badge/Gemini_CLI-8E75B2?style=for-the-badge&logo=googlegemini&logoColor=white"></a> <a href="#github-copilot"><img alt="GitHub Copilot" src="https://img.shields.io/badge/GitHub_Copilot-000000?style=for-the-badge&logo=githubcopilot&logoColor=white"></a> <a href="#opencode"><img alt="OpenCode" src="https://img.shields.io/badge/OpenCode-211E1E?style=for-the-badge&logo=opencode&logoColor=white"></a></p>
+```bash
+npx skills add Aboudjem/sniff -g
+```
+
+70 以上のエージェントで使えます。メニューで自分のものを選んでください ([対応エージェント](https://github.com/vercel-labs/skills#supported-agents))。
+ターミナルではエージェントのメニューを表示します。スクリプトではすべてのエージェントのフォルダーに入れるので、`-a <agent>` を足してください。
+`-g` はすべてのプロジェクト向けに入れます。このプロジェクトだけにするには：`-g` を外します。
+入るのは 3 つの skills だけです。MCP サーバーは別の 1 行の手順で、下にあります。
+
+<p><a href="https://skills.sh/aboudjem/sniff"><img alt="skills.sh: sniff on the Vercel skills directory" src="https://img.shields.io/badge/skills.sh-000000?style=flat-square&logo=vercel&logoColor=white" height="24"></a> <a href="https://skills.sh/aboudjem/sniff">skills.sh/aboudjem/sniff</a></p>
+
+**または、1 つのエージェントに直接入れる。** Node.js 22 以上が必要です。
+
+<p><a href="#claude-code"><img alt="Claude Code" src="https://img.shields.io/badge/Claude_Code-D97757?style=flat-square&logo=claude&logoColor=white" height="24"></a> <a href="#codex"><img alt="Codex" src="https://img.shields.io/badge/Codex-000000?style=flat-square&logo=data%3Aimage%2Fsvg%2Bxml%3Bbase64%2CPHN2ZyBmaWxsPSJ3aGl0ZSIgcm9sZT0iaW1nIiB2aWV3Qm94PSIwIDAgMjQgMjQiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI%2BPHRpdGxlPk9wZW5BSTwvdGl0bGU%2BPHBhdGggZD0iTTIyLjI4MTkgOS44MjExYTUuOTg0NyA1Ljk4NDcgMCAwIDAtLjUxNTctNC45MTA4IDYuMDQ2MiA2LjA0NjIgMCAwIDAtNi41MDk4LTIuOUE2LjA2NTEgNi4wNjUxIDAgMCAwIDQuOTgwNyA0LjE4MThhNS45ODQ3IDUuOTg0NyAwIDAgMC0zLjk5NzcgMi45IDYuMDQ2MiA2LjA0NjIgMCAwIDAgLjc0MjcgNy4wOTY2IDUuOTggNS45OCAwIDAgMCAuNTExIDQuOTEwNyA2LjA1MSA2LjA1MSAwIDAgMCA2LjUxNDYgMi45MDAxQTUuOTg0NyA1Ljk4NDcgMCAwIDAgMTMuMjU5OSAyNGE2LjA1NTcgNi4wNTU3IDAgMCAwIDUuNzcxOC00LjIwNTggNS45ODk0IDUuOTg5NCAwIDAgMCAzLjk5NzctMi45MDAxIDYuMDU1NyA2LjA1NTcgMCAwIDAtLjc0NzUtNy4wNzI5em0tOS4wMjIgMTIuNjA4MWE0LjQ3NTUgNC40NzU1IDAgMCAxLTIuODc2NC0xLjA0MDhsLjE0MTktLjA4MDQgNC43NzgzLTIuNzU4MmEuNzk0OC43OTQ4IDAgMCAwIC4zOTI3LS42ODEzdi02LjczNjlsMi4wMiAxLjE2ODZhLjA3MS4wNzEgMCAwIDEgLjAzOC4wNTJ2NS41ODI2YTQuNTA0IDQuNTA0IDAgMCAxLTQuNDk0NSA0LjQ5NDR6bS05LjY2MDctNC4xMjU0YTQuNDcwOCA0LjQ3MDggMCAwIDEtLjUzNDYtMy4wMTM3bC4xNDIuMDg1MiA0Ljc4MyAyLjc1ODJhLjc3MTIuNzcxMiAwIDAgMCAuNzgwNiAwbDUuODQyOC0zLjM2ODV2Mi4zMzI0YS4wODA0LjA4MDQgMCAwIDEtLjAzMzIuMDYxNUw5Ljc0IDE5Ljk1MDJhNC40OTkyIDQuNDk5MiAwIDAgMS02LjE0MDgtMS42NDY0ek0yLjM0MDggNy44OTU2YTQuNDg1IDQuNDg1IDAgMCAxIDIuMzY1NS0xLjk3MjhWMTEuNmEuNzY2NC43NjY0IDAgMCAwIC4zODc5LjY3NjVsNS44MTQ0IDMuMzU0My0yLjAyMDEgMS4xNjg1YS4wNzU3LjA3NTcgMCAwIDEtLjA3MSAwbC00LjgzMDMtMi43ODY1QTQuNTA0IDQuNTA0IDAgMCAxIDIuMzQwOCA3Ljg3MnptMTYuNTk2MyAzLjg1NThMMTMuMTAzOCA4LjM2NCAxNS4xMTkyIDcuMmEuMDc1Ny4wNzU3IDAgMCAxIC4wNzEgMGw0LjgzMDMgMi43OTEzYTQuNDk0NCA0LjQ5NDQgMCAwIDEtLjY3NjUgOC4xMDQydi01LjY3NzJhLjc5Ljc5IDAgMCAwLS40MDctLjY2N3ptMi4wMTA3LTMuMDIzMWwtLjE0Mi0uMDg1Mi00Ljc3MzUtMi43ODE4YS43NzU5Ljc3NTkgMCAwIDAtLjc4NTQgMEw5LjQwOSA5LjIyOTdWNi44OTc0YS4wNjYyLjA2NjIgMCAwIDEgLjAyODQtLjA2MTVsNC44MzAzLTIuNzg2NmE0LjQ5OTIgNC40OTkyIDAgMCAxIDYuNjgwMiA0LjY2ek04LjMwNjUgMTIuODYzbC0yLjAyLTEuMTYzOGEuMDgwNC4wODA0IDAgMCAxLS4wMzgtLjA1NjdWNi4wNzQyYTQuNDk5MiA0LjQ5OTIgMCAwIDEgNy4zNzU3LTMuNDUzN2wtLjE0Mi4wODA1TDguNzA0IDUuNDU5YS43OTQ4Ljc5NDggMCAwIDAtLjM5MjcuNjgxM3ptMS4wOTc2LTIuMzY1NGwyLjYwMi0xLjQ5OTggMi42MDY5IDEuNDk5OHYyLjk5OTRsLTIuNTk3NCAxLjQ5OTctMi42MDY3LTEuNDk5N1oiLz48L3N2Zz4%3D" height="24"></a> <a href="#cursor"><img alt="Cursor" src="https://img.shields.io/badge/Cursor-000000?style=flat-square&logo=cursor&logoColor=white" height="24"></a> <a href="#gemini-cli"><img alt="Gemini CLI" src="https://img.shields.io/badge/Gemini-8E75B2?style=flat-square&logo=googlegemini&logoColor=white" height="24"></a> <a href="#github-copilot"><img alt="GitHub Copilot" src="https://img.shields.io/badge/Copilot-000000?style=flat-square&logo=githubcopilot&logoColor=white" height="24"></a> <a href="#opencode"><img alt="OpenCode" src="https://img.shields.io/badge/OpenCode-211E1E?style=flat-square&logo=opencode&logoColor=white" height="24"></a></p>
 
 #### Claude Code
 
-テスト済み。ユーザー単位で MCP サーバーを追加します：
+インストールをテスト済み。
+
+```bash
+npx skills add Aboudjem/sniff -g -a claude-code
+```
+
+MCP サーバー (テスト済み、すべてのプロジェクト向け)：
 
 ```bash
 claude mcp add -s user sniff-qa -- npx -y sniff-qa --mcp
@@ -78,7 +97,13 @@ claude mcp add -s user sniff-qa -- npx -y sniff-qa --mcp
 
 #### Codex
 
-テスト済み。Codex は MCP サーバーをユーザー単位で追加します：
+インストールをテスト済み。
+
+```bash
+npx skills add Aboudjem/sniff -g -a codex
+```
+
+MCP サーバー (テスト済み、すべてのプロジェクト向け)：
 
 ```bash
 codex mcp add sniff-qa -- npx -y sniff-qa --mcp
@@ -86,17 +111,21 @@ codex mcp add sniff-qa -- npx -y sniff-qa --mcp
 
 #### Cursor
 
-インストールをテスト済み。3 つの skills を `~/.agents/skills` に追加します：
+インストールをテスト済み。
 
 ```bash
 npx skills add Aboudjem/sniff -g -a cursor
 ```
 
-このプロジェクトだけにするには：`-g` を外します。
-
 #### Gemini CLI
 
-インストールをテスト済み。ユーザー単位で拡張機能を追加します：
+インストールをテスト済み。
+
+```bash
+npx skills add Aboudjem/sniff -g -a gemini-cli
+```
+
+または拡張機能を追加します。MCP サーバーも一緒に入ります (インストールをテスト済み)：
 
 ```bash
 gemini extensions install https://github.com/Aboudjem/sniff
@@ -104,23 +133,30 @@ gemini extensions install https://github.com/Aboudjem/sniff
 
 #### GitHub Copilot
 
-インストールをテスト済み。3 つの skills を `~/.agents/skills` に追加します：
+インストールをテスト済み。
 
 ```bash
 npx skills add Aboudjem/sniff -g -a github-copilot
 ```
 
-このプロジェクトだけにするには：`-g` を外します。
-
 #### OpenCode
 
-インストールをテスト済み。3 つの skills を `~/.agents/skills` に追加します：
+インストールをテスト済み。
 
 ```bash
 npx skills add Aboudjem/sniff -g -a opencode
 ```
 
-このプロジェクトだけにするには：`-g` を外します。
+#### Claude Code プラグイン
+
+skills と MCP サーバーを 1 回で追加します。[10x マーケットプレイス](https://github.com/Aboudjem/10x) から入れます：
+
+```bash
+claude plugin marketplace add Aboudjem/10x
+claude plugin install sniff@10x
+```
+
+ほかの MCP クライアントは `npx -y sniff-qa --mcp` を実行します。エディターごとの設定例は [docs/editors.md](../docs/editors.md) にあります。
 
 #### エージェントなし
 
@@ -131,17 +167,6 @@ npx sniff-qa --url http://localhost:3000
 ```
 
 npm パッケージ名は `sniff-qa` です。`npx sniff` は実行しないでください。無関係の別パッケージです。
-
-#### Claude Code プラグイン
-
-プラグインは skills と MCP サーバーをユーザー単位で追加します。[10x マーケットプレイス](https://github.com/Aboudjem/10x) から入れます：
-
-```bash
-claude plugin marketplace add Aboudjem/10x
-claude plugin install sniff@10x
-```
-
-ほかの MCP クライアントは `npx -y sniff-qa --mcp` を実行します。エディターごとの設定例は [docs/editors.md](../docs/editors.md) にあります。
 
 #### 初回の実行
 
@@ -250,6 +275,10 @@ MCP サーバーはエージェントに次のツールを渡します：
 | Cursor           | `skills add -g -a cursor` が使い捨ての `~/.agents/skills` に 3 つの skills を入れた | 2026-11-17 |
 | GitHub Copilot   | `skills add -g -a github-copilot` が `~/.agents/skills` に 3 つの skills を入れた | 2026-11-17 |
 | OpenCode         | `skills add -g -a opencode` が `~/.agents/skills` に 3 つの skills を入れた | 2026-11-17 |
+| Claude Code      | `skills add -g -a claude-code` が `~/.claude/skills` に 3 つの skills を入れた | 2026-11-17 |
+| Codex CLI        | `skills add -g -a codex` が `~/.agents/skills` に 3 つの skills を入れた | 2026-11-17 |
+| Gemini CLI       | `skills add -g -a gemini-cli` が `~/.agents/skills` に 3 つの skills を入れた | 2026-11-17 |
+| Skills CLI       | ターミナルなしの `skills add -g` がすべてのエージェントのフォルダーに入れた | 2026-11-17 |
 
 文書化済みだが今日はテストしていないもの：Windsurf、Zed。Cursor、Copilot、OpenCode はインストールだけをテストしました。
 設定例は [docs/editors.md](../docs/editors.md) にあります。
