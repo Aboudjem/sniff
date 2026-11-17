@@ -58,7 +58,7 @@ Use a dev or staging app: a walk clicks buttons and submits real forms.
 ## Install
 
 You changed one form. Now a page you never opened shows a server error (HTTP 500).
-sniff finds it for you, with the steps to repeat it and a fix. Most findings also have a screenshot.
+With sniff you get that page, the steps to repeat it and a fix. Most findings also have a screenshot.
 It needs no API key and no account.
 
 The first walk downloads about 440 MB once. On a Mac it uses about 730 MB of disk.
