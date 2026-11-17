@@ -1,5 +1,1 @@
-# Recommended GitHub Repository Description (under 350 chars)
-# Set this in: Repository Settings > About > Description
-#
-# Current recommendation:
-Autonomous QA scanner: one command walks your running app in a real browser and reports what's actually broken (broken pages, forms, accessibility, console errors), each with screenshot proof. Zero config. No API key. CLI + MCP server.
+Finds what is broken in your running web app: walks it in a real browser, reports each bug with steps to reproduce.

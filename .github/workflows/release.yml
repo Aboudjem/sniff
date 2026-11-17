@@ -66,13 +66,67 @@ jobs:
       - name: Publish to npm with provenance (OIDC)
         run: npm publish --provenance --access public
 
+      - name: Extract this version's CHANGELOG section as release notes
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          awk -v v="$VERSION" '
+            $0 ~ "^## \\[" v "\\]" { on = 1; next }
+            on && /^## \[/ { exit }
+            on { print }
+          ' CHANGELOG.md > release-notes.md
+          if [ "$(wc -w < release-notes.md)" -lt 12 ]; then
+            echo "CHANGELOG.md has no real section for $VERSION"
+            exit 1
+          fi
+
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          generate_release_notes: true
+          body_path: release-notes.md
           name: ${{ github.ref_name }}
           draft: false
           prerelease: false
+
+  mcp-registry:
+    name: Publish to the MCP registry
+    needs: publish
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      id-token: write
+    env:
+      MCP_PUBLISHER_VERSION: v1.8.9
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install cosign
+        uses: sigstore/cosign-installer@v4.1.2
+
+      - name: Download and verify mcp-publisher
+        run: |
+          set -euo pipefail
+          archive="mcp-publisher_linux_amd64.tar.gz"
+          base_url="https://github.com/modelcontextprotocol/registry/releases/download/${MCP_PUBLISHER_VERSION}"
+          curl --fail --location --silent --show-error --output "$archive" "$base_url/$archive"
+          curl --fail --location --silent --show-error --output "$archive.sigstore.json" "$base_url/$archive.sigstore.json"
+          cosign verify-blob \
+            --bundle "$archive.sigstore.json" \
+            --certificate-identity "https://github.com/modelcontextprotocol/registry/.github/workflows/release.yml@refs/tags/${MCP_PUBLISHER_VERSION}" \
+            --certificate-oidc-issuer "https://token.actions.githubusercontent.com" \
+            "$archive"
+          tar xzf "$archive" mcp-publisher
+
+      - name: Check server.json matches the tag
+        run: |
+          TAG_VERSION="${GITHUB_REF_NAME#v}"
+          node -e "const s=require('./server.json'); const v=process.argv[1]; if (s.version!==v || s.packages[0].version!==v) { console.error('server.json is not at ' + v); process.exit(1); }" "$TAG_VERSION"
+
+      - name: Log in with GitHub OIDC
+        run: ./mcp-publisher login github-oidc
+
+      - name: Publish server.json
+        run: ./mcp-publisher publish
 
   sync-10x:
     name: Sync 10x marketplace

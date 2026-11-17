@@ -1,6 +1,6 @@
 $ npx sniff-qa --url http://localhost:3000
 
-  sniff — walking http://localhost:3000
+  sniff: walking http://localhost:3000
 
   CRITICAL
     • [confirmed] Page returns HTTP 500            /crash

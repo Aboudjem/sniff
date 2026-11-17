@@ -7,6 +7,40 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.9.0] - 2026-11-17
+
+Every report now opens with the answer. The first walk on a new machine works.
+
+### Changed
+
+- **Verdict first.** The terminal report, the HTML report and the MCP walk result now open with a
+  `PASS` or `FAIL` line and the three findings to fix first. The detail follows. In the
+  terminal the verdict follows the real exit decision, so `--fail-on` and `assert` budgets show in it.
+- **Shorter report lines.** Screenshot paths print relative to the folder you ran sniff in.
+- **Help that starts with the commands people type,** and the exit codes.
+- **Pinned launchers.** `.mcp.json` and the plugin manifests run `sniff-qa@0.9.0`, so every plugin
+  user runs the same code.
+- `npm test` runs the suite once (`vitest run`). Watch mode moved to `npm run test:watch`.
+
+### Fixed
+
+- **The first walk no longer crashes when Chromium was never downloaded.** The browser check
+  tested a path Playwright returns even when the file is absent. It now tests the file, so sniff
+  downloads the browser. `sniff doctor` reports the browser correctly too.
+- The browser download prints to stderr, so `--json` output stays parseable.
+- `npm audit --omit=dev` reports 0 vulnerabilities after a lockfile refresh.
+
+### Added
+
+- `server.json` lists the npm package, so MCP registry clients can install sniff.
+  The release workflow now publishes to the registry.
+- `gemini-extension.json` for the Gemini CLI.
+- `npm run proof` re-prints the fixture score the README quotes.
+- A test keeps the version equal across every manifest and checks the README names each MCP tool.
+- `.claude-plugin/icon.png`, so `claude plugin validate --strict` passes. The contributor notes moved
+  from `CLAUDE.md` to `.claude/CLAUDE.md`, which Claude Code still loads, so the plugin root holds
+  no file the plugin loader ignores.
+
 ## [0.8.1] - 2026-09-03
 
 A motion identity, and the literal synthwave scenery removed. No behaviour changes.

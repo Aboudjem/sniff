@@ -11,25 +11,28 @@ An autonomous QA scanner that walks your running app in a real headless browser,
 - **Tech stack**: TypeScript + Node.js 22+ (locked decision)
 - **Test runtime**: Playwright (chromium, webkit, firefox), a locked decision
 - **Default AI**: Claude Code (no API key), the key differentiator, must work out of the box
-- **Distribution**: npm-first (`npx sniff`), the lowest-friction path for developers
+- **Distribution**: npm-first (`npx sniff-qa`; `npx sniff` is an unrelated package)
 - **Budget**: Zero infrastructure cost for users, everything runs locally
 - **Performance**: Must complete a scan of a medium app (50 routes) in under 10 minutes
 
 ## Technology Stack
 
-Technology stack not yet documented. Will populate after codebase mapping or first phase.
+TypeScript on Node.js 22+, built with tsup, tested with vitest. Playwright drives the browser and
+axe-core backs the accessibility checks. The MCP server uses `@modelcontextprotocol/sdk` over stdio.
 
-## Conventions
+## Layout
 
-Conventions not yet established. Will populate as patterns emerge during development.
+- `src/cli/`: the `sniff` command (commander). `src/cli/index.ts` holds the help text and `doctor`.
+- `src/crawl/`: the default flow-walk. Detectors live in `src/crawl/detectors/`, one per issue class.
+- `src/crawl/verdict.ts`: the verdict line and the fix-first list every report opens with.
+- `src/mcp/`: the MCP server and its tools. `src/mcp/caps.ts` gates the tool list.
+- `skills/`: the three skills (`sniff`, `sniff-fix`, `sniff-report`).
+- `sniff-tests/planted-bugs/`: the fixture app with 21 planted bugs. `npm run proof` scores a walk on it.
 
-## Architecture
+## Commands
 
-Architecture not yet mapped. Follow existing patterns found in the codebase.
-
-## Project Skills
-
-No project skills found. Add skills to any of: `.claude/skills/`, `.agents/skills/`, `.cursor/skills/`, or `.github/skills/` with a `SKILL.md` index file.
+- `npm test`: the full suite once. The fixture gate needs Chromium; outside CI it skips with a reason when the browser is absent.
+- `npm run typecheck`, `npm run build`, `npm run proof`.
 
 ## Sniff contributor notes (portability and discoverability layer)
 
@@ -85,10 +88,11 @@ Three plugin manifests must stay aligned on `name`, `version`, and `description`
 
 ### Version-bump checklist
 
-When cutting a release, bump the version in `package.json` (and `package-lock.json`), `server.json`,
-`.claude-plugin/plugin.json`, `.cursor-plugin/plugin.json`, and `.copilot-plugin/plugin.json`, and
-add a `CHANGELOG.md` entry. `release.yml` checks the tag against `package.json` only, so the other
-four drift silently; 10x pins from `.claude-plugin/plugin.json`. The npm `files` list does not include the installer, the discovery manifests, `READMEs/`, or `site/`, so those are repo-only and are not shipped to npm.
+When cutting a release, bump the version in `package.json` (and `package-lock.json`), `server.json`
+(top level and `packages[0].version`), `gemini-extension.json`, `.claude-plugin/plugin.json`,
+`.cursor-plugin/plugin.json`, and `.copilot-plugin/plugin.json`, and the pinned `sniff-qa@<version>`
+in `.mcp.json`, `gemini-extension.json` and the Cursor and Copilot manifests. Add a `CHANGELOG.md`
+entry. `test/manifests.test.ts` fails when any of these drift. 10x pins from `.claude-plugin/plugin.json`. The npm `files` list does not include the installer, the discovery manifests, `READMEs/`, or `site/`, so those are repo-only and are not shipped to npm.
 
 ### GitHub Pages
 

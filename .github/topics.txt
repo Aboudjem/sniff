@@ -1,30 +1,15 @@
-# Recommended GitHub Topics for sniff
-# Set these in: Repository Settings > About > Topics
-#
-# Primary (category + ecosystem)
-qa-automation
-testing-tools
-ai-testing
-e2e-testing
-
-# Features
-accessibility-testing
-visual-regression-testing
-performance-testing
-bug-detection
-source-code-analysis
-
-# Technology
-playwright
-axe-core
-lighthouse
+accessibility
 mcp
-typescript
-
-# Discovery
-developer-tools
-code-quality
-a11y
+playwright
+testing
+axe-core
 ci-cd
-open-source
-nodejs
+claude-code
+dead-links
+mcp-server
+wcag
+claude-code-plugin
+agent-skills
+e2e-testing
+gemini-cli-extension
+qa-automation

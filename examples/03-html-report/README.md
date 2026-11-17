@@ -1,4 +1,4 @@
-# Example 03 — HTML report
+# Example 03: HTML report
 
 Generate a self-contained HTML report you can share with your team or attach to a PR.
 
@@ -23,7 +23,7 @@ sniff v0.7.0  ·  walking http://localhost:3000
 
 - All findings grouped by severity and route
 - Reproduction steps for each finding
-- Inlined screenshots (base64 — no external deps, works offline)
+- Inlined screenshots (base64, no external deps, works offline)
 - Console and network excerpts as evidence
 - Summary table: total findings by class
 

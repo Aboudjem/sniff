@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Setup Wizard — Acme Shop</title>
+  <title>Setup Wizard | Acme Shop</title>
   <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
@@ -15,17 +15,17 @@
   <h1>Setup Wizard</h1>
 
   <section id="step1">
-    <h2>Step 1 of 3 — Your details</h2>
+    <h2>Step 1 of 3: Your details</h2>
     <label for="fullname">Full name</label>
     <input id="fullname" name="fullname" type="text">
     <button id="to-step2" type="button">Next</button>
   </section>
 
   <section id="step2" hidden>
-    <h2>Step 2 of 3 — Preferences</h2>
+    <h2>Step 2 of 3: Preferences</h2>
     <label for="newsletter"><input id="newsletter" type="checkbox"> Subscribe to newsletter</label>
     <button id="back" type="button">Back</button>
-    <!-- B12: dead-end — the "Finish" button is permanently disabled, no way forward -->
+    <!-- B12: dead-end, the "Finish" button is permanently disabled, no way forward -->
     <button id="finish" type="button" disabled>Finish</button>
   </section>
 
@@ -36,7 +36,7 @@
       step1.hidden = true; step2.hidden = false;
     });
     document.getElementById('back').addEventListener('click', () => {
-      // B11: state-loss — going back blows away the name the user typed
+      // B11: state-loss, going back blows away the name the user typed
       document.getElementById('fullname').value = '';
       step2.hidden = true; step1.hidden = false;
     });

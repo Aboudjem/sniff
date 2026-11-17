@@ -1,4 +1,4 @@
-# Example 01 — Local browser walk
+# Example 01: Local browser walk
 
 The most common use case: walk a running local app and see every real bug.
 
@@ -30,7 +30,7 @@ sniff v0.7.0  ·  walking http://localhost:3000
   Walking /contact                ✗  1 finding
   Walking /dashboard              ✗  3 findings
 
-✗ Scan complete — 4 findings (2 high, 1 medium, 1 low)
+VERDICT  FAIL: 4 findings (2 high, 1 medium, 1 low)
 
 HIGH  /contact › Broken form submit
   Steps: 1. Navigate /contact  2. Fill "Name"  3. Click "Send"

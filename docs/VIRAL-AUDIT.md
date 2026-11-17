@@ -1,4 +1,4 @@
-# Viral-Readiness Audit — sniff
+# Viral-Readiness Audit: sniff
 
 **Engine:** Supernova v1 (2026-05-30)
 **Repo:** `Aboudjem/sniff`
@@ -10,8 +10,8 @@
 
 | Pass | Score | Tier |
 |:--|:--|:--|
-| Baseline (pre-pass) | 91 / 100 | Tier 1 — production-ready / viral-ready |
-| Post-pass | 100 / 100 | Tier 1 — production-ready / viral-ready |
+| Baseline (pre-pass) | 91 / 100 | Tier 1: production-ready / viral-ready |
+| Post-pass | 100 / 100 | Tier 1: production-ready / viral-ready |
 
 ---
 
@@ -19,7 +19,7 @@
 
 | Signal | Weight | Status | Fix applied |
 |:--|:--|:--|:--|
-| `description_quality` — GitHub description 20–160 chars, keyword-first | +5 | Already passing (155 chars, keyword-first) — engine flagged as gap but description was present and strong | No change needed |
+| `description_quality`, GitHub description 20–160 chars, keyword-first | +5 | Already passing (155 chars, keyword-first), engine flagged as gap but description was present and strong | No change needed |
 | `examples/ directory present` | +4 | Missing | Added `examples/` with 5 sub-examples (local walk, source scan, HTML report, MCP server, CI) |
 
 **Engine note:** The `description_quality` gap was a false positive. The live GitHub description was 155 characters, keyword-first, well-formed. Topics were also already comprehensive (19 topics including `claude-code`, `mcp`, `mcp-server`, `claude`, `testing`). No repo edit was made.
@@ -34,7 +34,7 @@ README present · package.json valid · LICENSE present · CHANGELOG present · 
 
 ## Engine assessment
 
-Sniff scored Tier 1 correctly: type=claude-plugin, packaging=plugin. The one real gap was the missing `examples/` directory — five working usage patterns now cover local walk, source scan, HTML report, MCP server, and CI. The `description_quality` signal was a false positive; no metadata changes were needed.
+Sniff scored Tier 1 correctly: type=claude-plugin, packaging=plugin. The one real gap was the missing `examples/` directory. Five working usage patterns now cover local walk, source scan, HTML report, MCP server, and CI. The `description_quality` signal was a false positive; no metadata changes were needed.
 
 ---
 

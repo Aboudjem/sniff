@@ -1,4 +1,4 @@
-# Example 02 — Source-only scan
+# Example 02: Source-only scan
 
 No running app needed. Sniff reads your source files and reports what it can find statically.
 
@@ -31,7 +31,7 @@ sniff v0.7.0  ·  source scan (no browser)
   LOW     src/components/Hero.tsx:7
     Placeholder text: "lorem ipsum dolor sit amet"
 
-✓ Scan complete — 2 findings
+VERDICT  PASS: 2 findings (1 medium, 1 low), none at a failing severity
 ```
 
 ## Note

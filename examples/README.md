@@ -1,4 +1,4 @@
-# Sniff — Examples
+# Sniff: Examples
 
 Working examples showing sniff in action. Each directory contains commands to run, sample output, and notes.
 
@@ -35,7 +35,7 @@ npx sniff-qa --url http://localhost:3000 --fail-on none
 
 | Directory | What it shows |
 |:--|:--|
-| [`01-local-walk/`](01-local-walk/) | Full browser walk of a local Next.js app — the most common use case |
+| [`01-local-walk/`](01-local-walk/) | Full browser walk of a local Next.js app, the most common use case |
 | [`02-source-scan/`](02-source-scan/) | Source-only scan when no dev server is running |
 | [`03-html-report/`](03-html-report/) | Generating and reading an HTML report |
 | [`04-mcp-server/`](04-mcp-server/) | Using sniff as an MCP server inside Claude Code / any MCP client |
@@ -43,7 +43,7 @@ npx sniff-qa --url http://localhost:3000 --fail-on none
 
 ---
 
-## 01-local-walk — Browser walk of a local app
+## 01-local-walk: Browser walk of a local app
 
 **Start your app first**, then run sniff against it:
 
@@ -61,7 +61,7 @@ npx sniff-qa --url http://localhost:3000
 - Console errors and failed network requests *during interaction*
 - Empty/placeholder data (`lorem ipsum`, `TODO`, `test@test.com`)
 - Broken forms (dead submit buttons, validation that never fires)
-- State loss (fill a form, hit back — is it wiped?)
+- State loss (fill a form, hit back, is it wiped?)
 - Flow dead-ends (journeys that can't complete)
 - Missing loading / error states
 - Responsive overflow and tiny tap targets (375 px pass)
@@ -77,7 +77,7 @@ sniff v0.7.0  ·  walking http://localhost:3000
   Walking /contact                ✗  1 finding
   Walking /dashboard              ✗  3 findings
 
-✗ Scan complete — 4 findings (2 high, 1 medium, 1 low)
+VERDICT  FAIL: 4 findings (2 high, 1 medium, 1 low)
 
 HIGH  /contact › Broken form submit
   Steps: 1. Navigate to /contact  2. Fill "Name" field  3. Click "Send message"
@@ -102,7 +102,7 @@ Each finding includes severity (`high` / `medium` / `low`), confidence (`confirm
 
 ---
 
-## 02-source-scan — No dev server required
+## 02-source-scan: No dev server required
 
 Sniff falls back automatically when no server is detected, but you can also run it explicitly:
 
@@ -127,18 +127,18 @@ sniff v0.7.0  ·  source scan (no browser)
   MEDIUM  src/pages/settings.tsx:18  Hardcoded TODO: "TODO: wire real user API"
   LOW     src/components/Hero.tsx:7  Placeholder text: "lorem ipsum dolor sit amet"
 
-✓ Scan complete — 2 findings
+VERDICT  PASS: 2 findings (1 medium, 1 low), none at a failing severity
 ```
 
 ---
 
-## 03-html-report — Shareable report
+## 03-html-report: Shareable report
 
 ```bash
 npx sniff-qa --url http://localhost:3000 --report
 ```
 
-Writes a **self-contained HTML file** to `sniff-reports/sniff-report.html` — no server needed, everything is inlined. Share it with your team or attach it to a PR.
+Writes a **self-contained HTML file** to `sniff-reports/sniff-report.html`, no server needed, everything is inlined. Share it with your team or attach it to a PR.
 
 ```
 sniff v0.7.0  ·  walking http://localhost:3000
@@ -153,7 +153,7 @@ A sample rendered report is in [`03-html-report/sample-report.md`](03-html-repor
 
 ---
 
-## 04-mcp-server — Claude Code / MCP client integration
+## 04-mcp-server: Claude Code / MCP client integration
 
 Sniff ships a built-in MCP server. No separate install; the same `sniff-qa` binary starts it.
 
@@ -195,11 +195,11 @@ Once connected, you can invoke sniff tools from within Claude Code (or any MCP c
 Use sniff to walk http://localhost:3000 and give me a prioritised bug list.
 ```
 
-Claude Code calls `sniff` via MCP, receives structured findings, and summarises them for you — no copy-pasting terminal output.
+Claude Code calls `sniff` via MCP, receives structured findings, and summarises them for you, no copy-pasting terminal output.
 
 ---
 
-## 05-ci — GitHub Actions
+## 05-ci: GitHub Actions
 
 Drop this into `.github/workflows/qa.yml`:
 
@@ -236,6 +236,6 @@ Sniff exits `1` when it finds bugs, so the CI step fails and the uploaded report
 
 ## See also
 
-- [Full README](../README.md) — all flags, MCP setup, CI tips
-- [Site / live docs](../site/index.html) — rendered documentation
-- [skills/](../skills/) — sniff, sniff-fix, sniff-report Claude Code skills
+- [Full README](../README.md), all flags, MCP setup, CI tips
+- [Site / live docs](../site/index.html), rendered documentation
+- [skills/](../skills/), sniff, sniff-fix, sniff-report Claude Code skills

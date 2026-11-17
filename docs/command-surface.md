@@ -17,6 +17,6 @@ These are hidden from the `/` menu (`user-invocable: false`) so the surface stay
 
 ## Rationale
 
-One primary command covers 90% of what a user actually wants — "find bugs in my running app." The other two are outputs of that primary flow, not independent workflows. Hiding them reduces the decision surface without removing capability: Claude can still invoke them on natural-language cues, and power users can type them directly if they know the name.
+One primary command covers 90% of what a user actually wants: "find bugs in my running app." The other two are outputs of that primary flow, not independent workflows. Hiding them reduces the decision surface without removing capability: Claude can still invoke them on natural-language cues, and power users can type them directly if they know the name.
 
 Rule of thumb: cap visible commands at 2. If a command is a sub-step of another command, hide it.

@@ -1,20 +1,27 @@
 # sniff
 
-> sniff is an autonomous QA scanner: you point it at a running web app and it walks the app's real
-> user flows in a real (headless) browser and reports what's actually broken, with proof. It is not
-> a static linter and it does not write or maintain a test suite. Every finding ships reproduction
-> proof (exact route + ordered steps + a screenshot + the console/network excerpt), a severity, a
-> confidence level, and a suggested fix. npm package `sniff-qa`. Binaries `sniff` and `sniff-qa`.
-> Ships as both a CLI and an MCP server (Claude Code plugin). No API key required. Node >= 22.
-> Apache-2.0.
+> sniff walks your running web app in a real headless browser and reports what is broken, with the
+> steps to reproduce it. Each finding has a severity, a confidence label, a screenshot and a fix.
+> The report opens with a PASS or FAIL verdict and the three findings to fix first. npm package
+> `sniff-qa`, binaries `sniff` and `sniff-qa`. CLI and MCP server. No API key. Node 22 or newer.
+> Apache-2.0. Version 0.9.0, updated 2026-11-17.
 
-A finding without reproduction proof is not a finding. sniff walks the app like a user (clicking,
-filling forms, navigating, going back) and only reports an issue it can demonstrate. On a planted-bug
-fixture (21 bugs across all 12 issue classes plus a clean control page) it finds 21/21 (100%) at 100%
-precision with 0 false positives and 0 findings on the clean page. That before/after is locked as a
-regression test, backed by a 507-test suite.
+A finding without reproduction proof is not a finding. On the planted-bug fixture (21 bugs across all
+12 classes, plus a clean control page) sniff finds 21 of 21 with 0 findings on the clean page.
+`npm run build && npm run proof` re-prints that score. The test suite fails the build if recall drops
+below 85% or if the clean page gets any finding.
 
-Last updated: 2026-05-29.
+## Docs
+
+- [README](https://github.com/Aboudjem/sniff/blob/main/README.md): install, sample report, how it works, proof, FAQ, limits
+- [Editor and MCP setup](https://github.com/Aboudjem/sniff/blob/main/docs/editors.md): snippets for each agent
+- [FAQ](https://github.com/Aboudjem/sniff/blob/main/docs/faq.md): first run, API keys, data changes, exit codes
+- [Authenticated walks](https://github.com/Aboudjem/sniff/blob/main/docs/authenticated-walks.md): `--storage-state` and redaction
+- [Assert budgets](https://github.com/Aboudjem/sniff/blob/main/docs/assert-budgets.md): capping findings by severity in `sniff.config`
+- [Comparison](https://github.com/Aboudjem/sniff/blob/main/docs/comparison.md): sniff against linters, link checkers and E2E frameworks
+- [Planted-bug manifest](https://github.com/Aboudjem/sniff/blob/main/sniff-tests/planted-bugs/MANIFEST.json): the 21 bugs the proof scores against
+- [CHANGELOG](https://github.com/Aboudjem/sniff/blob/main/CHANGELOG.md): what changed in each release
+- [npm package](https://www.npmjs.com/package/sniff-qa)
 
 ## What it is / who it's for
 
@@ -103,11 +110,11 @@ Every finding is an object of the form:
 
 - CLI: `npx sniff-qa` (in your project, with the dev server running), or `npx sniff-qa --url <url>`.
 - Claude Code plugin (also exposes the MCP server): install the `sniff` plugin. As an MCP server, the
-  command is `npx` with args `["-y", "sniff-qa", "--mcp"]`.
+  command is `npx` with args `["-y", "sniff-qa", "--mcp"]`, or `claude mcp add sniff-qa -- npx -y sniff-qa --mcp`.
 - Via the 10x marketplace (recommended for Claude Code users): `claude plugin marketplace add Aboudjem/10x`,
   then `claude plugin install sniff@10x`. Part of the 10x plugin marketplace (github.com/Aboudjem/10x).
-- Works first-class in: Claude Code, Cursor, VS Code (Copilot), Codex, Gemini CLI, Windsurf, and
-  Continue.dev.
+- Tested on 2026-11-17: Claude Code and Codex CLI (as an MCP server), Gemini CLI (extension manifest),
+  the skills CLI. Documented, not tested: Cursor, VS Code (Copilot), Windsurf, OpenCode, Zed.
 
 ## Q&A
 

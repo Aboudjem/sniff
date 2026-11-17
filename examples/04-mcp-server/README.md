@@ -1,4 +1,4 @@
-# Example 04 — MCP server
+# Example 04: MCP server
 
 Use sniff as an MCP server so Claude Code (or any MCP client) can run QA scans as a tool call.
 
@@ -40,7 +40,7 @@ Add to `.mcp.json` in your project root (or `claude_desktop_config.json` for Cla
 Use sniff to walk http://localhost:3000 and give me a prioritised list of bugs to fix.
 ```
 
-Claude Code calls the `sniff` MCP tool, receives structured findings JSON, and summarises them — no copy-pasting terminal output, no manual triage.
+Claude Code calls the `sniff` MCP tool, receives structured findings JSON, and summarises them, no copy-pasting terminal output, no manual triage.
 
 ## Other MCP clients
 

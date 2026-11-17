@@ -1,4 +1,4 @@
-# Example 05 — GitHub Actions CI
+# Example 05: GitHub Actions CI
 
 Run sniff on every push and pull request. Sniff exits `1` when it finds bugs, so the CI step fails and the uploaded report tells you exactly what to fix.
 

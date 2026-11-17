@@ -53,8 +53,8 @@ plain HTML. It walks the rendered app, so the framework does not matter for the 
 
 ## Why did it exit 1 when nothing crashed?
 
-A walk that finds bugs exits non-zero on purpose, so a CI job fails the build. You still see a
-`✓ Scan complete` line. `--fail-on critical` fails only on the worst findings, and `--fail-on none`
+A walk that finds bugs exits non-zero on purpose, so a CI job fails the build. The report still prints in full, and its last line says why
+the exit code is 1. `--fail-on critical` fails only on the worst findings, and `--fail-on none`
 turns the severity gate off entirely. One thing survives `--fail-on none`: an `assert` budget in
 `sniff.config` is evaluated separately and can still exit 1.
 
